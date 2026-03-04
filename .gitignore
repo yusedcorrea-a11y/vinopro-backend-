@@ -22,6 +22,10 @@ models/*.gguf.*
 backup_old/
 backups_viejos/
 backups/
+*_backup*
+*_backup_*
+*_old*
+*.error.backup
 
 # IDE
 .idea/

@@ -17,30 +17,30 @@ async def analyze_text(request: Request):
         if not texto:
             return JSONResponse(content={"error": "No text provided"})
         
-        print(f"\n? PETICIÓN NUCLEAR: {texto[:30]}...")
+        print(f"\n? PETICIÃ“N NUCLEAR: {texto[:30]}...")
         
-        # Configuración AGGRESIVA
+        # ConfiguraciÃ³n AGGRESIVA
         llm = Llama(
             model_path=MODEL_PATH,
-            n_ctx=512,  # MUY pequeño para forzar atención
+            n_ctx=512,  # MUY pequeÃ±o para forzar atenciÃ³n
             n_threads=1,
             verbose=False
         )
         
         # PROMPT NUCLEAR - ORDENES DIRECTAS, SIN MARGEN
-        prompt = f"""ANÁLISIS DE VINO - ORDEN DIRECTA:
+        prompt = f"""ANÃLISIS DE VINO - ORDEN DIRECTA:
 
 TEXTO A ANALIZAR: "{texto}"
 
 RESPONDE INMEDIATAMENTE con estos 5 campos:
 
-color: [ESCRIBE AQUÍ EL COLOR]
-aroma: [ESCRIBE AQUÍ LOS AROMAS]
-sabor: [ESCRIBE AQUÍ EL SABOR]
-cuerpo: [ESCRIBE AQUÍ EL CUERPO]
-final: [ESCRIBE AQUÍ EL FINAL]
+color: [ESCRIBE AQUÃ EL COLOR]
+aroma: [ESCRIBE AQUÃ LOS AROMAS]
+sabor: [ESCRIBE AQUÃ EL SABOR]
+cuerpo: [ESCRIBE AQUÃ EL CUERPO]
+final: [ESCRIBE AQUÃ EL FINAL]
 
-NO escribas ejercicios, NO expliques, NO añadas "Solution:", NO hagas follow-up.
+NO escribas ejercicios, NO expliques, NO aÃ±adas "Solution:", NO hagas follow-up.
 SOLO los 5 campos arriba. EMPIEZA DIRECTAMENTE con "color:"""
         
         # Forzar inicio con "color:"
@@ -76,7 +76,7 @@ SOLO los 5 campos arriba. EMPIEZA DIRECTAMENTE con "color:"""
             return JSONResponse(content={
                 "exito": True,
                 "datos": datos,
-                "nota": "Extracción nuclear exitosa",
+                "nota": "ExtracciÃ³n nuclear exitosa",
                 "respuesta_original": texto_respuesta[:100] + "..." if len(texto_respuesta) > 100 else texto_respuesta
             })
         else:

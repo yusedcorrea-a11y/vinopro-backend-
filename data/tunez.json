@@ -1,0 +1,41 @@
+{
+  "tunez_domaine_mornag_blanc": {
+    "nombre": "Domaine Mornag Blanc",
+    "bodega": "UTE Mornag",
+    "region": "Mornag",
+    "pais": "Túnez",
+    "tipo": "blanco",
+    "uva_principal": "Ugni Blanc, Chardonnay",
+    "puntuacion": 82,
+    "precio_estimado": "6-10€",
+    "descripcion": "Blanco tunecino de Mornag, región costera próxima a Túnez capital; tradición vitivinícola desde época romana.",
+    "notas_cata": "Cítricos, floral, fresco, ligero.",
+    "maridaje": "Pescado, marisco, ensalada, comida mediterránea"
+  },
+  "tunez_magon_rouge": {
+    "nombre": "Magon Rouge",
+    "bodega": "UCPTT (Magon)",
+    "region": "Túnez Norte",
+    "pais": "Túnez",
+    "tipo": "tinto",
+    "uva_principal": "Carignan, Syrah",
+    "puntuacion": 83,
+    "precio_estimado": "7-12€",
+    "descripcion": "Tinto tunecino de la cooperativa Magon; Carignan y Syrah en estilo mediterráneo.",
+    "notas_cata": "Fruta negra, especias, cuerpo medio.",
+    "maridaje": "Cordero, cuscús, platos con harissa"
+  },
+  "tunez_sidi_rais_gris": {
+    "nombre": "Sidi Rais Gris",
+    "bodega": "Sidi Rais",
+    "region": "Nabeul",
+    "pais": "Túnez",
+    "tipo": "rosado",
+    "uva_principal": "Grenache",
+    "puntuacion": 81,
+    "precio_estimado": "5-9€",
+    "descripcion": "Rosado de Nabeul (Cap Bon); zona turística y vitícola con buena producción de rosados.",
+    "notas_cata": "Fresa, flor blanca, seco y fácil de beber.",
+    "maridaje": "Pescado, ensalada, verano"
+  }
+}

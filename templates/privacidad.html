@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block meta_description %}Política de privacidad de VINO PRO IA. Cómo tratamos tus datos, cookies y sesión.{% endblock %}
+{% block content %}
+<div class="page-privacidad-inner">
+  <h1 class="page-privacidad-titulo">{{ t('nav.privacidad') }}</h1>
+  <p class="page-privacidad-actualizacion">Última actualización: febrero 2026</p>
+
+  <section class="page-privacidad-seccion">
+    <h2>1. Responsable</h2>
+    <p>El responsable del tratamiento de los datos que puedas facilitar al usar la aplicación y el sitio web VINO PRO IA es el titular del proyecto VINO PRO IA (en adelante, «nosotros»). Puedes contactarnos a través de los medios indicados en la aplicación o en la tienda de aplicaciones.</p>
+  </section>
+
+  <section class="page-privacidad-seccion">
+    <h2>2. Datos que recogemos</h2>
+    <p>Podemos recoger y tratar los siguientes datos en función del uso que hagas de la app:</p>
+    <ul>
+      <li><strong>Sesión (X-Session-ID):</strong> identificador anónimo en tu dispositivo para asociar tu bodega virtual, valoraciones y lista «Quiero probar» sin necesidad de cuenta. No permite identificarte personalmente.</li>
+      <li><strong>Uso de la app:</strong> búsquedas, escaneos, preguntas al sumiller y estadísticas agregadas (por ejemplo, tendencias y preguntas frecuentes) para mejorar el servicio. No se almacenan historiales personales identificables de forma indefinida.</li>
+      <li><strong>Cookies:</strong> cookie de idioma (<code>vino_pro_lang</code>) para recordar tu preferencia de idioma. No usamos cookies de publicidad ni de terceros para seguimiento.</li>
+      <li><strong>Si usas funciones de pago (Stripe):</strong> el procesamiento del pago lo realiza Stripe; nosotros no almacenamos datos de tarjeta. Consulta la política de privacidad de Stripe para más información.</li>
+      <li><strong>Si creas ofertas o contactas a oferentes:</strong> el correo que indiques se usa solo para poner en contacto a compradores y oferentes según la funcionalidad descrita en la app.</li>
+    </ul>
+  </section>
+
+  <section class="page-privacidad-seccion">
+    <h2>3. Finalidad y legitimación</h2>
+    <p>Utilizamos los datos para: (a) prestar el servicio (sumiller, bodega, escaneo, compra, planes); (b) mejorar la app y la experiencia de usuario con datos agregados; (c) cumplir obligaciones legales si resultan aplicables. La base legal es tu consentimiento (cookie de idioma, uso de la app) y la ejecución del servicio que solicitas.</p>
+  </section>
+
+  <section class="page-privacidad-seccion">
+    <h2>4. Conservación y seguridad</h2>
+    <p>Conservamos los datos de sesión (bodega, valoraciones, wishlist) mientras sea necesario para el funcionamiento del servicio. Los datos agregados y anónimos pueden conservarse más tiempo para análisis. Aplicamos medidas técnicas y organizativas razonables para proteger la información frente a accesos no autorizados y pérdida.</p>
+  </section>
+
+  <section class="page-privacidad-seccion">
+    <h2>5. Tus derechos</h2>
+    <p>Según la normativa aplicable (por ejemplo, RGPD si aplica), puedes solicitar acceso, rectificación, supresión, limitación del tratamiento, portabilidad y oposición. También puedes presentar una reclamación ante la autoridad de control competente. Para ejercer tus derechos, contacta con nosotros por los medios indicados en la app o en la ficha de la tienda.</p>
+  </section>
+
+  <section class="page-privacidad-seccion">
+    <h2>6. Cambios</h2>
+    <p>Podemos actualizar esta política de privacidad. La fecha de última actualización se indicará al inicio. El uso continuado de la app tras cambios relevantes implica la aceptación de la nueva versión.</p>
+  </section>
+
+  <p class="page-privacidad-volver"><a href="/">← {{ t('nav.inicio') }}</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{
+  "marruecos_domaine_des_ouled_thaleb_blanc": {
+    "nombre": "Domaine des Ouled Thaleb Blanc",
+    "bodega": "Domaine des Ouled Thaleb",
+    "region": "Béni M'Tir (Atlas)",
+    "pais": "Marruecos",
+    "tipo": "blanco",
+    "uva_principal": "Sauvignon Blanc, Chardonnay",
+    "puntuacion": 85,
+    "precio_estimado": "8-14€",
+    "descripcion": "Uno de los pioneros del vino marroquí moderno. Viñedos a altura en el Atlas, clima fresco que da blancos vivos.",
+    "notas_cata": "Cítricos, hierba fresca, mineral, ligero y digestivo.",
+    "maridaje": "Pescado a la plancha, ensaladas, tagine de verduras"
+  },
+  "marruecos_domaine_des_ouled_thaleb_rouge": {
+    "nombre": "Domaine des Ouled Thaleb Syrah",
+    "bodega": "Domaine des Ouled Thaleb",
+    "region": "Béni M'Tir",
+    "pais": "Marruecos",
+    "tipo": "tinto",
+    "uva_principal": "Syrah",
+    "puntuacion": 86,
+    "precio_estimado": "10-16€",
+    "descripcion": "Syrah del Atlas marroquí; buena acidez y fruta que acompañan la cocina local.",
+    "notas_cata": "Fruta negra, pimienta, especias, taninos suaves.",
+    "maridaje": "Cordero al tagine, kefta, cuscús, merguez"
+  },
+  "marruecos_les_coteaux_atlas_gris": {
+    "nombre": "Les Coteaux de l'Atlas Gris de Gris",
+    "bodega": "Les Coteaux de l'Atlas",
+    "region": "Meknès",
+    "pais": "Marruecos",
+    "tipo": "rosado",
+    "uva_principal": "Grenache, Cinsault",
+    "puntuacion": 84,
+    "precio_estimado": "7-12€",
+    "descripcion": "Rosado mediterráneo de Meknès; ideal para el clima y la gastronomía marroquí.",
+    "notas_cata": "Fresa, flor blanca, fresco, ligero.",
+    "maridaje": "Ensalada, pescado, tagine de pollo, verano"
+  },
+  "marruecos_volubilia_gris": {
+    "nombre": "Volubilia Gris",
+    "bodega": "Volubilia",
+    "region": "Meknès",
+    "pais": "Marruecos",
+    "tipo": "rosado",
+    "uva_principal": "Grenache",
+    "puntuacion": 83,
+    "precio_estimado": "6-11€",
+    "descripcion": "Rosado fácil de beber de la región de Meknès; proyecto joven que apuesta por la calidad marroquí.",
+    "notas_cata": "Frutos rojos, notas florales, final seco.",
+    "maridaje": "Mezze, pescado, comida al aire libre"
+  }
+}

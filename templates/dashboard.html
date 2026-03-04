@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <style>
+    body.page-dashboard .dashboard-container { max-width: 800px; margin: 0 auto; }
+    .dashboard-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+    .dashboard-section { margin-bottom: 1.5rem; }
+    .dashboard-list { margin: 0; padding-left: 1.2rem; }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+  <h1 class="page-title">{{ t('dashboard.title') }}</h1>
+  <p class="page-subtitle">{{ t('dashboard.subtitle') }}</p>
+
+  <div class="dashboard-stats">
+    <div class="resultado-vino en-bd stat-card">
+      <div class="stat-number" id="num-busquedas">-</div>
+      <div class="texto-pequeno">{{ t('dashboard.busquedas') }}</div>
+    </div>
+    <div class="resultado-vino en-bd stat-card">
+      <div class="stat-number" id="num-escaneos">-</div>
+      <div class="texto-pequeno">{{ t('dashboard.escaneos') }}</div>
+    </div>
+    <div class="resultado-vino en-bd stat-card">
+      <div class="stat-number" id="num-preguntas">-</div>
+      <div class="texto-pequeno">{{ t('dashboard.preguntas_sumiller') }}</div>
+    </div>
+  </div>
+
+  <section class="resultado-vino en-bd dashboard-section">
+    <h3 class="section-title">{{ t('dashboard.tendencias') }}</h3>
+    <ul id="tendencias" class="dashboard-list"></ul>
+  </section>
+
+  <section class="resultado-vino externo dashboard-section">
+    <h3 class="section-title">{{ t('dashboard.por_pais') }}</h3>
+    <div id="por-pais"></div>
+  </section>
+
+  <section class="resultado-vino en-bd">
+    <h3 class="section-title">{{ t('dashboard.preguntas_frecuentes') }}</h3>
+    <ul id="preguntas-frecuentes" class="dashboard-list"></ul>
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/dashboard.js"></script>
+{% endblock %}

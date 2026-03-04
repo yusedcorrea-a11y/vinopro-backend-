@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <style>
+    .mis-ofertas-container { max-width: 640px; margin: 2rem auto; }
+    .oferta-card { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius); padding: 1rem; margin-bottom: 1rem; }
+    .oferta-card h4 { margin: 0 0 0.5rem 0; }
+    .solicitud-item { padding: 0.5rem; margin: 0.25rem 0; background: rgba(255,255,255,0.05); border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+    .solicitud-item.respondida { opacity: 0.7; }
+    .btn-marcar { font-size: 0.85rem; padding: 0.35rem 0.6rem; }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="mis-ofertas-container">
+  <h1 class="page-title">{{ t('bodega.mis_ofertas') }}</h1>
+  <p class="page-subtitle">Gestiona tus ofertas y las solicitudes de contacto. Si no respondes a 3 solicitudes, la oferta se retirará.</p>
+  <div id="ofertas-list">Cargando…</div>
+</div>
+
+<script>
+(function() {
+  var sid = (localStorage.getItem('vino_pro_session_id') || '').trim();
+  var container = document.getElementById('ofertas-list');
+  var t = {
+    oferta_vino: "{{ t('bodega.oferta_vino') }}",
+    solicitudes: "{{ t('bodega.solicitudes_contacto') }}",
+    marcar: "{{ t('bodega.marcar_respondido') }}",
+    sin_ofertas: "{{ t('bodega.sin_ofertas') }}"
+  };
+  function esc(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+  fetch('/api/ofertas/mis-ofertas', { headers: sid ? { 'X-Session-ID': sid } : {} })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var ofertas = data.ofertas || [];
+      if (ofertas.length === 0) {
+        container.innerHTML = '<p class="texto-pequeno">' + esc(t.sin_ofertas) + '</p>';
+        return;
+      }
+      var html = '';
+      ofertas.forEach(function(o) {
+        if (o.removed) return;
+        var requests = o.contact_requests || [];
+        html += '<div class="oferta-card" data-offer-id="' + esc(o.id) + '">';
+        html += '<h4>' + t.oferta_vino + ': ' + esc(o.vino_key) + '</h4>';
+        html += '<p class="texto-pequeno">' + t.solicitudes + ' (' + requests.length + ')</p>';
+        requests.forEach(function(r) {
+          html += '<div class="solicitud-item' + (r.replied ? ' respondida' : '') + '" data-request-id="' + esc(r.id) + '">';
+          html += '<div><strong>' + esc(r.from_email) + '</strong> ' + (r.message ? '<br><span class="texto-pequeno">' + esc(r.message) + '</span>' : '') + '</div>';
+          if (!r.replied) {
+            html += '<button type="button" class="btn btn-dorado btn-marcar">' + t.marcar + '</button>';
+          } else {
+            html += '<span class="texto-pequeno">Respondido</span>';
+          }
+          html += '</div>';
+        });
+        html += '</div>';
+      });
+      container.innerHTML = html;
+      container.querySelectorAll('.btn-marcar').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var card = this.closest('.oferta-card');
+          var offerId = card.getAttribute('data-offer-id');
+          var reqItem = this.closest('.solicitud-item');
+          var requestId = reqItem.getAttribute('data-request-id');
+          fetch('/api/ofertas/' + offerId + '/marcar-respondido?request_id=' + encodeURIComponent(requestId), {
+            method: 'POST',
+            headers: sid ? { 'X-Session-ID': sid } : {}
+          })
+            .then(function(r) { return r.json(); })
+            .then(function(res) {
+              if (res.success) {
+                reqItem.classList.add('respondida');
+                reqItem.querySelector('.btn-marcar').outerHTML = '<span class="texto-pequeno">Respondido</span>';
+              }
+            });
+        });
+      });
+    })
+    .catch(function() {
+      container.innerHTML = '<p class="texto-pequeno">Error al cargar.</p>';
+    });
+})();
+</script>
+{% endblock %}

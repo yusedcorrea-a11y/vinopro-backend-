@@ -1,0 +1,210 @@
+"""
+API de comunidad (Fase 6B): perfiles, seguir, feed, notificaciones.
+"""
+from fastapi import APIRouter, Header, HTTPException, Request, Body
+
+from services import usuario_service as usuario_svc
+from services import seguidores_service as seg_svc
+from services import feed_service as feed_svc
+from services import notificacion_service as notif_svc
+from services import valoraciones_service as val_svc
+from services import wishlist_service as wish_svc
+
+router = APIRouter(prefix="", tags=["Comunidad"])
+
+
+def _session_and_username(x_session_id: str | None):
+    session_id = (x_session_id or "").strip()
+    if not session_id:
+        raise HTTPException(status_code=401, detail="X-Session-ID requerido")
+    username = usuario_svc.get_username_por_session(session_id)
+    return session_id, username
+
+
+def _optional_username(x_session_id: str | None):
+    """Sesión y username opcionales (no exige sesión)."""
+    session_id = (x_session_id or "").strip()
+    username = usuario_svc.get_username_por_session(session_id) if session_id else None
+    return session_id, username
+
+
+@router.post("/api/crear-perfil")
+async def crear_perfil(
+    username: str = Body(..., embed=True),
+    bio: str = Body("", embed=True),
+    ubicacion: str = Body("", embed=True),
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """Crea el perfil de comunidad para la sesión actual. Username único, 3-30 caracteres alfanuméricos o _."""
+    session_id = (x_session_id or "").strip()
+    if not session_id:
+        raise HTTPException(status_code=401, detail="X-Session-ID requerido")
+    ok, msg = usuario_svc.crear_perfil(session_id, username, bio, ubicacion)
+    if not ok:
+        raise HTTPException(status_code=400, detail=msg)
+    return {"ok": True, "username": username.strip().lower()}
+
+
+@router.get("/api/mi-perfil")
+async def get_mi_perfil(
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """Devuelve el perfil del usuario actual (por sesión). 404 si no tiene perfil."""
+    session_id, username = _session_and_username(x_session_id)
+    perfil = usuario_svc.get_perfil_por_session(session_id)
+    if not perfil:
+        raise HTTPException(status_code=404, detail="Sin perfil. Crea uno con POST /api/crear-perfil")
+    return perfil.to_dict()
+
+
+@router.put("/api/mi-perfil")
+async def actualizar_mi_perfil(
+    bio: str | None = Body(None, embed=True),
+    ubicacion: str | None = Body(None, embed=True),
+    privado: bool | None = Body(None, embed=True),
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """Actualiza bio, ubicación o privado del perfil actual."""
+    session_id, _ = _session_and_username(x_session_id)
+    if not usuario_svc.actualizar_perfil(session_id, bio=bio, ubicacion=ubicacion, privado=privado):
+        raise HTTPException(status_code=404, detail="Sin perfil")
+    return {"ok": True}
+
+
+@router.get("/api/perfil/{username}")
+async def get_perfil_publico(
+    username: str,
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """Perfil público por username. Incluye si el usuario actual sigue a este perfil (si hay sesión)."""
+    perfil = usuario_svc.get_perfil_por_username(username)
+    if not perfil:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    out = perfil.to_dict()
+    _, mi_username = _optional_username(x_session_id)
+    out["yo_sigo"] = seg_svc.sigue_a(mi_username or "", username) if mi_username else False
+    out["seguidores_count"] = len(seg_svc.get_seguidores(username))
+    out["seguidos_count"] = len(seg_svc.get_seguidos(username))
+    return out
+
+
+@router.post("/api/seguir/{username}")
+async def seguir_usuario(
+    username: str,
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """Seguir a un usuario. Crea notificación 'nuevo_seguidor' para el seguido."""
+    session_id, mi_username = _session_and_username(x_session_id)
+    if not mi_username:
+        raise HTTPException(status_code=400, detail="Necesitas un perfil para seguir a otros")
+    objetivo = username.strip().lower()
+    if usuario_svc.get_perfil_por_username(objetivo) is None:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    if not seg_svc.seguir(mi_username, objetivo):
+        return {"ok": True, "already_following": True}
+    notif_svc.add(objetivo, "nuevo_seguidor", from_username=mi_username)
+    return {"ok": True}
+
+
+@router.delete("/api/seguir/{username}")
+async def dejar_seguir(
+    username: str,
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """Dejar de seguir a un usuario."""
+    _, mi_username = _session_and_username(x_session_id)
+    if not mi_username:
+        raise HTTPException(status_code=400, detail="Necesitas un perfil")
+    seg_svc.dejar_de_seguir(mi_username, username.strip().lower())
+    return {"ok": True}
+
+
+@router.get("/api/seguidores")
+async def listar_seguidores(
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """Lista de usernames que siguen al usuario actual."""
+    _, mi_username = _session_and_username(x_session_id)
+    if not mi_username:
+        return {"seguidores": []}
+    return {"seguidores": seg_svc.get_seguidores(mi_username)}
+
+
+@router.get("/api/seguidos")
+async def listar_seguidos(
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """Lista de usernames que el usuario actual sigue."""
+    _, mi_username = _session_and_username(x_session_id)
+    if not mi_username:
+        return {"seguidos": []}
+    return {"seguidos": seg_svc.get_seguidos(mi_username)}
+
+
+@router.get("/api/feed")
+async def get_feed(
+    request: Request,
+    limit: int = 50,
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """Feed de actividad: eventos destacados (partners) + actividad de los usuarios que sigo."""
+    eventos = feed_svc.get_eventos_destacados(limit=10)
+    session_id = (x_session_id or "").strip()
+    mi_username = usuario_svc.get_username_por_session(session_id) if session_id else None
+    actividad = []
+    if mi_username:
+        seguidos = seg_svc.get_seguidos(mi_username)
+        actividad = feed_svc.get_feed_para_usuario(seguidos, limit=limit)
+        vinos = getattr(request.app.state, "vinos_mundiales", None) or {}
+        for a in actividad:
+            if not a.get("vino_nombre") and a.get("vino_key"):
+                v = vinos.get(a["vino_key"], {})
+                if isinstance(v, dict):
+                    a["vino_nombre"] = v.get("nombre") or v.get("name") or a.get("vino_key", "")
+    return {"actividad": actividad, "eventos": eventos}
+
+
+@router.get("/api/perfil/{username}/valoraciones")
+async def get_valoraciones_perfil(
+    username: str,
+    limit: int = 50,
+):
+    """Valoraciones públicas de un usuario (para su perfil)."""
+    lista = val_svc.get_valoraciones_por_username(username, limit=limit)
+    return {"username": username, "valoraciones": lista}
+
+
+@router.get("/api/perfil/{username}/actividad")
+async def get_actividad_perfil(
+    username: str,
+    limit: int = 30,
+):
+    """Actividad reciente de un usuario (para su perfil)."""
+    actividades = feed_svc.get_actividad_de_usuario(username, limit=limit)
+    return {"username": username, "actividad": actividades}
+
+
+@router.get("/api/notificaciones")
+async def get_notificaciones(
+    limit: int = 50,
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """Notificaciones del usuario actual."""
+    _, mi_username = _session_and_username(x_session_id)
+    if not mi_username:
+        return {"notificaciones": []}
+    lista = notif_svc.get_todas(mi_username, limit=limit)
+    return {"notificaciones": lista}
+
+
+@router.post("/api/notificaciones/leer")
+async def marcar_notificaciones_leidas(
+    ids: list[str] | None = Body(None, embed=True),
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """Marca notificaciones como leídas. Si ids es null, marca todas."""
+    _, mi_username = _session_and_username(x_session_id)
+    if not mi_username:
+        return {"ok": True}
+    notif_svc.marcar_leidas(mi_username, ids)
+    return {"ok": True}

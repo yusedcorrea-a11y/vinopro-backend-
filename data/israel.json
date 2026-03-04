@@ -1,0 +1,67 @@
+{
+  "israel_golan_heights_yarden_cabernet": {
+    "nombre": "Golan Heights Yarden Cabernet Sauvignon",
+    "bodega": "Golan Heights Winery",
+    "region": "Altos del Golán",
+    "pais": "Israel",
+    "tipo": "tinto",
+    "uva_principal": "Cabernet Sauvignon",
+    "puntuacion": 88,
+    "precio_estimado": "18-28€",
+    "descripcion": "Uno de los vinos emblemáticos de Israel. Altos del Golán, clima fresco y altura; referencia del Nuevo Mundo israelí.",
+    "notas_cata": "Fruta negra, cassis, especias, roble fino, taninos pulidos.",
+    "maridaje": "Cordero, carne a la parrilla, platos mediterráneos"
+  },
+  "israel_golan_yarden_merlot": {
+    "nombre": "Golan Heights Yarden Merlot",
+    "bodega": "Golan Heights Winery",
+    "region": "Altos del Golán",
+    "pais": "Israel",
+    "tipo": "tinto",
+    "uva_principal": "Merlot",
+    "puntuacion": 86,
+    "precio_estimado": "14-22€",
+    "descripcion": "Merlot del Golán; fruta madura y cuerpo medio, muy accesible.",
+    "notas_cata": "Ciruela, cereza, chocolate, taninos suaves.",
+    "maridaje": "Pollo asado, pasta con salsa de tomate, pizza"
+  },
+  "israel_dalton_reserve": {
+    "nombre": "Dalton Reserve Cabernet Sauvignon",
+    "bodega": "Dalton Winery",
+    "region": "Galilea",
+    "pais": "Israel",
+    "tipo": "tinto",
+    "uva_principal": "Cabernet Sauvignon",
+    "puntuacion": 87,
+    "precio_estimado": "16-25€",
+    "descripcion": "Bodega familiar en Galilea; reserva con buena estructura y carácter mediterráneo.",
+    "notas_cata": "Fruta negra, especias, roble integrado, final largo.",
+    "maridaje": "Cordero, ternera, quesos curados"
+  },
+  "israel_recanati_sauvignon_blanc": {
+    "nombre": "Recanati Sauvignon Blanc",
+    "bodega": "Recanati Winery",
+    "region": "Galilea",
+    "pais": "Israel",
+    "tipo": "blanco",
+    "uva_principal": "Sauvignon Blanc",
+    "puntuacion": 85,
+    "precio_estimado": "10-16€",
+    "descripcion": "Blanco fresco de Galilea; Recanati es una de las bodegas más reconocidas de Israel.",
+    "notas_cata": "Cítricos, hierba, mineral, vivo.",
+    "maridaje": "Pescado, ensaladas, comida israelí ligera"
+  },
+  "israel_tabor_adoam": {
+    "nombre": "Tabor Adama Syrah",
+    "bodega": "Tabor Winery",
+    "region": "Galilea",
+    "pais": "Israel",
+    "tipo": "tinto",
+    "uva_principal": "Syrah",
+    "puntuacion": 86,
+    "precio_estimado": "14-20€",
+    "descripcion": "Syrah de la línea Adama (tierra) de Tabor; viñedos en Galilea con buen potencial.",
+    "notas_cata": "Fruta negra, pimienta, especias, cuerpo medio.",
+    "maridaje": "Cordero, kebabs, platos especiados"
+  }
+}

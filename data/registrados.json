@@ -1,0 +1,38 @@
+{
+  "pinna_fidelis_roble": {
+    "nombre": "pinna fidelis (roble)",
+    "bodega": "Pinna Fidelis peñafiel",
+    "region": "PEÑAFIEL (RIBERA DE DUERO)",
+    "pais": "España",
+    "tipo": "tinto",
+    "puntuacion": 85,
+    "precio_estimado": "25",
+    "descripcion": "Vino Roble. Marca o bodega: Pinna Fidelis. Origen: Francia. Información obtenida de fuentes abiertas; no está en nuestra base de datos.",
+    "notas_cata": "No disponibles para este vino en fuentes externas.",
+    "maridaje": "Recomendamos maridar según el tipo: tintos con carnes rojas, blancos con pescado y aves, espumosos con aperitivos."
+  },
+  "venavides_sweet_red_wine": {
+    "nombre": "venavides (sweet red wine)",
+    "bodega": "venavides",
+    "region": "españa",
+    "pais": "España",
+    "tipo": "dulce",
+    "puntuacion": 75,
+    "precio_estimado": null,
+    "descripcion": "Vino registrado por el usuario.",
+    "notas_cata": "\"notas\": \"Vino tinto dulce con alta graduación. Formato media botella.\",\nsponibles.",
+    "maridaje": "Información no disponible."
+  },
+  "sardon": {
+    "nombre": "SARDON",
+    "bodega": "quintana sardonia",
+    "region": "castilla y leon",
+    "pais": "España",
+    "tipo": "tinto",
+    "puntuacion": null,
+    "precio_estimado": null,
+    "descripcion": "Vino registrado por el usuario.",
+    "notas_cata": "No disponibles.",
+    "maridaje": "Información no disponible."
+  }
+}

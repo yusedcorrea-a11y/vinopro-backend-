@@ -1,0 +1,28 @@
+{
+  "argelia_coteaux_de_mascara_rouge": {
+    "nombre": "Coteaux de Mascara Cuvée Prestige",
+    "bodega": "Coteaux de Mascara",
+    "region": "Mascara",
+    "pais": "Argelia",
+    "tipo": "tinto",
+    "uva_principal": "Cabernet Sauvignon, Syrah",
+    "puntuacion": 84,
+    "precio_estimado": "9-15€",
+    "descripcion": "Una de las bodegas históricas de Argelia; Mascara fue gran región vitivinícola en época colonial y hoy recupera presencia.",
+    "notas_cata": "Fruta negra, especias, cuerpo medio, taninos amables.",
+    "maridaje": "Cordero, cuscús, platos con especias magrebíes"
+  },
+  "argelia_domaine_beni_mtir_rouge": {
+    "nombre": "Domaine Beni Mtir Rouge",
+    "bodega": "Domaine Beni Mtir",
+    "region": "Aïn Bessem",
+    "pais": "Argelia",
+    "tipo": "tinto",
+    "uva_principal": "Cinsault, Carignan",
+    "puntuacion": 82,
+    "precio_estimado": "7-12€",
+    "descripcion": "Vino argelino de variedades mediterráneas clásicas; región con tradición vitivinícola.",
+    "notas_cata": "Fruta roja, notas herbáceas, ligero y bebible.",
+    "maridaje": "Cordero, merguez, verduras asadas"
+  }
+}

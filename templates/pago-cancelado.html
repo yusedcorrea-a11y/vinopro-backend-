@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="pago-container" style="max-width:560px; margin:2rem auto; padding:2rem; background:rgba(255,255,255,0.08); backdrop-filter:blur(10px); border-radius:var(--radius); border:1px solid rgba(255,255,255,0.2); text-align:center;">
+  <h1>{{ t('pago.cancelado_titulo') }}</h1>
+  <p style="margin:1rem 0;">{{ t('pago.cancelado_mensaje') }}</p>
+  <a href="/planes" class="btn btn-dorado">{{ t('planes.ir_planes') }}</a>
+</div>
+{% endblock %}

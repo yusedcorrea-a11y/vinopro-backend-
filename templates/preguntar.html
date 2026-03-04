@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <style>
+    body.page-preguntar .form-container { max-width: 720px; margin: 0 auto; }
+    body.page-preguntar .respuesta-sumiller .respuesta-container { display: flex; align-items: flex-start; gap: 1rem; }
+    .form-group-inline { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .form-group-inline .label-inline { margin: 0; }
+    /* Bloque de respuesta legible: fondo oscuro y texto claro */
+    body.page-preguntar #respuesta.respuesta-sumiller {
+      background: rgba(26, 21, 18, 0.94);
+      color: #faf8f5;
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      border-left: 4px solid var(--dorado);
+      margin-top: 1rem;
+    }
+    body.page-preguntar #respuesta.respuesta-sumiller .respuesta-meta { color: #e8dcc8; }
+    body.page-preguntar #respuesta.respuesta-sumiller .texto-pequeno,
+    body.page-preguntar #respuesta.respuesta-sumiller .pregunta,
+    body.page-preguntar #respuesta.respuesta-sumiller .respuesta,
+    body.page-preguntar #respuesta.respuesta-sumiller .respuesta-block,
+    body.page-preguntar #respuesta.respuesta-sumiller .respuesta-texto {
+      color: #faf8f5;
+      text-shadow: none;
+    }
+    body.page-preguntar #respuesta.respuesta-sumiller .pregunta { opacity: 0.9; font-size: 0.9rem; }
+    body.page-preguntar #respuesta.respuesta-sumiller .respuesta { font-size: 1.05rem; line-height: 1.6; }
+    body.page-preguntar #respuesta.respuesta-sumiller .respuesta-toolbar .btn-speak {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.35);
+      color: #faf8f5;
+    }
+    body.page-preguntar #respuesta.respuesta-sumiller .btn-comprar,
+    body.page-preguntar #respuesta.respuesta-sumiller a.btn-comprar {
+      color: #1a0a0e;
+      background: var(--dorado);
+    }
+    .sugerencias-personalizadas { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.2); }
+    .sugerencias-personalizadas .sugerencias-titulo { font-size: 1rem; margin: 0 0 0.75rem 0; color: #e8dcc8; }
+    .sugerencia-item { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; padding: 0.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .sugerencia-item:last-child { border-bottom: none; }
+    .sugerencia-nombre { color: #faf8f5; }
+    .sugerencia-feedback { display: flex; gap: 0.35rem; }
+    .btn-feedback { padding: 0.25rem 0.5rem; font-size: 0.85rem; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3); color: #faf8f5; border-radius: 4px; cursor: pointer; }
+    .btn-feedback:hover { background: rgba(255,255,255,0.2); }
+    .btn-feedback.active { background: var(--dorado); color: #1a0a0e; border-color: var(--dorado); }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <h1 class="page-title">{{ t('preguntar.title') }}</h1>
+  <p class="page-subtitle">En modo <strong>Nube</strong> puedes preguntar sin escanear: maridajes («¿Qué vino con carne?»), recomendaciones («Me gustan los tintos robustos») o seguir con «Y de esos, ¿cuál es el más económico?». Con <strong>Consulta ID</strong> (tras escanear) el sumiller responde sobre ese vino. Elige tu perfil para adaptar el lenguaje.</p>
+
+  <div class="form-group form-group-inline">
+    <label class="label-inline">Modo:</label>
+    <select id="modo_sumiller" title="IA Local (solo PRO) usa el agente en tu PC (puerto 8080); Nube usa reglas del servidor">
+      <option value="nube" selected>Nube ☁️</option>
+      <option value="local">IA Local 🖥️ (solo PRO)</option>
+    </select>
+    <span id="indicador_modo" class="texto-pequeno" style="color:var(--burdeos);">Modo: Nube ☁️</span>
+  </div>
+
+  <form id="formPregunta">
+    <div class="form-group">
+      <label for="perfil">Perfil</label>
+      <select id="perfil">
+        <option value="principiante">Principiante</option>
+        <option value="aficionado" selected>Aficionado</option>
+        <option value="profesional">Profesional</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="consulta_id">Consulta ID</label>
+      <input type="text" id="consulta_id" name="consulta_id" placeholder="UUID devuelto al escanear">
+    </div>
+    <div class="form-group" id="wrapSelectRecientes">
+      <label for="select_recientes">Últimas consultas (local)</label>
+      <select id="select_recientes">
+        <option value="">-- Seleccionar --</option>
+      </select>
+    </div>
+    <div class="form-group" id="wrapHistorial">
+      <label>Historial de escaneos (sesión)</label>
+      <div id="historial-list" class="texto-pequeno">Cargando…</div>
+    </div>
+    <div class="form-group">
+      <label for="texto">Tu pregunta</label>
+      <div class="pregunta-input-wrap">
+        <input type="text" id="texto" name="texto" required placeholder="Ej: ¿Qué vino con carne? Me gustan los tintos robustos. ¿Con qué marida?">
+        <button type="button" id="btn-mic" class="btn-mic" title="Preguntar por voz" aria-label="Activar micrófono para hablar">🎤</button>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-block">Preguntar</button>
+  </form>
+
+  <div id="error" class="hidden mensaje error"></div>
+  <div id="respuesta" class="hidden respuesta-sumiller"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/preguntar.js"></script>
+{% endblock %}

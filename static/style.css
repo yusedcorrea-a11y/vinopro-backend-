@@ -1,0 +1,2580 @@
+/* VINO PRO IA - Diseño 2026: elegante, moderno, profesional */
+/* Fondos: Unsplash (https://unsplash.com) - imágenes libres de derechos para uso comercial */
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@600;700&display=swap');
+
+:root {
+  --burdeos: #6b2d3c;
+  --burdeos-oscuro: #4a1f2a;
+  --burdeos-claro: #8b3d4a;
+  --burdeos-suave: rgba(107, 45, 60, 0.08);
+  --dorado: #b8860b;
+  --dorado-claro: #d4a84b;
+  --dorado-suave: rgba(184, 134, 11, 0.12);
+  --crema: #faf8f5;
+  --crema-oscuro: #ebe6df;
+  --blanco: #ffffff;
+  --negro: #1a1512;
+  --negro-elegante: rgba(26, 21, 18, 0.85);
+  --sombra-sm: 0 2px 8px rgba(74, 31, 42, 0.06);
+  --sombra-md: 0 8px 24px rgba(74, 31, 42, 0.1);
+  --sombra-lg: 0 16px 48px rgba(74, 31, 42, 0.12);
+  --sombra-tarjeta: 0 4px 20px rgba(74, 31, 42, 0.08), 0 0 0 1px rgba(107, 45, 60, 0.06);
+  --texto: #1c1512;
+  --texto-suave: #5c4a42;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--crema);
+  color: var(--texto);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fondos por sección - Modo claro: viñedo espectacular; modo oscuro = bodega (más abajo) */
+body.page-inicio {
+  background: var(--crema) url('/static/images/vino-pro-ia-fondo-claro-espectacular.jpg') no-repeat fixed;
+  background-size: cover;
+  background-position: center;
+}
+/* En inicio, main transparente para ver el fondo y solo los CTAs */
+body.page-inicio main {
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+  border: none;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+body.page-inicio main::before {
+  display: none;
+}
+.inicio-ctas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  text-align: center;
+}
+.inicio-ctas .inicio-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 220px;
+  padding: 1rem 1.5rem;
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: var(--sombra-md);
+}
+.inicio-ctas .inicio-cta-sumiller {
+  background: linear-gradient(135deg, var(--burdeos), var(--burdeos-oscuro));
+  color: #fff;
+  border: 2px solid rgba(255,255,255,0.2);
+}
+.inicio-ctas .inicio-cta-sumiller:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(74, 31, 42, 0.35);
+}
+.inicio-ctas .inicio-cta-escanear {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--burdeos);
+  border: 2px solid var(--dorado);
+}
+.inicio-ctas .inicio-cta-escanear:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(184, 134, 11, 0.3);
+}
+body.page-inicio::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Landing vinoproia.com */
+body.page-landing {
+  background: var(--crema) url('/static/images/vino-pro-ia-fondo-claro-espectacular.jpg') no-repeat fixed;
+  background-size: cover;
+  background-position: center;
+}
+body.page-landing::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 0;
+}
+body.page-landing main {
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 2rem 1rem;
+}
+.landing-wrap { width: 100%; max-width: 480px; }
+.landing-card {
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: var(--radius);
+  box-shadow: var(--sombra-lg);
+  padding: 2.5rem;
+  text-align: center;
+}
+.landing-logo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+.landing-logo .brand-vino { color: var(--burdeos); font-weight: 700; font-size: 1.75rem; }
+.landing-logo .brand-pro { color: var(--dorado); font-weight: 700; font-size: 1.75rem; }
+.landing-logo .brand-ia { color: var(--burdeos-oscuro); font-weight: 600; font-size: 1.75rem; }
+.landing-tagline { font-family: var(--font-display); color: var(--burdeos); font-size: 1.1rem; margin: 0 0 0.5rem; }
+.landing-desc { color: var(--texto-suave); font-size: 0.95rem; line-height: 1.5; margin: 0 0 1.5rem; }
+.landing-ctas { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem; }
+.landing-btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.landing-btn-app {
+  background: linear-gradient(135deg, var(--burdeos), var(--burdeos-oscuro));
+  color: #fff;
+  border: 2px solid rgba(255,255,255,0.2);
+}
+.landing-btn-app:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(74, 31, 42, 0.3); color: #fff; }
+.landing-coming { position: relative; }
+.landing-badge {
+  position: absolute;
+  top: -8px;
+  right: 50%;
+  transform: translateX(50%);
+  background: var(--dorado);
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+}
+.landing-btn-play {
+  background: rgba(255,255,255,0.9);
+  color: var(--texto);
+  border: 2px solid var(--crema-oscuro);
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+.landing-form-wrap { border-top: 1px solid var(--crema-oscuro); padding-top: 1.5rem; }
+.landing-form-title { font-size: 0.95rem; color: var(--texto); margin: 0 0 0.75rem; }
+.landing-form { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+.landing-input {
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--crema-oscuro);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  min-width: 200px;
+}
+.landing-btn-submit { background: var(--burdeos); color: #fff; border: none; cursor: pointer; }
+.landing-btn-submit:hover { opacity: 0.9; color: #fff; }
+.landing-form-msg { font-size: 0.9rem; margin-top: 0.5rem; min-height: 1.4em; }
+.landing-form-msg--ok { color: var(--burdeos); }
+.landing-form-msg--error { color: #c00; }
+
+body.page-escanear {
+  background: var(--crema) url('/static/images/vino-pro-ia-fondo-escanear.jpg') no-repeat fixed;
+  background-size: cover;
+  background-position: center;
+}
+body.page-escanear::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 0;
+}
+body.page-escanear .form-container {
+  background: transparent;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: none;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
+body.page-escanear .form-container h2,
+body.page-escanear .form-container .texto-pequeno,
+body.page-escanear .form-container label {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+body.page-escanear .form-container input[type="text"],
+body.page-escanear .form-container input[type="file"] {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+}
+body.page-escanear .form-container input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+body.page-escanear .form-container .mensaje,
+  body.page-escanear .form-container #resultado {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* Resultado del escaneo: fondo oscuro para que se lean bien las letras */
+body.page-escanear #resultado .resultado-vino {
+  background: rgba(26, 21, 18, 0.94);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #faf8f5;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+body.page-escanear #resultado .resultado-vino h3 {
+  color: #faf8f5;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+body.page-escanear #resultado .resultado-vino .fila-campo,
+body.page-escanear #resultado .resultado-vino .campo {
+  color: rgba(250, 248, 245, 0.98);
+}
+body.page-escanear #resultado .resultado-vino .fila-campo strong,
+body.page-escanear #resultado .resultado-vino .campo strong {
+  color: rgba(250, 248, 245, 0.82);
+}
+body.page-escanear #resultado .resultado-vino .fila-campo .icono {
+  color: var(--dorado-claro);
+}
+body.page-escanear #resultado .resultado-vino .aviso-externo {
+  background: rgba(184, 134, 11, 0.2);
+  border-color: rgba(184, 134, 11, 0.4);
+  color: #faf8f5;
+}
+body.page-escanear #resultado .resultado-vino .consulta-id-box {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #faf8f5;
+}
+body.page-escanear #resultado .resultado-vino .consulta-id-box code {
+  color: var(--dorado-claro);
+}
+body.page-escanear #resultado .resultado-vino .btn,
+body.page-escanear #resultado .resultado-vino .btn-comprar,
+body.page-escanear #resultado .resultado-vino .btn-dorado {
+  color: #1a1512;
+  background: var(--dorado);
+  border-color: var(--dorado-claro);
+}
+body.page-escanear #resultado .resultado-vino .btn:hover,
+body.page-escanear #resultado .resultado-vino .btn-comprar:hover {
+  background: var(--dorado-claro);
+  color: #1a1512;
+}
+body.page-escanear #resultado .resultado-vino a.btn {
+  color: #1a1512;
+}
+
+body.page-registrar {
+  background: var(--crema) url('/static/images/vino-pro-ia-fondo-registrar.jpg') no-repeat fixed;
+  background-size: cover;
+  background-position: center;
+}
+body.page-registrar::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 0;
+}
+body.page-registrar main {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+body.page-registrar main::before {
+  display: none;
+}
+body.page-registrar .form-container {
+  background: transparent;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: none;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
+body.page-registrar .form-container h2,
+body.page-registrar .form-container .texto-pequeno,
+body.page-registrar .form-container label {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+body.page-registrar .form-container input,
+body.page-registrar .form-container select,
+body.page-registrar .form-container textarea {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+}
+body.page-registrar .form-container input::placeholder,
+body.page-registrar .form-container textarea::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+body.page-registrar .form-container .mensaje {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+body.page-preguntar {
+  background: var(--crema) url('/static/images/vino-pro-ia-fondo-preguntar.jpg') no-repeat fixed;
+  background-size: cover;
+  background-position: center;
+}
+body.page-preguntar::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 0;
+}
+body.page-preguntar main {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+body.page-preguntar main::before {
+  display: none;
+}
+body.page-preguntar .form-container {
+  background: transparent;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: none;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
+body.page-preguntar .form-container h2,
+body.page-preguntar .form-container .texto-pequeno,
+body.page-preguntar .form-container label {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+body.page-preguntar .form-container input,
+body.page-preguntar .form-container select {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+}
+body.page-preguntar .form-container input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+body.page-preguntar .form-container .mensaje,
+body.page-preguntar .form-container .respuesta-sumiller {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+body.page-bodega {
+  background: var(--crema) url('/static/images/vino-pro-ia-fondo-mibodega.jpg') no-repeat fixed;
+  background-size: cover;
+  background-position: center;
+}
+body.page-bodega::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 0;
+}
+body.page-bodega main {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+body.page-bodega main::before {
+  display: none;
+}
+body.page-bodega .bodega-container {
+  background: transparent;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: none;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
+body.page-bodega .bodega-container h2,
+body.page-bodega .bodega-container h3,
+body.page-bodega .bodega-container .texto-pequeno,
+body.page-bodega .bodega-container label {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+body.page-bodega .bodega-container h3 {
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+/* Modo claro: texto legible en bodega */
+html:not([data-theme="dark"]) body.page-bodega .bodega-container {
+  color: var(--texto);
+  text-shadow: none;
+}
+html:not([data-theme="dark"]) body.page-bodega .bodega-container h1,
+html:not([data-theme="dark"]) body.page-bodega .bodega-container h2,
+html:not([data-theme="dark"]) body.page-bodega .bodega-container h3,
+html:not([data-theme="dark"]) body.page-bodega .bodega-container .section-title {
+  color: var(--burdeos) !important;
+}
+html:not([data-theme="dark"]) body.page-bodega .bodega-container .texto-pequeno,
+html:not([data-theme="dark"]) body.page-bodega .bodega-container .page-subtitle,
+html:not([data-theme="dark"]) body.page-bodega .bodega-container label {
+  color: var(--texto-suave);
+}
+html:not([data-theme="dark"]) body.page-bodega .bodega-container input,
+html:not([data-theme="dark"]) body.page-bodega .bodega-container select {
+  background: var(--blanco);
+  border-color: var(--crema-oscuro);
+  color: var(--texto);
+}
+html:not([data-theme="dark"]) body.page-bodega .bodega-container #valoracion,
+html:not([data-theme="dark"]) body.page-bodega .bodega-container #lista-botellas,
+html:not([data-theme="dark"]) body.page-bodega .bodega-container .bodega-sort-bar {
+  color: var(--texto);
+}
+html:not([data-theme="dark"]) body.page-bodega .bodega-container a {
+  color: var(--burdeos);
+}
+body.page-bodega .bodega-container input,
+body.page-bodega .bodega-container select {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+}
+body.page-bodega .bodega-container input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+body.page-bodega .bodega-container #valoracion,
+body.page-bodega .bodega-container #lista-botellas,
+body.page-bodega .bodega-container .bodega-sort-bar {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+body.page-bodega .bodega-container a {
+  color: rgba(255, 255, 255, 0.95);
+}
+body.page-dashboard {
+  background: var(--crema) url('/static/images/vino-pro-ia-fondo-dashboard.jpg') no-repeat fixed;
+  background-size: cover;
+  background-position: center;
+}
+body.page-dashboard::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 0;
+}
+body.page-dashboard main {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+body.page-dashboard main::before {
+  display: none;
+}
+body.page-dashboard .dashboard-container {
+  background: transparent;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: none;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  /* Modo claro: texto legible (hereda --texto) */
+  color: var(--texto);
+}
+body.page-dashboard .dashboard-container h2,
+body.page-dashboard .dashboard-container h1 {
+  color: var(--burdeos);
+}
+body.page-dashboard .dashboard-container .resultado-vino {
+  color: var(--texto);
+}
+body.page-dashboard .dashboard-container .resultado-vino h3 {
+  color: var(--burdeos) !important;
+}
+body.page-dashboard .dashboard-container .resultado-vino .texto-pequeno {
+  color: var(--texto-suave);
+}
+body.page-dashboard .dashboard-container .resultado-vino [id^="num-"] {
+  color: var(--burdeos) !important;
+}
+
+/* Adaptador restaurantes */
+body.page-adaptador {
+  background: var(--crema) url('/static/images/vino-pro-ia-fondo-adaptador-claro.jpg') no-repeat fixed;
+  background-size: cover;
+  background-position: center;
+}
+body.page-adaptador::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 0;
+}
+body.page-adaptador main {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+body.page-adaptador main::before {
+  display: none;
+}
+body.page-adaptador .adaptador-container {
+  background: transparent;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: none;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+}
+body.page-adaptador .adaptador-container h2,
+body.page-adaptador .adaptador-container h3,
+body.page-adaptador .adaptador-container h4,
+body.page-adaptador .adaptador-container .texto-pequeno,
+body.page-adaptador .adaptador-container label {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+body.page-adaptador .adaptador-container input,
+body.page-adaptador .adaptador-container .mensaje {
+  color: #fff;
+}
+body.page-adaptador .adaptador-container input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+body.page-adaptador .adaptador-container .adaptador-section {
+  margin-bottom: 1.5rem;
+}
+body.page-adaptador .adaptador-container .token-box {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+}
+body.page-adaptador .adaptador-container .token-box code {
+  word-break: break-all;
+  font-size: 0.9rem;
+}
+body.page-adaptador .adaptador-container .programas-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+body.page-adaptador .adaptador-container .checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+body.page-adaptador .adaptador-container .doc-section {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 1rem;
+}
+/* Modo claro: texto legible en adaptador */
+html:not([data-theme="dark"]) body.page-adaptador .adaptador-container {
+  color: var(--texto);
+  text-shadow: none;
+}
+html:not([data-theme="dark"]) body.page-adaptador .adaptador-container h1,
+html:not([data-theme="dark"]) body.page-adaptador .adaptador-container h2,
+html:not([data-theme="dark"]) body.page-adaptador .adaptador-container h3,
+html:not([data-theme="dark"]) body.page-adaptador .adaptador-container h4,
+html:not([data-theme="dark"]) body.page-adaptador .adaptador-container .section-title {
+  color: var(--burdeos) !important;
+}
+html:not([data-theme="dark"]) body.page-adaptador .adaptador-container .texto-pequeno,
+html:not([data-theme="dark"]) body.page-adaptador .adaptador-container .page-subtitle,
+html:not([data-theme="dark"]) body.page-adaptador .adaptador-container label {
+  color: var(--texto-suave);
+}
+html:not([data-theme="dark"]) body.page-adaptador .adaptador-container input {
+  background: var(--blanco);
+  border-color: var(--crema-oscuro);
+  color: var(--texto);
+}
+html:not([data-theme="dark"]) body.page-adaptador .adaptador-container .mensaje {
+  color: var(--texto);
+}
+html:not([data-theme="dark"]) body.page-adaptador .adaptador-container .code-block {
+  background: var(--crema-oscuro);
+  color: var(--texto);
+}
+body.page-adaptador .adaptador-container .code-block {
+  display: block;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1rem;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Página Planes: fondo según tema (claro = mujer, oscuro = hombre) */
+body.page-planes {
+  background: var(--crema) url('/static/images/vino-pro-ia-fondo-planes-claro.jpg') no-repeat fixed;
+  background-size: cover;
+  background-position: center;
+}
+body.page-planes::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 0;
+}
+body.page-planes main {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+body.page-planes main::before {
+  display: none;
+}
+/* Planes: texto legible sobre el fondo (modo claro = texto oscuro) */
+body.page-planes .planes-container {
+  color: var(--texto);
+  position: relative;
+  z-index: 1;
+}
+body.page-planes .planes-container .page-title {
+  color: var(--burdeos);
+}
+body.page-planes .planes-container .page-subtitle,
+body.page-planes .planes-container .subtitle {
+  color: var(--texto-suave);
+}
+body.page-planes .plan-card {
+  color: var(--texto);
+}
+body.page-planes .plan-card h2 {
+  color: var(--burdeos);
+}
+/* Modo oscuro: texto claro sobre fondo */
+[data-theme="dark"] body.page-planes .planes-container {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+[data-theme="dark"] body.page-planes .planes-container .page-title,
+[data-theme="dark"] body.page-planes .planes-container .plan-card h2 {
+  color: rgba(255, 255, 255, 0.98);
+}
+[data-theme="dark"] body.page-planes .planes-container .page-subtitle,
+[data-theme="dark"] body.page-planes .planes-container .subtitle,
+[data-theme="dark"] body.page-planes .plan-card li {
+  color: rgba(255, 255, 255, 0.9);
+}
+[data-theme="dark"] body.page-planes .plan-card .precio {
+  color: var(--dorado-claro);
+}
+
+/* Página Privacidad */
+body.page-privacidad {
+  background: var(--crema);
+}
+body.page-privacidad main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+.page-privacidad-inner {
+  background: var(--blanco);
+  border-radius: var(--radius);
+  box-shadow: var(--sombra-tarjeta);
+  padding: 2rem;
+}
+.page-privacidad-titulo {
+  font-family: var(--font-display);
+  color: var(--burdeos);
+  margin: 0 0 0.25rem;
+  font-size: 1.75rem;
+}
+.page-privacidad-actualizacion {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+.page-privacidad-seccion {
+  margin-bottom: 1.5rem;
+}
+.page-privacidad-seccion h2 {
+  font-size: 1.1rem;
+  color: var(--burdeos);
+  margin: 0 0 0.5rem;
+}
+.page-privacidad-seccion p,
+.page-privacidad-seccion ul {
+  margin: 0 0 0.75rem;
+  color: var(--texto);
+}
+.page-privacidad-seccion li {
+  margin-bottom: 0.35rem;
+}
+.page-privacidad-seccion code {
+  background: var(--crema-oscuro);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+.page-privacidad-volver {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--crema-oscuro);
+}
+.page-privacidad-volver a {
+  color: var(--burdeos);
+  text-decoration: none;
+  font-weight: 500;
+}
+.page-privacidad-volver a:hover {
+  text-decoration: underline;
+}
+
+/* Comprar vino */
+body.page-comprar {
+  background: var(--crema) url('/static/images/vino-pro-ia-fondo-mibodega.jpg') no-repeat fixed;
+  background-size: cover;
+  background-position: center;
+}
+body.page-comprar::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 0;
+}
+body.page-comprar main {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+body.page-comprar main::before {
+  display: none;
+}
+body.page-comprar .comprar-container {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: none;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 1200px;
+  border-radius: var(--radius, 0.5rem);
+}
+body.page-comprar .comprar-container h2,
+body.page-comprar .comprar-container h4,
+body.page-comprar .comprar-container .texto-pequeno {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+body.page-comprar .comprar-container .precio {
+  color: var(--dorado);
+}
+body.page-comprar .comprar-container a.btn {
+  color: inherit;
+}
+[data-theme="dark"] body.page-comprar .comprar-container,
+[data-theme="dark"] body.page-comprar .comprar-container h2,
+[data-theme="dark"] body.page-comprar .comprar-container h4,
+[data-theme="dark"] body.page-comprar .comprar-container .texto-pequeno {
+  color: var(--texto);
+}
+
+/* Cabecera */
+header {
+  background: rgba(74, 31, 42, 0.35);
+  backdrop-filter: blur(10px);
+  color: var(--crema);
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(212, 168, 75, 0.15), transparent);
+  pointer-events: none;
+}
+
+/* Marca en tres líneas: VINO / PRO / IA - efecto altura */
+.brand-stack {
+  text-align: center;
+  margin: 0 0 0.5rem 0;
+  position: relative;
+  z-index: 1;
+}
+.brand-line {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.3);
+  line-height: 1.15;
+}
+.brand-vino { font-size: 1.85rem; letter-spacing: 0.2em; }
+.brand-pro  { font-size: 1.5rem;  letter-spacing: 0.35em; margin-top: 2px; }
+.brand-ia   { font-size: 1.25rem;  letter-spacing: 0.5em;  margin-top: 2px; opacity: 0.95; }
+header .tagline {
+  margin: 0 0 1rem 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #fff;
+  opacity: 0.95;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.35);
+}
+header h1 {
+  margin: 0 0 1rem 0;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: 0.02em;
+  position: relative;
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+}
+
+/* Botones del menú: transparentes, sin borde, solo texto legible sobre el fondo */
+nav a {
+  display: inline-block;
+  padding: 0.6rem 1.1rem;
+  background: transparent;
+  color: #fff;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: color 0.2s, text-decoration 0.2s;
+  border: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+nav a:hover {
+  color: var(--dorado-claro);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+nav a.activo {
+  color: var(--dorado-claro);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* Header minimal (solo logo + botón menú) */
+.header-minimal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: rgba(74, 31, 42, 0.4);
+  backdrop-filter: blur(12px);
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+.header-minimal .header-minimal-logo {
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+.header-minimal .brand-line {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+.header-minimal .brand-vino { font-size: 1.35rem; letter-spacing: 0.2em; }
+.header-minimal .brand-pro  { font-size: 1.1rem;  letter-spacing: 0.3em; margin-top: 1px; }
+.header-minimal .brand-ia   { font-size: 0.95rem; letter-spacing: 0.4em; margin-top: 1px; opacity: 0.95; }
+.btn-menu-secreto {
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+.btn-menu-secreto:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
+/* Menú secreto (desplegable lateral, estilo glass) */
+.menu-secreto-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 21, 18, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+.menu-secreto-backdrop.menu-secreto--cerrado {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.menu-secreto {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(320px, 90vw);
+  max-width: 100%;
+  height: 100vh;
+  z-index: 1001;
+  background: rgba(250, 248, 245, 0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: -8px 0 32px rgba(74, 31, 42, 0.15);
+  border-left: 1px solid rgba(107, 45, 60, 0.12);
+  transform: translateX(0);
+  transition: transform 0.3s ease, visibility 0.3s ease;
+  visibility: visible;
+  overflow-y: auto;
+}
+.menu-secreto.menu-secreto--cerrado {
+  transform: translateX(100%);
+  visibility: hidden;
+  pointer-events: none;
+}
+.menu-secreto-inner {
+  padding: 2rem 1.5rem;
+}
+.menu-secreto-titulo {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--burdeos);
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--dorado-suave);
+}
+.menu-secreto-lista {
+  list-style: none;
+  margin: 0 0 1.5rem 0;
+  padding: 0;
+}
+.menu-secreto-lista li { margin: 0; }
+.menu-secreto-link {
+  display: block;
+  padding: 0.75rem 0;
+  color: var(--burdeos);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: var(--radius-sm);
+  transition: background 0.2s, color 0.2s;
+}
+.menu-secreto-link:hover {
+  background: var(--burdeos-suave);
+  color: var(--burdeos-oscuro);
+}
+.menu-secreto-perfil {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(107, 45, 60, 0.12);
+}
+.menu-secreto-subtitulo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--burdeos);
+  margin: 0 0 0.5rem 0;
+}
+.menu-secreto-label {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--texto-suave);
+  margin-bottom: 0.35rem;
+}
+.menu-secreto-select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(107, 45, 60, 0.2);
+  background: #fff;
+  color: var(--texto);
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+.menu-secreto-theme {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--dorado-suave);
+  background: var(--dorado-suave);
+  color: var(--burdeos);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.menu-secreto-theme:hover {
+  background: var(--dorado);
+  color: var(--negro);
+}
+[data-theme="dark"] .menu-secreto {
+  background: rgba(26, 21, 18, 0.97);
+  border-left-color: rgba(212, 168, 75, 0.2);
+}
+[data-theme="dark"] .menu-secreto-titulo,
+[data-theme="dark"] .menu-secreto-link { color: var(--crema); }
+[data-theme="dark"] .menu-secreto-link:hover {
+  background: rgba(212, 168, 75, 0.15);
+  color: var(--dorado-claro);
+}
+[data-theme="dark"] .menu-secreto-select {
+  background: var(--negro);
+  border-color: rgba(212, 168, 75, 0.3);
+  color: var(--crema);
+}
+[data-theme="dark"] .menu-secreto-theme {
+  background: rgba(212, 168, 75, 0.2);
+  border-color: var(--dorado);
+  color: var(--dorado-claro);
+}
+
+/* Main - tarjeta con transparencia sobre fondo de sección */
+main {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  min-height: calc(100vh - 140px);
+  position: relative;
+  z-index: 1;
+}
+body[class^="page-"] main {
+  background: rgba(250, 248, 245, 0.96);
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius);
+  box-shadow: var(--sombra-tarjeta);
+  border: 1px solid rgba(255,255,255,0.6);
+  margin-top: 1.5rem;
+  margin-bottom: 2rem;
+}
+/* Inicio: centro limpio, sin tarjeta, para que el fondo se vea completo */
+body.page-inicio main {
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+  border: none;
+  min-height: 0;
+  padding: 0.5rem 1rem;
+}
+body.page-inicio main::before {
+  display: none;
+}
+
+/* Hero página de inicio */
+.hero-inicio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+.hero-inicio-inner {
+  max-width: 520px;
+}
+.hero-inicio-titulo {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+  margin: 0 0 0.75rem 0;
+  letter-spacing: 0.02em;
+}
+.hero-inicio-texto {
+  color: rgba(255,255,255,0.95);
+  font-size: 1.05rem;
+  line-height: 1.5;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  margin: 0 0 1.75rem 0;
+}
+.hero-inicio-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+.hero-inicio-ctas .hero-cta {
+  padding: 0.65rem 1.35rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.hero-inicio-ctas .btn-dorado {
+  background: var(--dorado);
+  color: var(--negro);
+  border: 2px solid var(--dorado);
+}
+.hero-inicio-ctas .btn-dorado:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(184, 134, 11, 0.4);
+}
+.hero-inicio-ctas .btn-outline {
+  background: transparent;
+  color: #fff;
+  border: 2px solid rgba(255,255,255,0.9);
+}
+.hero-inicio-ctas .btn-outline:hover {
+  background: rgba(255,255,255,0.15);
+  transform: translateY(-2px);
+}
+[data-theme="dark"] .hero-inicio-titulo { text-shadow: 0 2px 16px rgba(0,0,0,0.7); }
+[data-theme="dark"] .hero-inicio-texto { color: rgba(250,248,245,0.95); }
+
+/* Escanear: main transparente para que la imagen de fondo se vea completa */
+body.page-escanear main {
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+  border: none;
+}
+body.page-escanear main::before {
+  display: none;
+}
+body[class^="page-"] main::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(184,134,11,0.2), transparent 40%, transparent 60%, rgba(107,45,60,0.15));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Títulos de página unificados (referencia: index/planes) */
+h1, .page-title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--burdeos);
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  line-height: 1.25;
+}
+.page-subtitle, .subtitulo {
+  font-size: 0.875rem;
+  color: var(--texto-suave);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+h2 {
+  font-family: var(--font-display);
+  color: var(--burdeos);
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 2px solid var(--dorado-suave);
+}
+
+h3, .section-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--burdeos);
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+/* Números grandes en cards (dashboard) */
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--burdeos);
+  line-height: 1.2;
+}
+.stat-card {
+  text-align: center;
+}
+.stat-card .texto-pequeno {
+  margin-top: 0.25rem;
+}
+
+/* Formularios */
+.form-group {
+  margin-bottom: 1.35rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.form-hint {
+  margin-top: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--texto-suave);
+  opacity: 0.9;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="file"],
+select,
+textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--crema-oscuro);
+  border-radius: var(--radius-sm);
+  background: var(--blanco);
+  color: var(--texto);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--burdeos-claro);
+  box-shadow: 0 0 0 3px var(--burdeos-suave);
+}
+
+textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+/* Botones */
+.btn {
+  display: inline-block;
+  padding: 0.85rem 1.6rem;
+  background: linear-gradient(180deg, var(--burdeos-claro) 0%, var(--burdeos) 100%);
+  color: var(--blanco);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  font-family: inherit;
+  text-decoration: none;
+  box-shadow: var(--sombra-sm);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-md);
+}
+
+.btn-dorado {
+  background: linear-gradient(180deg, var(--dorado-claro) 0%, var(--dorado) 100%);
+  color: var(--burdeos-oscuro);
+}
+
+.btn-dorado:hover {
+  box-shadow: 0 8px 24px rgba(184, 134, 11, 0.25);
+}
+
+.btn-block {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+/* Tarjetas - sombra suave y bordes elegantes */
+.resultado-vino {
+  background: var(--blanco);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  margin-top: 1.75rem;
+  box-shadow: var(--sombra-tarjeta);
+  border: 1px solid var(--crema-oscuro);
+  overflow: hidden;
+  position: relative;
+}
+
+.resultado-vino::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  border-radius: 4px 0 0 4px;
+}
+
+.resultado-vino.en-bd::before {
+  background: linear-gradient(180deg, var(--burdeos-claro), var(--burdeos));
+}
+
+.resultado-vino.externo::before {
+  background: linear-gradient(180deg, var(--dorado-claro), var(--dorado));
+}
+
+.resultado-vino h3 {
+  margin: 0 0 1.25rem 0;
+  font-family: var(--font-display);
+  color: var(--burdeos);
+  font-size: 1.35rem;
+  font-weight: 700;
+  padding-left: 0.5rem;
+}
+
+.resultado-vino .fila-campo {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.95rem;
+  padding-left: 0.5rem;
+}
+
+.resultado-vino .fila-campo .icono {
+  flex-shrink: 0;
+  width: 1.25rem;
+  text-align: center;
+  color: var(--dorado);
+  font-size: 1rem;
+}
+
+.resultado-vino .fila-campo strong {
+  min-width: 110px;
+  color: var(--texto-suave);
+  font-weight: 600;
+}
+
+.resultado-vino .campo {
+  margin-bottom: 0.85rem;
+  font-size: 0.95rem;
+  padding-left: 0.5rem;
+}
+
+.resultado-vino .campo strong {
+  display: inline-block;
+  min-width: 110px;
+  color: var(--texto-suave);
+}
+
+.aviso-externo {
+  background: linear-gradient(135deg, #fff9f0 0%, var(--dorado-suave) 100%);
+  border: 1px solid rgba(184, 134, 11, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.25rem;
+  margin: 1.25rem 0 1rem 0;
+  font-size: 0.95rem;
+  color: var(--texto-suave);
+  padding-left: 2.5rem;
+  position: relative;
+}
+
+.aviso-externo::before {
+  content: 'ℹ';
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+  color: var(--dorado);
+  font-weight: 700;
+}
+
+.consulta-id-box {
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  background: var(--crema);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  word-break: break-all;
+  border: 1px dashed var(--crema-oscuro);
+}
+
+.consulta-id-box strong {
+  color: var(--burdeos);
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+/* Menú principal */
+.menu-principal {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+
+.menu-principal a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+  padding: 1.75rem;
+  background: var(--blanco);
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: var(--burdeos);
+  font-weight: 600;
+  font-size: 1.1rem;
+  border: 1px solid var(--crema-oscuro);
+  box-shadow: var(--sombra-sm);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.menu-principal a:hover {
+  border-color: var(--burdeos-claro);
+  box-shadow: var(--sombra-md);
+  transform: translateY(-3px);
+}
+
+.menu-principal a span.icon {
+  font-size: 2.25rem;
+  margin-bottom: 0.6rem;
+}
+
+/* Respuesta sumiller */
+.respuesta-sumiller {
+  background: linear-gradient(135deg, #fffbf5 0%, var(--crema) 100%);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-top: 1.25rem;
+  border-left: 4px solid var(--dorado);
+  box-shadow: var(--sombra-sm);
+}
+
+.respuesta-sumiller .pregunta {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+  margin-bottom: 0.6rem;
+}
+
+.respuesta-sumiller .respuesta {
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+
+.respuesta-sumiller .respuesta-block {
+  position: relative;
+}
+.respuesta-sumiller .respuesta-toolbar {
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.respuesta-sumiller .btn-speak {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: inherit;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 1rem;
+}
+.respuesta-sumiller .btn-speak:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Sumiller: imagen del vino y contenedor de respuesta */
+.vino-imagen {
+  max-width: 150px;
+  max-height: 300px;
+  width: auto;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  margin-right: 20px;
+  float: left;
+  object-fit: cover;
+}
+
+.respuesta-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+  clear: both;
+}
+
+.respuesta-container .respuesta-texto {
+  flex: 1;
+  min-width: 200px;
+}
+
+.btn-comprar {
+  display: inline-block;
+  background: var(--dorado);
+  color: #1a0a0e;
+  padding: 10px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  margin-top: 10px;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.btn-comprar:hover {
+  background: var(--dorado-claro);
+  transform: scale(1.02);
+  color: #1a0a0e;
+}
+
+.acciones-escaneo {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Preguntar: input + micrófono */
+.pregunta-input-wrap {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+.pregunta-input-wrap input {
+  flex: 1;
+  min-width: 0;
+}
+.btn-mic {
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background 0.2s, border-color 0.2s;
+}
+.btn-mic:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.btn-mic.listening {
+  background: rgba(200, 60, 60, 0.9);
+  border-color: rgba(255, 100, 100, 0.8);
+  color: #fff;
+}
+
+/* Modo oscuro: botones de voz en páginas con fondo (heredan estilo del form-container) */
+[data-theme="dark"] .btn-mic {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--texto);
+}
+[data-theme="dark"] .btn-mic:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+[data-theme="dark"] .btn-mic.listening {
+  background: rgba(200, 60, 60, 0.85);
+  border-color: rgba(255, 100, 100, 0.7);
+  color: #fff;
+}
+[data-theme="dark"] .respuesta-sumiller .btn-speak {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--texto);
+}
+[data-theme="dark"] .respuesta-sumiller .btn-speak:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Mensajes */
+.mensaje {
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-sm);
+  margin: 1rem 0;
+  font-weight: 500;
+}
+
+.mensaje.exito {
+  background: #f0f7f0;
+  color: #1b5e20;
+  border: 1px solid #a5d6a7;
+}
+
+.mensaje.error {
+  background: #fff5f5;
+  color: #b71c1c;
+  border: 1px solid #ef9a9a;
+}
+
+.mensaje.info {
+  background: #f0f4ff;
+  color: #0d47a1;
+  border: 1px solid #90caf9;
+}
+
+.texto-pequeno {
+  font-size: 0.875rem;
+  color: var(--texto-suave);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Página pago exitoso / cancelado */
+.pago-container {
+  max-width: 560px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: center;
+  color: var(--texto);
+}
+.pago-container .page-title { color: var(--burdeos); }
+.pago-mensaje { margin: 1rem 0; }
+[data-theme="dark"] .pago-container {
+  background: rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--texto);
+}
+[data-theme="dark"] .pago-container .page-title { color: var(--dorado-claro); }
+
+/* ========== MODO OSCURO (2026) ========== */
+[data-theme="dark"] {
+  --crema: #1a1518;
+  --crema-oscuro: #2a2226;
+  --blanco: #252026;
+  --texto: #e8e4e0;
+  --texto-suave: #b0a8a0;
+  --burdeos-suave: rgba(184, 134, 11, 0.2);
+  --sombra-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --sombra-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --sombra-lg: 0 16px 48px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="dark"] body {
+  background: var(--crema);
+  color: var(--texto);
+}
+[data-theme="dark"] body[class^="page-"] {
+  background: var(--crema) url('/static/images/vino-pro-ia-fondo-oscuro-espectacular.jpg') no-repeat fixed;
+  background-size: cover;
+  background-position: center;
+}
+[data-theme="dark"] body.page-escanear {
+  background-image: url('/static/images/vino-pro-ia-fondo-escanear-oscuro.jpg');
+}
+[data-theme="dark"] body.page-registrar {
+  background-image: url('/static/images/vino-pro-ia-fondo-registrar-oscuro.jpg');
+}
+[data-theme="dark"] body.page-registrar::before {
+  background: rgba(0, 0, 0, 0.3);
+}
+[data-theme="dark"] body.page-preguntar {
+  background-image: url('/static/images/vino-pro-ia-fondo-preguntar-oscuro.jpg');
+}
+[data-theme="dark"] body.page-preguntar::before {
+  background: rgba(0, 0, 0, 0.3);
+}
+[data-theme="dark"] body.page-bodega {
+  background-image: url('/static/images/vino-pro-ia-fondo-mibodega-oscuro.jpg');
+}
+[data-theme="dark"] body.page-bodega::before {
+  background: rgba(0, 0, 0, 0.3);
+}
+[data-theme="dark"] body.page-dashboard {
+  background-image: url('/static/images/vino-pro-ia-fondo-dashboard-oscuro.jpg');
+}
+[data-theme="dark"] body.page-dashboard::before {
+  background: rgba(0, 0, 0, 0.3);
+}
+[data-theme="dark"] body.page-dashboard .dashboard-container {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+[data-theme="dark"] body.page-dashboard .dashboard-container h2,
+[data-theme="dark"] body.page-dashboard .dashboard-container h1,
+[data-theme="dark"] body.page-dashboard .dashboard-container h3,
+[data-theme="dark"] body.page-dashboard .dashboard-container .texto-pequeno,
+[data-theme="dark"] body.page-dashboard .dashboard-container .resultado-vino,
+[data-theme="dark"] body.page-dashboard .dashboard-container .resultado-vino h3,
+[data-theme="dark"] body.page-dashboard .dashboard-container .resultado-vino ul,
+[data-theme="dark"] body.page-dashboard .dashboard-container #por-pais,
+[data-theme="dark"] body.page-dashboard .dashboard-container .mensaje,
+[data-theme="dark"] body.page-dashboard .dashboard-container [id^="num-"] {
+  color: #fff !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+[data-theme="dark"] body.page-adaptador {
+  background-image: url('/static/images/vino-pro-ia-fondo-adaptador-oscuro.jpg');
+}
+[data-theme="dark"] body.page-adaptador::before {
+  background: rgba(0, 0, 0, 0.3);
+}
+[data-theme="dark"] body.page-planes {
+  background-image: url('/static/images/vino-pro-ia-fondo-planes-oscuro.jpg');
+}
+[data-theme="dark"] body.page-planes::before {
+  background: rgba(0, 0, 0, 0.3);
+}
+[data-theme="dark"] body.page-comprar {
+  background-image: url('/static/images/vino-pro-ia-fondo-mibodega-oscuro.jpg');
+}
+[data-theme="dark"] body.page-comprar::before {
+  background: rgba(0, 0, 0, 0.3);
+}
+[data-theme="dark"] body.page-escanear::before {
+  background: rgba(0, 0, 0, 0.3);
+}
+[data-theme="dark"] body.page-escanear main {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+[data-theme="dark"] body.page-escanear .form-container {
+  background: transparent;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+[data-theme="dark"] body.page-escanear .form-container h2,
+[data-theme="dark"] body.page-escanear .form-container .texto-pequeno,
+[data-theme="dark"] body.page-escanear .form-container label {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+[data-theme="dark"] body.page-escanear .form-container input[type="text"],
+[data-theme="dark"] body.page-escanear .form-container input[type="file"] {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+}
+[data-theme="dark"] body.page-escanear .form-container input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+[data-theme="dark"] body.page-escanear .form-container .mensaje,
+[data-theme="dark"] body.page-escanear .form-container #resultado {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+[data-theme="dark"] body.page-escanear #resultado .resultado-vino {
+  background: rgba(26, 21, 18, 0.96);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #faf8f5;
+}
+[data-theme="dark"] body.page-escanear #resultado .resultado-vino h3,
+[data-theme="dark"] body.page-escanear #resultado .resultado-vino .fila-campo,
+[data-theme="dark"] body.page-escanear #resultado .resultado-vino .campo {
+  color: rgba(250, 248, 245, 0.98);
+}
+[data-theme="dark"] body.page-escanear #resultado .resultado-vino .fila-campo strong,
+[data-theme="dark"] body.page-escanear #resultado .resultado-vino .campo strong {
+  color: rgba(250, 248, 245, 0.82);
+}
+[data-theme="dark"] body.page-escanear #resultado .resultado-vino .aviso-externo,
+[data-theme="dark"] body.page-escanear #resultado .resultado-vino .consulta-id-box {
+  background: rgba(255, 255, 255, 0.06);
+  color: #faf8f5;
+}
+[data-theme="dark"] body[class^="page-"]::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  z-index: 0;
+}
+[data-theme="dark"] body[class^="page-"] main {
+  background: var(--blanco);
+  border-color: var(--crema-oscuro);
+}
+
+[data-theme="dark"] .resultado-vino,
+[data-theme="dark"] .menu-principal a,
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background: var(--blanco);
+  border-color: var(--crema-oscuro);
+  color: var(--texto);
+}
+
+[data-theme="dark"] .consulta-id-box,
+[data-theme="dark"] .respuesta-sumiller {
+  background: var(--crema-oscuro);
+  border-color: var(--dorado);
+}
+
+/* Preguntar: bloque de respuesta siempre legible (tema claro y oscuro) */
+body.page-preguntar #respuesta.respuesta-sumiller {
+  background: rgba(26, 21, 18, 0.94);
+  color: #faf8f5;
+  border-left: 4px solid var(--dorado);
+}
+body.page-preguntar #respuesta.respuesta-sumiller .texto-pequeno,
+body.page-preguntar #respuesta.respuesta-sumiller .pregunta,
+body.page-preguntar #respuesta.respuesta-sumiller .respuesta,
+body.page-preguntar #respuesta.respuesta-sumiller .respuesta-texto {
+  color: #faf8f5 !important;
+}
+body.page-preguntar #respuesta.respuesta-sumiller .respuesta-toolbar .btn-speak {
+  color: #faf8f5;
+  border-color: rgba(255,255,255,0.35);
+}
+[data-theme="dark"] body.page-preguntar #respuesta.respuesta-sumiller {
+  background: rgba(26, 21, 18, 0.96);
+  color: #faf8f5;
+}
+[data-theme="dark"] body.page-preguntar #respuesta.respuesta-sumiller .texto-pequeno,
+[data-theme="dark"] body.page-preguntar #respuesta.respuesta-sumiller .pregunta,
+[data-theme="dark"] body.page-preguntar #respuesta.respuesta-sumiller .respuesta {
+  color: #faf8f5 !important;
+}
+
+[data-theme="dark"] .aviso-externo {
+  background: rgba(184, 134, 11, 0.15);
+  border-color: var(--dorado);
+}
+
+[data-theme="dark"] .mensaje.exito { background: #1b3320; color: #a5d6a7; border-color: #2e7d32; }
+[data-theme="dark"] .mensaje.error { background: #331b1b; color: #ef9a9a; border-color: #c62828; }
+[data-theme="dark"] .mensaje.info { background: #1a2332; color: #90caf9; border-color: #1565c0; }
+
+/* Modal de bienvenida: elegir idioma (solo primera visita) */
+.modal-bienvenida-idioma {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.modal-bienvenida-idioma[hidden],
+.modal-bienvenida-idioma--cerrado { display: none !important; }
+.modal-bienvenida-idioma-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+.modal-bienvenida-idioma-content {
+  position: relative;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius, 0.5rem);
+  padding: 2rem;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  color: var(--texto, #1a1512);
+}
+.modal-bienvenida-idioma-titulo {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  color: var(--burdeos, #5c2a2a);
+}
+.modal-bienvenida-idioma-sub {
+  margin: 0 0 1.5rem;
+  font-size: 0.9rem;
+  color: var(--texto-suave, #4a4541);
+}
+.modal-bienvenida-idioma-botones {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+.modal-bienvenida-idioma-btn {
+  display: block;
+  padding: 0.6rem 0.75rem;
+  background: rgba(92, 42, 42, 0.08);
+  border: 1px solid rgba(92, 42, 42, 0.2);
+  border-radius: var(--radius-sm, 0.35rem);
+  color: var(--burdeos, #5c2a2a);
+  text-decoration: none;
+  font-size: 0.9rem;
+  text-align: center;
+  transition: background 0.2s, border-color 0.2s;
+}
+.modal-bienvenida-idioma-btn:hover {
+  background: rgba(92, 42, 42, 0.15);
+  border-color: var(--dorado, #8b6914);
+}
+
+/* Toggle modo oscuro: transparente como el resto del menú */
+.lang-label { margin: 0; display: inline-flex; align-items: center; }
+.lang-select {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.lang-select option { background: var(--burdeos); color: #fff; }
+.toggle-theme {
+  background: transparent;
+  border: none;
+  color: #fff;
+  padding: 0.4rem 0.7rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-left: auto;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+.toggle-theme:hover {
+  color: var(--dorado-claro);
+  text-decoration: underline;
+}
+
+/* ========== Chatbot guía (¿Dudas? 👔) — Estilo espectacular ========== */
+.chatbot-guia-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgba(26, 21, 18, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 1;
+  transition: opacity 0.3s ease, visibility 0.3s;
+}
+.chatbot-guia-backdrop--closed {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+/* Mascota flotante: carita cartoon sumiller — arrastrable, doble toque abre */
+.chatbot-guia-mascot {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 998;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #fff 0%, #f8f2e8 45%, #f0e6d8 100%);
+  border: 3px solid var(--dorado);
+  box-shadow: 0 4px 20px rgba(107, 45, 60, 0.2), 0 0 0 0 rgba(184, 134, 11, 0.3), inset 0 1px 0 rgba(255,255,255,0.8);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  animation: chatbot-guia-mascot-float 3s ease-in-out infinite;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.chatbot-guia-mascot:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 28px rgba(184, 134, 11, 0.3), 0 0 0 4px rgba(184, 134, 11, 0.12);
+  animation: none;
+}
+.chatbot-guia-mascot:hover .chatbot-guia-mascot-smile {
+  transform: scaleX(1.15);
+  border-bottom-width: 4px;
+}
+.chatbot-guia-mascot:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--dorado-suave);
+}
+.chatbot-guia-mascot-face {
+  position: relative;
+  width: 82%;
+  height: 82%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 2%;
+}
+.chatbot-guia-mascot-eyes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14%;
+  margin-bottom: 2px;
+}
+.chatbot-guia-mascot-eye {
+  position: relative;
+  width: 18px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  border: 2.2px solid #3d2c2e;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+  overflow: hidden;
+  animation: chatbot-guia-mascot-blink 4s ease-in-out infinite;
+}
+.chatbot-guia-mascot-pupil {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: var(--burdeos);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(61, 44, 46, 0.4);
+}
+.chatbot-guia-mascot-shine {
+  position: absolute;
+  right: 3px;
+  top: 4px;
+  width: 5px;
+  height: 5px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.5);
+}
+.chatbot-guia-mascot-smile {
+  width: 22px;
+  height: 10px;
+  border-bottom: 3px solid #3d2c2e;
+  border-radius: 0 0 45% 45%;
+  margin-top: 1px;
+  transition: transform 0.2s ease, border-width 0.2s;
+}
+.chatbot-guia-mascot-blush {
+  position: absolute;
+  top: 42%;
+  width: 10px;
+  height: 6px;
+  background: rgba(235, 160, 160, 0.55);
+  border-radius: 50%;
+}
+.chatbot-guia-mascot-blush--l { left: 4px; }
+.chatbot-guia-mascot-blush--r { right: 4px; }
+.chatbot-guia-mascot-bow {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 10px;
+}
+.chatbot-guia-mascot-bow::before,
+.chatbot-guia-mascot-bow::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(135deg, var(--burdeos) 0%, var(--burdeos-oscuro) 100%);
+  border-radius: 50% 50% 45% 50%;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 1px 3px rgba(0,0,0,0.2);
+  top: 0;
+}
+.chatbot-guia-mascot-bow::before {
+  left: 0;
+  transform: rotate(-35deg);
+  transform-origin: right center;
+}
+.chatbot-guia-mascot-bow::after {
+  right: 0;
+  transform: rotate(35deg);
+  transform-origin: left center;
+  border-radius: 50% 50% 50% 45%;
+}
+@keyframes chatbot-guia-mascot-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes chatbot-guia-mascot-blink {
+  0%, 45%, 55%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.08); }
+}
+.chatbot-guia-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 400px;
+  z-index: 1000;
+  background: linear-gradient(180deg, var(--crema) 0%, #f5f0e8 100%);
+  color: var(--texto);
+  box-shadow: -8px 0 40px rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.chatbot-guia-panel--closed {
+  transform: translateX(100%);
+}
+.chatbot-guia-panel-inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+.chatbot-guia-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1.35rem;
+  background: linear-gradient(135deg, var(--burdeos) 0%, var(--burdeos-oscuro) 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.chatbot-guia-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+.chatbot-guia-header-text {
+  flex: 1;
+  min-width: 0;
+}
+.chatbot-guia-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.chatbot-guia-subtitle {
+  margin: 0.2rem 0 0 0;
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+.chatbot-guia-close {
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.chatbot-guia-close:hover {
+  background: rgba(255,255,255,0.25);
+}
+.chatbot-guia-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem 1.35rem;
+}
+.chatbot-guia-intro {
+  margin: 0 0 1.1rem 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--texto-suave);
+}
+.chatbot-guia-intro strong {
+  color: var(--burdeos);
+}
+.chatbot-guia-busca {
+  margin-bottom: 1.1rem;
+}
+.chatbot-guia-busca-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  color: var(--texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.chatbot-guia-input {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius-sm);
+  border: 2px solid rgba(107, 45, 60, 0.2);
+  background: #fff;
+  color: var(--texto);
+  font-size: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.chatbot-guia-input:focus {
+  outline: none;
+  border-color: var(--dorado);
+  box-shadow: 0 0 0 3px var(--dorado-suave);
+}
+.chatbot-guia-input::placeholder {
+  color: #999;
+}
+.chatbot-guia-topics-label {
+  margin: 0 0 0.6rem 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--texto-suave);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.chatbot-guia-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+.chatbot-guia-topic {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: 999px;
+  border: 2px solid rgba(107, 45, 60, 0.25);
+  background: #fff;
+  color: var(--burdeos);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s, border-color 0.2s, color 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.chatbot-guia-topic:hover {
+  transform: translateY(-2px);
+  background: var(--burdeos);
+  color: #fff;
+  border-color: var(--burdeos);
+  box-shadow: 0 4px 12px rgba(107, 45, 60, 0.25);
+}
+.chatbot-guia-topic-ico {
+  font-size: 1rem;
+  line-height: 1;
+}
+.chatbot-guia-answer {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  padding: 1rem 1.1rem;
+  background: rgba(26, 21, 18, 0.05);
+  border-radius: var(--radius);
+  border-left: 4px solid var(--dorado);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.chatbot-guia-answer--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.chatbot-guia-answer:empty {
+  display: none;
+}
+.chatbot-guia-answer strong {
+  color: var(--burdeos);
+}
+.chatbot-guia-answer code {
+  background: rgba(0,0,0,0.08);
+  padding: 0.2rem 0.4rem;
+  border-radius: 6px;
+  font-size: 0.85em;
+}
+.chatbot-guia-answer a.chatbot-guia-link {
+  color: var(--dorado);
+  font-weight: 700;
+  text-decoration: underline;
+}
+.chatbot-guia-answer a.chatbot-guia-link:hover {
+  text-decoration: none;
+}
+.nav-link-chatbot {
+  background: linear-gradient(145deg, rgba(184, 134, 11, 0.2) 0%, rgba(184, 134, 11, 0.1) 100%);
+  border: 1px solid rgba(184, 134, 11, 0.4);
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+}
+.nav-link-chatbot:hover {
+  background: var(--dorado-suave);
+  color: var(--burdeos);
+  transform: scale(1.03);
+}
+[data-theme="dark"] .chatbot-guia-panel {
+  background: linear-gradient(180deg, #1e1916 0%, #1a1512 100%);
+  color: #faf8f5;
+}
+[data-theme="dark"] .chatbot-guia-input {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.2);
+  color: #faf8f5;
+}
+[data-theme="dark"] .chatbot-guia-input:focus {
+  border-color: var(--dorado);
+}
+[data-theme="dark"] .chatbot-guia-topic {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.2);
+  color: #e8e0d8;
+}
+[data-theme="dark"] .chatbot-guia-topic:hover {
+  background: var(--dorado-suave);
+  color: var(--negro);
+  border-color: var(--dorado);
+}
+[data-theme="dark"] .chatbot-guia-answer {
+  background: rgba(255,255,255,0.06);
+}
+[data-theme="dark"] .chatbot-guia-answer strong {
+  color: var(--dorado-claro);
+}
+[data-theme="dark"] .chatbot-guia-answer a.chatbot-guia-link {
+  color: var(--dorado-claro);
+}
+[data-theme="dark"] .chatbot-guia-backdrop {
+  background: rgba(0,0,0,0.55);
+}
+[data-theme="dark"] .chatbot-guia-mascot {
+  background: linear-gradient(160deg, #2f2825 0%, #261f1c 50%, #1e1916 100%);
+  border-color: var(--dorado);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 0 0 rgba(184, 134, 11, 0.25), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+[data-theme="dark"] .chatbot-guia-mascot:hover {
+  box-shadow: 0 8px 28px rgba(184, 134, 11, 0.28), 0 0 0 4px rgba(184, 134, 11, 0.12);
+}
+[data-theme="dark"] .chatbot-guia-mascot-eye {
+  background: #3a3330;
+  border-color: #5c504a;
+}
+[data-theme="dark"] .chatbot-guia-mascot-pupil {
+  background: var(--dorado-claro);
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.3);
+}
+[data-theme="dark"] .chatbot-guia-mascot-smile {
+  border-bottom-color: #7a6b65;
+}
+[data-theme="dark"] .chatbot-guia-mascot-blush {
+  background: rgba(184, 134, 11, 0.2);
+}
+[data-theme="dark"] .chatbot-guia-mascot-bow::before,
+[data-theme="dark"] .chatbot-guia-mascot-bow::after {
+  background: linear-gradient(135deg, var(--dorado-suave) 0%, var(--dorado) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 4px rgba(0,0,0,0.3);
+}
+[data-theme="dark"] .nav-link-chatbot {
+  background: rgba(184, 134, 11, 0.2);
+  border-color: var(--dorado);
+  color: var(--dorado-claro);
+}
+[data-theme="dark"] .nav-link-chatbot:hover {
+  background: var(--dorado-suave);
+  color: var(--negro);
+}
+
+@media (max-width: 600px) {
+  .chatbot-guia-panel { max-width: 100%; }
+  .chatbot-guia-mascot { bottom: 0.75rem; right: 0.75rem; width: 60px; height: 60px; }
+  .chatbot-guia-mascot-eye { width: 14px; height: 16px; }
+  .chatbot-guia-mascot-pupil { width: 8px; height: 8px; }
+  .chatbot-guia-mascot-shine { width: 4px; height: 4px; right: 2px; top: 3px; }
+  .chatbot-guia-mascot-smile { width: 18px; height: 8px; border-bottom-width: 2.5px; }
+  .chatbot-guia-mascot-blush { width: 8px; height: 5px; }
+  .chatbot-guia-mascot-bow::before,
+  .chatbot-guia-mascot-bow::after { width: 10px; height: 10px; }
+  .brand-vino { font-size: 1.45rem; letter-spacing: 0.12em; }
+  .brand-pro  { font-size: 1.2rem;  letter-spacing: 0.25em; }
+  .brand-ia   { font-size: 1rem;    letter-spacing: 0.35em; }
+  header h1 {
+    font-size: 1.3rem;
+  }
+  main {
+    padding: 1.25rem 1rem;
+  }
+  body[class^="page-"] main {
+    margin-left: 0.75rem;
+    margin-right: 0.75rem;
+  }
+  nav a {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.85rem;
+  }
+  .menu-principal {
+    grid-template-columns: 1fr;
+  }
+  .resultado-vino {
+    padding: 1.25rem;
+  }
+}
+
+/* ========== FONDOS ADAPTADOS A MÓVIL Y TABLET ==========
+ * Móvil: imagen completa (contain) para no recortar sujeto; bordes con color de relleno.
+ * Tablet: cover con posición alta para priorizar el punto focal.
+ * Opción futura: usar -mobile.jpg / -tablet.jpg por imagen (ver README-FONDOS.md).
+ */
+@media (max-width: 767px) {
+  body.page-inicio,
+  body.page-escanear,
+  body.page-registrar,
+  body.page-preguntar,
+  body.page-bodega,
+  body.page-dashboard,
+  body.page-adaptador,
+  body.page-planes,
+  body.page-comprar {
+    background-size: contain !important;
+    background-position: center center !important;
+    background-color: #1a1512;
+  }
+  [data-theme="dark"] body.page-inicio,
+  [data-theme="dark"] body.page-escanear,
+  [data-theme="dark"] body.page-registrar,
+  [data-theme="dark"] body.page-preguntar,
+  [data-theme="dark"] body.page-bodega,
+  [data-theme="dark"] body.page-dashboard,
+  [data-theme="dark"] body.page-adaptador,
+  [data-theme="dark"] body.page-planes,
+  [data-theme="dark"] body.page-comprar {
+    background-size: contain !important;
+    background-position: center center !important;
+    background-color: #0d0b0a;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  body.page-inicio,
+  body.page-escanear,
+  body.page-registrar,
+  body.page-preguntar,
+  body.page-bodega,
+  body.page-dashboard,
+  body.page-adaptador,
+  body.page-planes,
+  body.page-comprar {
+    background-position: top center;
+  }
+  [data-theme="dark"] body.page-inicio,
+  [data-theme="dark"] body.page-escanear,
+  [data-theme="dark"] body.page-registrar,
+  [data-theme="dark"] body.page-preguntar,
+  [data-theme="dark"] body.page-bodega,
+  [data-theme="dark"] body.page-dashboard,
+  [data-theme="dark"] body.page-adaptador,
+  [data-theme="dark"] body.page-planes,
+  [data-theme="dark"] body.page-comprar {
+    background-position: top center;
+  }
+}
+
+/* ========== CRÉDITOS IMÁGENES (Unsplash - uso libre) ==========
+ * Inicio:    photo-1510812431401-41d2d331e9b3 (bodega/barricas)
+ * Escanear:  photo-1547595628-c61a29f496f0 (vino y móvil)
+ * Registrar: photo-1506377240377-2a5f363f8fcf (viñedo)
+ * Preguntar: photo-1551024709-8f23befc6f87 (cata)
+ * Mi Bodega: photo-1569529465841-dfecdab7503 (estantería vinos)
+ * Dashboard: photo-1559526324-303c6c1a9c8 (bodega barricas)
+ * Más fotos: https://unsplash.com/s/photos/wine https://unsplash.com/s/photos/winery
+ */

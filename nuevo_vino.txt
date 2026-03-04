@@ -1,0 +1,11 @@
+﻿  ,
+  "chateau_lafite_rothschild": {
+    "nombre": "Chateau Lafite Rothschild",
+    "bodega": "Domaines Barons de Rothschild",
+    "region": "Burdeos, Pauillac",
+    "pais": "Francia",
+    "tipo": "tinto",
+    "puntuacion": 100,
+    "precio_estimado": "800-1500 euros",
+    "descripcion": "Uno de los Premier Cru de Burdeos. Elegancia suprema y longevidad excepcional. Dominado por Cabernet Sauvignon."
+  }

@@ -1,0 +1,6 @@
+https://XXXXXXXX.ngrok-free.app
+
+Abre este enlace en el navegador de tu móvil o PC para usar Vino Pro IA.
+Puede tardar unos segundos en cargar la primera vez.
+
+(Al ejecutar scripts\iniciar_ngrok.ps1 se sustituirá la URL por la real y se copiará al portapapeles.)

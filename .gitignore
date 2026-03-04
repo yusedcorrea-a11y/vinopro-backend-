@@ -1,0 +1,35 @@
+# Entorno y secretos (NUNCA subir .env a git)
+.env
+.env.local
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+venv_agent/
+venv_ai/
+.venv/
+env/
+# Modelos de IA (pesados, no subir)
+*.gguf
+models/*.gguf
+models/*.gguf.*
+
+# Backups y carpetas pesadas (no subir a GitHub/Railway)
+backup_old/
+backups_viejos/
+backups/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs y temporales
+*.log
+.DS_Store
+Thumbs.db

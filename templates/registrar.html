@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <style>
+    body.page-registrar .form-container { max-width: 640px; margin: 0 auto; }
+    .registros-hoy-msg { margin-bottom: 0.5rem; }
+    .buscar-para-registrar { margin-bottom: 1.25rem; }
+    .buscar-para-registrar .input-buscar { width: 100%; padding: 0.6rem 0.75rem; font-size: 1rem; border: 1px solid var(--border, #ccc); border-radius: 6px; }
+    .buscar-resultados { margin-top: 0.5rem; border: 1px solid var(--border, #ddd); border-radius: 6px; background: var(--bg-card, #fafafa); max-height: 280px; overflow-y: auto; }
+    .buscar-resultados .grupo { padding: 0.4rem 0.75rem; font-size: 0.85rem; font-weight: 600; color: var(--text-muted, #555); border-bottom: 1px solid var(--border, #eee); }
+    .buscar-resultados .item { padding: 0.6rem 0.75rem; cursor: pointer; border-bottom: 1px solid var(--border, #eee); display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .buscar-resultados .item:last-child { border-bottom: none; }
+    .buscar-resultados .item:hover { background: var(--bg-hover, #eee); }
+    .buscar-resultados .item .nombre { font-weight: 500; }
+    .buscar-resultados .item .detalle { font-size: 0.85rem; color: var(--text-muted, #666); }
+    .buscar-resultados .item .accion { font-size: 0.8rem; color: var(--primary, #6b2d5c); }
+    .buscar-no-resultados { margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-muted, #666); }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+    .form-registro-vino.form-blocked-no-resultados { opacity: 0.7; pointer-events: none; }
+    .buscar-no-resultados .link-planes { font-weight: 600; color: var(--primary, #6b2d5c); }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <h1 class="page-title">{{ t('registrar.title') }}</h1>
+  <p class="page-subtitle">{{ t('registrar.subtitle') }}</p>
+  <p id="registros-hoy-msg" class="texto-pequeno registros-hoy-msg" aria-live="polite"></p>
+
+  <div class="buscar-para-registrar" aria-label="Buscar vino para registrar">
+    <label for="buscar-vino-input" class="visually-hidden">{{ t('registrar.buscar_placeholder') }}</label>
+    <input type="search" id="buscar-vino-input" class="input-buscar" placeholder="{{ t('registrar.buscar_placeholder') }}" autocomplete="off">
+    <div id="buscar-vino-resultados" class="buscar-resultados hidden" role="list"></div>
+    <p id="buscar-vino-no-resultados" class="buscar-no-resultados hidden"></p>
+  </div>
+
+  <form id="formRegistro" class="form-registro-vino">
+    <div class="form-group">
+      <label for="nombre">{{ t('registrar.nombre') }}</label>
+      <input type="text" id="nombre" name="nombre" required placeholder="{{ t('registrar.placeholder_nombre') }}">
+    </div>
+    <div class="form-group">
+      <label for="bodega">{{ t('registrar.bodega') }}</label>
+      <input type="text" id="bodega" name="bodega" required placeholder="{{ t('registrar.placeholder_bodega') }}">
+    </div>
+    <div class="form-group">
+      <label for="region">{{ t('registrar.region') }}</label>
+      <input type="text" id="region" name="region" required placeholder="{{ t('registrar.placeholder_region') }}">
+    </div>
+    <div class="form-group">
+      <label for="pais">{{ t('registrar.pais') }}</label>
+      <select id="pais" name="pais" required>
+        <option value="">{{ t('registrar.placeholder_pais') }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="tipo">{{ t('registrar.tipo') }}</label>
+      <select id="tipo" name="tipo">
+        <option value="tinto">Tinto</option>
+        <option value="blanco">Blanco</option>
+        <option value="rosado">Rosado</option>
+        <option value="espumoso">Espumoso</option>
+        <option value="dulce">Dulce</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="puntuacion">{{ t('registrar.puntuacion') }}</label>
+      <input type="number" id="puntuacion" name="puntuacion" min="0" max="100" placeholder="85">
+    </div>
+    <div class="form-group">
+      <label for="precio_estimado">{{ t('registrar.precio_estimado') }}</label>
+      <input type="text" id="precio_estimado" name="precio_estimado" placeholder="{{ t('registrar.placeholder_precio') }}">
+    </div>
+    <div class="form-group">
+      <label for="descripcion">{{ t('registrar.descripcion') }}</label>
+      <textarea id="descripcion" name="descripcion" placeholder="{{ t('registrar.placeholder_descripcion') }}"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="notas_cata">{{ t('registrar.notas_cata') }}</label>
+      <textarea id="notas_cata" name="notas_cata" placeholder="{{ t('registrar.placeholder_notas') }}"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="maridaje">{{ t('registrar.maridaje') }}</label>
+      <textarea id="maridaje" name="maridaje" placeholder="{{ t('registrar.placeholder_maridaje') }}"></textarea>
+    </div>
+    <button type="submit" class="btn btn-block">{{ t('registrar.btn_registrar') }}</button>
+  </form>
+
+  <div id="mensaje" class="hidden mensaje"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.ERROR_MSGS = {
+    "nombre_corto": "{{ t('error.nombre_corto') }}",
+    "nombre_prohibido": "{{ t('error.nombre_prohibido') }}",
+    "anio_invalido": "{{ t('error.anio_invalido') }}",
+    "limite_diario": "{{ t('error.limite_diario') }}"
+  };
+  window.INFO_REGISTROS_HOY = "{{ t('registrar.registros_hoy') }}";
+  window.REGISTRAR_BUSCAR = {
+    "ya_en_base": "{{ t('registrar.ya_en_base') }}",
+    "usar_datos": "{{ t('registrar.usar_datos') }}",
+    "en_nuestra_base": "{{ t('registrar.en_nuestra_base') }}",
+    "encontrados_internet": "{{ t('registrar.encontrados_internet') }}",
+    "no_resultados": "{{ t('registrar.no_resultados') }}",
+    "no_resultados_premium_cta": "{{ t('registrar.no_resultados_premium_cta') }}",
+    "ir_planes": "{{ t('planes.ir_planes') }}"
+  };
+</script>
+<script src="/static/js/registrar.js"></script>
+{% endblock %}

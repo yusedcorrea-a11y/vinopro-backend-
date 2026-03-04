@@ -1,0 +1,348 @@
+{
+  "busquedas": [
+    {
+      "query": "rioja",
+      "pais": "España",
+      "encontrados": 14,
+      "ts": "2026-02-22T10:54:42.539322"
+    },
+    {
+      "query": "rioja",
+      "pais": "España",
+      "encontrados": 14,
+      "ts": "2026-02-22T10:56:04.766315"
+    },
+    {
+      "query": "rioja",
+      "pais": "España",
+      "encontrados": 14,
+      "ts": "2026-02-23T10:45:46.914732"
+    },
+    {
+      "query": "rioja",
+      "pais": "España",
+      "encontrados": 14,
+      "ts": "2026-02-23T10:46:26.450988"
+    }
+  ],
+  "escaneos": [
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "La Rioja Alta Gran Reserva 904",
+      "pais": "España",
+      "ts": "2026-02-16T22:54:28.908804"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "La Rioja Alta Gran Reserva 904",
+      "pais": "España",
+      "ts": "2026-02-16T23:22:46.407266"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Pintia",
+      "pais": "España",
+      "ts": "2026-02-16T23:26:37.426766"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "PROVENTUS",
+      "pais": "Información no especificada",
+      "ts": "2026-02-16T23:27:53.540883"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "PROVENTUS",
+      "pais": "Información no especificada",
+      "ts": "2026-02-16T23:28:04.599355"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Bell Hill Chardonnay",
+      "pais": "Nueva Zelanda",
+      "ts": "2026-02-16T23:38:38.743683"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Viña Pedrosa Gran Reserva",
+      "pais": "España",
+      "ts": "2026-02-17T11:29:53.558792"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "Roble",
+      "pais": "Francia",
+      "ts": "2026-02-17T21:13:46.456574"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "venavides",
+      "pais": "Información no especificada",
+      "ts": "2026-02-19T15:08:24.254364"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Pingus",
+      "pais": "España",
+      "ts": "2026-02-21T07:05:00.386250"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Protos Reserva",
+      "pais": "España",
+      "ts": "2026-02-21T11:44:47.278956"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Viña Pedrosa Gran Reserva",
+      "pais": "España",
+      "ts": "2026-02-22T11:21:44.862626"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Viña Pedrosa Gran Reserva",
+      "pais": "España",
+      "ts": "2026-02-22T11:26:04.379619"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Pingus",
+      "pais": "España",
+      "ts": "2026-02-22T11:35:32.130985"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Pingus",
+      "pais": "España",
+      "ts": "2026-02-22T11:40:52.516584"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Durón Crianza",
+      "pais": "España",
+      "ts": "2026-02-22T12:03:26.213798"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Achaval-Ferrer Finca Altamira",
+      "pais": "Argentina",
+      "ts": "2026-02-22T19:43:37.231387"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Achaval-Ferrer Finca Altamira",
+      "pais": "Argentina",
+      "ts": "2026-02-22T19:43:40.402480"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Achaval-Ferrer Finca Altamira",
+      "pais": "Argentina",
+      "ts": "2026-02-22T19:44:23.754404"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "resals0",
+      "pais": "Información no especificada",
+      "ts": "2026-02-22T19:44:52.533343"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "Finca Resalso 2018",
+      "pais": "Francia",
+      "ts": "2026-02-22T19:44:58.573545"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "torrederos",
+      "pais": "Información no especificada",
+      "ts": "2026-02-23T10:50:38.854791"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "torrederos",
+      "pais": "Información no especificada",
+      "ts": "2026-02-23T11:27:09.820342"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Durón Crianza",
+      "pais": "España",
+      "ts": "2026-02-24T10:30:01.705923"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Pingus",
+      "pais": "España",
+      "ts": "2026-03-03T11:57:40.659436"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Pingus",
+      "pais": "España",
+      "ts": "2026-03-03T11:58:58.140575"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Pingus",
+      "pais": "España",
+      "ts": "2026-03-03T13:35:12.153774"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "ios\n\nBopecas HINOs. PEREZ PASCUAS\n\nCRIANZA\n2021\n\nRiBER A He, DUERO\n\nDenomanac ION DE ORIGEN",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T15:47:10.921628"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "Sina\nPadwosa\n\nBODEGAS HNOS. PEREZ PASCUAS\n\nCRIANZA\n2021\n\nRIBERA ppL DUERO\n\nDENOMINACION DEORIGEN",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T15:48:56.276841"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "Est. 1927\n\nProtos\n\nROBLE\n\nGin 9”\n\nPRopucto pe ESPANA",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T16:13:39.010600"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "Sados\n\nBobgcas HNos. PEREZ PASCUAS\n\nCRIANZA\n2021\n\nRIBERA pet DUERO\n\nDENomINaciOn DEORIGEN",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T16:16:48.141526"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "Sina Sadhosi BobeGas Hnos. PERE GCRIANZA BO21 Ribera del [DUERO MINACION DEORO*",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T16:41:19.407240"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "Sina Padwosa BODEGAS Hnos. Pérez Pascuas CRIANZA 2021 Ribera del DUERO Denominación de Origen",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T16:43:22.221472"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "Mh Suto BopEGAs Hnos. Pérez Pascuas CRIANZA FOP Ribera del Duero Denominación de Origen",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T20:29:55.473998"
+    },
+    {
+      "encontrado_en_bd": true,
+      "vino_nombre": "Pérez Pascuas",
+      "pais": "España",
+      "ts": "2026-03-03T20:40:59.291206"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "Roble ‘Gia -pANA PRODUCTO DE psPan",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T20:43:22.383017"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "Protos propucto",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T21:05:30.504341"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "Resultado de una 8°437018 barricas nuevas y envejecimiento de al result 500-liter months Contains Sulfites Enthalt -ULfite Contiene Sulfites 100m; E=301kj/72kcal",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T21:17:57.204046"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "Est. 19927 Protos Roble 2023",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T21:18:50.495711"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "PRopucro ESPANA",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T21:34:24.129448"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "Sodbiosa BODEGAS Hnos. Pérez Pascuas CRIANZA 2021 RIBERA DEL DUERO DeNomiyacion DE ORIGEN",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T21:41:07.772568"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "WINE de Guarda —————_—} INGREDL ENTES 80437 Resultado de una en barricas nuevas _Yenvejecimiento de al result cae) 500-Lliter four months Contains Sulfites Ente Sulfite Contiene 100m1 F=301k j/72k¢",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T21:43:27.109629"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "‘NAmearitio \"420342\" 00201",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T23:07:54.863386"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "odes BODEGAS Hnos. Pérez Pascuas CRIANZA DO21 RIBERA DUERO Denommn ACION DE ORIGEN",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T23:16:05.773267"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "Guarda Bit. 575046 barricas nuevas jecimiento de al Frames result 500-liter [Dagar four months ontains Sulfites Enthalt ““T1t@ Contiene fitos “OC? E=301kj/72kcal",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T23:18:26.272013"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "8420523332655",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T23:36:46.568067"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "8437018575046",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T23:38:50.028483"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "6632048575048",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T23:40:12.933091"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "430508666666",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T23:52:28.765380"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "4091811401",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T23:53:05.485518"
+    },
+    {
+      "encontrado_en_bd": false,
+      "vino_nombre": "https://id.aecocescanqr.es/01/08437018575046/22/2024",
+      "pais": "Información no especificada",
+      "ts": "2026-03-03T23:53:58.454008"
+    }
+  ],
+  "preguntas": [
+    {
+      "pregunta": "Pero este vino no es el que escaehe.",
+      "vino_nombre": "Pingus",
+      "ts": "2026-03-03T11:59:55.772443"
+    },
+    {
+      "pregunta": "puedo comer este vino",
+      "vino_nombre": "Pérez Pascuas",
+      "ts": "2026-03-03T20:42:38.826906"
+    }
+  ]
+}

@@ -1,0 +1,354 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <style>
+    .comprar-tabs { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .comprar-tabs button { padding: 0.5rem 1rem; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: inherit; cursor: pointer; }
+    .comprar-tabs button.active { background: rgba(184,134,11,0.4); border-color: var(--dorado); }
+    .comprar-tabs button:hover { background: rgba(255,255,255,0.2); }
+    .comprar-tabpanel { display: none; }
+    .comprar-tabpanel.active { display: block; }
+    .comprar-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+    .comprar-card { background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius); padding: 1rem; }
+    .comprar-card h4 { margin: 0 0 0.5rem 0; font-size: 1.05rem; }
+    .comprar-card .precio { font-size: 1.1rem; font-weight: 600; color: var(--dorado); margin: 0.5rem 0; }
+    .comprar-card .btn-comprar { display: inline-block; margin-top: 0.5rem; }
+    .comprar-card .envio { font-size: 0.85rem; opacity: 0.9; }
+    .comprar-card.amazon-card { border-color: #ff9900; background: rgba(255, 153, 0, 0.08); }
+    .comprar-card.amazon-card .amazon-logo { color: #ff9900; font-weight: bold; font-size: 1.2rem; margin-bottom: 0.25rem; }
+    .comprar-card.amazon-card .amazon-badge { font-size: 0.85rem; opacity: 0.9; margin: 0.5rem 0; }
+    .comprar-card .btn-amazon { background: #ff9900; color: #000; padding: 0.5rem 1rem; border-radius: var(--radius-sm); text-decoration: none; display: inline-block; margin-top: 0.5rem; font-weight: 600; border: none; }
+    .comprar-card .btn-amazon:hover { background: #ffac33; color: #000; }
+    .subasta-card { background: rgba(0,0,0,0.25); border-left: 4px solid var(--dorado); padding: 1rem; margin-bottom: 0.75rem; border-radius: var(--radius-sm); }
+    .subasta-card .casa { font-weight: 600; }
+    .subasta-card .puja { color: var(--dorado); }
+    .comprar-oferta-usuario .oferta-item { margin-bottom: 0.5rem; }
+    .modal-oferta { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .modal-oferta.hidden { display: none; }
+    .modal-oferta-content { position: relative; background: var(--bg-card, #1a1512); border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius); padding: 1.5rem; max-width: 400px; width: 90%; }
+    .modal-oferta-cerrar { position: absolute; top: 0.5rem; right: 0.5rem; background: none; border: none; color: inherit; font-size: 1.5rem; cursor: pointer; opacity: 0.8; }
+    .modal-oferta .form-group { margin-bottom: 0.75rem; }
+    .modal-oferta label { display: block; margin-bottom: 0.25rem; font-size: 0.9rem; }
+    .modal-oferta input, .modal-oferta textarea { width: 100%; padding: 0.5rem; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.3); background: rgba(0,0,0,0.3); color: inherit; }
+    .estrellas-valoracion { color: rgba(255,255,255,0.35); letter-spacing: 0.05em; }
+    .estrellas-valoracion .star.on { color: var(--dorado); }
+    .estrellas-input .btn-estrella { background: none; border: none; color: rgba(255,255,255,0.4); cursor: pointer; font-size: 1.5rem; padding: 0 0.15rem; }
+    .estrellas-input .btn-estrella:hover, .estrellas-input .btn-estrella.active { color: var(--dorado); }
+    .btn-wishlist { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.35); background: rgba(255,255,255,0.08); color: inherit; cursor: pointer; font-size: 0.9rem; }
+    .btn-wishlist:hover { background: rgba(255,255,255,0.15); }
+    .btn-wishlist.in-wishlist { border-color: var(--dorado); background: rgba(184,134,11,0.2); }
+    .btn-wishlist.in-wishlist .wishlist-icon { content: '❤️'; }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="comprar-container">
+  <h1 class="page-title">{{ t('comprar.title') }}</h1>
+  <p class="page-subtitle">{{ t('comprar.vino') }} <strong>{{ vino_nombre or vino_id }}</strong>. {{ t('comprar.pais_detectado') }} <strong>{{ pais_detectado }}</strong>.</p>
+
+  <div class="comprar-valoraciones-wishlist" style="margin-bottom:1.25rem; display:flex; flex-wrap:wrap; align-items:center; gap:1rem;" data-msg-valoraciones="{{ t('valoraciones.valoraciones') }}" data-msg-sin-valoraciones="{{ t('valoraciones.sin_valoraciones') }}" data-msg-quitar="{{ t('wishlist.quitar_quiero_probar') }}" data-msg-quiero="{{ t('wishlist.quiero_probar') }}" data-msg-elige="{{ t('valoraciones.elige_estrellas') }}" data-msg-inicia-val="{{ t('valoraciones.inicia_sesion') }}" data-msg-inicia-wish="{{ t('wishlist.inicia_sesion') }}">
+    <div class="valoraciones-resumen" id="valoraciones-resumen">
+      {% set vs = valoraciones_summary if valoraciones_summary is defined else {} %}
+      <span class="estrellas-valoracion" aria-hidden="true" data-promedio="{{ vs.get('average', 0) }}"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></span>
+      <span class="valoraciones-count texto-pequeno">{% if vs.get('count', 0) > 0 %}({{ vs.get('count', 0) }} {{ t('valoraciones.valoraciones') }}){% else %}{{ t('valoraciones.sin_valoraciones') }}{% endif %}</span>
+    </div>
+    <button type="button" class="btn btn-wishlist {% if wishlist_has is defined and wishlist_has %}in-wishlist{% endif %}" id="btn-wishlist" data-vino-id="{{ vino_id }}" title="{{ t('wishlist.anadir_quiero_probar') }}">
+      <span class="wishlist-icon">🤍</span> <span class="wishlist-label">{{ t('wishlist.quiero_probar') }}</span>
+    </button>
+  </div>
+
+  <div class="comprar-valorar-block" style="margin-bottom:1rem; padding:1rem; background:rgba(0,0,0,0.2); border-radius:var(--radius);">
+    <p class="texto-pequeno" style="margin:0 0 0.5rem 0;">{{ t('valoraciones.tu_valoracion') }}</p>
+    <div class="estrellas-input" id="estrellas-input" role="group" aria-label="{{ t('valoraciones.puntua_estrellas') }}">
+      <button type="button" class="btn-estrella" data-score="1" aria-label="1">★</button>
+      <button type="button" class="btn-estrella" data-score="2" aria-label="2">★</button>
+      <button type="button" class="btn-estrella" data-score="3" aria-label="3">★</button>
+      <button type="button" class="btn-estrella" data-score="4" aria-label="4">★</button>
+      <button type="button" class="btn-estrella" data-score="5" aria-label="5">★</button>
+    </div>
+    <textarea id="valoracion-nota" class="valoracion-nota" placeholder="{{ t('valoraciones.nota_placeholder') }}" rows="2" maxlength="2000" style="width:100%; margin-top:0.5rem; padding:0.5rem; border-radius:var(--radius-sm); border:1px solid rgba(255,255,255,0.3); background:rgba(0,0,0,0.3); color:inherit; font-size:0.9rem;"></textarea>
+    <button type="button" class="btn btn-dorado btn-enviar-valoracion" id="btn-enviar-valoracion" data-vino-id="{{ vino_id }}" style="margin-top:0.5rem;">{{ t('valoraciones.enviar') }}</button>
+  </div>
+
+  {% if tiene_enlaces %}
+  <div class="comprar-tabs" role="tablist">
+    <button type="button" class="tab-btn active" role="tab" aria-selected="true" data-tab="nacional">{{ t('comprar.nacional') }} ({{ pais_detectado }})</button>
+    <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="internacional">{{ t('comprar.internacional') }}</button>
+    {% if subastas %}
+    <button type="button" class="tab-btn" role="tab" aria-selected="false" data-tab="subastas">{{ t('comprar.subastas') }}</button>
+    {% endif %}
+  </div>
+
+  <div id="panel-nacional" class="comprar-tabpanel active" role="tabpanel">
+    {% if tiendas_pais %}
+    <div class="comprar-cards">
+      {% for tienda in tiendas_pais %}
+      <div class="comprar-card{% if tienda.get('es_amazon') %} amazon-card{% endif %}">
+        {% if tienda.get('es_amazon') %}
+        <div class="amazon-logo">🛒 Amazon</div>
+        <p class="amazon-badge">{{ t('amazon.envio_rapido') }}</p>
+        <a href="{{ tienda.url }}" target="_blank" rel="noopener noreferrer" class="btn-amazon">{{ t('amazon.ver_en') }} →</a>
+        {% else %}
+        <h4>{{ tienda.nombre }}</h4>
+        {% if tienda.precio is not none %}
+        <div class="precio">{{ (tienda.precio)|round(2) }} {{ tienda.moneda }}</div>
+        {% else %}
+        <div class="precio">{{ t('comprar.consultar_precio') }}</div>
+        {% endif %}
+        {% if tienda.envio_internacional %}<div class="envio">{{ t('comprar.envio_internacional') }}</div>{% endif %}
+        <a href="{{ tienda.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-dorado btn-comprar">{{ t('comprar.btn_comprar') }}</a>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="texto-pequeno">{{ t('comprar.sin_tiendas_nacional') }}</p>
+    {% endif %}
+  </div>
+
+  <div id="panel-internacional" class="comprar-tabpanel" role="tabpanel">
+    {% if tiendas_internacional %}
+    <div class="comprar-cards">
+      {% for tienda in tiendas_internacional %}
+      <div class="comprar-card">
+        <h4>{{ tienda.nombre }}</h4>
+        {% if tienda.precio is not none %}
+        <div class="precio">{{ (tienda.precio)|round(2) }} {{ tienda.moneda }}</div>
+        {% else %}
+        <div class="precio">{{ t('comprar.consultar_precio') }}</div>
+        {% endif %}
+        <div class="envio">{{ t('comprar.envio_internacional') }}</div>
+        <a href="{{ tienda.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-dorado btn-comprar">{{ t('comprar.btn_comprar') }}</a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="texto-pequeno">{{ t('comprar.sin_tiendas_int') }}</p>
+    {% endif %}
+  </div>
+
+  {% if subastas %}
+  <div id="panel-subastas" class="comprar-tabpanel" role="tabpanel">
+    {% for s in subastas %}
+    <div class="subasta-card">
+      <div class="casa">{{ s.casa }}</div>
+      <div class="texto-pequeno">Fin: {{ s.fecha_fin }}</div>
+      {% if s.puja_actual is not none %}<div class="puja">Puja actual: {{ (s.puja_actual)|round(0) }} €</div>{% endif %}
+      {% if s.estimado %}<div class="texto-pequeno">Estimado: {{ s.estimado }}</div>{% endif %}
+      <a href="{{ s.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-dorado" style="margin-top:0.5rem;">{{ t('comprar.ver_subasta') }}</a>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% else %}
+  <p class="texto-pequeno">{{ t('comprar.sin_enlaces') }}</p>
+  {% endif %}
+
+  <div class="comprar-guia-pais" style="margin-top:1.5rem; padding:1rem; background:rgba(0,0,0,0.15); border-radius:var(--radius); border:1px solid rgba(255,255,255,0.15);">
+    <p class="texto-pequeno" style="margin:0 0 0.25rem 0;">{{ t('comprar.donde_tomarlo') }}</p>
+    {% set _pkey = 'comprar.pais_' ~ pais_detectado %}
+    <p class="texto-pequeno" style="margin:0 0 0.5rem 0; opacity:0.95;">{{ t('comprar.guia_descripcion') }} {{ t(_pkey) if t(_pkey) != _pkey else t('comprar.pais_OTROS') }}</p>
+    <a href="{{ guia_vinos.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-dorado" style="display:inline-block;">{{ guia_vinos.emoji }} {{ t('comprar.guia_buscar') }} {{ guia_vinos.nombre }} →</a>
+  </div>
+
+  {% if ofertas is defined and ofertas %}
+  <div class="comprar-oferta-usuario" style="margin-top:1.5rem; padding:1rem; background:rgba(0,0,0,0.2); border-radius:var(--radius); border:1px solid rgba(184,134,11,0.4);">
+    <p class="texto-pequeno" style="margin:0 0 0.25rem 0; font-weight:600;">{{ t('comprar.oferta_usuario_titulo') }}</p>
+    <p class="texto-pequeno" style="margin:0 0 0.75rem 0; opacity:0.9;">{{ t('comprar.oferta_usuario_desc') }}</p>
+    {% for o in ofertas %}
+    <div class="oferta-item" data-offer-id="{{ o.id }}">
+      {% if o.photo_url %}
+      <img src="{{ o.photo_url }}" alt="" style="max-width:120px; max-height:120px; object-fit:cover; border-radius:var(--radius-sm); margin-right:0.75rem; vertical-align:middle;">
+      {% endif %}
+      <button type="button" class="btn btn-dorado btn-contactar-oferta" data-offer-id="{{ o.id }}">{{ t('comprar.contactar_oferta') }}</button>
+    </div>
+    {% endfor %}
+  </div>
+  <div id="modal-contactar-oferta" class="modal-oferta hidden" role="dialog" aria-labelledby="modal-oferta-title">
+    <div class="modal-oferta-content">
+      <h3 id="modal-oferta-title">{{ t('comprar.contactar_oferta') }}</h3>
+      <form id="form-contactar-oferta">
+        <input type="hidden" id="contactar-offer-id" name="offer_id">
+        <div class="form-group">
+          <label for="contactar-email">{{ t('comprar.tu_email') }}</label>
+          <input type="email" id="contactar-email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="contactar-mensaje">{{ t('comprar.tu_mensaje') }}</label>
+          <textarea id="contactar-mensaje" name="message" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-dorado">{{ t('comprar.enviar_solicitud') }}</button>
+      </form>
+      <button type="button" class="modal-oferta-cerrar" aria-label="{{ t('common.cerrar') }}">&times;</button>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+(function() {
+  var vinoId = '{{ vino_id }}';
+  function getSessionId() {
+    try {
+      if (typeof window.getSessionId === 'function') return (window.getSessionId() || '').trim();
+      return (localStorage.getItem('vino_pro_session_id') || '').trim();
+    } catch (e) { return ''; }
+  }
+  var sessionId = getSessionId();
+
+  function updateEstrellasPromedio(promedio) {
+    var stars = document.querySelectorAll('.estrellas-valoracion .star');
+    if (!stars.length) return;
+    var n = Math.max(0, Math.min(5, Math.round(parseFloat(promedio) || 0)));
+    stars.forEach(function(s, i) { s.classList.toggle('on', i < n); });
+  }
+  function updateResumen(data) {
+    if (!data || !data.summary) return;
+    var s = data.summary;
+    var countEl = document.querySelector('.valoraciones-count');
+    if (countEl) { var wrap = document.querySelector('.comprar-valoraciones-wishlist'); var lbl = (wrap && wrap.getAttribute('data-msg-valoraciones')) || 'valoraciones'; var empty = (wrap && wrap.getAttribute('data-msg-sin-valoraciones')) || 'Sin valoraciones'; countEl.textContent = s.count > 0 ? '(' + s.count + ' ' + lbl + ')' : empty; }
+    updateEstrellasPromedio(s.average);
+  }
+  if (sessionId) {
+    fetch('/api/vino/' + encodeURIComponent(vinoId) + '/valoraciones', { headers: { 'X-Session-ID': sessionId } })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        updateResumen(data);
+        if (data.summary && data.summary.user_rating) {
+          var ur = data.summary.user_rating;
+          document.querySelectorAll('.btn-estrella').forEach(function(b) {
+            b.classList.toggle('active', parseInt(b.getAttribute('data-score'), 10) <= ur.score);
+          });
+          var notaEl = document.getElementById('valoracion-nota');
+          if (notaEl) notaEl.value = ur.note || '';
+        }
+      })
+      .catch(function() {});
+    fetch('/api/wishlist/contains/' + encodeURIComponent(vinoId), { headers: { 'X-Session-ID': sessionId } })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        var btn = document.getElementById('btn-wishlist');
+        if (btn && d.in_wishlist) {
+          btn.classList.add('in-wishlist');
+          var icon = btn.querySelector('.wishlist-icon');
+          if (icon) icon.textContent = '❤️';
+          var lab = btn.querySelector('.wishlist-label');
+          if (lab) lab.textContent = (document.querySelector('.comprar-valoraciones-wishlist').getAttribute('data-msg-quitar')) || 'Quitar';
+        }
+      })
+      .catch(function() {});
+  } else {
+    var prom = document.querySelector('.estrellas-valoracion');
+    if (prom && prom.getAttribute('data-promedio')) updateEstrellasPromedio(prom.getAttribute('data-promedio'));
+  }
+
+  document.querySelectorAll('.btn-estrella').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var score = parseInt(this.getAttribute('data-score'), 10);
+      document.querySelectorAll('.btn-estrella').forEach(function(b) {
+        b.classList.toggle('active', parseInt(b.getAttribute('data-score'), 10) <= score);
+      });
+      document.getElementById('btn-enviar-valoracion').setAttribute('data-selected-score', score);
+    });
+  });
+  document.getElementById('btn-enviar-valoracion').addEventListener('click', function() {
+    var score = parseInt(this.getAttribute('data-selected-score') || '0', 10);
+    if (score < 1 || score > 5) { var w = document.querySelector('.comprar-valoraciones-wishlist'); alert(w ? w.getAttribute('data-msg-elige') : 'Elige 1 a 5 estrellas'); return; }
+    if (!sessionId) { var w = document.querySelector('.comprar-valoraciones-wishlist'); alert(w ? w.getAttribute('data-msg-inicia-val') : 'Recarga para guardar'); return; }
+    var note = (document.getElementById('valoracion-nota') && document.getElementById('valoracion-nota').value) || '';
+    fetch('/api/valorar-vino', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Session-ID': sessionId },
+      body: JSON.stringify({ wine_key: vinoId, score: score, note: note })
+    })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d.ok) {
+          fetch('/api/vino/' + encodeURIComponent(vinoId) + '/valoraciones', { headers: { 'X-Session-ID': sessionId } })
+            .then(function(r) { return r.json(); })
+            .then(function(data) { updateResumen(data); });
+        }
+      })
+      .catch(function() {});
+  });
+
+  document.getElementById('btn-wishlist').addEventListener('click', function() {
+    if (!sessionId) { var w = document.querySelector('.comprar-valoraciones-wishlist'); alert(w ? w.getAttribute('data-msg-inicia-wish') : 'Recarga para guardar'); return; }
+    var inList = this.classList.contains('in-wishlist');
+    var url = '/api/wishlist/' + (inList ? 'remove' : 'add');
+    var method = inList ? 'DELETE' : 'POST';
+    fetch(url, {
+      method: method,
+      headers: { 'Content-Type': 'application/json', 'X-Session-ID': sessionId },
+      body: JSON.stringify({ wine_key: vinoId })
+    })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d.ok) {
+          var btn = document.getElementById('btn-wishlist');
+          btn.classList.toggle('in-wishlist', !inList);
+          var icon = btn.querySelector('.wishlist-icon');
+          if (icon) icon.textContent = !inList ? '❤️' : '🤍';
+          var lab = btn.querySelector('.wishlist-label');
+          if (lab) { var w = document.querySelector('.comprar-valoraciones-wishlist'); var quitar = w ? w.getAttribute('data-msg-quitar') : 'Quitar'; var quiero = w ? w.getAttribute('data-msg-quiero') : 'Quiero probar'; lab.textContent = !inList ? quitar : quiero; }
+        }
+      })
+      .catch(function() {});
+  });
+})();
+
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var tab = this.getAttribute('data-tab');
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+      document.querySelectorAll('.comprar-tabpanel').forEach(function(p) { p.classList.remove('active'); });
+      this.classList.add('active');
+      this.setAttribute('aria-selected', 'true');
+      var panel = document.getElementById('panel-' + tab);
+      if (panel) { panel.classList.add('active'); }
+    });
+  });
+
+  (function() {
+    var modal = document.getElementById('modal-contactar-oferta');
+    var form = document.getElementById('form-contactar-oferta');
+    var offerIdInput = document.getElementById('contactar-offer-id');
+    var msgEnviada = "{{ t('comprar.solicitud_enviada') }}";
+    if (!modal || !form) return;
+    document.querySelectorAll('.btn-contactar-oferta').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var id = this.getAttribute('data-offer-id');
+        if (id) { offerIdInput.value = id; modal.classList.remove('hidden'); }
+      });
+    });
+    modal.querySelector('.modal-oferta-cerrar').addEventListener('click', function() { modal.classList.add('hidden'); });
+    modal.addEventListener('click', function(e) { if (e.target === modal) modal.classList.add('hidden'); });
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var id = offerIdInput.value;
+      if (!id) return;
+      var fd = new FormData();
+      fd.append('email', document.getElementById('contactar-email').value);
+      fd.append('message', document.getElementById('contactar-mensaje').value);
+      var sid = (localStorage.getItem('vino_pro_session_id') || '').trim();
+      fetch('/api/ofertas/' + id + '/contactar', {
+        method: 'POST',
+        body: fd,
+        headers: sid ? { 'X-Session-ID': sid } : {}
+      })
+        .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+        .then(function(res) {
+          if (res.ok && res.data.success) {
+            alert(msgEnviada);
+            modal.classList.add('hidden');
+            form.reset();
+          } else {
+            alert(res.data.detail || 'Error al enviar.');
+          }
+        })
+        .catch(function() { alert('Error de conexión.'); });
+    });
+  })();
+</script>
+{% endblock %}

@@ -1,0 +1,156 @@
+{
+  "marques-de-riscal-reserva": {
+    "vino_id": "marques-de-riscal-reserva",
+    "nacional": {
+      "ES": [
+        {
+          "nombre": "El Corte Inglés",
+          "url": "https://www.elcorteingles.es/super/alimentacion/vinos/",
+          "tipo": "tienda_online",
+          "precio": 12.95,
+          "moneda": "EUR",
+          "afiliado": true,
+          "envio_internacional": false,
+          "pais_origen": "ES"
+        },
+        {
+          "nombre": "Decántalo",
+          "url": "https://www.decantalo.com/",
+          "tipo": "tienda_online",
+          "precio": 11.50,
+          "moneda": "EUR",
+          "afiliado": true,
+          "envio_internacional": true,
+          "pais_origen": "ES"
+        }
+      ],
+      "AR": [
+        {
+          "nombre": "Vinoteca Argentina",
+          "url": "https://www.ejemplo-argentina.com/vinos",
+          "tipo": "tienda_online",
+          "precio": 8500,
+          "moneda": "ARS",
+          "afiliado": false,
+          "envio_internacional": false,
+          "pais_origen": "AR"
+        }
+      ]
+    },
+    "internacional": [
+      {
+        "nombre": "Decántalo",
+        "url": "https://www.decantalo.com/",
+        "tipo": "tienda_online",
+        "precio": 11.50,
+        "moneda": "EUR",
+        "afiliado": true,
+        "envio_internacional": true,
+        "pais_origen": "ES"
+      },
+      {
+        "nombre": "Vivino",
+        "url": "https://www.vivino.com/",
+        "tipo": "marketplace",
+        "precio": null,
+        "moneda": "EUR",
+        "afiliado": true,
+        "envio_internacional": true,
+        "pais_origen": ""
+      }
+    ],
+    "subastas": [],
+    "ultima_actualizacion": "2025-02-01T12:00:00Z"
+  },
+  "catena-zapata-malbec": {
+    "vino_id": "catena-zapata-malbec",
+    "nacional": {
+      "ES": [
+        {
+          "nombre": "Decántalo",
+          "url": "https://www.decantalo.com/",
+          "tipo": "tienda_online",
+          "precio": 18.90,
+          "moneda": "EUR",
+          "afiliado": true,
+          "envio_internacional": true,
+          "pais_origen": "ES"
+        }
+      ],
+      "AR": [
+        {
+          "nombre": "Tienda Catena Zapata",
+          "url": "https://www.catenazapata.com/",
+          "tipo": "tienda_online",
+          "precio": 12000,
+          "moneda": "ARS",
+          "afiliado": false,
+          "envio_internacional": false,
+          "pais_origen": "AR"
+        },
+        {
+          "nombre": "Vinoteca Argentina",
+          "url": "https://www.ejemplo-argentina.com/vinos",
+          "tipo": "tienda_online",
+          "precio": 11500,
+          "moneda": "ARS",
+          "afiliado": false,
+          "envio_internacional": false,
+          "pais_origen": "AR"
+        }
+      ]
+    },
+    "internacional": [
+      {
+        "nombre": "Decántalo",
+        "url": "https://www.decantalo.com/",
+        "tipo": "tienda_online",
+        "precio": 18.90,
+        "moneda": "EUR",
+        "afiliado": true,
+        "envio_internacional": true,
+        "pais_origen": "ES"
+      }
+    ],
+    "subastas": [],
+    "ultima_actualizacion": "2025-02-01T12:00:00Z"
+  },
+  "petrus-1990": {
+    "vino_id": "petrus-1990",
+    "nacional": {
+      "ES": [],
+      "FR": [
+        {
+          "nombre": "Cave Privée",
+          "url": "https://www.ejemplo-subasta.fr/",
+          "tipo": "coleccion",
+          "precio": 4500,
+          "moneda": "EUR",
+          "afiliado": false,
+          "envio_internacional": true,
+          "pais_origen": "FR"
+        }
+      ]
+    },
+    "internacional": [],
+    "subastas": [
+      {
+        "casa": "Subastas Vinícolas",
+        "url": "https://www.ejemplo-subasta.com/lote/petrus-1990",
+        "fecha_fin": "2025-03-15T20:00:00Z",
+        "puja_actual": 3200,
+        "estimado": "3000-5000€",
+        "tipo": "coleccion"
+      },
+      {
+        "casa": "Christie's Wine",
+        "url": "https://www.christies.com/",
+        "fecha_fin": "2025-04-01T18:00:00Z",
+        "puja_actual": 4100,
+        "estimado": "3500-5500€",
+        "tipo": "coleccion"
+      }
+    ],
+    "ultima_actualizacion": "2025-02-01T12:00:00Z"
+  }
+}

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="perfil-container" style="max-width: 720px; margin: 0 auto; padding: 1rem;">
+  <h1 class="page-title">{{ t('comunidad.perfil_publico') }}: <span id="perfil-username">{{ perfil_username }}</span></h1>
+
+  <div id="perfil-loading">Cargando…</div>
+  <div id="perfil-error" style="display:none;">
+    <p>{{ t('comunidad.usuario_no_encontrado') }}</p>
+    <p><a href="/comunidad/feed">← {{ t('comunidad.feed_title') }}</a></p>
+  </div>
+  <div id="perfil-content" style="display:none;">
+    <div id="perfil-header">
+      <p id="perfil-bio"></p>
+      <p id="perfil-ubicacion" class="texto-pequeno"></p>
+      <p id="perfil-stats"><span id="perfil-seguidores">0</span> {{ t('comunidad.seguidores') }} · <span id="perfil-seguidos">0</span> {{ t('comunidad.seguidos') }}</p>
+      <p id="perfil-btn-seguir"></p>
+    </div>
+    <h3 class="section-title">{{ t('comunidad.valoraciones') }}</h3>
+    <ul id="perfil-valoraciones"></ul>
+    <h3 class="section-title">{{ t('comunidad.actividad') }}</h3>
+    <ul id="perfil-actividad"></ul>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+window.COMUNIDAD_SEGUIR = "{{ t('comunidad.seguir') | e }}";
+window.COMUNIDAD_DEJAR = "{{ t('comunidad.dejar_seguir') | e }}";
+</script>
+<script>
+(function() {
+  var username = "{{ perfil_username | e }}";
+  var sid = window.getSessionId ? window.getSessionId() : '';
+  var headers = { 'Accept': 'application/json' };
+  if (sid) headers['X-Session-ID'] = sid;
+  var lblSeguir = window.COMUNIDAD_SEGUIR || 'Seguir';
+  var lblDejar = window.COMUNIDAD_DEJAR || 'Dejar de seguir';
+
+  var loading = document.getElementById('perfil-loading');
+  var err = document.getElementById('perfil-error');
+  var content = document.getElementById('perfil-content');
+
+  function showLoading() { loading.style.display = 'block'; err.style.display = 'none'; content.style.display = 'none'; }
+  function showError() { loading.style.display = 'none'; err.style.display = 'block'; content.style.display = 'none'; }
+  function showContent() { loading.style.display = 'none'; err.style.display = 'none'; content.style.display = 'block'; }
+
+  fetch('/api/perfil/' + encodeURIComponent(username), { headers: headers })
+    .then(function(r) {
+      if (r.status === 404) { showError(); return null; }
+      return r.json();
+    })
+    .then(function(perfil) {
+      if (!perfil) return;
+      showContent();
+      document.getElementById('perfil-bio').textContent = perfil.bio || '';
+      document.getElementById('perfil-ubicacion').textContent = perfil.ubicacion || '';
+      document.getElementById('perfil-seguidores').textContent = perfil.seguidores_count || 0;
+      document.getElementById('perfil-seguidos').textContent = perfil.seguidos_count || 0;
+
+      var btnWrap = document.getElementById('perfil-btn-seguir');
+      if (perfil.yo_sigo) {
+        btnWrap.innerHTML = '<button type="button" id="btn-dejar-seguir" class="btn">' + lblDejar + '</button>';
+        document.getElementById('btn-dejar-seguir').addEventListener('click', function() {
+          fetch('/api/seguir/' + encodeURIComponent(username), { method: 'DELETE', headers: headers })
+            .then(function() { window.location.reload(); });
+        });
+      } else {
+        btnWrap.innerHTML = '<button type="button" id="btn-seguir" class="btn">' + lblSeguir + '</button>';
+        document.getElementById('btn-seguir').addEventListener('click', function() {
+          fetch('/api/seguir/' + encodeURIComponent(username), { method: 'POST', headers: headers })
+            .then(function() { window.location.reload(); });
+        });
+      }
+    })
+    .catch(function() { showError(); });
+
+  fetch('/api/perfil/' + encodeURIComponent(username) + '/valoraciones', { headers: { 'Accept': 'application/json' } })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var ul = document.getElementById('perfil-valoraciones');
+      (data.valoraciones || []).forEach(function(v) {
+        var li = document.createElement('li');
+        li.innerHTML = (v.score || 0) + '★ <a href="/oferta/crear?key=' + encodeURIComponent(v.wine_key || '') + '">' + (v.wine_key || '') + '</a> ' + (v.note || '');
+        ul.appendChild(li);
+      });
+    });
+
+  fetch('/api/perfil/' + encodeURIComponent(username) + '/actividad', { headers: { 'Accept': 'application/json' } })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var ul = document.getElementById('perfil-actividad');
+      var tipos = { 'valoracion': 'valoró', 'deseado': 'quiere probar', 'probado': 'probó' };
+      (data.actividad || []).forEach(function(a) {
+        var li = document.createElement('li');
+        li.innerHTML = (a.username || '') + ' ' + (tipos[a.tipo] || a.tipo) + ' ' + (a.vino_nombre || a.vino_key || '') + (a.score ? ' (' + a.score + '★)' : '');
+        ul.appendChild(li);
+      });
+    });
+})();
+</script>
+{% endblock %}

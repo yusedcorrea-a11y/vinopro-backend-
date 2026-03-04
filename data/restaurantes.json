@@ -1,0 +1,10 @@
+{
+  "restaurantes": {
+    "8c5wRctVptM6weArOZVOfvX5cX6FEv75zHHgmMQqE5o": {
+      "session_id": "f75421c4-f461-4934-b9fb-67fb49cb45d6",
+      "nombre": "Mi Restaurante",
+      "programas": [],
+      "webhook_url": ""
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="inicio-ctas">
+    <a href="/preguntar" class="inicio-cta inicio-cta-sumiller">🗣️ {{ t('preguntar.title') }}</a>
+    <a href="/escanear" class="inicio-cta inicio-cta-escanear">📷 {{ t('escanear.btn_escanear') }}</a>
+  </div>
+  {# Ayudante (mascota) y menú ☰ están en base.html; doble clic en la mascota abre el menú secreto. #}
+{% endblock %}

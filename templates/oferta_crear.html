@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-container" style="max-width: 480px; margin: 2rem auto;">
+  <h1 class="page-title">{{ t('registrar.oferta_crear_titulo') }}</h1>
+  <p class="page-subtitle">{{ t('registrar.oferta_crear_desc') }}</p>
+
+  {% if vino_key %}
+  <form id="form-oferta-crear" enctype="multipart/form-data">
+    <input type="hidden" name="vino_key" value="{{ vino_key }}">
+    <div class="form-group">
+      <label for="oferta-foto">{{ t('registrar.oferta_foto') }}</label>
+      <input type="file" id="oferta-foto" name="photo" accept=".jpg,.jpeg,.png,.webp" required>
+    </div>
+    <div class="form-group">
+      <label for="oferta-email">{{ t('registrar.oferta_email') }}</label>
+      <input type="email" id="oferta-email" name="offerer_email" placeholder="opcional">
+    </div>
+    <button type="submit" class="btn btn-block">{{ t('registrar.oferta_crear_btn') }}</button>
+  </form>
+  <p id="oferta-msg" class="hidden mensaje"></p>
+  {% else %}
+  <p class="texto-pequeno">Falta el vino. Vuelve a <a href="/registrar">Registrar</a> y usa "¿Ofrecer este vino?" tras registrar.</p>
+  {% endif %}
+</div>
+
+<script>
+(function() {
+  var form = document.getElementById('form-oferta-crear');
+  var msg = document.getElementById('oferta-msg');
+  if (!form) return;
+  var sid = (localStorage.getItem('vino_pro_session_id') || '').trim();
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    msg.classList.add('hidden');
+    var fd = new FormData(form);
+    var photo = document.getElementById('oferta-foto');
+    if (!photo || !photo.files || !photo.files[0]) {
+      msg.className = 'mensaje error';
+      msg.textContent = 'Selecciona una foto del vino.';
+      msg.classList.remove('hidden');
+      return;
+    }
+    fd.append('photo', photo.files[0]);
+    fd.append('vino_key', form.querySelector('input[name="vino_key"]').value);
+    fd.append('offerer_email', (document.getElementById('oferta-email').value || '').trim());
+    fetch('/api/ofertas', {
+      method: 'POST',
+      body: fd,
+      headers: sid ? { 'X-Session-ID': sid } : {}
+    })
+      .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+      .then(function(res) {
+        if (res.ok && res.data.success) {
+          msg.className = 'mensaje exito';
+          msg.innerHTML = 'Oferta creada. Aparecerá en la página de compra de este vino. <a href="/mis-ofertas">Ver Mis ofertas</a>';
+          msg.classList.remove('hidden');
+          form.reset();
+        } else {
+          msg.className = 'mensaje error';
+          msg.textContent = res.data.detail || 'Error al crear la oferta.';
+          msg.classList.remove('hidden');
+        }
+      })
+      .catch(function() {
+        msg.className = 'mensaje error';
+        msg.textContent = 'Error de conexión.';
+        msg.classList.remove('hidden');
+      });
+  });
+})();
+</script>
+{% endblock %}

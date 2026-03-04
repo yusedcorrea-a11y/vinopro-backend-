@@ -1,0 +1,105 @@
+{
+  "tipos": {
+    "lambrusco": {
+      "nombre": "Lambrusco",
+      "tipo": "tinto",
+      "origen": "Emilia-Romagna, Italia",
+      "descripcion": "Vino espumoso o semiespumoso italiano, generalmente de color rojo, afrutado y refrescante. Puede ser seco o dulce.",
+      "ejemplos_famosos": "Lambrusco di Sorbara, Lambrusco Grasparossa, Lambrusco Salamino",
+      "maridaje": "Embutidos, mortadela, pasta a la boloñesa, pizza, charcutería"
+    },
+    "malbec": {
+      "nombre": "Malbec",
+      "tipo": "tinto",
+      "origen": "Argentina (Mendoza), Francia (Cahors)",
+      "descripcion": "Tinto intenso, fruta negra, taninos suaves. Argentina es el principal productor mundial.",
+      "ejemplos_famosos": "Catena Zapata Malbec, Achával-Ferrer, Luigi Bosca",
+      "maridaje": "Carnes rojas, asado, cordero, quesos curados"
+    },
+    "rioja": {
+      "nombre": "Rioja",
+      "tipo": "tinto",
+      "origen": "La Rioja, España",
+      "descripcion": "Tinto español por excelencia, crianza en barrica de roble. Crianza, Reserva y Gran Reserva.",
+      "ejemplos_famosos": "Marqués de Riscal, CVNE, Muga, López de Heredia",
+      "maridaje": "Cordero, cochinillo, jamón, tapas, carnes a la brasa"
+    },
+    "ribera del duero": {
+      "nombre": "Ribera del Duero",
+      "tipo": "tinto",
+      "origen": "Castilla y León, España",
+      "descripcion": "Tintos potentes y elegantes, principalmente Tempranillo (Tinto Fino). Alta calidad.",
+      "ejemplos_famosos": "Vega Sicilia, Pingus, Protos, Dominio de Pingus",
+      "maridaje": "Cordero asado, cochinillo, carnes rojas, caza"
+    },
+    "champagne": {
+      "nombre": "Champagne",
+      "tipo": "espumoso",
+      "origen": "Champagne, Francia",
+      "descripcion": "Espumoso por excelencia, segunda fermentación en botella. Chardonnay, Pinot Noir, Pinot Meunier.",
+      "ejemplos_famosos": "Dom Pérignon, Veuve Clicquot, Moët & Chandon, Krug",
+      "maridaje": "Aperitivos, marisco, sushi, celebraciones"
+    },
+    "cava": {
+      "nombre": "Cava",
+      "tipo": "espumoso",
+      "origen": "Cataluña, España",
+      "descripcion": "Espumoso español método tradicional. Macabeo, Xarel·lo, Parellada.",
+      "ejemplos_famosos": "Freixenet, Codorníu, Gramona, Recaredo",
+      "maridaje": "Tapas, arroces, marisco, aperitivos"
+    },
+    "priorat": {
+      "nombre": "Priorat",
+      "tipo": "tinto",
+      "origen": "Cataluña, España",
+      "descripcion": "Tintos de gran concentración, viñas viejas en pizarra (llicorella). Garnacha y Cariñena.",
+      "ejemplos_famosos": "L'Ermita, Clos Erasmus, Álvaro Palacios",
+      "maridaje": "Carnes rojas, caza, quesos curados"
+    },
+    "riesling": {
+      "nombre": "Riesling",
+      "tipo": "blanco",
+      "origen": "Alemania, Alsacia (Francia), Austria",
+      "descripcion": "Blanco aromático, desde seco a muy dulce. Mineral y frutal.",
+      "ejemplos_famosos": "Dr. Loosen, Egon Müller, Trimbach",
+      "maridaje": "Pescado, cocina asiática, foie, quesos frescos"
+    },
+    "sauvignon blanc": {
+      "nombre": "Sauvignon Blanc",
+      "tipo": "blanco",
+      "origen": "Nueva Zelanda, Loira (Francia), Chile",
+      "descripcion": "Blanco fresco, notas herbáceas y cítricas. Muy versátil.",
+      "ejemplos_famosos": "Cloudy Bay, Sancerre, Casas del Bosque",
+      "maridaje": "Ensaladas, cabra, marisco, sushi"
+    },
+    "carmenere": {
+      "nombre": "Carmenère",
+      "tipo": "tinto",
+      "origen": "Chile",
+      "descripcion": "Uva emblemática de Chile, tinto suave con notas a pimiento y fruta.",
+      "ejemplos_famosos": "Casa Lapostolle, Concha y Toro, Montes",
+      "maridaje": "Carnes rojas, pastas con salsa, quesos semicurados"
+    },
+    "prosecco": {
+      "nombre": "Prosecco",
+      "tipo": "espumoso",
+      "origen": "Veneto, Italia",
+      "descripcion": "Espumoso italiano ligero y afrutado. Método Charmat.",
+      "ejemplos_famosos": "Mionetto, La Marca, Bisol",
+      "maridaje": "Aperitivos, fruta, postres ligeros, brunch"
+    }
+  },
+  "claves_busqueda": {
+    "lambrusco": ["lambrusco"],
+    "malbec": ["malbec"],
+    "rioja": ["rioja"],
+    "ribera": ["ribera del duero", "ribera"],
+    "champagne": ["champagne", "champán", "champan"],
+    "cava": ["cava"],
+    "priorat": ["priorat"],
+    "riesling": ["riesling"],
+    "sauvignon": ["sauvignon blanc", "sauvignon"],
+    "carmenere": ["carmenere", "carmenère"],
+    "prosecco": ["prosecco"]
+  }
+}

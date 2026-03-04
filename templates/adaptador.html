@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <style>
+    body.page-adaptador .adaptador-container { max-width: 720px; margin: 0 auto; }
+    .adaptador-section { margin-bottom: 2rem; }
+    .token-box { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+    .programas-checkboxes { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+    .checkbox-label { display: inline-flex; align-items: center; gap: 0.35rem; }
+    .code-block { background: rgba(0,0,0,0.25); padding: 1rem; border-radius: 8px; overflow-x: auto; font-size: 0.9rem; }
+    .doc-section h4 { margin-top: 1rem; color: var(--dorado-claro); }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="adaptador-container">
+  <h1 class="page-title">{{ t('adaptador.title') }}</h1>
+  <p class="page-subtitle">{{ t('adaptador.subtitle') }}</p>
+
+  <section class="adaptador-section">
+    <h3 class="section-title">{{ t('adaptador.tu_token') }}</h3>
+    <p class="texto-pequeno">{{ t('adaptador.token_help') }} Al cargar esta página se ha vinculado tu sesión de Mi Bodega.</p>
+    <div class="token-box">
+      <code id="api-token">Cargando…</code>
+      <button type="button" id="copy-token" class="btn btn-dorado" style="margin-left:0.5rem;">{{ t('common.copiar') }}</button>
+    </div>
+    <p id="token-msg" class="texto-pequeno hidden" style="margin-top:0.5rem;"></p>
+  </section>
+
+  <section class="adaptador-section">
+    <h3 class="section-title">{{ t('adaptador.config') }}</h3>
+    <form id="form-config">
+      <div class="form-group">
+        <label for="nombre-rest">{{ t('adaptador.nombre_rest') }}</label>
+        <input type="text" id="nombre-rest" name="nombre" placeholder="Ej: Restaurante La Viña" maxlength="200">
+      </div>
+      <div class="form-group">
+        <label>{{ t('adaptador.programas') }}</label>
+        <div class="programas-checkboxes">
+          <label class="checkbox-label"><input type="checkbox" name="programa" value="CoverManager"> CoverManager</label>
+          <label class="checkbox-label"><input type="checkbox" name="programa" value="TheFork"> TheFork</label>
+          <label class="checkbox-label"><input type="checkbox" name="programa" value="Otro"> Otro</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="webhook-url">{{ t('adaptador.webhook_url') }}</label>
+        <input type="url" id="webhook-url" name="webhook_url" placeholder="https://tu-sistema.com/webhook/vinopro">
+        <p class="texto-pequeno">{{ t('adaptador.webhook_help') }}</p>
+      </div>
+      <button type="submit" class="btn btn-block">{{ t('adaptador.guardar_config') }}</button>
+    </form>
+    <div id="config-msg" class="mensaje hidden" style="margin-top:0.75rem;"></div>
+  </section>
+
+  <section class="adaptador-section doc-section">
+    <h3 class="section-title">{{ t('adaptador.doc') }}</h3>
+    <h4>Endpoint de stock</h4>
+    <p><strong>GET</strong> <code>/api/bodega/stock</code></p>
+    <p class="texto-pequeno">Devuelve la lista de vinos con cantidad actual. Formato JSON apto para consumo externo.</p>
+    <p><strong>Cabecera obligatoria:</strong></p>
+    <ul>
+      <li><code>X-API-Token: &lt;tu_token&gt;</code></li>
+    </ul>
+    <p><strong>Ejemplo de solicitud (cURL):</strong></p>
+    <pre class="code-block">curl -X GET "https://tu-dominio.com/api/bodega/stock" \
+  -H "X-API-Token: TU_TOKEN_AQUI"</pre>
+    <p><strong>Ejemplo de respuesta:</strong></p>
+    <pre class="code-block">{
+  "stock": [
+    {
+      "id": "uuid-botella",
+      "vino_nombre": "Marqués de Riscal Reserva",
+      "cantidad": 3,
+      "anada": 2020,
+      "ubicacion": "Estantería 2",
+      "tipo": "tinto"
+    }
+  ],
+  "total_entradas": 1
+}</pre>
+    <h4>Webhook (opcional)</h4>
+    <p>Si configuras una URL de webhook, al añadir, modificar o eliminar botellas en Mi Bodega enviaremos un <strong>POST</strong> a esa URL con el cuerpo:</p>
+    <pre class="code-block">{
+  "event": "bodega.updated",
+  "stock": [ ... ]
+}</pre>
+    <p class="texto-pequeno">El array <code>stock</code> tiene el mismo formato que la respuesta de GET /api/bodega/stock.</p>
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/adaptador.js"></script>
+{% endblock %}

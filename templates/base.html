@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ bandera }} VINO PRO IA - {{ t('common.tagline') }}</title>
+  <meta name="description" content="{% block meta_description %}Escanea, registra y pregunta sobre vinos. Tu sumiller inteligente con bodega personal y plan PRO.{% endblock %}">
+  <meta name="keywords" content="vino, sumiller, escanear etiqueta, bodega, análisis vinos, PRO, IA">
+  <link rel="canonical" href="{{ base_url_str }}{{ request.url.path if request else '' }}{% if request and request.url.query %}?{{ request.url.query }}{% endif %}">
+  <!-- Open Graph / redes sociales (vinoproia.com) -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="VINO PRO IA">
+  <meta property="og:title" content="VINO PRO IA - {{ t('common.tagline') }}">
+  <meta property="og:description" content="{% block og_description %}Escanea, registra y pregunta sobre vinos. Tu sumiller inteligente con bodega personal y plan PRO.{% endblock %}">
+  <meta property="og:url" content="{{ base_url_str }}{{ request.url.path if request else '' }}{% if request and request.url.query %}?{{ request.url.query }}{% endif %}">
+  <meta property="og:image" content="{% block og_image %}{{ base_url_str }}/static/og-image.png{% endblock %}">
+  <meta property="og:locale" content="{{ lang }}_{{ lang | upper }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="VINO PRO IA - {{ t('common.tagline') }}">
+  <meta name="twitter:description" content="{% block twitter_description %}Escanea, registra y pregunta sobre vinos. Tu sumiller inteligente.{% endblock %}">
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js"></script>
+  {% block head %}{% endblock %}
+</head>
+<body class="{{ page_class }}">
+  <!-- Modal de bienvenida: elegir idioma (solo primera visita, sin cookie vino_pro_lang) -->
+  <div id="modal-bienvenida-idioma" class="modal-bienvenida-idioma modal-bienvenida-idioma--cerrado" role="dialog" aria-labelledby="modal-bienvenida-titulo" aria-modal="true" hidden>
+    <div class="modal-bienvenida-idioma-backdrop"></div>
+    <div class="modal-bienvenida-idioma-content">
+      <h2 id="modal-bienvenida-titulo" class="modal-bienvenida-idioma-titulo">🌍 ¿En qué idioma prefieres hablar?</h2>
+      <p class="modal-bienvenida-idioma-sub">Elige tu idioma. Podrás cambiarlo después en el menú.</p>
+      <div class="modal-bienvenida-idioma-botones">
+        <a href="/set-lang?lang=es" class="modal-bienvenida-idioma-btn" data-lang="es">🇪🇸 Español</a>
+        <a href="/set-lang?lang=en" class="modal-bienvenida-idioma-btn" data-lang="en">🇬🇧 English</a>
+        <a href="/set-lang?lang=pt" class="modal-bienvenida-idioma-btn" data-lang="pt">🇵🇹 Português</a>
+        <a href="/set-lang?lang=fr" class="modal-bienvenida-idioma-btn" data-lang="fr">🇫🇷 Français</a>
+        <a href="/set-lang?lang=de" class="modal-bienvenida-idioma-btn" data-lang="de">🇩🇪 Deutsch</a>
+        <a href="/set-lang?lang=it" class="modal-bienvenida-idioma-btn" data-lang="it">🇮🇹 Italiano</a>
+        <a href="/set-lang?lang=ar" class="modal-bienvenida-idioma-btn" data-lang="ar">🇦🇪 العربية</a>
+        <a href="/set-lang?lang=ru" class="modal-bienvenida-idioma-btn" data-lang="ru">🇷🇺 Русский</a>
+        <a href="/set-lang?lang=tr" class="modal-bienvenida-idioma-btn" data-lang="tr">🇹🇷 Türkçe</a>
+        <a href="/set-lang?lang=zh" class="modal-bienvenida-idioma-btn" data-lang="zh">🇨🇳 中文</a>
+        <a href="/set-lang?lang=ja" class="modal-bienvenida-idioma-btn" data-lang="ja">🇯🇵 日本語</a>
+        <a href="/set-lang?lang=ko" class="modal-bienvenida-idioma-btn" data-lang="ko">🇰🇷 한국어</a>
+        <a href="/set-lang?lang=hi" class="modal-bienvenida-idioma-btn" data-lang="hi">🇮🇳 हिन्दी</a>
+        <a href="/set-lang?lang=he" class="modal-bienvenida-idioma-btn" data-lang="he">🇮🇱 עברית</a>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function() {
+      var cookieName = 'vino_pro_lang';
+      function getCookie(n) {
+        var m = document.cookie.match(new RegExp('(^| )' + n + '=([^;]+)'));
+        return m ? decodeURIComponent(m[2]) : '';
+      }
+      var modal = document.getElementById('modal-bienvenida-idioma');
+      if (modal && !getCookie(cookieName)) {
+        modal.removeAttribute('hidden');
+        modal.classList.remove('modal-bienvenida-idioma--cerrado');
+      }
+    })();
+  </script>
+  <header class="header-minimal">
+    <a href="/inicio" class="header-minimal-logo" aria-label="Vino Pro IA - Inicio">
+      <span class="brand-line brand-vino">VINO</span>
+      <span class="brand-line brand-pro">PRO</span>
+      <span class="brand-line brand-ia">IA</span>
+    </a>
+    <button type="button" id="btn-menu-secreto" class="btn-menu-secreto" aria-label="Menú" title="Menú">☰</button>
+  </header>
+
+  <!-- Menú secreto (desplegable lateral) -->
+  <div id="menu-secreto-backdrop" class="menu-secreto-backdrop menu-secreto--cerrado" aria-hidden="true"></div>
+  <aside id="menu-secreto" class="menu-secreto menu-secreto--cerrado" role="navigation" aria-label="Menú principal">
+    <div class="menu-secreto-inner">
+      <h2 class="menu-secreto-titulo">Vino Pro IA</h2>
+      <ul class="menu-secreto-lista">
+        <li><a href="/bodega" class="menu-secreto-link">🍷 {{ t('nav.mi_bodega') }}</a></li>
+        <li><a href="/planes" class="menu-secreto-link">📊 {{ t('nav.planes') }}</a></li>
+        <li><a href="/adaptador" class="menu-secreto-link">🏨 {{ t('nav.adaptador') }}</a></li>
+        <li><a href="/mapa" class="menu-secreto-link">📍 {{ t('nav.mapa') }}</a></li>
+        <li><a href="/comunidad/feed" class="menu-secreto-link">👥 {{ t('nav.comunidad') }}</a></li>
+        <li><a href="/qr" class="menu-secreto-link">📱 {{ t('nav.qr_networking') }}</a></li>
+        <li><a href="/privacidad" class="menu-secreto-link">🔒 {{ t('nav.privacidad') }}</a></li>
+      </ul>
+      <div class="menu-secreto-perfil">
+        <h3 class="menu-secreto-subtitulo">👤 Perfil</h3>
+        <label for="lang-select-menu" class="menu-secreto-label">Idioma</label>
+        <select id="lang-select-menu" class="menu-secreto-select" title="Idioma">
+          <option value="es" {% if lang == 'es' %}selected{% endif %}>🇪🇸 Español</option>
+          <option value="en" {% if lang == 'en' %}selected{% endif %}>🇬🇧 English</option>
+          <option value="pt" {% if lang == 'pt' %}selected{% endif %}>🇵🇹 Português</option>
+          <option value="fr" {% if lang == 'fr' %}selected{% endif %}>🇫🇷 Français</option>
+          <option value="de" {% if lang == 'de' %}selected{% endif %}>🇩🇪 Deutsch</option>
+          <option value="it" {% if lang == 'it' %}selected{% endif %}>🇮🇹 Italiano</option>
+          <option value="ar" {% if lang == 'ar' %}selected{% endif %}>🇦🇪 العربية</option>
+          <option value="ru" {% if lang == 'ru' %}selected{% endif %}>🇷🇺 Русский</option>
+          <option value="tr" {% if lang == 'tr' %}selected{% endif %}>🇹🇷 Türkçe</option>
+          <option value="zh" {% if lang == 'zh' %}selected{% endif %}>🇨🇳 中文</option>
+          <option value="ja" {% if lang == 'ja' %}selected{% endif %}>🇯🇵 日本語</option>
+          <option value="ko" {% if lang == 'ko' %}selected{% endif %}>🇰🇷 한국어</option>
+          <option value="hi" {% if lang == 'hi' %}selected{% endif %}>🇮🇳 हिन्दी</option>
+          <option value="he" {% if lang == 'he' %}selected{% endif %}>🇮🇱 עברית</option>
+        </select>
+        <button type="button" id="toggle-theme-btn" class="menu-secreto-theme" aria-label="{{ t('common.modo_oscuro') }}">{{ t('common.modo_oscuro') }}</button>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <script>
+    (function() {
+      var sel = document.getElementById('lang-select-menu');
+      if (sel) sel.addEventListener('change', function() {
+        var lang = this.value;
+        if (lang) window.location.href = '/set-lang?lang=' + encodeURIComponent(lang);
+      });
+    })();
+  </script>
+  <script src="/static/js/menu-secreto.js"></script>
+  {% block scripts %}{% endblock %}
+
+  <div id="chatbot-guia-mascot" class="chatbot-guia-mascot" role="button" tabindex="0" aria-label="Ayudante sumiller: arrastra para mover, doble toque para abrir la guía o doble clic para abrir el menú">
+    <div class="chatbot-guia-mascot-face" aria-hidden="true">
+      <div class="chatbot-guia-mascot-eyes">
+        <div class="chatbot-guia-mascot-eye"><span class="chatbot-guia-mascot-pupil"></span><span class="chatbot-guia-mascot-shine"></span></div>
+        <div class="chatbot-guia-mascot-eye"><span class="chatbot-guia-mascot-pupil"></span><span class="chatbot-guia-mascot-shine"></span></div>
+      </div>
+      <div class="chatbot-guia-mascot-smile"></div>
+      <span class="chatbot-guia-mascot-blush chatbot-guia-mascot-blush--l"></span>
+      <span class="chatbot-guia-mascot-blush chatbot-guia-mascot-blush--r"></span>
+      <div class="chatbot-guia-mascot-bow"></div>
+    </div>
+  </div>
+  <div id="chatbot-guia-backdrop" class="chatbot-guia-backdrop chatbot-guia-backdrop--closed" aria-hidden="true"></div>
+  <div id="chatbot-guia-panel" class="chatbot-guia-panel chatbot-guia-panel--closed" role="dialog" aria-labelledby="chatbot-guia-title">
+    <div class="chatbot-guia-panel-inner">
+      <div class="chatbot-guia-header">
+        <div class="chatbot-guia-avatar" aria-hidden="true">👔</div>
+        <div class="chatbot-guia-header-text">
+          <h2 id="chatbot-guia-title" class="chatbot-guia-title">Guía de la app</h2>
+          <p class="chatbot-guia-subtitle">Tu asistente con pajarita</p>
+        </div>
+        <button type="button" class="chatbot-guia-close" aria-label="Cerrar">&times;</button>
+      </div>
+      <div id="chatbot-guia-content" class="chatbot-guia-content">
+        <p class="chatbot-guia-intro" id="chatbot-guia-intro"></p>
+        <div class="chatbot-guia-busca">
+          <label for="chatbot-guia-input" class="chatbot-guia-busca-label">Escribe tu duda</label>
+          <input type="text" id="chatbot-guia-input" class="chatbot-guia-input" placeholder="Ej: premium, escanear, IA local…" autocomplete="off">
+        </div>
+        <p class="chatbot-guia-topics-label">O elige un tema</p>
+        <div class="chatbot-guia-topics">
+          <button type="button" class="chatbot-guia-topic" data-topic="escanear"><span class="chatbot-guia-topic-ico">🍷</span> Escanear</button>
+          <button type="button" class="chatbot-guia-topic" data-topic="registrar"><span class="chatbot-guia-topic-ico">📝</span> Registrar</button>
+          <button type="button" class="chatbot-guia-topic" data-topic="preguntar"><span class="chatbot-guia-topic-ico">💬</span> Preguntar</button>
+          <button type="button" class="chatbot-guia-topic" data-topic="ia_local"><span class="chatbot-guia-topic-ico">🖥️</span> IA Local</button>
+          <button type="button" class="chatbot-guia-topic" data-topic="bodega"><span class="chatbot-guia-topic-ico">🏠</span> Mi Bodega</button>
+          <button type="button" class="chatbot-guia-topic" data-topic="comprar"><span class="chatbot-guia-topic-ico">🛒</span> Comprar</button>
+          <button type="button" class="chatbot-guia-topic" data-topic="planes"><span class="chatbot-guia-topic-ico">⭐</span> Planes</button>
+          <button type="button" class="chatbot-guia-topic" data-topic="adaptador"><span class="chatbot-guia-topic-ico">🍴</span> Adaptador</button>
+        </div>
+        <div id="chatbot-guia-answer" class="chatbot-guia-answer" role="region" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+  <script src="/static/js/chatbot-guia.js"></script>
+  <script>
+    (function() {
+      var intro = document.getElementById('chatbot-guia-intro');
+      if (intro) intro.innerHTML = '¡Hola! Soy el asistente de Vino Pro IA. 👔 Resuelvo dudas de <strong>toda</strong> la app. Para vinos y maridajes, usa <strong>Preguntar</strong>. Escribe algo abajo o elige un tema.';
+    })();
+  </script>
+</body>
+</html>

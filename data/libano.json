@@ -1,0 +1,67 @@
+{
+  "libano_chateau_musar_rouge": {
+    "nombre": "Château Musar Rouge",
+    "bodega": "Château Musar",
+    "region": "Bekaa Valley",
+    "pais": "Líbano",
+    "tipo": "tinto",
+    "uva_principal": "Cinsault, Carignan, Cabernet Sauvignon",
+    "puntuacion": 92,
+    "precio_estimado": "25-45€",
+    "descripcion": "Icono del vino libanés. Ensamblaje mediterráneo de la legendaria bodega de la Bekaa, criado varios años antes de salir al mercado.",
+    "notas_cata": "Fruta roja madura, especias, cuero, taninos sedosos, gran longevidad.",
+    "maridaje": "Cordero, kebabs, mezze, platos especiados del Levante"
+  },
+  "libano_chateau_musar_blanc": {
+    "nombre": "Château Musar Blanco",
+    "bodega": "Château Musar",
+    "region": "Bekaa Valley",
+    "pais": "Líbano",
+    "tipo": "blanco",
+    "uva_principal": "Obaideh, Merwah",
+    "puntuacion": 90,
+    "precio_estimado": "22-40€",
+    "descripcion": "Blanco único de variedades autóctonas libanesas, con crianza prolongada; uno de los blancos más longevos del mundo.",
+    "notas_cata": "Nueces, miel, fruta seca, notas oxidativas elegantes, mineral.",
+    "maridaje": "Pescado a la plancha, mezes, arroz con especias, queso halloumi"
+  },
+  "libano_chateau_musar_jeune": {
+    "nombre": "Château Musar Jeune Rouge",
+    "bodega": "Château Musar",
+    "region": "Bekaa Valley",
+    "pais": "Líbano",
+    "tipo": "tinto",
+    "uva_principal": "Cinsault, Syrah, Cabernet Sauvignon",
+    "puntuacion": 87,
+    "precio_estimado": "12-18€",
+    "descripcion": "Versión joven y afrutada de Musar, para beber pronto; misma filosofía mediterránea.",
+    "notas_cata": "Fruta roja y negra, especias suaves, taninos amables.",
+    "maridaje": "Parrillada, pasta con salsa de tomate, pizza"
+  },
+  "libano_iksir_rouge": {
+    "nombre": "Ixsir Altitudes Rouge",
+    "bodega": "Ixsir",
+    "region": "Batroun, Bekaa",
+    "pais": "Líbano",
+    "tipo": "tinto",
+    "uva_principal": "Syrah, Cabernet Sauvignon",
+    "puntuacion": 88,
+    "precio_estimado": "18-28€",
+    "descripcion": "Bodega moderna en Batroun y Bekaa; vinos de altura con estilo internacional y carácter libanés.",
+    "notas_cata": "Fruta negra, pimienta, toques de roble, final fresco.",
+    "maridaje": "Cordero, ternera, platos con hierbas y especias"
+  },
+  "libano_massaya_reserve": {
+    "nombre": "Massaya Reserve Rouge",
+    "bodega": "Massaya",
+    "region": "Bekaa Valley",
+    "pais": "Líbano",
+    "tipo": "tinto",
+    "uva_principal": "Cabernet Sauvignon, Mourvèdre",
+    "puntuacion": 86,
+    "precio_estimado": "14-22€",
+    "descripcion": "Proyecto familiar en la Bekaa; vinos accesibles y frutales que reflejan el terruño libanés.",
+    "notas_cata": "Ciruela, especias, taninos redondos, fácil de beber.",
+    "maridaje": "Cordero, arroz con especias, tabule, hummus"
+  }
+}

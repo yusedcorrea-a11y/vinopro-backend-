@@ -1,0 +1,15 @@
+[
+  {
+    "id": "casa-paca",
+    "nombre": "Restaurante Asador Casa Paca",
+    "direccion": "Puebla de Sanabria, Zamora, Castilla y León",
+    "lat": 42.1056,
+    "lon": -6.6333,
+    "tipo": "restaurante",
+    "descripcion": "Lugar recomendado para maridajes y disfrutar del vino en un entorno único. Ideal para registrar tus descorches y experiencias con VINO PRO.",
+    "telefono": "",
+    "email": "casapaca@hotmail.es",
+    "web": "",
+    "destacado": true
+  }
+]

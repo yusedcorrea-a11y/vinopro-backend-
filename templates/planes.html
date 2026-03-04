@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block head %}
+  <style>
+    .planes-container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+    .planes-container h1 { text-align: center; margin-bottom: 0.5rem; }
+    .planes-container .subtitle { text-align: center; margin-bottom: 2rem; opacity: 0.95; }
+    .planes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; align-items: stretch; }
+    @media (max-width: 900px) { .planes-grid { grid-template-columns: 1fr; } }
+    .plan-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: var(--radius, 16px);
+      padding: 1.75rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .plan-card.pro-destacado { border: 2px solid var(--dorado); box-shadow: 0 0 24px var(--dorado-suave); }
+    .plan-card .badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--dorado); color: #1a0a0e; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 999px; white-space: nowrap; }
+    .plan-card h2 { margin: 0 0 0.5rem 0; font-size: 1.5rem; }
+    .plan-card .precio { font-size: 1.75rem; font-weight: 700; color: var(--dorado); margin: 0.75rem 0; }
+    .plan-card ul { list-style: none; padding: 0; margin: 1rem 0; flex: 1; }
+    .plan-card li { padding: 0.4rem 0; padding-left: 1.25rem; position: relative; }
+    .plan-card li::before { content: "✓"; position: absolute; left: 0; color: var(--dorado-claro); font-weight: bold; }
+    .plan-card .btn-plan { display: block; text-align: center; margin-top: auto; padding: 0.75rem 1.25rem; border-radius: var(--radius-sm); text-decoration: none; font-weight: 600; transition: opacity 0.2s; }
+    .plan-card .btn-plan:hover { opacity: 0.9; }
+    .plan-card .btn-gratis { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: inherit; }
+    .plan-card .btn-pro { background: var(--dorado); color: #1a0a0e; border: none; }
+    .plan-card .btn-restaurante { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: inherit; }
+    .aviso-pago { margin-top: 0.75rem; font-size: 0.9rem; color: var(--dorado-claro, #c9a227); }
+    .aviso-pago.hidden { display: none; }
+  </style>
+{% endblock %}
+
+{% block content %}
+<div class="planes-container">
+  <h1 class="page-title">{{ t('planes.title') }}</h1>
+  <p class="page-subtitle subtitle">{{ t('planes.subtitle') }}</p>
+
+  <div class="planes-grid">
+    <div class="plan-card">
+      <h2>{{ t('planes.gratis') }}</h2>
+      <div class="precio">{{ t('planes.precio_gratis') }}</div>
+      <ul>
+        <li>{{ t('planes.caract_escaneo') }}</li>
+        <li>{{ t('planes.caract_bodega') }}</li>
+        <li>{{ t('planes.caract_informes') }}</li>
+      </ul>
+      <span class="btn-plan btn-gratis">{{ t('planes.boton_actual') }}</span>
+    </div>
+
+    <div class="plan-card pro-destacado">
+      <span class="badge">{{ t('planes.mas_popular') }}</span>
+      <h2>{{ t('planes.pro') }}</h2>
+      <div class="precio">{{ t('planes.precio_pro') }}</div>
+      <ul>
+        <li>{{ t('planes.caract_escaneo') }}</li>
+        <li>{{ t('planes.caract_bodega_pro') }}</li>
+        <li>{{ t('planes.caract_registrar_raros') }}</li>
+        <li>{{ t('planes.caract_informes') }}</li>
+      </ul>
+      <button type="button" id="btn-actualizar-pro" class="btn-plan btn-pro" data-msg-no-pagos="{{ t('planes.pagos_no_disponibles') | e }}">{{ t('planes.boton_actualizar_pro') }}</button>
+      <p id="aviso-pago-pro" class="aviso-pago hidden" aria-live="polite"></p>
+    </div>
+
+    <div class="plan-card">
+      <h2>{{ t('planes.restaurante') }}</h2>
+      <div class="precio">{{ t('planes.precio_restaurante') }}</div>
+      <ul>
+        <li>{{ t('planes.caract_adaptador') }}</li>
+        <li>{{ t('planes.stock_api') }}</li>
+      </ul>
+      <a href="/adaptador" class="btn-plan btn-restaurante">{{ t('planes.boton_contactar') }}</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var SESSION_KEY = 'vino_pro_session_id';
+  function getSid() {
+    try {
+      var s = (localStorage.getItem(SESSION_KEY) || '').trim();
+      if (s) return s;
+      var u = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : 'sess-' + Math.random().toString(36).slice(2, 15);
+      localStorage.setItem(SESSION_KEY, u);
+      return u;
+    } catch (e) { return ''; }
+  }
+  function showAviso(texto) {
+    var el = document.getElementById('aviso-pago-pro');
+    if (el) { el.textContent = texto || ''; el.classList.toggle('hidden', !texto); }
+  }
+  var btn = document.getElementById('btn-actualizar-pro');
+  if (btn) {
+    btn.addEventListener('click', function() {
+      showAviso('');
+      var sid = getSid();
+      btn.disabled = true;
+      fetch('/crear-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Session-ID': sid }
+      })
+        .then(function(r) {
+          return r.json().then(function(d) {
+            if (r.ok && d && d.url) {
+              window.location.href = d.url;
+              return;
+            }
+            btn.disabled = false;
+            var msg = (d && d.detail === 'pagos_no_disponibles' && btn.getAttribute('data-msg-no-pagos')) ? btn.getAttribute('data-msg-no-pagos') : (d && d.detail) || 'Error al crear la sesión de pago.';
+            showAviso(msg);
+          });
+        })
+        .catch(function() {
+          btn.disabled = false;
+          showAviso('Error de conexión.');
+        });
+    });
+  }
+})();
+</script>
+{% endblock %}

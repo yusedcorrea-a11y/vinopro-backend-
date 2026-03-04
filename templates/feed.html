@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="feed-container" style="max-width: 640px; margin: 0 auto; padding: 1rem;">
+  <h1 class="page-title">{{ t('comunidad.feed_title') }}</h1>
+  <p class="page-subtitle">{{ t('comunidad.feed_subtitle') }}</p>
+
+  <div id="feed-sin-perfil" style="display:none;">
+    <p>{{ t('comunidad.feed_vacio') }} <a href="/bodega">{{ t('nav.mi_bodega') }}</a>.</p>
+    <p><a href="/comunidad/feed" id="link-crear-perfil">{{ t('comunidad.crear_perfil') }}</a> (próximamente desde aquí).</p>
+  </div>
+
+  <div id="feed-list" style="display:none;">
+    <ul id="feed-actividad" class="feed-actividad"></ul>
+  </div>
+
+  <div id="feed-loading">Cargando…</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  var sid = window.getSessionId ? window.getSessionId() : '';
+  var feedList = document.getElementById('feed-list');
+  var feedSinPerfil = document.getElementById('feed-sin-perfil');
+  var feedLoading = document.getElementById('feed-loading');
+  var ul = document.getElementById('feed-actividad');
+
+  function showLoading() { feedLoading.style.display = 'block'; feedList.style.display = 'none'; feedSinPerfil.style.display = 'none'; }
+  function showList() { feedLoading.style.display = 'none'; feedList.style.display = 'block'; feedSinPerfil.style.display = 'none'; }
+  function showSinPerfil() { feedLoading.style.display = 'none'; feedList.style.display = 'none'; feedSinPerfil.style.display = 'block'; }
+
+  var headers = { 'Accept': 'application/json' };
+  if (sid) headers['X-Session-ID'] = sid;
+
+  fetch('/api/feed', { headers: headers })
+    .then(function(r) {
+      if (r.status === 401) { showSinPerfil(); return null; }
+      return r.json();
+    })
+    .then(function(data) {
+      if (!data) return;
+      var eventos = data.eventos || [];
+      var acts = data.actividad || [];
+      if (eventos.length === 0 && acts.length === 0) {
+        showSinPerfil();
+        return;
+      }
+      showList();
+      ul.innerHTML = '';
+      var tipos = { 'valoracion': '{{ t("comunidad.valoracion") }}', 'deseado': '{{ t("comunidad.deseado") }}', 'probado': '{{ t("comunidad.probado") }}' };
+      eventos.forEach(function(e) {
+        var li = document.createElement('li');
+        li.className = 'feed-item feed-item-evento';
+        li.style.marginBottom = '1rem'; li.style.padding = '0.75rem'; li.style.background = 'rgba(107,45,60,0.06)'; li.style.borderRadius = '8px';
+        var html = '<strong>' + (e.username || '') + '</strong> <span class="feed-evento-badge">{{ t("comunidad.evento_partner") }}</span><br>';
+        if (e.titulo) html += '<strong style="font-size:1.05rem;">' + (e.titulo || '') + '</strong><br>';
+        if (e.texto) html += '<p style="margin:0.35rem 0 0 0; color: var(--texto-suave, #555);">' + (e.texto || '') + '</p>';
+        if (e.link) html += '<p style="margin:0.35rem 0 0 0;"><a href="' + encodeURI(e.link) + '" target="_blank" rel="noopener">Más información</a></p>';
+        html += '<p style="margin:0.35rem 0 0 0; font-size:0.9rem;"><a href="/comunidad/perfil/' + encodeURIComponent((e.username || '').toLowerCase()) + '">Ver perfil</a></p>';
+        li.innerHTML = html;
+        ul.appendChild(li);
+      });
+      acts.forEach(function(a) {
+        var li = document.createElement('li');
+        li.style.marginBottom = '0.75rem';
+        var nombre = a.vino_nombre || a.vino_key || '';
+        var tipo = tipos[a.tipo] || a.tipo;
+        li.innerHTML = '<strong>' + (a.username || '') + '</strong> ' + tipo + ' <a href="/oferta/crear?key=' + encodeURIComponent(a.vino_key || '') + '">' + (nombre || a.vino_key) + '</a>' + (a.score ? ' (' + a.score + '★)' : '') + '';
+        ul.appendChild(li);
+      });
+    })
+    .catch(function() { showSinPerfil(); });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ t('qr.panel_titulo') }} – Vino Pro IA</title>
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    .qr-panel { max-width: 480px; margin: 0 auto; padding: 1rem; }
+    .qr-panel h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+    .qr-panel .sub { color: var(--texto); opacity: 0.85; font-size: 0.9rem; margin-bottom: 1.25rem; }
+    .qr-form .form-group { margin-bottom: 0.75rem; }
+    .qr-form label { display: block; font-size: 0.9rem; margin-bottom: 0.25rem; }
+    .qr-form input, .qr-form select { width: 100%; padding: 0.5rem; font-size: 1rem; border-radius: 6px; }
+    .qr-form button { width: 100%; padding: 0.75rem; font-size: 1rem; font-weight: 600; border-radius: 8px; margin-top: 0.5rem; cursor: pointer; }
+    .qr-result { margin-top: 1rem; padding: 1rem; background: var(--fondo-card, #1a1a1a); border-radius: 10px; display: none; }
+    .qr-result.visible { display: block; }
+    .qr-result img { display: block; margin: 0.5rem auto 1rem; max-width: 200px; }
+    .qr-result .url { font-size: 0.8rem; word-break: break-all; margin-bottom: 0.5rem; }
+    .qr-result .btn-descargar { display: inline-block; padding: 0.5rem 1rem; margin-top: 0.5rem; cursor: pointer; text-decoration: none; border-radius: 6px; font-weight: 600; }
+    .qr-list { margin-top: 2rem; }
+    .qr-list h2 { font-size: 1.1rem; margin-bottom: 0.75rem; }
+    .qr-list table { width: 100%; font-size: 0.85rem; border-collapse: collapse; }
+    .qr-list th, .qr-list td { padding: 0.4rem 0.5rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    [data-theme="dark"] .qr-list th, [data-theme="dark"] .qr-list td { border-bottom-color: rgba(255,255,255,0.15); }
+    .qr-list .badge { font-size: 0.75rem; padding: 0.15rem 0.4rem; border-radius: 4px; }
+    .qr-list .badge.si { background: #2d5a27; color: #b8e0b4; }
+    .qr-list .badge.no { background: #555; color: #ccc; }
+    .qr-back { margin-bottom: 1rem; }
+    .qr-back a { color: var(--accent, #c9a227); }
+  </style>
+</head>
+<body class="page-qr">
+  <div class="qr-panel">
+    <p class="qr-back"><a href="{{ base_url_str }}/inicio">← {{ t('nav.inicio') }}</a></p>
+    <h1>{{ t('qr.panel_titulo') }}</h1>
+    <p class="sub">{{ t('qr.panel_subtitulo') }}</p>
+
+    <form id="form-qr" class="qr-form">
+      <div class="form-group">
+        <label for="qr-nombre">{{ t('qr.nombre_placeholder') }}</label>
+        <input type="text" id="qr-nombre" required placeholder="Ej: Marco" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="qr-empresa">{{ t('qr.empresa_placeholder') }}</label>
+        <input type="text" id="qr-empresa" placeholder="Ej: Cantina Torino" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="qr-idioma">{{ t('qr.idioma_qr') }}</label>
+        <select id="qr-idioma">
+          <option value="it">Italiano</option>
+          <option value="es">Español</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-block">{{ t('qr.generar') }}</button>
+    </form>
+
+    <div id="qr-result" class="qr-result">
+      <p class="url" id="qr-url"></p>
+      <img id="qr-img" src="" alt="QR" width="200" height="200">
+      <a href="#" id="qr-descargar" class="btn-descargar btn">{{ t('qr.descargar') }}</a>
+    </div>
+
+    <section class="qr-list">
+      <h2>{{ t('qr.lista_contactos') }}</h2>
+      <p id="qr-loading">Cargando…</p>
+      <table id="qr-tabla" style="display:none;">
+        <thead><tr><th>{{ t('qr.nombre_placeholder') }}</th><th>{{ t('qr.empresa_placeholder') }}</th><th>{{ t('qr.idioma_qr') }}</th><th>{{ t('qr.escaneado') }}</th><th>{{ t('qr.fecha_escaneo') }}</th><th>{{ t('qr.pais') }}</th></tr></thead>
+        <tbody id="qr-tabla-body"></tbody>
+      </table>
+      <p id="qr-empty" style="display:none;">No hay contactos aún. Genera el primero arriba.</p>
+    </section>
+  </div>
+  <script src="/static/js/qr_generador.js"></script>
+</body>
+</html>

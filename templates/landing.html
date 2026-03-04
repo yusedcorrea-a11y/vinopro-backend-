@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block meta_description %}Vino Pro IA: tu sumiller inteligente. Escanea etiquetas, pregunta por maridajes y gestiona tu bodega. Próximamente en Google Play.{% endblock %}
+{% block og_description %}Vino Pro IA: sumiller inteligente, escaneo de etiquetas y bodega virtual. Próximamente en Google Play.{% endblock %}
+{% block content %}
+<div class="landing-wrap">
+  <div class="landing-card">
+    <div class="landing-logo" aria-hidden="true">
+      <span class="brand-line brand-vino">VINO</span>
+      <span class="brand-line brand-pro">PRO</span>
+      <span class="brand-line brand-ia">IA</span>
+    </div>
+    <p class="landing-tagline">{{ t('common.tagline') }}</p>
+    <p class="landing-desc">Escanea etiquetas de vino, pregunta por maridajes y recomendaciones, y lleva tu bodega virtual. Todo en una app con inteligencia artificial.</p>
+
+    <div class="landing-ctas">
+      <a href="/inicio" class="landing-btn landing-btn-app">🍷 Probar la app web</a>
+      <div class="landing-coming">
+        <span class="landing-badge">Próximamente</span>
+        <a href="#" class="landing-btn landing-btn-play" aria-disabled="true">📱 En Google Play</a>
+      </div>
+    </div>
+
+    <div class="landing-form-wrap">
+      <p class="landing-form-title">¿Quieres que te avisemos cuando esté en la tienda?</p>
+      <form id="landing-notify-form" class="landing-form" action="/api/landing-notify" method="post">
+        <input type="email" name="email" placeholder="tu@email.com" required class="landing-input">
+        <button type="submit" class="landing-btn landing-btn-submit">Avísame</button>
+      </form>
+      <p id="landing-form-msg" class="landing-form-msg" role="status" aria-live="polite"></p>
+    </div>
+  </div>
+</div>
+<script>
+(function() {
+  var form = document.getElementById('landing-notify-form');
+  var msg = document.getElementById('landing-form-msg');
+  if (form) form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var email = form.querySelector('input[name="email"]').value.trim();
+    if (!email) return;
+    msg.textContent = 'Enviando…';
+    msg.className = 'landing-form-msg';
+    fetch(form.action, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email })
+    }).then(function(r) {
+      if (r.ok) {
+        msg.textContent = '¡Listo! Te avisaremos cuando esté en Google Play.';
+        msg.className = 'landing-form-msg landing-form-msg--ok';
+        form.reset();
+      } else {
+        msg.textContent = 'Algo falló. Prueba de nuevo o escribe a hola@vinoproia.com';
+        msg.className = 'landing-form-msg landing-form-msg--error';
+      }
+    }).catch(function() {
+      msg.textContent = 'Error de conexión. Intenta más tarde.';
+      msg.className = 'landing-form-msg landing-form-msg--error';
+    });
+  });
+})();
+</script>
+{% endblock %}

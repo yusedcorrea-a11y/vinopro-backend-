@@ -1,0 +1,81 @@
+============================================
+  VinoPro - Instalar y arrancar agente local
+============================================
+
+A) EJECUTAR EL SCRIPT EN POWERSHELL
+-----------------------------------
+1. Abra PowerShell (no necesita ejecutar como administrador).
+2. Vaya a la carpeta del backend:
+   cd "C:\Users\yused\Documents\VINO_PRO_FINAL\backend_optimized"
+   (Ajuste la ruta si su proyecto esta en otro sitio.)
+
+3. Ejecute el script con la ruta actual (.\):
+   .\install_local_agent.bat
+
+   IMPORTANTE: Use ".\" delante del nombre. Si solo escribe
+   install_local_agent.bat, PowerShell puede no encontrarlo.
+
+4. Si PowerShell no permite ejecutar scripts, ejecutelo con cmd:
+   cmd /c install_local_agent.bat
+
+5. Si aun asi da errores de codificacion, use los pasos manuales (B).
+
+
+B) PASOS MANUALES (sin usar el .bat)
+------------------------------------
+Ejecute estos comandos uno a uno en PowerShell o en CMD.
+
+1. Ir a la carpeta del proyecto:
+   cd "C:\Users\yused\Documents\VINO_PRO_FINAL\backend_optimized"
+
+2. Comprobar Python:
+   python --version
+   (Debe mostrar Python 3.10 o superior. Si no, instale Python y anada al PATH.)
+
+3. Crear entorno virtual:
+   python -m venv venv_agent
+
+4. Activar entorno virtual:
+   En CMD:
+     venv_agent\Scripts\activate.bat
+   En PowerShell:
+     .\venv_agent\Scripts\Activate.ps1
+   (Si PowerShell da error de politica de ejecucion, ejecute primero: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser)
+
+5. Instalar dependencias:
+   pip install fastapi uvicorn httpx pydantic python-dotenv
+
+6. Opcional - Clave OpenRouter (para IA generativa gratuita):
+   $env:OPENROUTER_API_KEY = "sk-or-v1-su-clave-aqui"
+   (En CMD seria: set OPENROUTER_API_KEY=sk-or-v1-su-clave-aqui)
+
+7. Arrancar el agente:
+   $env:AGENTE_PORT = "8080"
+   $env:VINOPRO_BACKEND_URL = "http://127.0.0.1:8001"
+   python -m agente_local.server
+
+   En CMD:
+     set AGENTE_PORT=8080
+     set VINOPRO_BACKEND_URL=http://127.0.0.1:8001
+     python -m agente_local.server
+
+8. Dejar esa ventana abierta. El agente estara en http://127.0.0.1:8080
+   Para detenerlo: Ctrl+C.
+
+9. Asegurese de que el backend VinoPro este corriendo en http://127.0.0.1:8001
+   (por ejemplo: python -m uvicorn app:app --host 0.0.0.0 --port 8001)
+
+
+C) SI EL .BAT SIGUE FALLANDO (codificacion)
+-------------------------------------------
+1. Abra install_local_agent.bat en Notepad.
+2. Guardar como: Archivo > Guardar como.
+3. En "Codificacion" elija "ANSI" o "UTF-8 sin BOM".
+4. Guarde y cierre. Vuelva a ejecutar con .\install_local_agent.bat
+
+O cree el archivo de nuevo desde CMD con codificacion correcta:
+  copy con install_local_agent.bat
+  (Pegue el contenido linea a linea y al final Ctrl+Z y Enter.
+   Mejor use los pasos manuales de la seccion B.)
+
+============================================

@@ -1,0 +1,16 @@
+{
+  "profiles": [
+    {
+      "username": "catas_divertidas",
+      "session_id": "seed_catas_divertidas",
+      "bio": "Organizamos Wine Tasting Experiences y catas para aficionados y profesionales. Contacto para eventos: pregúntanos por nuestras experiencias de cata.",
+      "ubicacion": "España",
+      "avatar_path": "",
+      "privado": false,
+      "created_at": 1739721600
+    }
+  ],
+  "session_to_username": {
+    "seed_catas_divertidas": "catas_divertidas"
+  }
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vino Pro IA – {{ contacto.nombre }}</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <style>
+    :root { --bg: #0f0f0f; --text: #f0e6d8; --accent: #c9a227; --card: #1a1a1a; }
+    @media (prefers-color-scheme: light) {
+      :root { --bg: #f5f0e8; --text: #1a1a1a; --accent: #a67c00; --card: #fff; }
+    }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 1rem; min-height: 100vh; background: var(--bg); color: var(--text); line-height: 1.5; }
+    .qr-wrap { max-width: 420px; margin: 0 auto; }
+    .qr-logo { display: block; text-align: center; margin-bottom: 1.5rem; }
+    .qr-logo a { text-decoration: none; color: inherit; font-size: 1.5rem; font-weight: 700; letter-spacing: 0.05em; }
+    .qr-logo .vino { color: #c9a227; }
+    .qr-mensaje { font-size: 1.15rem; margin-bottom: 1.5rem; padding: 1rem; background: var(--card); border-radius: 10px; border-left: 4px solid var(--accent); }
+    .qr-resumen { font-size: 0.95rem; opacity: 0.9; margin-bottom: 1.5rem; }
+    .qr-beneficios { margin-bottom: 1.5rem; }
+    .qr-beneficios h3 { font-size: 1rem; margin-bottom: 0.5rem; color: var(--accent); }
+    .qr-beneficios ul { margin: 0; padding-left: 1.2rem; font-size: 0.9rem; }
+    .qr-beneficios li { margin-bottom: 0.35rem; }
+    .qr-cta { margin-bottom: 1.5rem; }
+    .qr-cta a { display: inline-block; padding: 0.75rem 1.5rem; background: var(--accent); color: #000; text-decoration: none; border-radius: 8px; font-weight: 600; }
+    .qr-contacto h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+    .qr-contacto a { color: var(--accent); }
+    .qr-contacto p { margin: 0.35rem 0; font-size: 0.9rem; }
+    .qr-lang { margin-top: 1.5rem; font-size: 0.85rem; }
+    .qr-lang a { color: var(--accent); margin-right: 0.75rem; }
+  </style>
+</head>
+<body>
+  <div class="qr-wrap">
+    <div class="qr-logo">
+      <a href="{{ base_url_str }}/inicio"><span class="vino">VINO</span> PRO <span class="vino">IA</span></a>
+    </div>
+    <p class="qr-mensaje">{{ (t('qr.mensaje_hola') | replace('{nombre}', contacto.nombre)) }}</p>
+    <p class="qr-resumen">{{ t('qr.resumen_app') }}</p>
+    <section class="qr-beneficios">
+      <h3>{{ t('qr.beneficios_titulo') }}</h3>
+      <ul>
+        <li>{{ t('qr.beneficio_1') }}</li>
+        <li>{{ t('qr.beneficio_2') }}</li>
+        <li>{{ t('qr.beneficio_3') }}</li>
+      </ul>
+    </section>
+    {% if qr_calendly %}
+    <div class="qr-cta">
+      <a href="{{ qr_calendly }}" target="_blank" rel="noopener">{{ t('qr.agendar') }}</a>
+    </div>
+    {% endif %}
+    <section class="qr-contacto">
+      <h3>{{ t('qr.contacto_titulo') }}</h3>
+      {% if qr_email %}<p><a href="mailto:{{ qr_email }}">{{ qr_email }}</a></p>{% endif %}
+      {% if qr_linkedin %}<p><a href="{{ qr_linkedin }}" target="_blank" rel="noopener">LinkedIn</a></p>{% endif %}
+      {% if qr_whatsapp %}<p><a href="https://wa.me/{{ qr_whatsapp }}" target="_blank" rel="noopener">WhatsApp</a></p>{% endif %}
+    </section>
+    <p class="qr-lang">{{ t('qr.idioma') }}: <a href="/c/{{ codigo }}?lang=it">Italiano</a> <a href="/c/{{ codigo }}?lang=es">Español</a> <a href="/c/{{ codigo }}?lang=en">English</a></p>
+  </div>
+</body>
+</html>

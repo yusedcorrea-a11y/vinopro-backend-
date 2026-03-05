@@ -10,8 +10,11 @@ from fastapi import APIRouter, Header, HTTPException, Request, Body
 from services import sumiller_service as svc_sumiller
 from services.imagen_service import get_imagen_vino
 from services.busqueda_service import buscar_vinos_avanzado, buscar_vinos_con_sugerencia
+from services.api_externa_service import buscar_por_texto as off_buscar_por_texto
 from services import recomendaciones_service as rec_svc
 from services.ocr_normalizer import limpiar as normalizar_ocr
+from services import enlaces_service as enlaces_svc
+from routes.escaneo import _guardar_vino_consulta
 
 router = APIRouter(prefix="", tags=["Sumiller"])
 
@@ -160,6 +163,125 @@ def _es_pregunta_tipo_famoso(texto: str) -> bool:
     )
 
 
+def _maridaje_por_tipo(tipo: str) -> str:
+    """Sugerencia genérica de maridaje según tipo cuando no hay dato específico."""
+    t = (tipo or "tinto").strip().lower()
+    if "blanco" in t:
+        return "Pescados, mariscos, ensaladas, arroces y quesos frescos. Ideal para aperitivo."
+    if "rosado" in t or "rosé" in t:
+        return "Ensaladas, pasta ligera, tapas y barbacoa. Muy versátil."
+    if "espumoso" in t or "cava" in t or "champagne" in t:
+        return "Aperitivos, mariscos, sushi y celebraciones. Perfecto para brindar."
+    if "dulce" in t or "postre" in t:
+        return "Postres, foie gras, quesos azules y frutas."
+    return "Carnes rojas, guisos, quesos curados y embutidos. Clásico maridaje de tinto."
+
+
+def _construir_ficha_respuesta(vino: dict, key_used: str | None) -> dict:
+    """Construye la respuesta estándar de sumiller-ficha a partir de un dict vino."""
+    nombre = (vino.get("nombre") or "").strip() or "Sin nombre"
+    info_basica = {
+        "nombre": nombre,
+        "bodega": (vino.get("bodega") or "").strip() or "No especificada",
+        "region": (vino.get("region") or "").strip() or "Por determinar",
+        "pais": (vino.get("pais") or "").strip() or "Desconocido",
+        "tipo": (vino.get("tipo") or "").strip() or "tinto",
+        "puntuacion": vino.get("puntuacion"),
+        "precio_estimado": (vino.get("precio_estimado") or "").strip() or None,
+    }
+    especificacion_tecnica = {
+        "descripcion": (vino.get("descripcion") or "").strip() or None,
+        "notas_cata": (vino.get("notas_cata") or "").strip() or None,
+        "uva_principal": (vino.get("uva_principal") or "").strip() or None,
+        "graduacion": (vino.get("graduacion") or "").strip() or None,
+    }
+    maridaje_raw = (vino.get("maridaje") or "").strip()
+    if not maridaje_raw or maridaje_raw == "Información no disponible." or "no tenemos información" in maridaje_raw.lower():
+        maridaje = "Recomendación por tipo: " + _maridaje_por_tipo(info_basica["tipo"])
+    else:
+        maridaje = maridaje_raw
+    return {
+        "vino_key": key_used,
+        "info_basica": info_basica,
+        "especificacion_tecnica": especificacion_tecnica,
+        "maridaje": maridaje,
+        "incorporado": vino.get("_incorporado", False),
+    }
+
+
+@router.get("/api/sumiller-ficha")
+def api_sumiller_ficha(
+    request: Request,
+    vino_key: str | None = None,
+    consulta_id: str | None = None,
+    nombre: str | None = None,
+    pais: str | None = None,
+):
+    """
+    Ficha estructurada del vino para la app (Fase 1 + Fase 2).
+    Devuelve: info_basica, especificacion_tecnica, maridaje, enlaces_compra.
+    - vino_key o consulta_id: vino ya en nuestra base.
+    - pais: código ISO (ES, FR, MX...) para enlaces de compra (Amazon primero si tiene, luego locales).
+      Si no se envía, se usa X-Country o detección por IP (por defecto ES).
+    - Si no está en base: indica nombre (o texto de búsqueda). Se busca en BD por nombre
+      y si no hay resultado en Open Food Facts; si se encuentra, se GUARDA en nuestra base
+      (registrados.json) y se devuelve la ficha. Así la base crece con cada consulta.
+    """
+    vinos_dict = _get_vinos(request)
+    vino = None
+    key_used = None
+
+    if consulta_id:
+        consultas = _get_consultas(request)
+        vino, key_used = _unwrap_consulta(consultas, consulta_id)
+    if vino is None and vino_key:
+        key_used = (vino_key or "").strip()
+        vino = vinos_dict.get(key_used) if key_used else None
+
+    # Si no encontramos por key/consulta: buscar por nombre y, si viene de fuera, incorporar a la base
+    if (not vino or not isinstance(vino, dict)) and nombre and (nombre := (nombre or "").strip()):
+        # 1) Buscar en nuestra BD por nombre (por si la key no coincidía)
+        coincidencias = buscar_vinos_avanzado(vinos_dict, nombre, limite=3)
+        if coincidencias and coincidencias[0]["score"] >= 3.0:
+            mejor = coincidencias[0]
+            vino = mejor["vino"]
+            key_used = mejor["key"]
+        else:
+            # 2) Buscar en Open Food Facts
+            resultados_off = off_buscar_por_texto(nombre, limite=1)
+            if resultados_off and len(resultados_off) > 0:
+                vino_externo = resultados_off[0]
+                key_used = _guardar_vino_consulta(request, vino_externo)
+                if key_used:
+                    vino = vinos_dict.get(key_used) or vino_externo
+                    vino["_incorporado"] = True
+                else:
+                    vino = vino_externo
+                    vino["_incorporado"] = False
+                    key_used = None
+
+    if not vino or not isinstance(vino, dict):
+        raise HTTPException(
+            status_code=404,
+            detail="Vino no encontrado. Indica vino_key, consulta_id o nombre del vino para buscarlo e incorporarlo.",
+        )
+
+    # País para enlaces de compra: query param, cabecera X-Country o IP (Fase 2)
+    pais_resuelto = (pais or "").strip().upper() or request.headers.get("X-Country", "").strip().upper()
+    if not pais_resuelto and request.client:
+        pais_resuelto = enlaces_svc.detectar_pais_por_ip(request.client.host)
+    if not pais_resuelto:
+        pais_resuelto = "ES"
+
+    respuesta = _construir_ficha_respuesta(vino, key_used)
+    vino_id = key_used or ""
+    vino_nombre = (vino.get("nombre") or "").strip()
+    enlaces = enlaces_svc.enlaces_ordenados_para_app(vino_id, vino_nombre, pais_resuelto)
+    respuesta["enlaces_compra"] = [t.to_dict() for t in enlaces]
+    respuesta["pais_enlaces"] = pais_resuelto
+    return respuesta
+
+
 @router.get("/preguntar-sumiller")
 async def preguntar_sumiller(
     request: Request,
@@ -276,6 +398,12 @@ async def preguntar_sumiller(
     session_id = (x_session_id or "").strip()
     historial_store = _get_historial_sumiller(request)
     contexto = list(historial_store.get(session_id, [])) if session_id else []
+    # Keys ya recomendadas en esta sesión (últimas respuestas) para no repetir el mismo vino
+    keys_ya_recomendados = []
+    for ent in contexto:
+        refs = ent.get("vinos_ref") or []
+        keys_ya_recomendados.extend(r for r in refs if isinstance(r, str) and r.strip())
+    exclude_keys_sesion = list(dict.fromkeys(keys_ya_recomendados))[-25:]
     quizas_quisiste_decir = None
 
     # Búsqueda previa en BD: si la pregunta menciona un vino (Protos, Viña Pedrosa, etc.), responder con datos de nuestra BD
@@ -327,7 +455,9 @@ async def preguntar_sumiller(
                 break
         if not comida or len(comida) < 2:
             comida = "plato"
-        coincidencias = svc_sumiller.buscar_vinos_por_maridaje(vinos_dict, comida, limite=5)
+        coincidencias = svc_sumiller.buscar_vinos_por_maridaje(
+            vinos_dict, comida, limite=5, exclude_keys=exclude_keys_sesion
+        )
         if coincidencias:
             respuesta = svc_sumiller.formatear_respuesta_maridaje(
                 [{"key": r["key"], "vino": r["vino"]} for r in coincidencias],
@@ -379,7 +509,9 @@ async def preguntar_sumiller(
         vinos_recomendados = [s["vino"] for s in similares] if similares else None
         vinos_ref_para_guardar = [str(s["key"]) for s in similares if s.get("key")] if similares else []
     elif _es_recomendacion(texto_clean):
-        coincidencias = svc_sumiller.buscar_vinos_por_preferencia(vinos_dict, texto_clean, limite=5)
+        coincidencias = svc_sumiller.buscar_vinos_por_preferencia(
+            vinos_dict, texto_clean, limite=5, exclude_keys=exclude_keys_sesion
+        )
         if coincidencias:
             respuesta = svc_sumiller.formatear_respuesta_recomendacion(
                 [{"key": r["key"], "vino": r["vino"]} for r in coincidencias],

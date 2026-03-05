@@ -94,22 +94,26 @@ def _es_cocina_especial(comida_norm: str) -> str | None:
     return None
 
 
-def buscar_vinos_por_maridaje(vinos_dict: dict, comida: str, limite: int = 5) -> list[dict]:
+def buscar_vinos_por_maridaje(
+    vinos_dict: dict, comida: str, limite: int = 5, exclude_keys: list[str] | None = None
+) -> list[dict]:
     """
     Busca vinos cuyo campo maridaje coincida con la comida indicada.
     Soporta cocinas del mundo (india, china, japonesa): prioriza blancos aromáticos y vinos de la región.
+    exclude_keys: keys ya recomendadas en esta sesión para no repetir la misma respuesta.
     Devuelve lista de { "key", "vino" } ordenada por puntuación (mejor primero).
     """
     comida_norm = _normalizar(comida)
     if not comida_norm:
         return []
+    exclude = set((exclude_keys or []))
     tokens = [w for w in comida_norm.split() if len(w) > 2]
     cocina = _es_cocina_especial(comida_norm)
     palabras_vinos_especial = PALABRAS_VINO_COCINA_INDIA if cocina == "india" else PALABRAS_VINO_ASIA if cocina else []
 
     resultados = []
     for key, vino in vinos_dict.items():
-        if not isinstance(vino, dict):
+        if key in exclude or not isinstance(vino, dict):
             continue
         maridaje = _normalizar(vino.get("maridaje") or "")
         nombre = _normalizar(vino.get("nombre") or "")
@@ -185,22 +189,25 @@ def _extraer_region_prioritaria(texto: str) -> str | None:
     return None
 
 
-def buscar_vinos_por_preferencia(vinos_dict: dict, texto: str, limite: int = 5) -> list[dict]:
+def buscar_vinos_por_preferencia(
+    vinos_dict: dict, texto: str, limite: int = 5, exclude_keys: list[str] | None = None
+) -> list[dict]:
     """
     Busca vinos que coincidan con la preferencia: tipo, país/región, precio máximo, estilo.
     Prioridad: si menciona "ribera" / "ribera del duero", solo vinos de esa región.
+    exclude_keys: keys ya recomendadas en esta sesión para no repetir.
     """
+    exclude = set((exclude_keys or []))
     texto_norm = _normalizar(texto)
     # Prioridad región: Ribera del Duero
     region_prioritaria = _extraer_region_prioritaria(texto)
     if region_prioritaria:
         vinos_dict = {
             k: v for k, v in vinos_dict.items()
-            if isinstance(v, dict) and _normalizar(v.get("region") or "") == _normalizar(region_prioritaria)
+            if k not in exclude and isinstance(v, dict) and _normalizar(v.get("region") or "") == _normalizar(region_prioritaria)
         }
         if not vinos_dict:
             return []
-        # Devolver los mejor valorados de la región, ordenados por puntuación
         lista = [
             {"key": k, "vino": v, "puntuacion": v.get("puntuacion") or 0}
             for k, v in vinos_dict.items()
@@ -219,7 +226,7 @@ def buscar_vinos_por_preferencia(vinos_dict: dict, texto: str, limite: int = 5) 
 
     resultados = []
     for key, vino in vinos_dict.items():
-        if not isinstance(vino, dict):
+        if key in exclude or not isinstance(vino, dict):
             continue
         tipo = (vino.get("tipo") or "").strip().lower()
         if tipo not in ("tinto", "blanco", "rosado", "espumoso", "dulce"):

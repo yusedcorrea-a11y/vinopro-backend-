@@ -45,104 +45,109 @@ MARIDAJE_PALABRAS = {
 # Así en cada país recomendamos vinos que sí pegan con su cocina (nada de "ni con pegamento" 😄)
 COCINA_TRADICIONAL = {
     "india": {
-        "platos": ["tikka", "masala", "curry", "india", "indio", "indios", "especiado", "especiada", "biryani", "tandoori", "naan", "dal"],
+        "platos": ["tikka", "masala", "curry", "india", "indio", "indios", "comida india", "especiado", "especiada", "biryani", "tandoori", "naan", "dal"],
         "vinos": ["chenin", "gewürztraminer", "gewurztraminer", "riesling", "sula", "india", "blanco", "aromatico"],
         "intro": "Para la cocina india especiada (curry, tikka masala, biryani) van bien blancos aromáticos: Chenin, Gewürztraminer o Riesling.",
     },
     "china": {
-        "platos": ["china", "chino", "wok", "agridulce", "pato", "dim sum", "cerdo", "arroz frito", "noodles", "sweet and sour"],
+        "platos": ["china", "chino", "comida china", "wok", "agridulce", "pato", "dim sum", "cerdo", "arroz frito", "noodles", "sweet and sour"],
         "vinos": ["gewurztraminer", "riesling", "blanco", "koshu", "china", "japon", "semidulce", "ligero"],
         "intro": "Para cocina china (dim sum, wok, pato) recomendamos blancos aromáticos o semidulces: Riesling, Gewürztraminer.",
     },
     "japon": {
-        "platos": ["japon", "japones", "sushi", "sashimi", "sake", "koshu", "umami", "tempura", "ramen", "tonkatsu", "teriyaki"],
+        "platos": ["japon", "japones", "japonesa", "comida japonesa", "comida japon", "sushi", "sashimi", "sake", "koshu", "umami", "tempura", "ramen", "tonkatsu", "teriyaki"],
         "vinos": ["riesling", "blanco", "koshu", "sake", "japon", "champagne", "espumoso", "ligero", "mineral"],
         "intro": "Para sushi, sashimi o cocina japonesa van bien un blanco ligero, Riesling, Champagne o un Koshu.",
     },
     "rusia": {
-        "platos": ["pelmeni", "pelmeny", "vareniki", "borscht", "rusa", "ruso", "dumpling", "dumplings", "smetana", "blinis", "caviar"],
+        "platos": ["pelmeni", "pelmeny", "vareniki", "borscht", "rusa", "ruso", "comida rusa", "dumpling", "dumplings", "smetana", "blinis", "caviar"],
         "vinos": ["riesling", "blanco", "espumoso", "champagne", "cava", "prosecco", "suave", "afrutado", "rusia", "saperavi"],
         "intro": "Para pelmeni, vareniki o cocina rusa van bien un blanco ligero, espumoso o un tinto suave.",
     },
     "espana": {
-        "platos": ["paella", "tapas", "jamon", "iberico", "cocido", "tortilla", "gazpacho", "fabada", "pulpo", "gallega", "española", "espana", "mariscos", "arroces", "fritura"],
+        "platos": ["paella", "tapas", "jamon", "iberico", "cocido", "tortilla", "gazpacho", "fabada", "pulpo", "gallega", "española", "espana", "comida española", "comida espana", "mariscos", "arroces", "fritura"],
         "vinos": ["rioja", "ribera", "cava", "tinto", "blanco", "albarino", "verdejo", "crianza", "espana", "priorat", "manzanilla", "fino"],
         "intro": "Para cocina española (paella, tapas, jamón, cocido) un Rioja, Ribera, cava o un blanco Albariño/Verdejo.",
     },
     "italia": {
-        "platos": ["pasta", "pizza", "risotto", "osso buco", "parmigiana", "tiramisu", "carbonara", "lasaña", "lasana", "ravioli", "italiana", "italia", "ragu", "bolognesa", "gnocchi"],
+        "platos": ["pasta", "pizza", "risotto", "osso buco", "parmigiana", "tiramisu", "carbonara", "lasaña", "lasana", "ravioli", "italiana", "italia", "comida italiana", "comida italia", "ragu", "bolognesa", "gnocchi"],
         "vinos": ["chianti", "barolo", "pinot grigio", "prosecco", "brunello", "italia", "toscana", "piamonte", "nero d'avola", "blanco", "tinto", "sangiovese", "montepulciano"],
         "intro": "Para pasta, pizza o cocina italiana un Chianti, Prosecco, Pinot Grigio o un Barolo son clásicos.",
     },
     "francia": {
-        "platos": ["frances", "francia", "quiche", "boeuf", "bourguignon", "coq au vin", "ratatouille", "crepes", "croissant", "cassoulet", "tarte", "creme brulee"],
+        "platos": ["frances", "francia", "francesa", "comida francesa", "comida francia", "quiche", "boeuf", "bourguignon", "coq au vin", "ratatouille", "crepes", "croissant", "cassoulet", "tarte", "creme brulee"],
         "vinos": ["burdeos", "borgoña", "champagne", "chablis", "rhone", "loira", "francia", "tinto", "blanco", "chardonnay", "pinot noir", "syrah"],
         "intro": "Para cocina francesa (boeuf bourguignon, quiche, coq au vin) un Burdeos, Borgoña o Champagne.",
     },
     "argentina": {
-        "platos": ["asado", "empanada", "empanadas", "chimichurri", "provoleta", "argentina", "argentino", "dulce de leche", "milanesa", "choripan"],
+        "platos": ["asado", "empanada", "empanadas", "chimichurri", "provoleta", "argentina", "argentino", "comida argentina", "dulce de leche", "milanesa", "choripan"],
         "vinos": ["malbec", "argentina", "mendoza", "tinto", "torrontes", "bonarda", "cabernet", "blanco"],
         "intro": "Para asado, empanadas o cocina argentina un Malbec de Mendoza es el maridaje clásico. También Torrontés o tintos.",
     },
     "mexico": {
-        "platos": ["taco", "tacos", "mole", "ceviche", "guacamole", "enchilada", "mexicana", "mexico", "chiles", "pozole", "carnitas", "quesadilla"],
+        "platos": ["taco", "tacos", "mole", "ceviche", "guacamole", "enchilada", "mexicana", "mexico", "comida mexicana", "comida mexico", "chiles", "pozole", "carnitas", "quesadilla"],
         "vinos": ["blanco", "rosado", "tinto", "frutal", "riesling", "gewurztraminer", "espumoso", "burbuja", "cava"],
         "intro": "Para tacos, mole o cocina mexicana van bien blancos frescos, rosados o tintos frutales; también un Riesling o espumoso.",
     },
     "portugal": {
-        "platos": ["bacalao", "bacalhau", "caldo verde", "francesinha", "pastel", "pastéis", "portuguesa", "portugal", "caldeirada", "sardinas"],
+        "platos": ["bacalao", "bacalhau", "caldo verde", "francesinha", "pastel", "pastéis", "portuguesa", "portugal", "comida portuguesa", "comida portugal", "caldeirada", "sardinas"],
         "vinos": ["vinho verde", "porto", "dao", "douro", "portugal", "alvarinho", "blanco", "tinto", "espumoso", "bairrada"],
         "intro": "Para bacalao o cocina portuguesa un Vinho Verde, un blanco del Dão o un tinto del Douro maridan muy bien.",
     },
     "grecia": {
-        "platos": ["moussaka", "souvlaki", "tzatziki", "griega", "grecia", "feta", "gyros", "dolma", "ensalada griega", "spanakopita"],
+        "platos": ["moussaka", "souvlaki", "tzatziki", "griega", "grecia", "comida griega", "comida grecia", "feta", "gyros", "dolma", "ensalada griega", "spanakopita"],
         "vinos": ["retsina", "assyrtiko", "grecia", "nemea", "blanco", "rosado", "tinto", "santorini", "naoussa"],
         "intro": "Para moussaka, souvlaki o cocina griega un Assyrtiko, Retsina o un tinto de Nemea.",
     },
     "alemania": {
-        "platos": ["bratwurst", "schnitzel", "sauerkraut", "pretzel", "alemana", "alemania", "currywurst", "spatzle", "black forest"],
+        "platos": ["bratwurst", "schnitzel", "sauerkraut", "pretzel", "alemana", "alemania", "comida alemana", "comida alemania", "currywurst", "spatzle", "black forest"],
         "vinos": ["riesling", "alemania", "spatburgunder", "pinot noir", "blanco", "tinto", "mosel", "rheingau"],
         "intro": "Para cocina alemana (bratwurst, schnitzel) un Riesling o un Spätburgunder (Pinot Noir) son ideales.",
     },
     "peru": {
-        "platos": ["ceviche", "causa", "lomo saltado", "aji de gallina", "peruana", "peru", "anticuchos", "rocoto", "pisco"],
+        "platos": ["ceviche", "causa", "lomo saltado", "aji de gallina", "peruana", "peru", "comida peruana", "comida peru", "anticuchos", "rocoto", "pisco"],
         "vinos": ["sauvignon blanc", "blanco", "tinto", "champagne", "espumoso", "peru", "afrutado", "acido"],
         "intro": "Para ceviche o cocina peruana un Sauvignon Blanc fresco, espumoso o un tinto afrutado.",
     },
     "chile": {
-        "platos": ["empanada", "cazuela", "pastel de choclo", "chilena", "chile", "humita", "curanto", "asado chileno"],
+        "platos": ["empanada", "cazuela", "pastel de choclo", "chilena", "chile", "comida chilena", "comida chile", "humita", "curanto", "asado chileno"],
         "vinos": ["carmenere", "cabernet", "chile", "sauvignon blanc", "tinto", "blanco", "maipo", "colchagua"],
         "intro": "Para empanadas, cazuela o cocina chilena un Carmenere o Cabernet de Chile, o un Sauvignon Blanc.",
     },
     "brasil": {
-        "platos": ["feijoada", "churrasco", "moqueca", "brasileña", "brasil", "pão de queijo", "coxinha", "acarajé"],
+        "platos": ["feijoada", "churrasco", "moqueca", "brasileña", "brasil", "comida brasileña", "comida brasil", "pão de queijo", "coxinha", "acarajé"],
         "vinos": ["tinto", "espumoso", "espumante", "brasil", "blanco", "tannat", "merlot", "serra gaucha"],
         "intro": "Para feijoada o churrasco brasileño un tinto robusto o un espumante de Brasil (Serra Gaúcha).",
     },
     "turquia": {
-        "platos": ["kebab", "meze", "baklava", "köfte", "turca", "turquia", "döner", "lahmacun", "borek", "dolma"],
+        "platos": ["kebab", "meze", "baklava", "köfte", "turca", "turquia", "comida turca", "comida turquia", "döner", "lahmacun", "borek", "dolma"],
         "vinos": ["turquia", "anatolia", "okuzgozu", "bogazkere", "tinto", "rosado", "blanco", "narince"],
         "intro": "Para kebab, meze o cocina turca un tinto de Anatolia (Öküzgözü), rosado o blanco Narince.",
     },
     "libano": {
-        "platos": ["hummus", "tabule", "kibbeh", "shawarma", "libanesa", "libano", "falafel", "fattoush", "tahini"],
+        "platos": ["hummus", "tabule", "kibbeh", "shawarma", "libanesa", "libano", "comida libanesa", "comida libano", "falafel", "fattoush", "tahini"],
         "vinos": ["libano", "bekaa", "musar", "tinto", "blanco", "rosado", "chardonnay", "cabernet"],
         "intro": "Para hummus, kibbeh o cocina libanesa un vino del Valle del Bekaa (Château Musar) o rosado.",
     },
     "marruecos": {
-        "platos": ["tagine", "couscous", "harira", "pastela", "marroqui", "marruecos", "kefta", "mechoui", "cuscus"],
+        "platos": ["tagine", "couscous", "harira", "pastela", "marroqui", "marruecos", "comida marroqui", "comida marruecos", "kefta", "mechoui", "cuscus"],
         "vinos": ["rosado", "tinto", "blanco", "marruecos", "afrutado", "suave", "gewurztraminer", "riesling"],
         "intro": "Para tagine o couscous marroquí un rosado, tinto suave o blanco aromático (Gewürztraminer, Riesling).",
     },
     "usa": {
-        "platos": ["barbecue", "bbq", "hamburguesa", "mac and cheese", "thanksgiving", "americana", "america", "pollo frito", "ribs", "hot dog"],
+        "platos": ["barbecue", "bbq", "hamburguesa", "mac and cheese", "thanksgiving", "americana", "america", "comida americana", "comida america", "pollo frito", "ribs", "hot dog"],
         "vinos": ["zinfandel", "chardonnay", "cabernet", "california", "napa", "tinto", "blanco", "pinot noir", "estados unidos"],
         "intro": "Para barbecue o cocina americana un Zinfandel, Cabernet de California o Chardonnay.",
     },
     "australia": {
-        "platos": ["barbacoa", "australiana", "australia", "meat pie", "fish and chips", "lamington", "vegemite"],
+        "platos": ["barbacoa", "australiana", "australia", "comida australiana", "comida australia", "meat pie", "fish and chips", "lamington", "vegemite"],
         "vinos": ["shiraz", "australia", "chardonnay", "tinto", "blanco", "mclaren vale", "barossa", "semillon"],
         "intro": "Para barbacoa o cocina australiana un Shiraz, Chardonnay o Semillón de Australia.",
+    },
+    "colombia": {
+        "platos": ["colombiana", "colombiano", "comida colombiana", "comida colombia", "bandeja paisa", "ajiaco", "sancocho", "arepa", "arepas", "lechona", "tamal", "empanadas colombianas", "chicharrón", "mondongo"],
+        "vinos": ["blanco", "tinto", "rosado", "espumoso", "frutal", "suave", "riesling", "chardonnay", "malbec", "merlot"],
+        "intro": "Para bandeja paisa, ajiaco, arepas o cocina colombiana van bien un blanco fresco, un tinto suave (Malbec, Merlot) o un rosado.",
     },
 }
 

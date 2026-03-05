@@ -52,6 +52,7 @@ from services.ocr_service import extraer_texto_de_imagen, TesseractNoDisponibleE
 from services.api_externa_service import buscar_por_texto, buscar_por_codigo_barras
 from services.ocr_normalizer import limpiar as normalizar_ocr
 from services.codigos_service import extraer_primer_ean_de_imagen
+from services.wine_label_api4ai_service import recognize_wine_from_image
 
 router = APIRouter(prefix="", tags=["Escaneo"])
 
@@ -364,7 +365,58 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                             "mensaje": "Identificado por código de barras. Este vino no está en nuestra base; te mostramos la ficha externa. ¿Quieres una recomendación similar de nuestra carta?",
                             "es_pro": _es_pro((x_session_id or "").strip()),
                         }
-                # 2) OCR sobre la misma imagen
+                # 2) Reconocimiento por imagen (API4AI) - opcional, como Vivino
+                sugerencias_ia = recognize_wine_from_image(contenido_imagen)
+                if sugerencias_ia and sugerencias_ia[0].get("confidence", 0) >= 0.5:
+                    nombre_ia = (sugerencias_ia[0].get("name") or "").strip()
+                    if nombre_ia:
+                        coincidencias_ia = buscar_vinos_avanzado(vinos, nombre_ia, limite=3)
+                        if coincidencias_ia and coincidencias_ia[0]["score"] >= 3.0:
+                            mejor_ia = coincidencias_ia[0]
+                            vino_ia = mejor_ia["vino"]
+                            consulta_id = str(uuid.uuid4())
+                            consultas[consulta_id] = {"vino": vino_ia, "key": mejor_ia["key"]}
+                            try:
+                                from services import analytics_service
+                                analytics_service.registrar_escaneo(True, vino_ia.get("nombre"), vino_ia.get("pais"))
+                            except Exception:
+                                pass
+                            _push_historial(request, (x_session_id or "").strip(), consulta_id, vino_ia.get("nombre"), True)
+                            logger.info("[ESCANEAR] Identificado por IA (API4AI): %s", vino_ia.get("nombre", "")[:60])
+                            return {
+                                "encontrado_en_bd": True,
+                                "consulta_id": consulta_id,
+                                "key": mejor_ia["key"],
+                                "vino_key": mejor_ia["key"],
+                                "mostrar_boton_comprar": True,
+                                "vino": vino_ia,
+                                "mensaje": "Identificado por reconocimiento de etiqueta (IA).",
+                                "es_pro": _es_pro((x_session_id or "").strip()),
+                            }
+                        resultados_off = buscar_por_texto(nombre_ia, limite=1)
+                        if resultados_off and len(resultados_off) > 0:
+                            vino_externo = resultados_off[0]
+                            consulta_id = str(uuid.uuid4())
+                            key_guardada = _guardar_vino_consulta(request, vino_externo)
+                            consultas[consulta_id] = {"vino": vino_externo, "key": key_guardada}
+                            try:
+                                from services import analytics_service
+                                analytics_service.registrar_escaneo(False, vino_externo.get("nombre"), vino_externo.get("pais"))
+                            except Exception:
+                                pass
+                            _push_historial(request, (x_session_id or "").strip(), consulta_id, vino_externo.get("nombre"), False)
+                            nombre_slug = key_guardada or _slug(vino_externo.get("nombre") or "")
+                            logger.info("[ESCANEAR] Identificado por IA (API4AI) + OFF: %s", (vino_externo.get("nombre") or "")[:60])
+                            return {
+                                "encontrado_en_bd": False,
+                                "consulta_id": consulta_id,
+                                "vino": vino_externo,
+                                "vino_key": nombre_slug or None,
+                                "mostrar_boton_comprar": True,
+                                "mensaje": "Identificado por reconocimiento de etiqueta (IA).",
+                                "es_pro": _es_pro((x_session_id or "").strip()),
+                            }
+                # 3) OCR sobre la misma imagen
                 try:
                     texto_ocr = extraer_texto_de_imagen(contenido_imagen)
                     if texto_ocr:

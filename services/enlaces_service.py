@@ -12,6 +12,7 @@ from models.enlaces_compra import EnlacesVino, TiendaAfiliado
 
 DATA_FOLDER = os.environ.get("DATA_FOLDER", "data")
 ENLACES_PATH = os.path.join(DATA_FOLDER, "enlaces_compra.json")
+PATROCINADORES_PATH = os.path.join(DATA_FOLDER, "patrocinadores.json")
 
 
 def _load_enlaces() -> dict:
@@ -444,6 +445,86 @@ def buscar_tiendas_para_pais(vino_id: str, vino_nombre: str, pais: str) -> list[
     out.extend(_tiendas_locales_para_pais(nombre_para_busqueda, pais_upper))
     # Amazon al final: enlace de búsqueda adaptado al país (o amazon.es si no hay marketplace local)
     out.append(generar_enlace_amazon(nombre_para_busqueda, pais_upper))
+    return out
+
+
+def _load_patrocinadores() -> list[dict]:
+    """Carga la lista de patrocinadores desde data/patrocinadores.json."""
+    if not os.path.exists(PATROCINADORES_PATH):
+        return []
+    try:
+        with open(PATROCINADORES_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data.get("enlaces") or []
+    except Exception:
+        return []
+
+
+def _get_patrocinadores_enlaces(vino_id: str, pais: str) -> list[TiendaAfiliado]:
+    """
+    Enlaces de tiendas patrocinadoras: primera opción para el usuario.
+    Se cargan desde data/patrocinadores.json. Cada entrada puede tener "paises" (lista de códigos);
+    si falta o está vacía, se muestra en todos los países. Al clic se abre la URL del patrocinador.
+    """
+    pais_upper = (pais or "").strip().upper()
+    out: list[TiendaAfiliado] = []
+    for item in _load_patrocinadores():
+        if not isinstance(item, dict) or not item.get("url") or not item.get("nombre"):
+            continue
+        paises = item.get("paises")
+        if paises is not None and len(paises) > 0 and pais_upper not in [str(p).strip().upper() for p in paises]:
+            continue
+        out.append(
+            TiendaAfiliado(
+                nombre=item.get("nombre", "").strip(),
+                url=item.get("url", "").strip(),
+                tipo="patrocinador",
+                afiliado=False,
+                envio_internacional=False,
+                pais_origen=pais_upper,
+                es_amazon=False,
+                patrocinador=True,
+            )
+        )
+    return out
+
+
+def enlaces_ordenados_para_app(vino_id: str, vino_nombre: str, pais: str) -> list[TiendaAfiliado]:
+    """
+    Enlaces de compra ordenados para la app (Fase 2 Sumiller "Dónde comprarlo"):
+    1) Patrocinadores (cuando existan).
+    2) Amazon primero si el país tiene marketplace Amazon (prioridad países con Amazon).
+    3) Tiendas locales del país (cerca de su ubicación / país).
+    4) Tiendas nacionales del JSON para ese país.
+    5) Tiendas internacionales con envío.
+    6) Amazon al final si no se añadió antes (países sin Amazon propio).
+    """
+    pais_upper = (pais or "ES").strip().upper()
+    nombre_para_busqueda = (vino_nombre or vino_id or "").strip()
+    enlaces = get_enlaces_vino(vino_id)
+    tiene_amazon = pais_upper in DOMINIOS_AMAZON
+
+    out: list[TiendaAfiliado] = []
+    # 1) Patrocinadores (futuro)
+    out.extend(_get_patrocinadores_enlaces(vino_id, pais_upper))
+    # 2) Amazon primero si el país tiene Amazon
+    if tiene_amazon:
+        out.append(generar_enlace_amazon(nombre_para_busqueda, pais_upper))
+    # 3) Tiendas locales del país
+    out.extend(_tiendas_locales_para_pais(nombre_para_busqueda, pais_upper))
+    # 4) Nacional del JSON para ese país
+    if enlaces:
+        for t in enlaces.nacional.get(pais_upper, []):
+            if isinstance(t, dict):
+                out.append(TiendaAfiliado.from_dict(t))
+    # 5) Internacional con envío
+    if enlaces:
+        for t in enlaces.internacional:
+            if isinstance(t, dict) and t.get("envio_internacional"):
+                out.append(TiendaAfiliado.from_dict(t))
+    # 6) Amazon al final si no estaba (países sin Amazon propio)
+    if not tiene_amazon:
+        out.append(generar_enlace_amazon(nombre_para_busqueda, pais_upper))
     return out
 
 

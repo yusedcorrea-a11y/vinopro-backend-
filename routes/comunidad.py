@@ -1,5 +1,5 @@
 """
-API de comunidad (Fase 6B): perfiles, seguir, feed, notificaciones.
+API de comunidad (Fase 6B): perfiles, seguir, feed, notificaciones, traducción en tiempo real.
 """
 from fastapi import APIRouter, Header, HTTPException, Request, Body
 
@@ -9,6 +9,8 @@ from services import feed_service as feed_svc
 from services import notificacion_service as notif_svc
 from services import valoraciones_service as val_svc
 from services import wishlist_service as wish_svc
+from services import translation_service as translation_svc
+from services import chat_service as chat_svc
 
 router = APIRouter(prefix="", tags=["Comunidad"])
 
@@ -33,13 +35,14 @@ async def crear_perfil(
     username: str = Body(..., embed=True),
     bio: str = Body("", embed=True),
     ubicacion: str = Body("", embed=True),
+    idioma: str = Body("", embed=True),
     x_session_id: str | None = Header(None, alias="X-Session-ID"),
 ):
-    """Crea el perfil de comunidad para la sesión actual. Username único, 3-30 caracteres alfanuméricos o _."""
+    """Crea el perfil de comunidad para la sesión actual. Username único, 3-30 caracteres. idioma: código para leer contenido (es, en, ru, hi, etc.)."""
     session_id = (x_session_id or "").strip()
     if not session_id:
         raise HTTPException(status_code=401, detail="X-Session-ID requerido")
-    ok, msg = usuario_svc.crear_perfil(session_id, username, bio, ubicacion)
+    ok, msg = usuario_svc.crear_perfil(session_id, username, bio, ubicacion, idioma=idioma)
     if not ok:
         raise HTTPException(status_code=400, detail=msg)
     return {"ok": True, "username": username.strip().lower()}
@@ -62,11 +65,12 @@ async def actualizar_mi_perfil(
     bio: str | None = Body(None, embed=True),
     ubicacion: str | None = Body(None, embed=True),
     privado: bool | None = Body(None, embed=True),
+    idioma: str | None = Body(None, embed=True),
     x_session_id: str | None = Header(None, alias="X-Session-ID"),
 ):
-    """Actualiza bio, ubicación o privado del perfil actual."""
+    """Actualiza bio, ubicación, privado o idioma del perfil actual. idioma: es, en, ru, hi, etc."""
     session_id, _ = _session_and_username(x_session_id)
-    if not usuario_svc.actualizar_perfil(session_id, bio=bio, ubicacion=ubicacion, privado=privado):
+    if not usuario_svc.actualizar_perfil(session_id, bio=bio, ubicacion=ubicacion, privado=privado, idioma=idioma):
         raise HTTPException(status_code=404, detail="Sin perfil")
     return {"ok": True}
 
@@ -162,6 +166,86 @@ async def get_feed(
                 if isinstance(v, dict):
                     a["vino_nombre"] = v.get("nombre") or v.get("name") or a.get("vino_key", "")
     return {"actividad": actividad, "eventos": eventos}
+
+
+@router.post("/api/traducir")
+async def traducir_texto(
+    texto: str = Body(..., embed=True),
+    idioma_destino: str = Body(..., embed=True),
+    idioma_origen: str | None = Body(None, embed=True),
+):
+    """Traduce un texto al idioma del lector. Comunidad sin barreras de idioma (ruso → hindi, etc.)."""
+    traducido = await translation_svc.traducir(texto, idioma_destino, idioma_origen)
+    return {"traducido": traducido, "idioma_destino": idioma_destino}
+
+
+@router.post("/api/traducir-lote")
+async def traducir_lote(
+    textos: list[str] = Body(..., embed=True),
+    idioma_destino: str = Body(..., embed=True),
+    idioma_origen: str | None = Body(None, embed=True),
+):
+    """Traduce varios textos de una vez (para feed/perfiles). Máximo ~20 textos por petición recomendado."""
+    if len(textos) > 50:
+        textos = textos[:50]
+    traducidos = await translation_svc.traducir_lote(textos, idioma_destino, idioma_origen)
+    return {"traducidos": traducidos, "idioma_destino": idioma_destino}
+
+
+# ----- Chat: cada usuario escribe en su idioma; la app traduce al idioma del lector -----
+
+@router.get("/api/conversaciones")
+async def listar_conversaciones(
+    limit: int = 50,
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """Lista de conversaciones del usuario (other_username, last_message, last_at)."""
+    _, mi_username = _session_and_username(x_session_id)
+    if not mi_username:
+        return {"conversaciones": []}
+    lista = chat_svc.get_conversaciones(mi_username, limit=limit)
+    return {"conversaciones": lista}
+
+
+@router.get("/api/chat/{username}")
+async def get_chat(
+    username: str,
+    limit: int = 100,
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """Mensajes con ese usuario. Cada mensaje: id, from_username, texto (idioma original), created_at. La app traduce al idioma del lector."""
+    _, mi_username = _session_and_username(x_session_id)
+    if not mi_username:
+        raise HTTPException(status_code=401, detail="Necesitas perfil para chatear")
+    other = (username or "").strip().lower()
+    if not other or other == mi_username:
+        raise HTTPException(status_code=400, detail="Usuario no válido")
+    if usuario_svc.get_perfil_por_username(other) is None:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    msgs = chat_svc.get_mensajes(mi_username, other, limit=limit)
+    return {"username": other, "mensajes": msgs}
+
+
+@router.post("/api/chat/{username}")
+async def enviar_mensaje_chat(
+    username: str,
+    texto: str = Body(..., embed=True),
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """Envía un mensaje al usuario. Guárdalo en tu idioma; el otro lo verá traducido al suyo."""
+    _, mi_username = _session_and_username(x_session_id)
+    if not mi_username:
+        raise HTTPException(status_code=401, detail="Necesitas perfil para chatear")
+    other = (username or "").strip().lower()
+    if not other or other == mi_username:
+        raise HTTPException(status_code=400, detail="Usuario no válido")
+    if usuario_svc.get_perfil_por_username(other) is None:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    msg = chat_svc.enviar_mensaje(mi_username, other, texto)
+    if not msg:
+        raise HTTPException(status_code=400, detail="Mensaje vacío o inválido")
+    notif_svc.add(other, "nuevo_mensaje", from_username=mi_username, ref_id=msg.get("id", ""))
+    return {"ok": True, "mensaje": msg}
 
 
 @router.get("/api/perfil/{username}/valoraciones")

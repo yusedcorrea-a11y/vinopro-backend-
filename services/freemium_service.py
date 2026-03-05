@@ -1,6 +1,6 @@
 """
-Servicio freemium: límite 50 vinos en Mi Bodega para usuarios gratis.
-Usuarios PRO (listados en data/usuarios_pro.json por session_id) sin límite.
+Servicio freemium: límite 30 botellas en Mi Bodega para usuarios gratis.
+Usuarios PRO (listados en data/usuarios_pro.json por session_id) bodega ilimitada.
 """
 import json
 import os
@@ -9,7 +9,7 @@ DATA_FOLDER = os.environ.get("DATA_FOLDER", "data")
 BODEGAS_PATH = os.path.join(DATA_FOLDER, "bodegas.json")
 USUARIOS_PRO_PATH = os.path.join(DATA_FOLDER, "usuarios_pro.json")
 
-LIMITE_GRATIS = 50
+LIMITE_GRATIS = 30
 
 
 def _load_bodegas() -> dict:
@@ -90,7 +90,7 @@ def puede_anadir_botella(session_id: str, cantidad: int = 1) -> tuple[bool, str]
     nuevo_total = usado + max(1, int(cantidad))
     if nuevo_total > LIMITE_GRATIS:
         return False, (
-            f"Límite del plan Gratis alcanzado ({usado}/{LIMITE_GRATIS} vinos). "
+            f"Límite del plan Gratis alcanzado ({usado}/{LIMITE_GRATIS} botellas). "
             "Pasa a PRO para bodega ilimitada."
         )
     return True, ""

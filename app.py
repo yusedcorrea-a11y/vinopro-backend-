@@ -66,7 +66,7 @@ def cargar_todos_los_vinos():
         'valoraciones.json', 'wishlist.json', 'historial_usuario.json',
         'notificaciones_landing.json',
         'usuarios_perfiles.json', 'seguidores.json', 'actividad.json', 'notificaciones.json',
-        'contactos_qr.json', 'lugares_destacados.json',
+        'contactos_qr.json', 'lugares_destacados.json', 'chat_mensajes.json',
     }
     archivos = [f for f in os.listdir(DATA_FOLDER) if f.endswith('.json') and f not in excluir]
     
@@ -118,14 +118,19 @@ def render_page(request: Request, template_name: str, **context):
 
 @app.get("/set-lang", response_class=RedirectResponse)
 def set_lang(request: Request, lang: str = "es"):
-    """Establece cookie de idioma (1 año) y redirige a la página anterior."""
+    """Establece cookie de idioma (1 año) y redirige a la página anterior (o a /inicio si venían de /)."""
+    from urllib.parse import urlparse
     from services.i18n import IDIOMAS_SOPORTADOS, IDIOMA_POR_DEFECTO
     lang = lang.strip().lower() if lang else IDIOMA_POR_DEFECTO
     if lang not in IDIOMAS_SOPORTADOS:
         lang = IDIOMA_POR_DEFECTO
-    url = request.headers.get("referer") or "/"
-    if not url.startswith("/") and not url.startswith("http"):
-        url = "/"
+    referer = request.headers.get("referer") or ""
+    path = (urlparse(referer).path or "").rstrip("/") or "/"
+    # Si el usuario venía de la raíz (landing), llevar a la Home para que vea viñedo y botones
+    if path == "/":
+        url = "/inicio"
+    else:
+        url = referer if referer.startswith("http") else path or "/inicio"
     response = RedirectResponse(url=url)
     response.set_cookie("vino_pro_lang", lang, max_age=31536000, path="/")
     return response
@@ -145,7 +150,9 @@ def ready():
 
 @app.get("/", response_class=HTMLResponse)
 def pagina_landing(request: Request):
-    """Landing pública en vinoproia.com: logo, descripción, Próximamente Google Play, formulario notificación."""
+    """Landing (primera visita sin cookie) o redirige a Home si ya tiene idioma."""
+    if request.cookies.get("vino_pro_lang"):
+        return RedirectResponse(url="/inicio", status_code=302)
     return render_page(request, "landing.html", page_class="page-landing", active_page="")
 
 

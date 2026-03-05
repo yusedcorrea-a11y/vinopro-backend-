@@ -9,7 +9,9 @@
     "descripcion": "Lugar recomendado para maridajes y disfrutar del vino en un entorno único. Ideal para registrar tus descorches y experiencias con VINO PRO.",
     "telefono": "",
     "email": "casapaca@hotmail.es",
-    "web": "",
-    "destacado": true
+    "web": "https://www.casapaca.es",
+    "destacado": true,
+    "patrocinador": true,
+    "prioridad": 1
   }
 ]

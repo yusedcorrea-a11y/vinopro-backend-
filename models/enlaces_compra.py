@@ -16,6 +16,7 @@ class TiendaAfiliado:
     envio_internacional: bool = False
     pais_origen: str = ""
     es_amazon: bool = False
+    patrocinador: bool = False  # Fase 2+: tiendas que patrocinan para aparecer en "Dónde comprarlo"
 
     def to_dict(self) -> dict[str, Any]:
         out = {
@@ -30,6 +31,8 @@ class TiendaAfiliado:
         }
         if self.es_amazon:
             out["es_amazon"] = True
+        if self.patrocinador:
+            out["patrocinador"] = True
         return out
 
     @classmethod
@@ -44,6 +47,7 @@ class TiendaAfiliado:
             envio_internacional=d.get("envio_internacional", False),
             pais_origen=d.get("pais_origen", ""),
             es_amazon=d.get("es_amazon", False),
+            patrocinador=d.get("patrocinador", False),
         )
 
 

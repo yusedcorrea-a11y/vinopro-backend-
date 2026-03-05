@@ -1,0 +1,15 @@
+{
+  "_comentario": "Patrocinadores: primera opción en Dónde comprarlo. nombre y url obligatorios. paises: opcional; si se omite o [] se muestra en todos los países.",
+  "enlaces": [
+    {
+      "nombre": "Restaurante Asador Casa Paca",
+      "url": "https://www.casapaca.es",
+      "paises": []
+    },
+    {
+      "nombre": "Ejemplo Vinoteca",
+      "url": "https://www.ejemplo-vinoteca.com",
+      "paises": ["ES"]
+    }
+  ]
+}

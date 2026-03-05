@@ -53,13 +53,23 @@ def lugares_cerca(
 
 
 def _cargar_lugares_destacados() -> list:
-    """Lugares recomendados / partners (ej. Restaurante Casa Paca)."""
+    """
+    Lugares recomendados / partners. Orden: patrocinadores primero (patrocinador=true),
+    luego por prioridad (mayor primero). Campos opcionales: patrocinador (bool), prioridad (int).
+    """
     if not LUGARES_DESTACADOS_PATH.is_file():
         return []
     try:
         with open(LUGARES_DESTACADOS_PATH, "r", encoding="utf-8") as f:
             data = json.load(f)
-        return data if isinstance(data, list) else []
+        lugares = data if isinstance(data, list) else []
+        # Fase 4: ordenar por patrocinador (true primero) y prioridad (mayor primero)
+        def orden(l):
+            es_patrocinador = 1 if (isinstance(l, dict) and l.get("patrocinador")) else 0
+            prioridad = int(l.get("prioridad", 0)) if isinstance(l, dict) else 0
+            return (-es_patrocinador, -prioridad)
+        lugares.sort(key=orden)
+        return lugares
     except Exception:
         return []
 
@@ -68,7 +78,8 @@ def _cargar_lugares_destacados() -> list:
 def lugares_destacados():
     """
     Devuelve establecimientos destacados (partners) donde los usuarios pueden
-    disfrutar del vino y registrar descorches. Incluye información de contacto.
+    disfrutar del vino. Los que tengan patrocinador=true aparecen primero;
+    opcionalmente se ordenan por prioridad. Incluye información de contacto.
     """
     lugares = _cargar_lugares_destacados()
     return {"lugares": lugares}

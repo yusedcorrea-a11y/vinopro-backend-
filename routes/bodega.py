@@ -13,6 +13,8 @@ from services import adaptador_service as adaptador_svc
 from services import freemium_service as freemium_svc
 from services import validacion_service as validacion_svc
 from services import limite_diario_service as limite_diario_svc
+from services import usuario_service as usuario_svc
+from services import feed_service as feed_svc
 
 router = APIRouter(prefix="", tags=["Bodega"])
 
@@ -61,11 +63,23 @@ def get_registros_hoy(
 
 @router.get("/bodega")
 def get_bodega(session_id: str = Depends(_session_id)):
-    """Lista todas las botellas de la bodega del usuario."""
+    """
+    Lista todas las botellas de la bodega del usuario.
+    Incluye limite_max (30 para gratis, null para PRO) y es_pro para que la app muestre inventario y límite.
+    """
     botellas = svc.get_bodega(session_id)
     for b in botellas:
         b["potencial_guarda"] = svc.get_potencial_guarda(b)
-    return {"session_id": session_id, "botellas": botellas}
+    es_pro = freemium_svc.is_pro(session_id)
+    total_botellas = freemium_svc.count_botellas(session_id)
+    limite_max = None if es_pro else freemium_svc.LIMITE_GRATIS
+    return {
+        "session_id": session_id,
+        "botellas": botellas,
+        "es_pro": es_pro,
+        "limite_max": limite_max,
+        "total_botellas": total_botellas,
+    }
 
 
 @router.post("/bodega/botellas")
@@ -118,6 +132,11 @@ def add_botella(body: BotellaCreate, session_id: str = Depends(_session_id)):
         adaptador_svc.notify_webhook(session_id)
     except Exception:
         pass
+    # Actividad en el feed: "X probó [vino]" para la comunidad
+    username = usuario_svc.get_username_por_session(session_id)
+    if username:
+        vino_key = (body.vino_key or botella.get("vino_key") or "").strip() or nombre_limpio[:200]
+        feed_svc.add_actividad(username, "probado", vino_key, vino_nombre=nombre_limpio[:200])
     return {"success": True, "botella": botella}
 
 

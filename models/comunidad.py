@@ -15,6 +15,7 @@ class PerfilUsuario:
     avatar_path: str = ""
     privado: bool = False
     created_at: int = 0
+    idioma: str = ""  # idioma preferido para leer contenido (es, en, ru, hi, etc.)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -25,6 +26,7 @@ class PerfilUsuario:
             "avatar_path": self.avatar_path,
             "privado": self.privado,
             "created_at": self.created_at,
+            "idioma": self.idioma,
         }
 
     @classmethod
@@ -37,6 +39,7 @@ class PerfilUsuario:
             avatar_path=d.get("avatar_path", ""),
             privado=d.get("privado", False),
             created_at=int(d.get("created_at") or 0),
+            idioma=(d.get("idioma") or "").strip()[:10] or "",
         )
 
 

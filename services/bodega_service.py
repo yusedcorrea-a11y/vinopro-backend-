@@ -116,6 +116,48 @@ def delete_botella(session_id: str, botella_id: str) -> bool:
     return True
 
 
+def _normalizar_nombre(n: str) -> str:
+    return (n or "").strip().lower()
+
+
+def restar_cantidad(
+    session_id: str,
+    vino_nombre: str,
+    cantidad: int = 1,
+) -> tuple[dict | None, bool]:
+    """
+    Resta cantidad de una botella por nombre (para venta desde programa de restaurante).
+    Busca por coincidencia normalizada (strip, lower). Si la cantidad resultante <= 0, elimina la botella.
+    Devuelve (botella_actualizada_o_None, encontrado: bool).
+    """
+    data = _load_bodegas()
+    if session_id not in data:
+        return (None, False)
+    busqueda = _normalizar_nombre(vino_nombre)
+    if not busqueda:
+        return (None, False)
+    cantidad_restar = max(1, int(cantidad))
+    botellas = data[session_id]["botellas"]
+    for i, b in enumerate(botellas):
+        nom = _normalizar_nombre(b.get("vino_nombre", ""))
+        if nom != busqueda and busqueda not in nom and nom not in busqueda:
+            continue
+        cant = int(b.get("cantidad", 1))
+        if cant < cantidad_restar:
+            continue
+        nueva_cant = cant - cantidad_restar
+        if nueva_cant <= 0:
+            botellas.pop(i)
+            data[session_id]["updated_at"] = datetime.utcnow().isoformat()
+            _save_bodegas(data)
+            return (None, True)  # botella eliminada (agotada)
+        b["cantidad"] = nueva_cant
+        data[session_id]["updated_at"] = datetime.utcnow().isoformat()
+        _save_bodegas(data)
+        return (b, True)
+    return (None, False)
+
+
 def get_alertas(session_id: str, temp_actual: float | None, humedad_actual: float | None) -> list:
     if temp_actual is None and humedad_actual is None:
         return []

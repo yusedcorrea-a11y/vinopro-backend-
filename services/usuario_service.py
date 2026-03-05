@@ -48,14 +48,15 @@ def username_valido(username: str) -> bool:
     return bool(username and _USERNAME_RE.match(username.strip()))
 
 
-def crear_perfil(session_id: str, username: str, bio: str = "", ubicacion: str = "") -> tuple[bool, str]:
+def crear_perfil(session_id: str, username: str, bio: str = "", ubicacion: str = "", idioma: str = "") -> tuple[bool, str]:
     """
     Crea perfil para esta sesión. username debe ser único.
+    idioma: código preferido para leer contenido (es, en, ru, hi, etc.).
     Devuelve (True, "") o (False, "mensaje_error").
     """
     if not session_id:
         return False, "Sesión requerida"
-    username = (username or "").strip().lower()
+    username = (username or "").strip().lower().replace("@", "")
     if not username_valido(username):
         return False, "Usuario inválido (3-30 caracteres, letras, números y _)"
     _load()
@@ -73,6 +74,7 @@ def crear_perfil(session_id: str, username: str, bio: str = "", ubicacion: str =
         "avatar_path": "",
         "privado": False,
         "created_at": now,
+        "idioma": (idioma or "").strip()[:10] or "",
     })
     _data["session_to_username"][session_id] = username
     _save()
@@ -103,8 +105,8 @@ def get_perfil_por_session(session_id: str) -> PerfilUsuario | None:
     return get_perfil_por_username(username)
 
 
-def actualizar_perfil(session_id: str, bio: str | None = None, ubicacion: str | None = None, privado: bool | None = None) -> bool:
-    """Actualiza bio, ubicación o privado del perfil de esta sesión."""
+def actualizar_perfil(session_id: str, bio: str | None = None, ubicacion: str | None = None, privado: bool | None = None, idioma: str | None = None) -> bool:
+    """Actualiza bio, ubicación, privado o idioma del perfil de esta sesión."""
     perfil = get_perfil_por_session(session_id)
     if not perfil:
         return False
@@ -117,6 +119,8 @@ def actualizar_perfil(session_id: str, bio: str | None = None, ubicacion: str | 
                 p["ubicacion"] = (ubicacion or "").strip()[:200]
             if privado is not None:
                 p["privado"] = bool(privado)
+            if idioma is not None:
+                p["idioma"] = (idioma or "").strip()[:10] or ""
             _save()
             return True
     return False

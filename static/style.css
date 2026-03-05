@@ -49,17 +49,21 @@ body.page-inicio {
 }
 /* Inicio: imagen full screen, barra abajo con glassmorphism */
 body.page-inicio main {
-  background: transparent;
-  backdrop-filter: none;
-  box-shadow: none;
-  border: none;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
   min-height: calc(100vh - 56px);
   display: flex;
   flex-direction: column;
   padding: 0;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  max-width: none !important;
 }
 body.page-inicio main::before {
-  display: none;
+  display: none !important;
+  content: none !important;
 }
 .inicio-wrap {
   display: flex;
@@ -71,12 +75,15 @@ body.page-inicio main::before {
   flex: 1;
 }
 .inicio-barra {
-  background: rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid rgba(255, 255, 255, 0.25);
-  padding: 1.25rem 1rem 1.5rem;
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: none;
+  padding: 1rem 1rem 1.5rem;
   width: 100%;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
   box-sizing: border-box;
 }
 .inicio-ctas {
@@ -85,57 +92,60 @@ body.page-inicio main::before {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem 1rem;
+  gap: 1rem;
   text-align: center;
 }
 .inicio-ctas .inicio-cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.45rem;
-  min-width: 160px;
-  padding: 0.85rem 1.25rem;
+  gap: 0.5rem;
+  min-width: 180px;
+  padding: 1rem 1.5rem;
   border-radius: var(--radius);
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 1.05rem;
   text-decoration: none;
-  transition: transform 0.2s, box-shadow 0.2s;
-  border: 1px solid transparent;
+  transition: transform 0.2s, box-shadow 0.25s;
+  border: 2px solid transparent;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 .inicio-ctas .inicio-cta-ico {
-  font-size: 1.1em;
+  font-size: 1.2em;
 }
 .inicio-ctas .inicio-cta-sumiller {
-  background: rgba(92, 42, 42, 0.85);
+  background: linear-gradient(135deg, var(--burdeos), #3d1a1f);
   color: #fff;
-  border-color: rgba(255,255,255,0.25);
+  border-color: rgba(255, 255, 255, 0.35);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 .inicio-ctas .inicio-cta-sumiller:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(74, 31, 42, 0.4);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(74, 31, 42, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 .inicio-ctas .inicio-cta-escanear {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   color: var(--burdeos);
-  border-color: rgba(184, 134, 11, 0.6);
+  border-color: var(--dorado);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 .inicio-ctas .inicio-cta-escanear:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(184, 134, 11, 0.35);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 32px rgba(184, 134, 11, 0.4), 0 4px 12px rgba(0, 0, 0, 0.25);
 }
 .inicio-microcopy {
-  margin: 0.75rem 0 0;
+  margin: 0.85rem 0 0;
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.85);
   text-align: center;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 [data-theme="dark"] .inicio-barra {
-  background: rgba(28, 24, 22, 0.75);
-  border-top-color: rgba(255, 255, 255, 0.1);
+  background: transparent;
+  border: none;
 }
 [data-theme="dark"] .inicio-microcopy {
-  color: rgba(232, 228, 224, 0.7);
+  color: rgba(232, 228, 224, 0.85);
 }
 body.page-inicio::before {
   content: '';
@@ -1015,21 +1025,16 @@ nav a.activo {
 .header-minimal .brand-vino { font-size: 1.35rem; letter-spacing: 0.2em; }
 .header-minimal .brand-pro  { font-size: 1.1rem;  letter-spacing: 0.3em; margin-top: 1px; }
 .header-minimal .brand-ia   { font-size: 0.95rem; letter-spacing: 0.4em; margin-top: 1px; opacity: 0.95; }
-/* Home: logo con más presencia, serif */
+/* Home: logo en tres líneas como antes (VINO / PRO / IA) */
 body.page-inicio .header-minimal .header-minimal-logo {
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 0 0.35rem;
-  align-items: baseline;
+  flex-direction: column;
+  align-items: center;
 }
 body.page-inicio .header-minimal .brand-line {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-weight: 700;
-  font-size: 1.4rem;
-  letter-spacing: 0.08em;
   margin-top: 0;
 }
-body.page-inicio .header-minimal .brand-ia { opacity: 1; }
+body.page-inicio .header-minimal .brand-pro { margin-top: 1px; }
+body.page-inicio .header-minimal .brand-ia { margin-top: 1px; opacity: 0.95; }
 .btn-menu-secreto {
   width: 44px;
   height: 44px;
@@ -1204,7 +1209,16 @@ body[class^="page-"] main {
   margin-top: 1.5rem;
   margin-bottom: 2rem;
 }
-/* Inicio: reglas de main ya definidas arriba (full height + barra abajo) */
+/* Inicio: forzar sin fondo blanco (después del bloque anterior) */
+body.page-inicio main {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  border-radius: 0 !important;
+}
 
 /* Hero página de inicio */
 .hero-inicio {
@@ -1286,10 +1300,10 @@ body[class^="page-"] main::before {
   padding: 1px;
   background: linear-gradient(135deg, rgba(184,134,11,0.2), transparent 40%, transparent 60%, rgba(107,45,60,0.15));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
+}
+body.page-inicio main::before {
+  display: none !important;
+  content: none !important;
 }
 
 /* Títulos de página unificados (referencia: index/planes) */
@@ -2696,6 +2710,21 @@ body.page-inicio .chatbot-guia-mascot:hover {
   [data-theme="dark"] body.page-comprar {
     background-position: top center;
   }
+}
+
+/* ========== INICIO: SIN FONDO BLANCO (prioridad máxima) ========== */
+body.page-inicio main,
+body.page-inicio .inicio-wrap,
+body.page-inicio .inicio-barra {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+body.page-inicio main::before,
+body.page-inicio main::after {
+  display: none !important;
+  content: none !important;
 }
 
 /* ========== CRÉDITOS IMÁGENES (Unsplash - uso libre) ==========

@@ -3,6 +3,7 @@ Servicio para el Sumiller Virtual: maridajes y recomendaciones desde la base de 
 soporte de contexto (últimas preguntas) y fallback cuando no hay resultados (conocimiento + similares).
 """
 import json
+import random
 import re
 from pathlib import Path
 from typing import Any
@@ -27,9 +28,9 @@ def _cargar_conocimiento() -> dict:
         _conocimiento_cache = {"tipos": {}, "claves_busqueda": {}}
     return _conocimiento_cache
 
-# Palabras clave de comida para maridaje
+# Palabras clave de comida para maridaje (usuario y texto maridaje del vino)
 MARIDAJE_PALABRAS = {
-    "carne": ["carne", "carnes", "solomillo", "ternera", "vacío", "chuletón", "entrecot"],
+    "carne": ["carne", "carnes", "solomillo", "ternera", "vacío", "chuletón", "entrecot", "cocido", "guiso", "guisos", "estofado", "estofados", "rabo", "potaje", "olla", "madrileño", "asado", "asados"],
     "pescado": ["pescado", "pescados", "marisco", "mariscos", "salmón", "salmon", "bacalao", "atún", "tuna", "lubina", "dorada"],
     "cordero": ["cordero", "cordero asado", "lechazo"],
     "caza": ["caza", "caza mayor", "jabalí", "jabali", "venado", "perdiz"],
@@ -37,6 +38,7 @@ MARIDAJE_PALABRAS = {
     "pasta": ["pasta", "arroz", "risotto"],
     "ensalada": ["ensalada", "verduras", "vegetal"],
     "postre": ["postre", "dulce", "chocolate"],
+    "empanada": ["empanada", "empanadas", "argentina", "argentinas"],
 }
 
 # Cocinas del mundo / platos específicos -> tipos de vino o palabras para buscar en nombre/descripción
@@ -146,6 +148,10 @@ def buscar_vinos_por_maridaje(
                 "puntuacion": vino.get("puntuacion") or 0,
             })
     resultados.sort(key=lambda x: (-x["score"], -x["puntuacion"]))
+    if len(resultados) > limite:
+        pool = resultados[: min(limite * 3, len(resultados))]
+        random.shuffle(pool)
+        resultados = pool[:limite]
     return [{"key": r["key"], "vino": r["vino"]} for r in resultados[:limite]]
 
 
@@ -272,6 +278,10 @@ def buscar_vinos_por_preferencia(
             "puntuacion": puntuacion,
         })
     resultados.sort(key=lambda x: (-x["score"], -x["puntuacion"]))
+    if len(resultados) > limite:
+        pool = resultados[: min(limite * 3, len(resultados))]
+        random.shuffle(pool)
+        resultados = pool[:limite]
     return [{"key": r["key"], "vino": r["vino"]} for r in resultados[:limite]]
 
 
@@ -289,6 +299,8 @@ def formatear_respuesta_maridaje(vinos: list[dict], comida: str, perfil: str = "
         intro += "la cocina japonesa, "
     elif any(p in comida_low for p in ["cordero", "lechazo"]):
         intro += "un cordero asado, "
+    elif "cocido" in comida_low or "guiso" in comida_low or "estofado" in comida_low or "rabo" in comida_low or "potaje" in comida_low:
+        intro += "un cocido, guiso o estofado, "
     elif "carne" in comida_low or "ternera" in comida_low:
         intro += "carnes rojas, "
     elif "pescado" in comida_low or "marisco" in comida_low:
@@ -352,13 +364,16 @@ def formatear_respuesta_recomendacion(vinos: list[dict], perfil: str = "aficiona
     return texto
 
 
-def _buscar_similares_por_tipo_o_pais(vinos_dict: dict, tipo: str | None, pais: str | None, limite: int = 3) -> list[dict]:
-    """Devuelve vinos del mismo tipo o país, ordenados por puntuación."""
+def _buscar_similares_por_tipo_o_pais(
+    vinos_dict: dict, tipo: str | None, pais: str | None, limite: int = 3, exclude_keys: list[str] | None = None
+) -> list[dict]:
+    """Devuelve vinos del mismo tipo o país, ordenados por puntuación. exclude_keys: no repetir esos vinos."""
+    exclude = set((exclude_keys or []))
     candidatos = []
     tipo = (tipo or "").strip().lower() if tipo else None
     pais = (pais or "").strip() if pais else None
     for key, vino in vinos_dict.items():
-        if not isinstance(vino, dict):
+        if key in exclude or not isinstance(vino, dict):
             continue
         t = (vino.get("tipo") or "").strip().lower()
         p = (vino.get("pais") or "").strip()
@@ -367,7 +382,7 @@ def _buscar_similares_por_tipo_o_pais(vinos_dict: dict, tipo: str | None, pais: 
         elif pais and p == pais:
             candidatos.append({"key": key, "vino": vino, "puntuacion": vino.get("puntuacion") or 0})
     candidatos.sort(key=lambda x: -x["puntuacion"])
-    return candidatos[:limite]
+    return [{"key": r["key"], "vino": r["vino"]} for r in candidatos[:limite]]
 
 
 def _pais_desde_origen(origen: str) -> str | None:
@@ -382,11 +397,14 @@ def _pais_desde_origen(origen: str) -> str | None:
     return parte if parte else None
 
 
-def _buscar_vinos_por_palabras(vinos_dict: dict, palabras: list[str], limite: int = 5) -> list[dict]:
-    """Vinos cuyo nombre o descripción contienen alguna de las palabras (normalizadas)."""
+def _buscar_vinos_por_palabras(
+    vinos_dict: dict, palabras: list[str], limite: int = 5, exclude_keys: list[str] | None = None
+) -> list[dict]:
+    """Vinos cuyo nombre o descripción contienen alguna de las palabras (normalizadas). exclude_keys: no repetir."""
+    exclude = set((exclude_keys or []))
     resultados = []
     for key, vino in vinos_dict.items():
-        if not isinstance(vino, dict):
+        if key in exclude or not isinstance(vino, dict):
             continue
         concat = _normalizar((vino.get("nombre") or "") + " " + (vino.get("descripcion") or "") + " " + (vino.get("uva_principal") or ""))
         for p in palabras:
@@ -397,12 +415,15 @@ def _buscar_vinos_por_palabras(vinos_dict: dict, palabras: list[str], limite: in
     return [{"key": r["key"], "vino": r["vino"]} for r in resultados[:limite]]
 
 
-def fallback_sin_resultados(pregunta: str, vinos_dict: dict) -> tuple[str, list[dict]]:
+def fallback_sin_resultados(
+    pregunta: str, vinos_dict: dict, exclude_keys: list[str] | None = None
+) -> tuple[str, list[dict]]:
     """
     Cuando no hay vinos en la base que coincidan: información real del tipo de vino
     (desde conocimiento_vinos.json) y sugerencia de vinos similares de la BD.
-    Para cocina india/china/japonesa ofrece texto específico y blancos aromáticos si hay.
+    exclude_keys: keys ya recomendadas en sesión para no repetir el mismo vino.
     """
+    exclude = set((exclude_keys or []))
     conocimiento = _cargar_conocimiento()
     tipos = conocimiento.get("tipos") or {}
     claves_busqueda = conocimiento.get("claves_busqueda") or {}
@@ -410,16 +431,20 @@ def fallback_sin_resultados(pregunta: str, vinos_dict: dict) -> tuple[str, list[
 
     cocina = _es_cocina_especial(pregunta_norm)
     if cocina == "india":
-        similares_cocina = _buscar_vinos_por_palabras(vinos_dict, [x for x in PALABRAS_VINO_COCINA_INDIA if len(x) > 3], limite=5)
+        similares_cocina = _buscar_vinos_por_palabras(
+            vinos_dict, [x for x in PALABRAS_VINO_COCINA_INDIA if len(x) > 3], limite=5, exclude_keys=exclude_keys
+        )
         if similares_cocina:
             texto = "Para la cocina india especiada (pollo tikka masala, curry, etc.) recomendamos un blanco aromático: Chenin Blanc, Gewürztraminer o Riesling. En nuestra carta:"
             return texto, similares_cocina
         texto = "Para la cocina india especiada recomendamos un Sula Chenin Blanc (India) o un Gewürztraminer alsaciano. No tenemos esos vinos exactos en la carta; aquí van alternativas que pueden ir bien:"
-        todos = [{"key": k, "vino": v, "puntuacion": (v.get("puntuacion") or 0) if isinstance(v, dict) else 0} for k, v in vinos_dict.items() if isinstance(v, dict)]
+        todos = [{"key": k, "vino": v, "puntuacion": (v.get("puntuacion") or 0) if isinstance(v, dict) else 0} for k, v in vinos_dict.items() if isinstance(v, dict) and k not in exclude]
         todos.sort(key=lambda x: -x["puntuacion"])
-        return texto, [{"key": r["key"], "vino": r["vino"]} for r in todos[:3]]
+        return texto, [{"key": r["key"], "vino": r["vino"]} for r in todos[:5]]
     if cocina in ("china", "japonesa"):
-        similares_cocina = _buscar_vinos_por_palabras(vinos_dict, [x for x in PALABRAS_VINO_ASIA if len(x) > 3], limite=5)
+        similares_cocina = _buscar_vinos_por_palabras(
+            vinos_dict, [x for x in PALABRAS_VINO_ASIA if len(x) > 3], limite=5, exclude_keys=exclude_keys
+        )
         if similares_cocina:
             texto = f"Para la cocina {cocina} recomendamos blancos aromáticos o ligeros (Riesling, Gewürztraminer, Koshu). En nuestra carta:"
             return texto, similares_cocina
@@ -445,16 +470,16 @@ def fallback_sin_resultados(pregunta: str, vinos_dict: dict) -> tuple[str, list[
         pais_para_similares = _pais_desde_origen(origen)
         tipo_buscado = tipos.get(tipo_key, {}).get("tipo") or tipo_key
         if pais_para_similares:
-            similares = _buscar_similares_por_tipo_o_pais(vinos_dict, None, pais_para_similares, limite=3)
+            similares = _buscar_similares_por_tipo_o_pais(vinos_dict, None, pais_para_similares, limite=5, exclude_keys=exclude_keys)
         if not similares:
-            similares = _buscar_similares_por_tipo_o_pais(vinos_dict, tipo_buscado, None, limite=3)
+            similares = _buscar_similares_por_tipo_o_pais(vinos_dict, tipo_buscado, None, limite=5, exclude_keys=exclude_keys)
     elif tipo_key:
         tipo_buscado = tipo_key
-        similares = _buscar_similares_por_tipo_o_pais(vinos_dict, tipo_buscado, None, limite=3)
+        similares = _buscar_similares_por_tipo_o_pais(vinos_dict, tipo_buscado, None, limite=5, exclude_keys=exclude_keys)
     if not similares:
-        todos = [{"key": k, "vino": v, "puntuacion": (v.get("puntuacion") or 0) if isinstance(v, dict) else 0} for k, v in vinos_dict.items() if isinstance(v, dict)]
+        todos = [{"key": k, "vino": v, "puntuacion": (v.get("puntuacion") or 0) if isinstance(v, dict) else 0} for k, v in vinos_dict.items() if isinstance(v, dict) and k not in exclude]
         todos.sort(key=lambda x: -x["puntuacion"])
-        similares = todos[:3]
+        similares = [{"key": r["key"], "vino": r["vino"]} for r in todos[:5]]
 
     lineas = []
     if info_tipo and isinstance(info_tipo, dict):
@@ -478,9 +503,9 @@ def fallback_sin_resultados(pregunta: str, vinos_dict: dict) -> tuple[str, list[
             lineas.append(f"En nuestra base de datos no tenemos {nombre_tipo} actualmente, pero sí estos excelentes {region_label}:")
         else:
             lineas.append(f"En nuestra base no tenemos {nombre_tipo} en este momento. Aquí van algunos de los mejor valorados:")
-            todos = [{"key": k, "vino": v, "puntuacion": (v.get("puntuacion") or 0) if isinstance(v, dict) else 0} for k, v in vinos_dict.items() if isinstance(v, dict)]
+            todos = [{"key": k, "vino": v, "puntuacion": (v.get("puntuacion") or 0) if isinstance(v, dict) else 0} for k, v in vinos_dict.items() if isinstance(v, dict) and k not in exclude]
             todos.sort(key=lambda x: -x["puntuacion"])
-            similares = [{"key": r["key"], "vino": r["vino"]} for r in todos[:3]]
+            similares = [{"key": r["key"], "vino": r["vino"]} for r in todos[:5]]
             lineas.append("")
             for item in similares:
                 v = item["vino"]
@@ -499,9 +524,9 @@ def fallback_sin_resultados(pregunta: str, vinos_dict: dict) -> tuple[str, list[
         if similares:
             lineas.append("Estos son algunos de los mejor valorados que sí tenemos:")
         else:
-            todos = [{"key": k, "vino": v, "puntuacion": (v.get("puntuacion") or 0) if isinstance(v, dict) else 0} for k, v in vinos_dict.items() if isinstance(v, dict)]
+            todos = [{"key": k, "vino": v, "puntuacion": (v.get("puntuacion") or 0) if isinstance(v, dict) else 0} for k, v in vinos_dict.items() if isinstance(v, dict) and k not in exclude]
             todos.sort(key=lambda x: -x["puntuacion"])
-            similares = [{"key": r["key"], "vino": r["vino"]} for r in todos[:3]]
+            similares = [{"key": r["key"], "vino": r["vino"]} for r in todos[:5]]
             if similares:
                 lineas.append("Algunos de los mejor valorados:")
             else:

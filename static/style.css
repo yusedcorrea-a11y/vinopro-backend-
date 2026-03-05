@@ -2186,7 +2186,7 @@ body.page-preguntar #respuesta.respuesta-sumiller .respuesta-toolbar .btn-speak 
   visibility: hidden;
   pointer-events: none;
 }
-/* Mascota flotante: carita cartoon sumiller — arrastrable, doble toque abre */
+/* Mascota flotante: zorrito con pajarita — arrastrable, doble toque abre */
 .chatbot-guia-mascot {
   position: fixed;
   bottom: 1.5rem;
@@ -2198,14 +2198,39 @@ body.page-preguntar #respuesta.respuesta-sumiller .respuesta-toolbar .btn-speak 
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: linear-gradient(160deg, #fff 0%, #f8f2e8 45%, #f0e6d8 100%);
+  background: linear-gradient(160deg, #f5e6d8 0%, #ebd4c4 40%, #e2c4b0 100%);
   border: 3px solid var(--dorado);
-  box-shadow: 0 4px 20px rgba(107, 45, 60, 0.2), 0 0 0 0 rgba(184, 134, 11, 0.3), inset 0 1px 0 rgba(255,255,255,0.8);
+  box-shadow: 0 4px 20px rgba(107, 45, 60, 0.2), 0 0 0 0 rgba(184, 134, 11, 0.3), inset 0 1px 0 rgba(255,255,255,0.6);
   transition: transform 0.2s ease, box-shadow 0.3s ease;
   animation: chatbot-guia-mascot-float 3s ease-in-out infinite;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
+/* Orejas de zorro */
+.chatbot-guia-mascot-ear {
+  position: absolute;
+  top: -4px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-color: transparent transparent #c9a88a transparent;
+  border-width: 0 10px 18px 10px;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
+  z-index: -1;
+}
+.chatbot-guia-mascot-ear--l {
+  left: 6px;
+  transform: rotate(-28deg);
+  transform-origin: bottom center;
+}
+.chatbot-guia-mascot-ear--r {
+  right: 6px;
+  transform: rotate(28deg);
+  transform-origin: bottom center;
+  border-width: 0 10px 18px 10px;
+}
+.chatbot-guia-mascot:hover .chatbot-guia-mascot-ear--l { transform: rotate(-28deg) scale(1.05); }
+.chatbot-guia-mascot:hover .chatbot-guia-mascot-ear--r { transform: rotate(28deg) scale(1.05); }
 /* En página inicio: zorrito flotando sin círculo duro (fondo semitransparente) */
 body.page-inicio .chatbot-guia-mascot {
   background: rgba(255, 255, 255, 0.22);
@@ -2215,6 +2240,9 @@ body.page-inicio .chatbot-guia-mascot {
 body.page-inicio .chatbot-guia-mascot:hover {
   background: rgba(255, 255, 255, 0.35);
   box-shadow: 0 8px 28px rgba(184, 134, 11, 0.25);
+}
+body.page-inicio .chatbot-guia-mascot-ear {
+  border-bottom-color: rgba(201, 168, 138, 0.9);
 }
 .chatbot-guia-mascot:hover {
   transform: scale(1.1);
@@ -2582,9 +2610,12 @@ body.page-inicio .chatbot-guia-mascot:hover {
   background: rgba(0,0,0,0.55);
 }
 [data-theme="dark"] .chatbot-guia-mascot {
-  background: linear-gradient(160deg, #2f2825 0%, #261f1c 50%, #1e1916 100%);
+  background: linear-gradient(160deg, #3d3028 0%, #2f2620 50%, #261f1a 100%);
   border-color: var(--dorado);
   box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 0 0 rgba(184, 134, 11, 0.25), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+[data-theme="dark"] .chatbot-guia-mascot-ear {
+  border-bottom-color: #4a3c32;
 }
 [data-theme="dark"] .chatbot-guia-mascot:hover {
   box-shadow: 0 8px 28px rgba(184, 134, 11, 0.28), 0 0 0 4px rgba(184, 134, 11, 0.12);
@@ -2621,6 +2652,9 @@ body.page-inicio .chatbot-guia-mascot:hover {
 @media (max-width: 600px) {
   .chatbot-guia-panel { max-width: 100%; }
   .chatbot-guia-mascot { bottom: 0.75rem; right: 0.75rem; width: 60px; height: 60px; }
+  .chatbot-guia-mascot-ear { border-width: 0 8px 14px 8px; top: -3px; }
+  .chatbot-guia-mascot-ear--l { left: 4px; transform: rotate(-28deg); }
+  .chatbot-guia-mascot-ear--r { right: 4px; transform: rotate(28deg); }
   .chatbot-guia-mascot-eye { width: 14px; height: 16px; }
   .chatbot-guia-mascot-pupil { width: 8px; height: 8px; }
   .chatbot-guia-mascot-shine { width: 4px; height: 4px; right: 2px; top: 3px; }
@@ -2709,6 +2743,69 @@ body.page-inicio .chatbot-guia-mascot:hover {
   [data-theme="dark"] body.page-planes,
   [data-theme="dark"] body.page-comprar {
     background-position: top center;
+  }
+}
+
+/* ========== INICIO: RESPONSIVE (móvil y tablet) ========== */
+@media (max-width: 600px) {
+  body.page-inicio main {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    padding-bottom: 0;
+  }
+  body.page-inicio .inicio-wrap {
+    min-height: calc(100vh - 52px);
+    min-height: calc(100dvh - 52px);
+  }
+  body.page-inicio .inicio-barra {
+    padding: 0.75rem 0.5rem 1.25rem;
+    padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+    max-width: 100%;
+  }
+  body.page-inicio .inicio-ctas {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  body.page-inicio .inicio-ctas .inicio-cta {
+    min-width: 0;
+    width: 100%;
+    max-width: 280px;
+    padding: 0.9rem 1.25rem;
+    font-size: 0.98rem;
+  }
+  body.page-inicio .inicio-microcopy {
+    font-size: 0.75rem;
+    margin-top: 0.65rem;
+  }
+  body.page-inicio .header-minimal .brand-vino { font-size: 1.25rem; letter-spacing: 0.15em; }
+  body.page-inicio .header-minimal .brand-pro  { font-size: 1rem;   letter-spacing: 0.28em; }
+  body.page-inicio .header-minimal .brand-ia   { font-size: 0.85rem; letter-spacing: 0.38em; }
+}
+
+@media (min-width: 601px) and (max-width: 767px) {
+  body.page-inicio .inicio-barra {
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+  body.page-inicio .inicio-ctas .inicio-cta {
+    min-width: 160px;
+    padding: 0.95rem 1.35rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  body.page-inicio .inicio-wrap {
+    min-height: calc(100vh - 56px);
+    min-height: calc(100dvh - 56px);
+  }
+  body.page-inicio .inicio-barra {
+    max-width: 420px;
+    padding: 1rem 1.25rem 1.5rem;
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+  body.page-inicio .inicio-ctas .inicio-cta {
+    min-width: 190px;
+    padding: 1rem 1.5rem;
+    font-size: 1.05rem;
   }
 }
 

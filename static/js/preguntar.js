@@ -4,14 +4,13 @@
  */
 (function() {
   const form = document.getElementById('formPregunta');
-  const consultaIdInput = document.getElementById('consulta_id');
-  const selectRecientes = document.getElementById('select_recientes');
+  const vinoContextoSelect = document.getElementById('vino_contexto');
   const errorDiv = document.getElementById('error');
   const respuestaDiv = document.getElementById('respuesta');
   const modoSelect = document.getElementById('modo_sumiller');
-  const indicadorModo = document.getElementById('indicador_modo');
   const textoInput = document.getElementById('texto');
   const btnMic = document.getElementById('btn-mic');
+  const chipsContainer = document.getElementById('chips_preguntas_recientes');
 
   if (!form) return;
 
@@ -104,47 +103,29 @@
     window.addEventListener('voiceschanged', function() { speechSynthesis.getVoices(); });
   }
 
-  function actualizarIndicadorModo() {
-    var esLocal = modoSelect && modoSelect.value === 'local';
-    if (indicadorModo) indicadorModo.textContent = esLocal ? 'Modo: IA Local 🖥️' : 'Modo: Nube ☁️';
-  }
-  if (modoSelect) modoSelect.addEventListener('change', actualizarIndicadorModo);
-  actualizarIndicadorModo();
-
-  /* IA Local solo Premium: ocultar opción y forzar Nube si no es PRO */
+  /* Modo: ocultar fila entera para usuarios gratis; PRO: auto Local sin internet */
   (function initModoPremium() {
-    if (!modoSelect) return;
     var sid = getSessionId();
-    if (!sid) {
-      modoSelect.value = 'nube';
-      actualizarIndicadorModo();
-      return;
-    }
+    if (!sid) return;
+    var wrapRow = document.getElementById('wrap_modo_row');
     fetch('/api/check-limit', { headers: { 'X-Session-ID': sid, 'Accept': 'application/json' } })
       .then(function(r) { return r.ok ? r.json() : {}; })
       .then(function(d) {
         var esPro = !!d.es_pro;
-        var optLocal = modoSelect.querySelector('option[value="local"]');
-        if (!esPro && optLocal) {
-          optLocal.disabled = true;
-          optLocal.textContent = (optLocal.textContent.replace(/\s*\(.*\)/, '') || 'IA Local 🖥️') + ' (solo PRO)';
-          if (modoSelect.value === 'local') {
-            modoSelect.value = 'nube';
-            actualizarIndicadorModo();
-          }
-          var wrap = document.getElementById('wrap_modo_premium');
-          if (!wrap && modoSelect.parentElement) {
-            wrap = document.createElement('p');
-            wrap.id = 'wrap_modo_premium';
-            wrap.className = 'texto-pequeno';
-            wrap.style.marginTop = '0.35rem';
-            wrap.style.color = 'var(--texto-suave)';
-            wrap.innerHTML = 'IA Local es exclusiva para Premium. <a href="/planes">Pasar a PRO</a>';
-            modoSelect.parentElement.appendChild(wrap);
-          }
+        var wrap = document.getElementById('wrap_modo_premium');
+        if (wrap) wrap.style.display = esPro ? 'none' : '';
+        if (wrapRow) wrapRow.style.display = esPro ? 'flex' : 'none';
+        if (!esPro) {
+          if (modoSelect) modoSelect.value = 'nube';
+          return;
         }
+        var optLocal = modoSelect && modoSelect.querySelector('option[value="local"]');
+        if (optLocal) optLocal.disabled = false;
+        if (!navigator.onLine && modoSelect) modoSelect.value = 'local';
+        window.addEventListener('offline', function() { if (modoSelect) modoSelect.value = 'local'; });
+        window.addEventListener('online', function() { if (modoSelect) modoSelect.value = 'nube'; });
       })
-      .catch(function() {});
+      .catch(function() { if (wrapRow) wrapRow.style.display = 'none'; });
   })();
 
   function ensureSessionId() {
@@ -171,50 +152,63 @@
     } catch (_) { return ''; }
   }
 
-  function cargarRecientes() {
-    try {
-      const list = JSON.parse(localStorage.getItem('ultimasConsultas') || '[]');
-      if (selectRecientes) {
-        selectRecientes.innerHTML = '<option value="">-- Seleccionar --</option>';
-        list.forEach(id => {
-          const opt = document.createElement('option');
+  function cargarVinoContexto() {
+    var sid = getSessionId();
+    if (!vinoContextoSelect || !sid) return;
+    vinoContextoSelect.innerHTML = '<option value="">Sin vino en contexto</option>';
+    fetch('/historial-escaneos', { headers: { 'X-Session-ID': sid } })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        (d.historial || []).slice(0, 15).forEach(function(h) {
+          var id = h.consulta_id || '';
+          var nombre = h.vino_nombre || 'Sin nombre';
+          var opt = document.createElement('option');
           opt.value = id;
-          opt.textContent = id.slice(0, 8) + '...';
-          selectRecientes.appendChild(opt);
+          opt.textContent = 'Vino escaneado: ' + nombre;
+          vinoContextoSelect.appendChild(opt);
         });
-      }
-    } catch (_) {}
+      })
+      .catch(function() {});
   }
-  cargarRecientes();
+  cargarVinoContexto();
 
-  function cargarHistorial() {
-    if (!window.getSessionId) return;
-    var sid = window.getSessionId();
-    var el = document.getElementById('historial-list');
-    if (!el) return;
-    if (!sid) { el.textContent = 'Sin sesión.'; return; }
-    fetch('/historial-escaneos', { headers: { 'X-Session-ID': sid } }).then(function(r) { return r.json(); }).then(function(d) {
-      var html = '';
-      (d.historial || []).slice(0, 10).forEach(function(h) {
-        html += '<div style="margin:0.3rem 0;"><a href="#" class="link-consulta" data-id="' + (h.consulta_id || '') + '">' + (h.vino_nombre || 'Sin nombre') + '</a> ' + (h.encontrado_en_bd ? '(BD)' : '(externo)') + '</div>';
+  var chipsHideTimer = null;
+  function mostrarChipsPreguntasRecientes() {
+    if (!chipsContainer) return;
+    try {
+      var list = JSON.parse(localStorage.getItem('vino_pro_voice_history') || '[]');
+      var preguntas = list.slice(0, 5).map(function(x) { return x.pregunta; }).filter(Boolean);
+      chipsContainer.innerHTML = '';
+      if (preguntas.length === 0) { chipsContainer.hidden = true; return; }
+      preguntas.forEach(function(p) {
+        var chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'chip-pregunta';
+        chip.textContent = p.length > 50 ? p.slice(0, 47) + '…' : p;
+        chip.title = p;
+        chip.addEventListener('click', function() {
+          if (textoInput) textoInput.value = p;
+          chipsContainer.hidden = true;
+        });
+        chipsContainer.appendChild(chip);
       });
-      el.innerHTML = html || 'Sin escaneos en esta sesión.';
-      document.querySelectorAll('.link-consulta').forEach(function(a) {
-        a.addEventListener('click', function(e) { e.preventDefault(); if (consultaIdInput) consultaIdInput.value = a.getAttribute('data-id'); });
-      });
-    }).catch(function() { el.textContent = 'Error al cargar.'; });
+      chipsContainer.hidden = false;
+    } catch (_) { chipsContainer.hidden = true; }
   }
-  cargarHistorial();
-
-  if (selectRecientes) selectRecientes.addEventListener('change', function() {
-    if (this.value && consultaIdInput) consultaIdInput.value = this.value;
-  });
+  function ocultarChipsConRetraso() {
+    if (chipsHideTimer) clearTimeout(chipsHideTimer);
+    chipsHideTimer = setTimeout(function() { if (chipsContainer) chipsContainer.hidden = true; chipsHideTimer = null; }, 200);
+  }
+  if (textoInput && chipsContainer) {
+    textoInput.addEventListener('focus', mostrarChipsPreguntasRecientes);
+    textoInput.addEventListener('blur', ocultarChipsConRetraso);
+  }
 
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
     errorDiv.classList.add('hidden');
     respuestaDiv.classList.add('hidden');
-    const consulta_id = (consultaIdInput.value || (selectRecientes && selectRecientes.value)).trim();
+    const consulta_id = (vinoContextoSelect && vinoContextoSelect.value) ? vinoContextoSelect.value.trim() : '';
     const texto = document.getElementById('texto').value.trim();
     var modoLocal = modoSelect && modoSelect.value === 'local';
     if (!texto) {
@@ -252,10 +246,8 @@
         errorDiv.classList.remove('hidden');
         return;
       }
-      if (window._ultimaPreguntaFueVoz) {
-        guardarInteraccionVoz(texto, data.respuesta || '');
-        window._ultimaPreguntaFueVoz = false;
-      }
+      guardarInteraccionVoz(texto, data.respuesta || '');
+      if (window._ultimaPreguntaFueVoz) window._ultimaPreguntaFueVoz = false;
       respuestaDiv.innerHTML = '';
       var meta = document.createElement('div');
       meta.className = 'texto-pequeno respuesta-meta';

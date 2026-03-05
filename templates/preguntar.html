@@ -45,21 +45,25 @@
     .btn-feedback { padding: 0.25rem 0.5rem; font-size: 0.85rem; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3); color: #faf8f5; border-radius: 4px; cursor: pointer; }
     .btn-feedback:hover { background: rgba(255,255,255,0.2); }
     .btn-feedback.active { background: var(--dorado); color: #1a0a0e; border-color: var(--dorado); }
+    .chips-preguntas-recientes { margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .chips-preguntas-recientes .chip-pregunta { padding: 0.35rem 0.6rem; font-size: 0.85rem; background: rgba(107, 45, 60, 0.15); border: 1px solid rgba(107, 45, 60, 0.35); border-radius: 999px; color: var(--burdeos); cursor: pointer; }
+    .chips-preguntas-recientes .chip-pregunta:hover { background: rgba(107, 45, 60, 0.25); }
+    body.page-preguntar #wrap_modo_row { display: none; }
   </style>
 {% endblock %}
 
 {% block content %}
 <div class="form-container">
   <h1 class="page-title">{{ t('preguntar.title') }}</h1>
-  <p class="page-subtitle">En modo <strong>Nube</strong> puedes preguntar sin escanear: maridajes («¿Qué vino con carne?»), recomendaciones («Me gustan los tintos robustos») o seguir con «Y de esos, ¿cuál es el más económico?». Con <strong>Consulta ID</strong> (tras escanear) el sumiller responde sobre ese vino. Elige tu perfil para adaptar el lenguaje.</p>
+  <p class="page-subtitle">Pregunta por maridajes («¿Qué vino con carne?»), recomendaciones («Me gustan los tintos robustos») o sobre un vino que hayas escaneado. Elige tu perfil para adaptar el lenguaje.</p>
 
-  <div class="form-group form-group-inline">
+  <div class="form-group form-group-inline" id="wrap_modo_row">
     <label class="label-inline">Modo:</label>
-    <select id="modo_sumiller" title="IA Local (solo PRO) usa el agente en tu PC (puerto 8080); Nube usa reglas del servidor">
+    <select id="modo_sumiller" title="IA Local (solo PRO) usa el agente en tu PC; sin internet se activa automático si eres PRO">
       <option value="nube" selected>Nube ☁️</option>
       <option value="local">IA Local 🖥️ (solo PRO)</option>
     </select>
-    <span id="indicador_modo" class="texto-pequeno" style="color:var(--burdeos);">Modo: Nube ☁️</span>
+    <p id="wrap_modo_premium" class="texto-pequeno" style="margin:0.35rem 0 0 0; color:var(--texto-suave);">IA Local es exclusiva para Premium. <a href="/planes">Pasar a PRO</a></p>
   </div>
 
   <form id="formPregunta">
@@ -71,19 +75,11 @@
         <option value="profesional">Profesional</option>
       </select>
     </div>
-    <div class="form-group">
-      <label for="consulta_id">Consulta ID</label>
-      <input type="text" id="consulta_id" name="consulta_id" placeholder="UUID devuelto al escanear">
-    </div>
-    <div class="form-group" id="wrapSelectRecientes">
-      <label for="select_recientes">Últimas consultas (local)</label>
-      <select id="select_recientes">
-        <option value="">-- Seleccionar --</option>
+    <div class="form-group" id="wrap_vino_contexto">
+      <label for="vino_contexto">Vino en contexto</label>
+      <select id="vino_contexto">
+        <option value="">Sin vino en contexto</option>
       </select>
-    </div>
-    <div class="form-group" id="wrapHistorial">
-      <label>Historial de escaneos (sesión)</label>
-      <div id="historial-list" class="texto-pequeno">Cargando…</div>
     </div>
     <div class="form-group">
       <label for="texto">Tu pregunta</label>
@@ -91,6 +87,7 @@
         <input type="text" id="texto" name="texto" required placeholder="Ej: ¿Qué vino con carne? Me gustan los tintos robustos. ¿Con qué marida?">
         <button type="button" id="btn-mic" class="btn-mic" title="Preguntar por voz" aria-label="Activar micrófono para hablar">🎤</button>
       </div>
+      <div id="chips_preguntas_recientes" class="chips-preguntas-recientes" hidden aria-live="polite"></div>
     </div>
     <button type="submit" class="btn btn-block">Preguntar</button>
   </form>

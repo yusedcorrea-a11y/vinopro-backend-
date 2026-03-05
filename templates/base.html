@@ -28,23 +28,27 @@
   <div id="modal-bienvenida-idioma" class="modal-bienvenida-idioma modal-bienvenida-idioma--cerrado" role="dialog" aria-labelledby="modal-bienvenida-titulo" aria-modal="true" hidden>
     <div class="modal-bienvenida-idioma-backdrop"></div>
     <div class="modal-bienvenida-idioma-content">
-      <h2 id="modal-bienvenida-titulo" class="modal-bienvenida-idioma-titulo">🌍 ¿En qué idioma prefieres hablar?</h2>
+      <h2 id="modal-bienvenida-titulo" class="modal-bienvenida-idioma-titulo">VINO PRO</h2>
+      <p class="modal-bienvenida-idioma-subtitulo">Selecciona tu idioma</p>
       <p class="modal-bienvenida-idioma-sub">Elige tu idioma. Podrás cambiarlo después en el menú.</p>
-      <div class="modal-bienvenida-idioma-botones">
-        <a href="/set-lang?lang=es" class="modal-bienvenida-idioma-btn" data-lang="es">🇪🇸 Español</a>
-        <a href="/set-lang?lang=en" class="modal-bienvenida-idioma-btn" data-lang="en">🇬🇧 English</a>
-        <a href="/set-lang?lang=pt" class="modal-bienvenida-idioma-btn" data-lang="pt">🇵🇹 Português</a>
-        <a href="/set-lang?lang=fr" class="modal-bienvenida-idioma-btn" data-lang="fr">🇫🇷 Français</a>
-        <a href="/set-lang?lang=de" class="modal-bienvenida-idioma-btn" data-lang="de">🇩🇪 Deutsch</a>
-        <a href="/set-lang?lang=it" class="modal-bienvenida-idioma-btn" data-lang="it">🇮🇹 Italiano</a>
-        <a href="/set-lang?lang=ar" class="modal-bienvenida-idioma-btn" data-lang="ar">🇦🇪 العربية</a>
-        <a href="/set-lang?lang=ru" class="modal-bienvenida-idioma-btn" data-lang="ru">🇷🇺 Русский</a>
-        <a href="/set-lang?lang=tr" class="modal-bienvenida-idioma-btn" data-lang="tr">🇹🇷 Türkçe</a>
-        <a href="/set-lang?lang=zh" class="modal-bienvenida-idioma-btn" data-lang="zh">🇨🇳 中文</a>
-        <a href="/set-lang?lang=ja" class="modal-bienvenida-idioma-btn" data-lang="ja">🇯🇵 日本語</a>
-        <a href="/set-lang?lang=ko" class="modal-bienvenida-idioma-btn" data-lang="ko">🇰🇷 한국어</a>
-        <a href="/set-lang?lang=hi" class="modal-bienvenida-idioma-btn" data-lang="hi">🇮🇳 हिन्दी</a>
-        <a href="/set-lang?lang=he" class="modal-bienvenida-idioma-btn" data-lang="he">🇮🇱 עברית</a>
+      <div class="modal-bienvenida-idioma-botones" id="modal-bienvenida-lista">
+        <button type="button" class="modal-bienvenida-idioma-btn" data-lang="es">Español</button>
+        <button type="button" class="modal-bienvenida-idioma-btn" data-lang="en">English</button>
+        <button type="button" class="modal-bienvenida-idioma-btn" data-lang="pt">Português</button>
+        <button type="button" class="modal-bienvenida-idioma-btn" data-lang="fr">Français</button>
+        <button type="button" class="modal-bienvenida-idioma-btn" data-lang="de">Deutsch</button>
+        <button type="button" class="modal-bienvenida-idioma-btn" data-lang="it">Italiano</button>
+        <button type="button" class="modal-bienvenida-idioma-btn" data-lang="ar">العربية</button>
+        <button type="button" class="modal-bienvenida-idioma-btn" data-lang="ru">Русский</button>
+        <button type="button" class="modal-bienvenida-idioma-btn" data-lang="tr">Türkçe</button>
+        <button type="button" class="modal-bienvenida-idioma-btn" data-lang="zh">中文</button>
+        <button type="button" class="modal-bienvenida-idioma-btn" data-lang="ja">日本語</button>
+        <button type="button" class="modal-bienvenida-idioma-btn" data-lang="ko">한국어</button>
+        <button type="button" class="modal-bienvenida-idioma-btn" data-lang="hi">हिन्दी</button>
+        <button type="button" class="modal-bienvenida-idioma-btn" data-lang="he">עברית</button>
+      </div>
+      <div class="modal-bienvenida-idioma-footer">
+        <button type="button" id="modal-bienvenida-continuar" class="modal-bienvenida-idioma-continuar" disabled>Continuar</button>
       </div>
     </div>
   </div>
@@ -59,6 +63,23 @@
       if (modal && !getCookie(cookieName)) {
         modal.removeAttribute('hidden');
         modal.classList.remove('modal-bienvenida-idioma--cerrado');
+      }
+      var selectedLang = null;
+      var list = document.getElementById('modal-bienvenida-lista');
+      var continuarBtn = document.getElementById('modal-bienvenida-continuar');
+      if (list && continuarBtn) {
+        list.addEventListener('click', function(e) {
+          var btn = e.target.closest('.modal-bienvenida-idioma-btn');
+          if (!btn) return;
+          selectedLang = btn.getAttribute('data-lang');
+          list.querySelectorAll('.modal-bienvenida-idioma-btn').forEach(function(b) { b.classList.remove('modal-bienvenida-idioma-btn--selected'); b.removeAttribute('aria-pressed'); });
+          btn.classList.add('modal-bienvenida-idioma-btn--selected');
+          btn.setAttribute('aria-pressed', 'true');
+          continuarBtn.disabled = false;
+        });
+        continuarBtn.addEventListener('click', function() {
+          if (selectedLang) window.location.href = '/set-lang?lang=' + encodeURIComponent(selectedLang);
+        });
       }
     })();
   </script>

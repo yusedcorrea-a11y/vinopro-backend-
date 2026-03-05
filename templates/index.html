@@ -1,8 +1,14 @@
 {% extends "base.html" %}
 {% block content %}
-  <div class="inicio-ctas">
-    <a href="/preguntar" class="inicio-cta inicio-cta-sumiller">🗣️ {{ t('preguntar.title') }}</a>
-    <a href="/escanear" class="inicio-cta inicio-cta-escanear">📷 {{ t('escanear.btn_escanear') }}</a>
+  <div class="inicio-wrap">
+    <div class="inicio-spacer"></div>
+    <footer class="inicio-barra">
+      <div class="inicio-ctas">
+        <a href="/preguntar" class="inicio-cta inicio-cta-sumiller"><span class="inicio-cta-ico" aria-hidden="true">💬</span> Habla con el sumiller</a>
+        <a href="/escanear" class="inicio-cta inicio-cta-escanear"><span class="inicio-cta-ico" aria-hidden="true">📷</span> Descubre un vino</a>
+      </div>
+      <p class="inicio-microcopy">Tu sumiller personal con IA</p>
+    </footer>
   </div>
   {# Ayudante (mascota) y menú ☰ están en base.html; doble clic en la mascota abre el menú secreto. #}
 {% endblock %}

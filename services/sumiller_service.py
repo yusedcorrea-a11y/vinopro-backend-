@@ -41,15 +41,110 @@ MARIDAJE_PALABRAS = {
     "empanada": ["empanada", "empanadas", "argentina", "argentinas"],
 }
 
-# Cocinas del mundo / platos específicos -> tipos de vino o palabras para buscar en nombre/descripción
-MARIDAJE_COCINA = {
-    "india": ["tikka", "masala", "curry", "india", "indio", "indios", "especiado", "especiada"],
-    "china": ["china", "chino", "wok", "sweet and sour", "agridulce", "pato laqueado"],
-    "japonesa": ["japon", "japones", "sushi", "sashimi", "sake", "koshu", "umami", "tempura"],
+# Cocina tradicional por país: platos típicos + palabras para buscar vinos que maridan + texto intro
+# Así en cada país recomendamos vinos que sí pegan con su cocina (nada de "ni con pegamento" 😄)
+COCINA_TRADICIONAL = {
+    "india": {
+        "platos": ["tikka", "masala", "curry", "india", "indio", "indios", "especiado", "especiada", "biryani", "tandoori", "naan", "dal"],
+        "vinos": ["chenin", "gewürztraminer", "gewurztraminer", "riesling", "sula", "india", "blanco", "aromatico"],
+        "intro": "Para la cocina india especiada (curry, tikka masala, biryani) van bien blancos aromáticos: Chenin, Gewürztraminer o Riesling.",
+    },
+    "china": {
+        "platos": ["china", "chino", "wok", "agridulce", "pato", "dim sum", "cerdo", "arroz frito", "noodles", "sweet and sour"],
+        "vinos": ["gewurztraminer", "riesling", "blanco", "koshu", "china", "japon", "semidulce", "ligero"],
+        "intro": "Para cocina china (dim sum, wok, pato) recomendamos blancos aromáticos o semidulces: Riesling, Gewürztraminer.",
+    },
+    "japon": {
+        "platos": ["japon", "japones", "sushi", "sashimi", "sake", "koshu", "umami", "tempura", "ramen", "tonkatsu", "teriyaki"],
+        "vinos": ["riesling", "blanco", "koshu", "sake", "japon", "champagne", "espumoso", "ligero", "mineral"],
+        "intro": "Para sushi, sashimi o cocina japonesa van bien un blanco ligero, Riesling, Champagne o un Koshu.",
+    },
+    "rusia": {
+        "platos": ["pelmeni", "pelmeny", "vareniki", "borscht", "rusa", "ruso", "dumpling", "dumplings", "smetana", "blinis", "caviar"],
+        "vinos": ["riesling", "blanco", "espumoso", "champagne", "cava", "prosecco", "suave", "afrutado", "rusia", "saperavi"],
+        "intro": "Para pelmeni, vareniki o cocina rusa van bien un blanco ligero, espumoso o un tinto suave.",
+    },
+    "espana": {
+        "platos": ["paella", "tapas", "jamon", "iberico", "cocido", "tortilla", "gazpacho", "fabada", "pulpo", "gallega", "española", "espana", "mariscos", "arroces", "fritura"],
+        "vinos": ["rioja", "ribera", "cava", "tinto", "blanco", "albarino", "verdejo", "crianza", "espana", "priorat", "manzanilla", "fino"],
+        "intro": "Para cocina española (paella, tapas, jamón, cocido) un Rioja, Ribera, cava o un blanco Albariño/Verdejo.",
+    },
+    "italia": {
+        "platos": ["pasta", "pizza", "risotto", "osso buco", "parmigiana", "tiramisu", "carbonara", "lasaña", "lasana", "ravioli", "italiana", "italia", "ragu", "bolognesa", "gnocchi"],
+        "vinos": ["chianti", "barolo", "pinot grigio", "prosecco", "brunello", "italia", "toscana", "piamonte", "nero d'avola", "blanco", "tinto", "sangiovese", "montepulciano"],
+        "intro": "Para pasta, pizza o cocina italiana un Chianti, Prosecco, Pinot Grigio o un Barolo son clásicos.",
+    },
+    "francia": {
+        "platos": ["frances", "francia", "quiche", "boeuf", "bourguignon", "coq au vin", "ratatouille", "crepes", "croissant", "cassoulet", "tarte", "creme brulee"],
+        "vinos": ["burdeos", "borgoña", "champagne", "chablis", "rhone", "loira", "francia", "tinto", "blanco", "chardonnay", "pinot noir", "syrah"],
+        "intro": "Para cocina francesa (boeuf bourguignon, quiche, coq au vin) un Burdeos, Borgoña o Champagne.",
+    },
+    "argentina": {
+        "platos": ["asado", "empanada", "empanadas", "chimichurri", "provoleta", "argentina", "argentino", "dulce de leche", "milanesa", "choripan"],
+        "vinos": ["malbec", "argentina", "mendoza", "tinto", "torrontes", "bonarda", "cabernet", "blanco"],
+        "intro": "Para asado, empanadas o cocina argentina un Malbec de Mendoza es el maridaje clásico. También Torrontés o tintos.",
+    },
+    "mexico": {
+        "platos": ["taco", "tacos", "mole", "ceviche", "guacamole", "enchilada", "mexicana", "mexico", "chiles", "pozole", "carnitas", "quesadilla"],
+        "vinos": ["blanco", "rosado", "tinto", "frutal", "riesling", "gewurztraminer", "espumoso", "burbuja", "cava"],
+        "intro": "Para tacos, mole o cocina mexicana van bien blancos frescos, rosados o tintos frutales; también un Riesling o espumoso.",
+    },
+    "portugal": {
+        "platos": ["bacalao", "bacalhau", "caldo verde", "francesinha", "pastel", "pastéis", "portuguesa", "portugal", "caldeirada", "sardinas"],
+        "vinos": ["vinho verde", "porto", "dao", "douro", "portugal", "alvarinho", "blanco", "tinto", "espumoso", "bairrada"],
+        "intro": "Para bacalao o cocina portuguesa un Vinho Verde, un blanco del Dão o un tinto del Douro maridan muy bien.",
+    },
+    "grecia": {
+        "platos": ["moussaka", "souvlaki", "tzatziki", "griega", "grecia", "feta", "gyros", "dolma", "ensalada griega", "spanakopita"],
+        "vinos": ["retsina", "assyrtiko", "grecia", "nemea", "blanco", "rosado", "tinto", "santorini", "naoussa"],
+        "intro": "Para moussaka, souvlaki o cocina griega un Assyrtiko, Retsina o un tinto de Nemea.",
+    },
+    "alemania": {
+        "platos": ["bratwurst", "schnitzel", "sauerkraut", "pretzel", "alemana", "alemania", "currywurst", "spatzle", "black forest"],
+        "vinos": ["riesling", "alemania", "spatburgunder", "pinot noir", "blanco", "tinto", "mosel", "rheingau"],
+        "intro": "Para cocina alemana (bratwurst, schnitzel) un Riesling o un Spätburgunder (Pinot Noir) son ideales.",
+    },
+    "peru": {
+        "platos": ["ceviche", "causa", "lomo saltado", "aji de gallina", "peruana", "peru", "anticuchos", "rocoto", "pisco"],
+        "vinos": ["sauvignon blanc", "blanco", "tinto", "champagne", "espumoso", "peru", "afrutado", "acido"],
+        "intro": "Para ceviche o cocina peruana un Sauvignon Blanc fresco, espumoso o un tinto afrutado.",
+    },
+    "chile": {
+        "platos": ["empanada", "cazuela", "pastel de choclo", "chilena", "chile", "humita", "curanto", "asado chileno"],
+        "vinos": ["carmenere", "cabernet", "chile", "sauvignon blanc", "tinto", "blanco", "maipo", "colchagua"],
+        "intro": "Para empanadas, cazuela o cocina chilena un Carmenere o Cabernet de Chile, o un Sauvignon Blanc.",
+    },
+    "brasil": {
+        "platos": ["feijoada", "churrasco", "moqueca", "brasileña", "brasil", "pão de queijo", "coxinha", "acarajé"],
+        "vinos": ["tinto", "espumoso", "espumante", "brasil", "blanco", "tannat", "merlot", "serra gaucha"],
+        "intro": "Para feijoada o churrasco brasileño un tinto robusto o un espumante de Brasil (Serra Gaúcha).",
+    },
+    "turquia": {
+        "platos": ["kebab", "meze", "baklava", "köfte", "turca", "turquia", "döner", "lahmacun", "borek", "dolma"],
+        "vinos": ["turquia", "anatolia", "okuzgozu", "bogazkere", "tinto", "rosado", "blanco", "narince"],
+        "intro": "Para kebab, meze o cocina turca un tinto de Anatolia (Öküzgözü), rosado o blanco Narince.",
+    },
+    "libano": {
+        "platos": ["hummus", "tabule", "kibbeh", "shawarma", "libanesa", "libano", "falafel", "fattoush", "tahini"],
+        "vinos": ["libano", "bekaa", "musar", "tinto", "blanco", "rosado", "chardonnay", "cabernet"],
+        "intro": "Para hummus, kibbeh o cocina libanesa un vino del Valle del Bekaa (Château Musar) o rosado.",
+    },
+    "marruecos": {
+        "platos": ["tagine", "couscous", "harira", "pastela", "marroqui", "marruecos", "kefta", "mechoui", "cuscus"],
+        "vinos": ["rosado", "tinto", "blanco", "marruecos", "afrutado", "suave", "gewurztraminer", "riesling"],
+        "intro": "Para tagine o couscous marroquí un rosado, tinto suave o blanco aromático (Gewürztraminer, Riesling).",
+    },
+    "usa": {
+        "platos": ["barbecue", "bbq", "hamburguesa", "mac and cheese", "thanksgiving", "americana", "america", "pollo frito", "ribs", "hot dog"],
+        "vinos": ["zinfandel", "chardonnay", "cabernet", "california", "napa", "tinto", "blanco", "pinot noir", "estados unidos"],
+        "intro": "Para barbecue o cocina americana un Zinfandel, Cabernet de California o Chardonnay.",
+    },
+    "australia": {
+        "platos": ["barbacoa", "australiana", "australia", "meat pie", "fish and chips", "lamington", "vegemite"],
+        "vinos": ["shiraz", "australia", "chardonnay", "tinto", "blanco", "mclaren vale", "barossa", "semillon"],
+        "intro": "Para barbacoa o cocina australiana un Shiraz, Chardonnay o Semillón de Australia.",
+    },
 }
-# Para cocina india/especiada: priorizar blancos aromáticos (Chenin, Gewürztraminer, Riesling) y vinos indios por nombre
-PALABRAS_VINO_COCINA_INDIA = ["chenin", "gewürztraminer", "gewurztraminer", "riesling", "sula", "india", "blanco"]
-PALABRAS_VINO_ASIA = ["gewürztraminer", "gewurztraminer", "riesling", "blanco", "koshu", "sake", "sula", "china", "japon", "india"]
 
 # Términos de perfil de gusto para recomendaciones
 PREFERENCIA_TIPO = {"tinto": "tinto", "tintos": "tinto", "blanco": "blanco", "blancos": "blanco", "rosado": "rosado", "rosados": "rosado", "espumoso": "espumoso", "espumosos": "espumoso", "dulce": "dulce"}
@@ -89,11 +184,20 @@ def _normalizar(t: str) -> str:
 
 
 def _es_cocina_especial(comida_norm: str) -> str | None:
-    """Devuelve 'india', 'china' o 'japonesa' si la comida encaja en esa cocina."""
-    for cocina, palabras in MARIDAJE_COCINA.items():
-        if any(p in comida_norm for p in palabras):
+    """Devuelve la clave de cocina (india, espana, italia, etc.) si la comida encaja en esa cocina tradicional."""
+    for cocina, data in COCINA_TRADICIONAL.items():
+        platos = data.get("platos") or []
+        if any(p in comida_norm for p in platos):
             return cocina
     return None
+
+
+def _palabras_vino_para_cocina(cocina: str) -> list[str]:
+    """Lista de palabras para buscar vinos que maridan con esa cocina."""
+    data = COCINA_TRADICIONAL.get(cocina)
+    if not data:
+        return []
+    return [p for p in (data.get("vinos") or []) if len(p) > 2]
 
 
 def buscar_vinos_por_maridaje(
@@ -111,7 +215,7 @@ def buscar_vinos_por_maridaje(
     exclude = set((exclude_keys or []))
     tokens = [w for w in comida_norm.split() if len(w) > 2]
     cocina = _es_cocina_especial(comida_norm)
-    palabras_vinos_especial = PALABRAS_VINO_COCINA_INDIA if cocina == "india" else PALABRAS_VINO_ASIA if cocina else []
+    palabras_vinos_especial = _palabras_vino_para_cocina(cocina) if cocina else []
 
     resultados = []
     for key, vino in vinos_dict.items():
@@ -286,18 +390,30 @@ def buscar_vinos_por_preferencia(
 
 
 def formatear_respuesta_maridaje(vinos: list[dict], comida: str, perfil: str = "aficionado") -> str:
-    """Genera texto elegante con recomendaciones de maridaje. Soporta cocina india/china/japonesa."""
+    """Genera texto elegante con recomendaciones de maridaje. Usa COCINA_TRADICIONAL por país cuando aplica."""
     if not vinos:
         return "No tenemos en la carta vinos especialmente recomendados para ese plato. Puedo recomendarte tintos para carne, blancos para pescado o cordero si me dices qué prefieres."
+    comida_norm = _normalizar(comida)
+    cocina = _es_cocina_especial(comida_norm)
+    if cocina and cocina in COCINA_TRADICIONAL:
+        intro_base = (COCINA_TRADICIONAL[cocina].get("intro") or "").strip()
+        if intro_base:
+            partes = []
+            for i, item in enumerate(vinos[:5]):
+                v = item["vino"]
+                nombre = v.get("nombre") or "—"
+                bodega = v.get("bodega") or "—"
+                region = v.get("region") or ""
+                if i == 0:
+                    partes.append(f"un {nombre} ({bodega}, {region})")
+                else:
+                    partes.append(f"{nombre} ({bodega})")
+            if len(partes) == 1:
+                return intro_base + " Le recomiendo " + partes[0] + "."
+            return intro_base + " Le recomiendo " + ", ".join(partes[:-1]) + " y " + partes[-1] + "."
     comida_low = comida.lower()
     intro = "Para "
-    if any(p in comida_low for p in ["tikka", "masala", "curry", "india", "indio"]):
-        intro += "la cocina india especiada, "
-    elif any(p in comida_low for p in ["china", "chino", "wok"]):
-        intro += "la cocina china, "
-    elif any(p in comida_low for p in ["japon", "japones", "sushi", "sashimi"]):
-        intro += "la cocina japonesa, "
-    elif any(p in comida_low for p in ["cordero", "lechazo"]):
+    if any(p in comida_low for p in ["cordero", "lechazo"]):
         intro += "un cordero asado, "
     elif "cocido" in comida_low or "guiso" in comida_low or "estofado" in comida_low or "rabo" in comida_low or "potaje" in comida_low:
         intro += "un cocido, guiso o estofado, "
@@ -430,24 +546,20 @@ def fallback_sin_resultados(
     pregunta_norm = _normalizar(pregunta)
 
     cocina = _es_cocina_especial(pregunta_norm)
-    if cocina == "india":
+    if cocina and cocina in COCINA_TRADICIONAL:
+        data = COCINA_TRADICIONAL[cocina]
+        palabras = _palabras_vino_para_cocina(cocina)
         similares_cocina = _buscar_vinos_por_palabras(
-            vinos_dict, [x for x in PALABRAS_VINO_COCINA_INDIA if len(x) > 3], limite=5, exclude_keys=exclude_keys
-        )
+            vinos_dict, palabras, limite=5, exclude_keys=exclude_keys
+        ) if palabras else []
+        intro = (data.get("intro") or "").strip()
         if similares_cocina:
-            texto = "Para la cocina india especiada (pollo tikka masala, curry, etc.) recomendamos un blanco aromático: Chenin Blanc, Gewürztraminer o Riesling. En nuestra carta:"
+            texto = intro + " En nuestra carta:"
             return texto, similares_cocina
-        texto = "Para la cocina india especiada recomendamos un Sula Chenin Blanc (India) o un Gewürztraminer alsaciano. No tenemos esos vinos exactos en la carta; aquí van alternativas que pueden ir bien:"
         todos = [{"key": k, "vino": v, "puntuacion": (v.get("puntuacion") or 0) if isinstance(v, dict) else 0} for k, v in vinos_dict.items() if isinstance(v, dict) and k not in exclude]
         todos.sort(key=lambda x: -x["puntuacion"])
-        return texto, [{"key": r["key"], "vino": r["vino"]} for r in todos[:5]]
-    if cocina in ("china", "japonesa"):
-        similares_cocina = _buscar_vinos_por_palabras(
-            vinos_dict, [x for x in PALABRAS_VINO_ASIA if len(x) > 3], limite=5, exclude_keys=exclude_keys
-        )
-        if similares_cocina:
-            texto = f"Para la cocina {cocina} recomendamos blancos aromáticos o ligeros (Riesling, Gewürztraminer, Koshu). En nuestra carta:"
-            return texto, similares_cocina
+        texto_fallback = intro + " Aquí van opciones de la carta:" if intro else "Aquí van algunos vinos que pueden ir bien:"
+        return texto_fallback, [{"key": r["key"], "vino": r["vino"]} for r in todos[:5]]
 
     info_tipo = None
     tipo_key = None

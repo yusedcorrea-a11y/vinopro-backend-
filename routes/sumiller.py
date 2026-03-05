@@ -400,7 +400,9 @@ async def preguntar_sumiller(
     except HTTPException:
         raise
     except Exception as e:
+        import traceback
         print("[SUMILLER] Error en preguntar_sumiller:", e)
+        traceback.print_exc()
         raise HTTPException(
             status_code=500,
             detail="Error al procesar la pregunta. Inténtalo de nuevo.",
@@ -448,7 +450,7 @@ def _preguntar_sumiller_general(
     if respuesta_contexto:
         respuesta = respuesta_contexto
         vinos_recomendados = None
-        vinos_ref_para_guardar = list(vinos_ref)  # mantener los mismos para seguir refiriéndonos a "esos"
+        vinos_ref_para_guardar = [r for r in vinos_ref if isinstance(r, str) and (r or "").strip()]
     elif parece_de_esos and not vinos_ref:
         respuesta = "Disculpe, no recordaba los vinos que le recomendé antes. ¿Puede repetir su pregunta sobre maridaje o gustos para que le recomiende de nuevo y luego le diga el más barato o el más caro?"
         vinos_recomendados = None
@@ -456,7 +458,7 @@ def _preguntar_sumiller_general(
     elif parece_de_esos and vinos_ref and not respuesta_contexto:
         respuesta = "Disculpe, no he podido resolver su pregunta sobre esos vinos. ¿Quiere que le recomiende de nuevo y luego le indique el más económico o el más caro?"
         vinos_recomendados = None
-        vinos_ref_para_guardar = list(vinos_ref)
+        vinos_ref_para_guardar = [r for r in vinos_ref if isinstance(r, str) and (r or "").strip()]
     elif vino_bd and key_bd:
         # Usuario preguntó por un vino que SÍ está en nuestra BD (Protos, Viña Pedrosa, etc.) -> responder con datos reales
         print("[SUMILLER] Búsqueda previa BD: encontrado %s (key=%s)" % (vino_bd.get("nombre", "")[:50], key_bd))
@@ -584,13 +586,16 @@ def _preguntar_sumiller_general(
         print("[SUMILLER] historial_store después de guardar: session_id=%r, entradas=%s, última vinos_ref=%s" % (
             session_id, len(contexto), len(nuevo.get("vinos_ref") or [])))
 
-    vino_nombre = vinos_recomendados[0].get("nombre") if vinos_recomendados else None
-    primer_key = vinos_ref_para_guardar[0] if vinos_ref_para_guardar else None
-    primer_vino = vinos_recomendados[0] if vinos_recomendados else None
+    vinos_ref_para_guardar = [k for k in (vinos_ref_para_guardar or []) if isinstance(k, str) and (k or "").strip()]
+    vino_nombre = vinos_recomendados[0].get("nombre") if vinos_recomendados and isinstance(vinos_recomendados[0], dict) else None
+    primer_key = (vinos_ref_para_guardar[0] if vinos_ref_para_guardar else None)
+    if primer_key is not None and not isinstance(primer_key, str):
+        primer_key = str(primer_key) if primer_key else None
+    primer_vino = vinos_recomendados[0] if vinos_recomendados and isinstance(vinos_recomendados[0], dict) else None
     tipo_primer = (primer_vino.get("tipo") or "tinto").strip().lower() if primer_vino else "tinto"
     if tipo_primer not in ("tinto", "blanco", "rosado", "espumoso"):
         tipo_primer = "tinto"
-    imagen_url = get_imagen_vino(primer_key or "", tipo_primer) if primer_key else None
+    imagen_url = get_imagen_vino((primer_key or "").strip(), tipo_primer) if primer_key else None
     out = {
         "consulta_id": None,
         "vino_key": primer_key,
@@ -615,12 +620,18 @@ def _preguntar_sumiller_general(
     if quizas_quisiste_decir:
         out["quizas_quisiste_decir"] = quizas_quisiste_decir
     if session_id:
-        rec_svc.registrar_busqueda(session_id, texto_clean, vinos_ref_para_guardar)
+        try:
+            rec_svc.registrar_busqueda(session_id, texto_clean, vinos_ref_para_guardar or [])
+        except Exception:
+            pass
     exclude_keys = list(vinos_ref_para_guardar) if vinos_ref_para_guardar else []
-    sugerencias = rec_svc.get_recomendaciones_personalizadas(session_id or "", vinos_dict, exclude_keys=exclude_keys, limite=3)
+    try:
+        sugerencias = rec_svc.get_recomendaciones_personalizadas(session_id or "", vinos_dict, exclude_keys=exclude_keys, limite=3) or []
+    except Exception:
+        sugerencias = []
     out["sugerencias_personalizadas"] = [
-        {"key": s["key"], "nombre": s["vino"].get("nombre"), "bodega": s["vino"].get("bodega"), "region": s["vino"].get("region"), "precio_estimado": s["vino"].get("precio_estimado")}
-        for s in sugerencias
+        {"key": s.get("key"), "nombre": (s.get("vino") or {}).get("nombre"), "bodega": (s.get("vino") or {}).get("bodega"), "region": (s.get("vino") or {}).get("region"), "precio_estimado": (s.get("vino") or {}).get("precio_estimado")}
+        for s in sugerencias if isinstance(s, dict)
     ]
     return out
 

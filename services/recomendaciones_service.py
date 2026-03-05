@@ -66,12 +66,13 @@ def _load():
         pass
 
 
-def registrar_busqueda(session_id: str, query: str, wine_keys: list[str]) -> None:
-    """Registra una búsqueda del usuario y los vinos devueltos."""
+def registrar_busqueda(session_id: str, query: str, wine_keys: list[str] | None = None) -> None:
+    """Registra una búsqueda del usuario y los vinos devueltos. Solo se guardan keys que sean strings."""
     s = _get_session(session_id)
     if not session_id:
         return
-    s["busquedas"] = (s.get("busquedas") or []) + [{"q": (query or "").strip(), "keys": list(wine_keys)[:10]}]
+    keys_safe = [k for k in (list(wine_keys or [])[:10]) if isinstance(k, str) and (k or "").strip()]
+    s["busquedas"] = (s.get("busquedas") or []) + [{"q": (query or "").strip(), "keys": keys_safe}]
     s["busquedas"] = s["busquedas"][-_MAX_BUSQUEDAS:]
     _persist()
 
@@ -150,7 +151,7 @@ def get_recomendaciones_personalizadas(
         if key in vistos:
             score += 5
         for b in busquedas[-5:]:
-            keys_b = set(b.get("keys") or [])
+            keys_b = set(k for k in (b.get("keys") or []) if isinstance(k, str))
             if key in keys_b:
                 score += 3
             for k in keys_b:

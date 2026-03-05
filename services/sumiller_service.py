@@ -564,7 +564,7 @@ def fallback_sin_resultados(
         todos = [{"key": k, "vino": v, "puntuacion": (v.get("puntuacion") or 0) if isinstance(v, dict) else 0} for k, v in vinos_dict.items() if isinstance(v, dict) and k not in exclude]
         todos.sort(key=lambda x: -x["puntuacion"])
         texto_fallback = intro + " Aquí van opciones de la carta:" if intro else "Aquí van algunos vinos que pueden ir bien:"
-        return texto_fallback, [{"key": r["key"], "vino": r["vino"]} for r in todos[:5]]
+        return texto_fallback, list({"key": r["key"], "vino": r["vino"]} for r in todos[:5])
 
     info_tipo = None
     tipo_key = None

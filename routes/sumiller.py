@@ -395,6 +395,25 @@ async def preguntar_sumiller(
         }
 
     # --- Modo: pregunta general (maridaje, recomendación, contexto) ---
+    try:
+        return _preguntar_sumiller_general(request, vinos_dict, texto_clean, perfil, x_session_id)
+    except HTTPException:
+        raise
+    except Exception as e:
+        print("[SUMILLER] Error en preguntar_sumiller:", e)
+        raise HTTPException(
+            status_code=500,
+            detail="Error al procesar la pregunta. Inténtalo de nuevo.",
+        )
+
+
+def _preguntar_sumiller_general(
+    request: Request,
+    vinos_dict: dict,
+    texto_clean: str,
+    perfil: str,
+    x_session_id: str | None,
+):
     session_id = (x_session_id or "").strip()
     historial_store = _get_historial_sumiller(request)
     contexto = list(historial_store.get(session_id, [])) if session_id else []
@@ -469,6 +488,15 @@ async def preguntar_sumiller(
                 idx = cl.find(" para acompañar") if " para acompañar" in cl else cl.find(" acompañar ")
                 if idx >= 0:
                     comida = (cl[idx:] + " ").split(" ", 2)[-1].strip().strip("?¿.,") or comida
+            elif "hoy toca comida " in cl:
+                # "hoy toca comida japonesa que vino pongo" -> comida japonesa / japonesa
+                parte = cl.split("hoy toca comida ", 1)[-1].strip()
+                for sep in [" que ", " qué ", " que vino", " qué vino", " ?", "?"]:
+                    if sep in parte:
+                        comida = parte.split(sep)[0].strip().strip("?¿.,")
+                        break
+                else:
+                    comida = parte[:50].strip() if parte else comida
         if not comida or len(comida) < 2:
             comida = "plato"
         coincidencias = svc_sumiller.buscar_vinos_por_maridaje(

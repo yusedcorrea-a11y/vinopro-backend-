@@ -1,4 +1,8 @@
 {
+  "inicio": {
+    "bodega_count": "Tienes %s vinos en tu bodega",
+    "bodega_link": "Ver mi bodega"
+  },
   "nav": {
     "inicio": "Inicio",
     "escanear": "Escanear",

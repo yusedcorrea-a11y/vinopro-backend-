@@ -1,4 +1,8 @@
 {
+  "inicio": {
+    "bodega_count": "You have %s wines in your cellar",
+    "bodega_link": "View my cellar"
+  },
   "nav": {
     "inicio": "Home",
     "escanear": "Scan",

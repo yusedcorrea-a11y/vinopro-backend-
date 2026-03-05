@@ -3,12 +3,40 @@
   <div class="inicio-wrap">
     <div class="inicio-spacer"></div>
     <footer class="inicio-barra">
+      <p class="inicio-dato-bodega" id="inicio-dato-bodega" data-msg="{{ t('inicio.bodega_count') }}" data-link="{{ t('inicio.bodega_link') }}" hidden aria-live="polite">
+        <span id="inicio-dato-bodega-text"></span> <a href="/bodega" id="inicio-dato-bodega-link" class="inicio-dato-bodega-link"></a>
+      </p>
       <div class="inicio-ctas">
-        <a href="/preguntar" class="inicio-cta inicio-cta-sumiller"><span class="inicio-cta-ico" aria-hidden="true">💬</span> Habla con el sumiller</a>
-        <a href="/escanear" class="inicio-cta inicio-cta-escanear"><span class="inicio-cta-ico" aria-hidden="true">📷</span> Descubre un vino</a>
+        <a href="/preguntar" class="inicio-cta inicio-cta-sumiller" aria-label="Ir a hablar con el sumiller con IA"><span class="inicio-cta-ico" aria-hidden="true">💬</span> Habla con el sumiller</a>
+        <a href="/escanear" class="inicio-cta inicio-cta-escanear" aria-label="Ir a escanear una etiqueta y descubrir un vino"><span class="inicio-cta-ico" aria-hidden="true">📷</span> Descubre un vino</a>
       </div>
       <p class="inicio-microcopy">Tu sumiller personal con IA</p>
     </footer>
   </div>
   {# Ayudante (mascota) y menú ☰ están en base.html; doble clic en la mascota abre el menú secreto. #}
+{% endblock %}
+{% block scripts %}
+  <script>
+  (function() {
+    var wrap = document.getElementById('inicio-dato-bodega');
+    if (!wrap) return;
+    var sid = typeof window.getSessionId === 'function' ? (window.getSessionId() || '').trim() : '';
+    if (!sid) return;
+    fetch('/api/bodega', { headers: { 'X-Session-ID': sid, 'Accept': 'application/json' } })
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(d) {
+        if (!d || typeof d.total_botellas !== 'number' || d.total_botellas < 1) return;
+        var msgTpl = wrap.getAttribute('data-msg') || 'Tienes %s vinos en tu bodega';
+        if (msgTpl.indexOf('%s') === -1) msgTpl = 'Tienes %s vinos en tu bodega';
+        var msg = msgTpl.replace('%s', String(d.total_botellas));
+        var linkText = wrap.getAttribute('data-link') || 'Ver mi bodega';
+        var textEl = document.getElementById('inicio-dato-bodega-text');
+        var linkEl = document.getElementById('inicio-dato-bodega-link');
+        if (textEl) textEl.textContent = msg;
+        if (linkEl) { linkEl.textContent = linkText; linkEl.setAttribute('aria-label', linkText); }
+        wrap.hidden = false;
+      })
+      .catch(function() {});
+  })();
+  </script>
 {% endblock %}

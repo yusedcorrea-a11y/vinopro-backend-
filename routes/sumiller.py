@@ -395,6 +395,8 @@ async def preguntar_sumiller(
         }
 
     # --- Modo: pregunta general (maridaje, recomendación, contexto) ---
+    if not isinstance(vinos_dict, dict):
+        vinos_dict = {}
     try:
         return _preguntar_sumiller_general(request, vinos_dict, texto_clean, perfil, x_session_id)
     except HTTPException:
@@ -416,6 +418,8 @@ def _preguntar_sumiller_general(
     perfil: str,
     x_session_id: str | None,
 ):
+    if not isinstance(vinos_dict, dict):
+        vinos_dict = {}
     session_id = (x_session_id or "").strip()
     historial_store = _get_historial_sumiller(request)
     contexto = list(historial_store.get(session_id, [])) if session_id else []

@@ -214,6 +214,8 @@ def buscar_vinos_por_maridaje(
     exclude_keys: keys ya recomendadas en esta sesión para no repetir la misma respuesta.
     Devuelve lista de { "key", "vino" } ordenada por puntuación (mejor primero).
     """
+    if not isinstance(vinos_dict, dict):
+        return []
     comida_norm = _normalizar(comida)
     if not comida_norm:
         return []
@@ -405,7 +407,9 @@ def formatear_respuesta_maridaje(vinos: list[dict], comida: str, perfil: str = "
         if intro_base:
             partes = []
             for i, item in enumerate(vinos[:5]):
-                v = item["vino"]
+                v = item.get("vino") if isinstance(item, dict) else None
+                if not isinstance(v, dict):
+                    continue
                 nombre = v.get("nombre") or "—"
                 bodega = v.get("bodega") or "—"
                 region = v.get("region") or ""
@@ -413,6 +417,8 @@ def formatear_respuesta_maridaje(vinos: list[dict], comida: str, perfil: str = "
                     partes.append(f"un {nombre} ({bodega}, {region})")
                 else:
                     partes.append(f"{nombre} ({bodega})")
+            if not partes:
+                return intro_base + " No tenemos en la carta vinos de esa categoría en este momento."
             if len(partes) == 1:
                 return intro_base + " Le recomiendo " + partes[0] + "."
             return intro_base + " Le recomiendo " + ", ".join(partes[:-1]) + " y " + partes[-1] + "."
@@ -431,7 +437,9 @@ def formatear_respuesta_maridaje(vinos: list[dict], comida: str, perfil: str = "
     intro += "le recomiendo "
     partes = []
     for i, item in enumerate(vinos[:5]):
-        v = item["vino"]
+        v = item.get("vino") if isinstance(item, dict) else None
+        if not isinstance(v, dict):
+            continue
         nombre = v.get("nombre") or "—"
         bodega = v.get("bodega") or "—"
         region = v.get("region") or ""
@@ -440,6 +448,8 @@ def formatear_respuesta_maridaje(vinos: list[dict], comida: str, perfil: str = "
             partes.append(f"un {nombre} ({bodega}, {region})")
         else:
             partes.append(f"{nombre} ({bodega})")
+    if not partes:
+        return intro + "No tenemos en la carta vinos para ese maridaje en este momento."
     if len(partes) == 1:
         texto = intro + partes[0] + "."
     else:
@@ -544,6 +554,8 @@ def fallback_sin_resultados(
     (desde conocimiento_vinos.json) y sugerencia de vinos similares de la BD.
     exclude_keys: keys ya recomendadas en sesión para no repetir el mismo vino.
     """
+    if not isinstance(vinos_dict, dict):
+        return "No hemos encontrado vinos para esa consulta. Prueba con otro maridaje o preferencia.", []
     exclude = set((exclude_keys or []))
     conocimiento = _cargar_conocimiento()
     tipos = conocimiento.get("tipos") or {}

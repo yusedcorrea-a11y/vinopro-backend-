@@ -433,29 +433,9 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                                 "mensaje": "Identificado por reconocimiento de etiqueta (IA).",
                                 "es_pro": _es_pro((x_session_id or "").strip()),
                             }
-                        resultados_off = buscar_por_texto(nombre_ia, limite=1)
-                        if resultados_off and len(resultados_off) > 0:
-                            vino_externo = resultados_off[0]
-                            consulta_id = str(uuid.uuid4())
-                            key_guardada = _guardar_vino_consulta(request, vino_externo)
-                            consultas[consulta_id] = {"vino": vino_externo, "key": key_guardada}
-                            try:
-                                from services import analytics_service
-                                analytics_service.registrar_escaneo(False, vino_externo.get("nombre"), vino_externo.get("pais"))
-                            except Exception:
-                                pass
-                            _push_historial(request, (x_session_id or "").strip(), consulta_id, vino_externo.get("nombre"), False)
-                            nombre_slug = key_guardada or _slug(vino_externo.get("nombre") or "")
-                            logger.info("[ESCANEAR] Identificado por IA (API4AI) + OFF: %s", (vino_externo.get("nombre") or "")[:60])
-                            return {
-                                "encontrado_en_bd": False,
-                                "consulta_id": consulta_id,
-                                "vino": vino_externo,
-                                "vino_key": nombre_slug or None,
-                                "mostrar_boton_comprar": True,
-                                "mensaje": "Identificado por reconocimiento de etiqueta (IA).",
-                                "es_pro": _es_pro((x_session_id or "").strip()),
-                            }
+                        # No devolver vino de OFF solo por API de imagen: suele equivocarse (ej. Changyu en vez de Viña Pedrosa).
+                        # Si no está en nuestra BD, pedimos que escriba el nombre; así evitamos información falsa.
+                        logger.info("[ESCANEAR] API4AI sugirió %s (no en nuestra BD); no devolvemos OFF para evitar falsos positivos.", nombre_ia[:50])
                 # OCR ya hecho arriba (1b) para priorizar nuestra BD (Viña Pedrosa, etc.)
         except Exception:
             imagen_enviada = True

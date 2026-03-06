@@ -116,9 +116,29 @@
   var MAX_SIZE_MB = 6;
   var MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
   var FETCH_TIMEOUT_MS = 60000;
+  var SUBMIT_DEBOUNCE_MS = 1200;
+  var isSubmitting = false;
+  var lastSubmitAt = 0;
+  var submitBtn = form.querySelector('button[type="submit"]');
+
+  function setSubmittingState(active) {
+    isSubmitting = !!active;
+    if (submitBtn) submitBtn.disabled = !!active;
+    if (btnCapturar) btnCapturar.disabled = !!active;
+    if (btnAbrirCamara) btnAbrirCamara.disabled = !!active;
+  }
+
+  function canSubmitNow() {
+    var now = Date.now();
+    if (isSubmitting) return false;
+    if (now - lastSubmitAt < SUBMIT_DEBOUNCE_MS) return false;
+    lastSubmitAt = now;
+    return true;
+  }
 
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
+    if (!canSubmitNow()) return;
     errorDiv.classList.add('hidden');
     resultadoDiv.classList.add('hidden');
     const imagen = document.getElementById('imagen').files[0];
@@ -139,6 +159,7 @@
       errorDiv.classList.remove('hidden');
       return;
     }
+    setSubmittingState(true);
     cargando.classList.remove('hidden');
     const formData = new FormData();
     if (imagen) formData.append('imagen', imagen);
@@ -162,6 +183,7 @@
         data = { message: 'Respuesta inválida del servidor.' };
       }
       cargando.classList.add('hidden');
+      setSubmittingState(false);
       if (!r.ok) {
         var msg = data.message || data.detail || 'Error al escanear';
         if (typeof data.detail === 'string') msg = data.detail;
@@ -189,6 +211,7 @@
       resultadoDiv.classList.remove('hidden');
     } catch (err) {
       cargando.classList.add('hidden');
+      setSubmittingState(false);
       if (err.name === 'AbortError') {
         errorDiv.textContent = 'La operación tardó demasiado. Prueba con una imagen más pequeña o escribe el nombre del vino en el cuadro de texto.';
       } else {
@@ -214,8 +237,10 @@
   }
 
   function enviarFormData(formData) {
+    if (!canSubmitNow()) return;
     errorDiv.classList.add('hidden');
     resultadoDiv.classList.add('hidden');
+    setSubmittingState(true);
     cargando.classList.remove('hidden');
     var opts = { method: 'POST', body: formData };
     if (typeof window.getSessionId === 'function') {
@@ -233,6 +258,7 @@
       .then(function(res) {
         var data = res.data;
         cargando.classList.add('hidden');
+        setSubmittingState(false);
         if (!res.ok) {
           errorDiv.textContent = (data && (data.detail || data.message)) || 'Error al escanear';
           errorDiv.classList.remove('hidden');
@@ -252,6 +278,7 @@
       .catch(function(err) {
         clearTimeout(timeoutId);
         cargando.classList.add('hidden');
+        setSubmittingState(false);
         errorDiv.textContent = err.name === 'AbortError' ? 'Operación tardó demasiado.' : ('Error: ' + (err.message || ''));
         errorDiv.classList.remove('hidden');
       });
@@ -278,6 +305,7 @@
 
   if (btnCapturar && cameraPreview) {
     btnCapturar.addEventListener('click', function() {
+      if (isSubmitting) return;
       if (!cameraStream || !cameraPreview.videoWidth) return;
       var canvas = document.createElement('canvas');
       canvas.width = cameraPreview.videoWidth;

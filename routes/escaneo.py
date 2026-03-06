@@ -400,7 +400,10 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                             "entidades_extraidas": _obtener_entidades_extraidas(None, vino_por_codigo),
                         }
                 # 1b) Doble capa: OCR local + fallback IA visión (Gemini 2.0 Flash)
-                resultado_doble = extraer_datos_etiqueta_doble_capa(contenido_imagen)
+                resultado_doble = extraer_datos_etiqueta_doble_capa(
+                    contenido_imagen,
+                    session_key=(x_session_id or "").strip() or None,
+                )
                 texto_ocr = (resultado_doble.get("texto") or "").strip()
                 entidades_imagen = resultado_doble.get("entidades")
                 error_vision_imagen = resultado_doble.get("error_vision")
@@ -619,7 +622,11 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
             "reconocido": False,
             "error_imagen": True,
             "es_pro": es_pro,
-            "mensaje": "No se pudo identificar la etiqueta con claridad. Prueba con otra foto más nítida o escribe el nombre del vino abajo.",
+            "mensaje": (
+                error_vision_imagen
+                if error_vision_imagen
+                else "No se pudo identificar la etiqueta con claridad. Prueba con otra foto más nítida o escribe el nombre del vino abajo."
+            ),
             "entidades_extraidas": _obtener_entidades_extraidas(texto_limpio or texto_busqueda, entidades_override=entidades_imagen),
         }
 

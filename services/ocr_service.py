@@ -203,7 +203,7 @@ _MIN_LONGITUD_OCR_CONFIABLE = 15
 _MIN_SCORE_OCR_CONFIABLE = 3.0
 
 
-def extraer_datos_etiqueta_doble_capa(contenido: bytes, idioma: str = "spa+eng") -> dict:
+def extraer_datos_etiqueta_doble_capa(contenido: bytes, idioma: str = "spa+eng", session_key: str | None = None) -> dict:
     """
     Flujo de doble capa: OCR local optimizado + fallback con IA de visión.
     - Paso 1: OCR con preprocesamiento OpenCV (CLAHE, bilateral, sharpen).
@@ -212,7 +212,7 @@ def extraer_datos_etiqueta_doble_capa(contenido: bytes, idioma: str = "spa+eng")
 
     :param contenido: bytes de la imagen
     :param idioma: idiomas Tesseract (spa+eng)
-    :return: {"texto": str, "entidades": dict, "origen": "ocr"|"vision"}
+    :return: {"texto": str, "entidades": dict, "origen": "ocr"|"vision", "error_vision": str|None}
     """
     from services.data_refinement import normalizar_entidades, refinar_texto_ocr
     from services.entity_extractor import extraer_entidades
@@ -226,7 +226,7 @@ def extraer_datos_etiqueta_doble_capa(contenido: bytes, idioma: str = "spa+eng")
         texto_ocr = extraer_texto_de_imagen(contenido, idioma)
     except TesseractNoDisponibleError:
         logger.info("[OCR] Tesseract no disponible, intentando fallback con IA de visión...")
-        vision_result = analizar_etiqueta_vision(contenido)
+        vision_result = analizar_etiqueta_vision(contenido, session_key=session_key)
         if vision_result and "error" in vision_result:
             resultado_base["error_vision"] = vision_result["error"]
             return resultado_base
@@ -242,11 +242,11 @@ def extraer_datos_etiqueta_doble_capa(contenido: bytes, idioma: str = "spa+eng")
     if texto_refinado and len(texto_refinado) >= _MIN_LONGITUD_OCR_CONFIABLE and score >= _MIN_SCORE_OCR_CONFIABLE:
         ent = extraer_entidades(texto_refinado)
         ent_norm = normalizar_entidades(ent)
-        return {"texto": texto_refinado, "entidades": ent_norm, "origen": "ocr"}
+        return {"texto": texto_refinado, "entidades": ent_norm, "origen": "ocr", "error_vision": None}
 
     # Paso 2: Fallback con IA de visión
     logger.info("[OCR] Texto insuficiente (len=%d, score=%.1f), usando IA de visión...", len(texto_refinado or ""), score)
-    vision_result = analizar_etiqueta_vision(contenido)
+    vision_result = analizar_etiqueta_vision(contenido, session_key=session_key)
     if vision_result and "error" in vision_result:
         resultado_base["error_vision"] = vision_result["error"]
     elif vision_result:
@@ -258,5 +258,5 @@ def extraer_datos_etiqueta_doble_capa(contenido: bytes, idioma: str = "spa+eng")
     if texto_refinado:
         ent = extraer_entidades(texto_refinado)
         ent_norm = normalizar_entidades(ent)
-        return {"texto": texto_refinado, "entidades": ent_norm, "origen": "ocr", "error_vision": None}
+        return {"texto": texto_refinado, "entidades": ent_norm, "origen": "ocr", "error_vision": resultado_base["error_vision"]}
     return resultado_base

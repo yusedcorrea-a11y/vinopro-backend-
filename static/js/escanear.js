@@ -298,15 +298,5 @@
     });
   }
 
-  setTimeout(function() {
-    if (cameraWrap && cameraWrap.classList.contains('hidden') && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-        .then(function(stream) {
-          cameraStream = stream;
-          if (cameraPreview) cameraPreview.srcObject = stream;
-          if (cameraWrap) cameraWrap.classList.remove('hidden');
-        })
-        .catch(function() {});
-    }
-  }, 500);
+  // La cámara solo se abre cuando el usuario pulsa "Abrir cámara y escanear" (no al entrar en la página).
 })();

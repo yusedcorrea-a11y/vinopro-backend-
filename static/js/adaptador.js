@@ -12,6 +12,8 @@
   var tokenMsg = document.getElementById('token-msg');
   var formConfig = document.getElementById('form-config');
   var configMsg = document.getElementById('config-msg');
+  var testWebhookBtn = document.getElementById('test-webhook');
+  var testWebhookMsg = document.getElementById('test-webhook-msg');
   var syncStatus = document.getElementById('sync-status');
   var curlStock = document.getElementById('curl-stock');
   var curlVenta = document.getElementById('curl-venta');
@@ -188,6 +190,42 @@
         })
         .catch(function() {
           showMsg(configMsg, 'Error al guardar.', true);
+        });
+    });
+  }
+
+  if (testWebhookBtn) {
+    testWebhookBtn.addEventListener('click', function() {
+      if (!apiToken) {
+        showMsg(testWebhookMsg, 'Primero carga el token.', true);
+        return;
+      }
+      testWebhookBtn.disabled = true;
+      fetch('/api/adaptador/test-webhook?token=' + encodeURIComponent(apiToken), {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' }
+      })
+        .then(function(r) {
+          return r.json().then(function(d) { return { ok: r.ok, data: d }; });
+        })
+        .then(function(res) {
+          testWebhookBtn.disabled = false;
+          var msg = '';
+          if (res.ok && res.data && res.data.success) {
+            msg = (res.data.message || 'Webhook de prueba correcto.') + ' ';
+            msg += '(HTTP ' + (res.data.status_code || 200) + ')';
+            if (res.data.response_preview) msg += ' Respuesta: ' + res.data.response_preview;
+            showMsg(testWebhookMsg, msg, false);
+            return;
+          }
+          msg = (res.data && res.data.message) || (res.data && res.data.detail) || 'Error al probar el webhook.';
+          if (res.data && res.data.status_code) msg += ' (HTTP ' + res.data.status_code + ')';
+          if (res.data && res.data.response_preview) msg += ' Respuesta: ' + res.data.response_preview;
+          showMsg(testWebhookMsg, msg, true);
+        })
+        .catch(function(err) {
+          testWebhookBtn.disabled = false;
+          showMsg(testWebhookMsg, 'Error al probar el webhook: ' + (err.message || ''), true);
         });
     });
   }

@@ -232,6 +232,69 @@ def _send_webhook_now(session_id: str, attempt: int = 1) -> None:
         _set_sync_status(session_id, "error", str(exc))
 
 
+def test_webhook(token: str) -> dict:
+    """
+    Envía un evento de prueba al webhook configurado sin tocar el stock real.
+    Devuelve estado HTTP y un fragmento de la respuesta remota para depuración.
+    """
+    rest = get_restaurante_by_token(token)
+    if not rest:
+        return {"success": False, "status_code": None, "message": "Token no válido."}
+    url = (rest.get("webhook_url") or "").strip()
+    if not url:
+        return {"success": False, "status_code": None, "message": "No hay webhook configurado."}
+
+    payload = json.dumps(
+        {
+            "event": "bodega.test",
+            "timestamp": _utc_now_iso(),
+            "restaurant_name": rest.get("nombre") or "Mi Restaurante",
+            "message": "Evento de prueba desde VINO. No afecta al stock real.",
+            "sample_stock": [
+                {
+                    "id": "sample-botella",
+                    "vino_nombre": "Vino de prueba",
+                    "cantidad": 2,
+                    "anada": 2021,
+                    "ubicacion": "Bodega principal",
+                    "tipo": "tinto",
+                }
+            ],
+        }
+    ).encode("utf-8")
+    req = Request(url, data=payload, method="POST", headers={"Content-Type": "application/json"})
+    try:
+        with urlopen(req, timeout=WEBHOOK_TIMEOUT_SECONDS) as response:
+            status = getattr(response, "status", 200)
+            body = response.read().decode("utf-8", errors="replace")[:300]
+        ok = 200 <= status < 300
+        return {
+            "success": ok,
+            "status_code": status,
+            "message": "Webhook de prueba recibido correctamente." if ok else f"Respuesta inesperada del servidor: HTTP {status}",
+            "response_preview": body,
+        }
+    except HTTPError as exc:
+        body = ""
+        try:
+            body = exc.read().decode("utf-8", errors="replace")[:300]
+        except Exception:
+            body = str(exc)[:300]
+        return {
+            "success": False,
+            "status_code": getattr(exc, "code", None),
+            "message": f"El servidor respondió con HTTP {getattr(exc, 'code', 'error')}.",
+            "response_preview": body,
+        }
+    except (URLError, OSError) as exc:
+        return {
+            "success": False,
+            "status_code": None,
+            "message": f"No se pudo contactar con el webhook: {str(exc)[:200]}",
+            "response_preview": "",
+        }
+
+
 def notify_webhook(session_id: str) -> None:
     """
     Programa una actualización consolidada del stock.

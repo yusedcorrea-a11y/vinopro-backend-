@@ -62,6 +62,19 @@ def update_config(body: ConfigBody, token: str = Query(..., description="Token d
     return {"success": True, "config": rest}
 
 
+@router.post("/test-webhook")
+def test_webhook(token: str = Query(..., description="Token del restaurante")):
+    """
+    Envía un evento de prueba al webhook configurado, sin modificar stock real.
+    """
+    result = svc.test_webhook(token.strip())
+    if result.get("status_code") == 404 and not result.get("success"):
+        raise HTTPException(status_code=404, detail=result.get("message") or "Webhook no encontrado.")
+    if result.get("message") == "Token no válido.":
+        raise HTTPException(status_code=404, detail="Token no válido.")
+    return result
+
+
 class VentaBody(BaseModel):
     """Cuando el TPV/programa del restaurante registra una venta de vino."""
     vino_nombre: str = Field(..., min_length=1, max_length=200, description="Nombre del vino vendido")

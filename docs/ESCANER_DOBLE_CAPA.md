@@ -5,25 +5,23 @@ Arquitectura de escaneo infalible: OCR local + fallback con IA de visión.
 ## Flujo
 
 1. **OCR local**: OpenCV (CLAHE, bilateral, sharpen) + Tesseract (spa+eng)
-2. **Fallback**: Si OCR vacío, corto (<15 chars) o baja confianza → GPT-4o o Claude 3.5 Sonnet
+2. **Fallback**: Si OCR vacío, corto (<15 chars) o baja confianza → Google Gemini 1.5 Flash
 3. **Refinamiento**: Normalización (2O22→2022, etc.) y estructura JSON consistente
 
 ## Variables de entorno
 
-Añade a tu `.env` **al menos una** para activar el fallback con IA:
+Añade a tu `.env` para activar el fallback con IA:
 
 ```env
-# OpenAI (prioridad)
-OPENAI_API_KEY=sk-...
-
-# Anthropic (fallback si no hay OpenAI)
-ANTHROPIC_API_KEY=sk-ant-...
+GOOGLE_API_KEY=tu-clave-de-google-ai
 ```
+
+(Obtén la clave en https://aistudio.google.com/apikey)
 
 ## Instalación de librerías de IA
 
 ```powershell
-pip install openai>=1.0.0 anthropic>=0.18.0
+pip install google-generativeai
 ```
 
 O con requirements:
@@ -48,5 +46,5 @@ Siempre consistente (campos null si no se detectan):
 
 ## Compatibilidad
 
-- **Dockerfile**: Incluye openai y anthropic. Añade `OPENAI_API_KEY` o `ANTHROPIC_API_KEY` en Render/Railway.
-- **Sin API keys**: El OCR local sigue funcionando. El fallback con visión solo se activa si hay clave configurada.
+- **Dockerfile**: Incluye google-generativeai. Añade `GOOGLE_API_KEY` en Render/Railway.
+- **Sin API key**: El OCR local sigue funcionando. El fallback con visión solo se activa si hay clave configurada.

@@ -1,10 +1,9 @@
 """
 Servicio de IA de visión para análisis de etiquetas de vino.
 Fallback cuando el OCR local no obtiene texto suficiente.
-Soporta OpenAI GPT-4o y Anthropic Claude 3.5 Sonnet.
-API keys desde variables de entorno: OPENAI_API_KEY, ANTHROPIC_API_KEY.
+Usa Google Gemini 1.5 Flash (GOOGLE_API_KEY).
 """
-import base64
+import io
 import json
 import logging
 import os
@@ -90,106 +89,55 @@ def _normalizar_entidades_vision(ent: dict) -> dict:
 
 def analizar_etiqueta_vision(imagen_bytes: bytes) -> dict | None:
     """
-    Envía la imagen a GPT-4o o Claude 3.5 Sonnet para extraer datos de la etiqueta.
+    Envía la imagen a Google Gemini 1.5 Flash para extraer datos de la etiqueta.
     :param imagen_bytes: bytes de la imagen (JPEG, PNG)
     :return: dict con texto, entidades, origen="vision" o None si falla
     """
     if not imagen_bytes or len(imagen_bytes) < 100:
         return None
 
-    b64 = base64.b64encode(imagen_bytes).decode("utf-8")
-    mime = "image/jpeg" if imagen_bytes[:2] == b"\xff\xd8" else "image/png"
-    data_url = f"data:{mime};base64,{b64}"
-
-    openai_key = (os.environ.get("OPENAI_API_KEY") or "").strip()
-    anthropic_key = (os.environ.get("ANTHROPIC_API_KEY") or "").strip()
-
-    # Intentar OpenAI primero
-    if openai_key:
-        try:
-            return _llamada_openai(data_url, openai_key)
-        except Exception as e:
-            logger.warning("[Vision] OpenAI falló: %s", e)
-
-    # Fallback a Anthropic
-    if anthropic_key:
-        try:
-            return _llamada_anthropic(imagen_bytes, mime, anthropic_key)
-        except Exception as e:
-            logger.warning("[Vision] Anthropic falló: %s", e)
-
-    if not openai_key and not anthropic_key:
-        logger.debug("[Vision] No hay OPENAI_API_KEY ni ANTHROPIC_API_KEY en .env")
-    return None
-
-
-def _llamada_openai(data_url: str, api_key: str) -> dict | None:
-    """Llamada a GPT-4o con imagen."""
-    try:
-        from openai import OpenAI
-    except ImportError:
-        logger.warning("[Vision] openai no instalado: pip install openai")
+    api_key = (os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY") or "").strip()
+    if not api_key:
+        logger.debug("[Vision] No hay GOOGLE_API_KEY en .env")
         return None
 
-    client = OpenAI(api_key=api_key)
-    response = client.chat.completions.create(
-        model="gpt-4o",
-        max_tokens=500,
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": PROMPT_VISION},
-                    {"type": "image_url", "image_url": {"url": data_url, "detail": "low"}},
-                ],
-            }
-        ],
-    )
-    texto_resp = (response.choices[0].message.content or "").strip()
+    try:
+        import google.generativeai as genai
+        from PIL import Image
+    except ImportError:
+        logger.warning("[Vision] google-generativeai no instalado: pip install google-generativeai")
+        return None
+
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel("gemini-1.5-flash")
+
+    try:
+        img = Image.open(io.BytesIO(imagen_bytes))
+        response = model.generate_content(
+            [PROMPT_VISION, img],
+            generation_config={"max_output_tokens": 500},
+        )
+    except Exception as e:
+        logger.warning("[Vision] Gemini falló: %s", e)
+        return None
+
+    try:
+        texto_resp = (response.text or "").strip()
+    except AttributeError:
+        texto_resp = ""
+        if response.candidates:
+            for part in response.candidates[0].content.parts:
+                if hasattr(part, "text"):
+                    texto_resp += part.text or ""
+        texto_resp = texto_resp.strip()
     if not texto_resp:
         return None
+
     entidades_raw = _limpiar_json_vision(texto_resp)
     entidades = _normalizar_entidades_vision(entidades_raw)
     texto = _entidades_a_texto_busqueda(entidades)
     if not texto:
         return None
-    logger.info("[Vision] GPT-4o extrajo: %s", texto[:80])
-    return {"texto": texto, "entidades": entidades, "origen": "vision"}
 
-
-def _llamada_anthropic(imagen_bytes: bytes, mime: str, api_key: str) -> dict | None:
-    """Llamada a Claude 3.5 Sonnet con imagen."""
-    try:
-        import anthropic
-    except ImportError:
-        logger.warning("[Vision] anthropic no instalado: pip install anthropic")
-        return None
-
-    client = anthropic.Anthropic(api_key=api_key)
-    msg = client.messages.create(
-        model="claude-3-5-sonnet-20241022",
-        max_tokens=500,
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {"type": "image", "source": {"type": "base64", "media_type": mime, "data": base64.b64encode(imagen_bytes).decode()}},
-                    {"type": "text", "text": PROMPT_VISION},
-                ],
-            }
-        ],
-    )
-    texto_resp = ""
-    for b in msg.content:
-        if hasattr(b, "text"):
-            texto_resp += b.text
-    texto_resp = texto_resp.strip()
-    if not texto_resp:
-        return None
-    entidades_raw = _limpiar_json_vision(texto_resp)
-    entidades = _normalizar_entidades_vision(entidades_raw)
-    texto = _entidades_a_texto_busqueda(entidades)
-    if not texto:
-        return None
-    logger.info("[Vision] Claude extrajo: %s", texto[:80])
+    logger.info("[Vision] Gemini extrajo: %s", texto[:80])
     return {"texto": texto, "entidades": entidades, "origen": "vision"}

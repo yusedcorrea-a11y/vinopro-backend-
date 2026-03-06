@@ -1,14 +1,12 @@
 """
 Servicio de OCR para extraer texto de imágenes de etiquetas de vino.
-Usa pytesseract (Tesseract) para reconocimiento de caracteres.
+Usa pytesseract (Tesseract) con preprocesamiento OpenCV (CLAHE, bilateral, sharpen)
+para mejorar lectura con reflejos, curvatura y ruido.
 
-Flujo real (solo información veraz):
-- El texto extraído aquí se envía a routes/escaneo.py.
-- Ahí se busca en la BASE DE DATOS de vinos (buscar_vinos_avanzado) y en fuentes
-  externas (Open Food Facts, etc.). No se usa un LLM para "identificar" el vino:
-  la identificación es por coincidencia real con el catálogo.
-- Si no hay coincidencia, el backend devuelve un mensaje honesto y la opción
-  "Recomiéndame algo similar" (sumiller sí usa reglas/IA para recomendar).
+Flujo:
+- Preprocesamiento multi-paso (si OpenCV disponible): CLAHE, bilateral+sharpen, adaptativo.
+- OCR sobre cada versión; se elige el resultado con mejor puntuación.
+- El texto se envía a routes/escaneo.py para búsqueda en BD y fuentes externas.
 """
 import io
 import logging
@@ -28,7 +26,6 @@ try:
     from PIL import Image
     OCR_AVAILABLE = True
     _TesseractNotFoundError = getattr(pytesseract, "TesseractNotFoundError", Exception)
-    # En Windows, winget/instalador suele dejar Tesseract aquí; así no dependemos del PATH
     if sys.platform == "win32":
         _tesseract_exe = os.environ.get("TESSERACT_CMD") or r"C:\Program Files\Tesseract-OCR\tesseract.exe"
         if os.path.isfile(_tesseract_exe):
@@ -39,24 +36,77 @@ except ImportError:
     Image = None
     _TesseractNotFoundError = Exception
 
+try:
+    from services.image_preprocessor import preprocesar_para_ocr, PREPROCESSOR_AVAILABLE
+except ImportError:
+    PREPROCESSOR_AVAILABLE = False
+    preprocesar_para_ocr = lambda c: []
 
-# Tamaño máximo del lado largo para no saturar OCR (fotos de móvil suelen ser 3000+ px)
 MAX_SIDE_OCR = 1200
+
+# Palabras clave que indican texto útil de etiqueta de vino
+_PALABRAS_CLAVE = frozenset({
+    "bodega", "bodegas", "crianza", "reserva", "gran", "ribera", "rioja", "duero",
+    "denominacion", "origen", "producto", "espana", "españa", "vino", "tinto", "blanco",
+    "tempranillo", "garnacha", "pedrosa", "protos", "pascuas", "hnos",
+})
+
+
+def _score_texto_ocr(texto: str) -> float:
+    """Puntuación heurística: más palabras clave y longitud = mejor resultado."""
+    if not texto or len(texto.strip()) < 3:
+        return 0.0
+    t_lower = texto.lower()
+    score = len(texto) * 0.1
+    for kw in _PALABRAS_CLAVE:
+        if kw in t_lower:
+            score += 2.0
+    return score
+
+
+def _ocr_desde_pil(image: "Image.Image", idioma: str) -> str:
+    """Ejecuta Tesseract sobre una imagen PIL."""
+    return (pytesseract.image_to_string(image, lang=idioma) or "").strip()
+
+
+def _ocr_desde_numpy(arr, idioma: str) -> str:
+    """Ejecuta Tesseract sobre un array numpy (OpenCV)."""
+    try:
+        from PIL import Image
+        pil_img = Image.fromarray(arr)
+        return _ocr_desde_pil(pil_img, idioma)
+    except Exception:
+        return ""
 
 
 def extraer_texto_de_imagen(contenido: bytes, idioma: str = "spa+eng") -> str:
     """
-    Extrae texto de una imagen (etiqueta de vino) usando OCR.
-    Redimensiona imágenes muy grandes para acelerar y evitar fallos.
+    Extrae texto de una imagen (etiqueta de vino) usando OCR con preprocesamiento.
+    Multi-paso: CLAHE, bilateral+sharpen, adaptativo + original. Elige el mejor resultado.
     :param contenido: bytes de la imagen (JPEG, PNG, etc.)
     :param idioma: idiomas para Tesseract (spa+eng por defecto)
     :return: texto extraído o cadena vacía si falla
-    :raises TesseractNoDisponibleError: si Tesseract no está instalado o no está en el PATH
+    :raises TesseractNoDisponibleError: si Tesseract no está instalado
     """
     if not OCR_AVAILABLE:
         logger.warning("OCR no disponible: instalar Pillow y pytesseract (y Tesseract en el sistema)")
         return ""
 
+    resultados: list[tuple[str, float]] = []
+
+    # Pipeline 1: Preprocesamiento OpenCV + OCR multi-paso
+    if PREPROCESSOR_AVAILABLE and preprocesar_para_ocr:
+        pipelines = preprocesar_para_ocr(contenido)
+        for nombre, img_arr in pipelines:
+            try:
+                texto = _ocr_desde_numpy(img_arr, idioma)
+                if texto:
+                    score = _score_texto_ocr(texto)
+                    resultados.append((texto, score))
+            except Exception as e:
+                logger.debug("[OCR] Pipeline %s falló: %s", nombre, e)
+
+    # Pipeline 2: Original con PIL (fallback o adicional)
     try:
         image = Image.open(io.BytesIO(contenido))
         image = image.convert("RGB")
@@ -68,8 +118,10 @@ def extraer_texto_de_imagen(contenido: bytes, idioma: str = "spa+eng") -> str:
             if getattr(Image, "Resampling", None) and hasattr(Image.Resampling, "LANCZOS"):
                 resample = Image.Resampling.LANCZOS
             image = image.resize((new_w, new_h), resample)
-        texto = pytesseract.image_to_string(image, lang=idioma)
-        return (texto or "").strip()
+        texto = _ocr_desde_pil(image, idioma)
+        if texto:
+            score = _score_texto_ocr(texto)
+            resultados.append((texto, score))
     except Exception as e:
         msg = str(e).lower()
         is_tesseract_missing = (
@@ -87,3 +139,10 @@ def extraer_texto_de_imagen(contenido: bytes, idioma: str = "spa+eng") -> str:
             ) from e
         logger.exception("Error en OCR: %s", e)
         return ""
+
+    if not resultados:
+        return ""
+
+    # Elegir el resultado con mayor puntuación; si empatan, el más largo
+    mejor = max(resultados, key=lambda x: (x[1], len(x[0])))
+    return mejor[0]

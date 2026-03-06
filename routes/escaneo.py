@@ -53,6 +53,7 @@ from services.api_externa_service import buscar_por_texto, buscar_por_codigo_bar
 from services.ocr_normalizer import limpiar as normalizar_ocr
 from services.codigos_service import extraer_primer_ean_de_imagen
 from services.wine_label_api4ai_service import recognize_wine_from_image
+from services.entity_extractor import extraer_entidades, formatear_entidades_para_json
 
 router = APIRouter(prefix="", tags=["Escaneo"])
 
@@ -232,6 +233,33 @@ def _push_historial(request: Request, session_id: str | None, consulta_id: str, 
     hist[session_id] = hist[session_id][-50:]
 
 
+def _obtener_entidades_extraidas(texto: str | None, vino: dict | None = None) -> dict:
+    """
+    Extrae entidades (bodega, añada, denominacion_origen, variedad) del texto OCR
+    o las deriva del vino cuando no hay texto (ej. match por EAN).
+    Siempre devuelve un dict para incluir en entidades_extraidas.
+    """
+    if texto and len(texto.strip()) >= 2:
+        ent = extraer_entidades(texto)
+        return formatear_entidades_para_json(ent)
+    if vino:
+        out = {}
+        if vino.get("nombre") and vino.get("nombre") not in ("vino escaneado", "No especificada"):
+            out["nombre"] = str(vino["nombre"]).strip()[:120]
+        if vino.get("bodega") and vino.get("bodega") != "No especificada":
+            out["bodega"] = str(vino["bodega"]).strip()[:200]
+        if vino.get("region") and vino.get("region") != "Por determinar":
+            out["denominacion_origen"] = str(vino["region"]).strip()[:150]
+        if vino.get("uva_principal"):
+            out["variedad"] = str(vino["uva_principal"]).strip()[:80]
+        # Añada: intentar extraer de descripcion o nombre si hay año
+        m = re.search(r"\b(19[5-9]\d|20[0-3]\d)\b", (vino.get("descripcion") or "") + " " + (vino.get("nombre") or ""))
+        if m:
+            out["añada"] = int(m.group(1))
+        return out
+    return {}
+
+
 def _detail_escanear(falta: str) -> str:
     """Mensaje de error claro cuando faltan datos en POST /escanear."""
     return (
@@ -298,6 +326,7 @@ async def escanear_etiqueta(
             "recomendar_similar": True,
             "mensaje": "No pudimos identificar este vino. ¿Quieres que te recomiende algo similar?",
             "es_pro": es_pro,
+            "entidades_extraidas": {},
         }
 
 
@@ -364,6 +393,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                             "mostrar_boton_comprar": True,
                             "mensaje": "Identificado por código de barras. Este vino no está en nuestra base; te mostramos la ficha externa. ¿Quieres una recomendación similar de nuestra carta?",
                             "es_pro": _es_pro((x_session_id or "").strip()),
+                            "entidades_extraidas": _obtener_entidades_extraidas(None, vino_por_codigo),
                         }
                 # 1b) OCR de la etiqueta ANTES que la API de imagen: si el texto (Viña Pedrosa, Pérez Pascuas, etc.)
                 #     coincide con un vino de nuestra BD, lo devolvemos y no usamos el resultado de la API (que a veces falla).
@@ -404,38 +434,17 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                                         "vino": vino_early,
                                         "mensaje": "Encontrado en nuestra base de datos (etiqueta leída correctamente).",
                                         "es_pro": _es_pro((x_session_id or "").strip()),
+                                        "entidades_extraidas": _obtener_entidades_extraidas(texto_para_early),
                                     }
-                # 2) Reconocimiento por imagen (API4AI) - solo si OCR no dio coincidencia fuerte en nuestra BD
+                # 2) Reconocimiento por imagen (API4AI): NO usamos el resultado para devolver vino.
+                # La API suele devolver siempre el mismo vino (ej. Changyu Icewine) para fotos distintas;
+                # como Changyu está en nuestra BD, antes devolvíamos ese vino para cualquier escaneo.
+                # Solo confiamos en OCR + nuestra BD o en texto/código que escriba el usuario.
                 sugerencias_ia = recognize_wine_from_image(contenido_imagen)
                 if sugerencias_ia and sugerencias_ia[0].get("confidence", 0) >= 0.5:
                     nombre_ia = (sugerencias_ia[0].get("name") or "").strip()
                     if nombre_ia:
-                        coincidencias_ia = buscar_vinos_avanzado(vinos, nombre_ia, limite=3)
-                        if coincidencias_ia and coincidencias_ia[0]["score"] >= 3.0:
-                            mejor_ia = coincidencias_ia[0]
-                            vino_ia = mejor_ia["vino"]
-                            consulta_id = str(uuid.uuid4())
-                            consultas[consulta_id] = {"vino": vino_ia, "key": mejor_ia["key"]}
-                            try:
-                                from services import analytics_service
-                                analytics_service.registrar_escaneo(True, vino_ia.get("nombre"), vino_ia.get("pais"))
-                            except Exception:
-                                pass
-                            _push_historial(request, (x_session_id or "").strip(), consulta_id, vino_ia.get("nombre"), True)
-                            logger.info("[ESCANEAR] Identificado por IA (API4AI): %s", vino_ia.get("nombre", "")[:60])
-                            return {
-                                "encontrado_en_bd": True,
-                                "consulta_id": consulta_id,
-                                "key": mejor_ia["key"],
-                                "vino_key": mejor_ia["key"],
-                                "mostrar_boton_comprar": True,
-                                "vino": vino_ia,
-                                "mensaje": "Identificado por reconocimiento de etiqueta (IA).",
-                                "es_pro": _es_pro((x_session_id or "").strip()),
-                            }
-                        # No devolver vino de OFF solo por API de imagen: suele equivocarse (ej. Changyu en vez de Viña Pedrosa).
-                        # Si no está en nuestra BD, pedimos que escriba el nombre; así evitamos información falsa.
-                        logger.info("[ESCANEAR] API4AI sugirió %s (no en nuestra BD); no devolvemos OFF para evitar falsos positivos.", nombre_ia[:50])
+                        logger.info("[ESCANEAR] API4AI sugirió %s; no usamos para devolver (evitar mismo vino para todas las fotos).", nombre_ia[:50])
                 # OCR ya hecho arriba (1b) para priorizar nuestra BD (Viña Pedrosa, etc.)
         except Exception:
             imagen_enviada = True
@@ -446,6 +455,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
             "error_imagen": True,
             "es_pro": _es_pro(x_session_id or ""),
             "mensaje": "El escaneo requiere un componente adicional. Por favor, contacta al administrador.",
+            "entidades_extraidas": {},
         }
 
     sid = (x_session_id or "").strip()
@@ -472,6 +482,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                 "mostrar_boton_comprar": True,
                 "mensaje": "Este vino no está en nuestra base de datos. Te mostramos información externa; ya lo hemos guardado. ¿Quieres que te recomiende algo similar de nuestra base?",
                 "es_pro": es_pro,
+                "entidades_extraidas": _obtener_entidades_extraidas(None, vino_externo),
             }
         texto_busqueda = codigo_barras
 
@@ -483,6 +494,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                 "error_imagen": True,
                 "es_pro": es_pro,
                 "mensaje": "No pudimos leer la etiqueta. ¿Es una botella de vino? Prueba con otra foto más nítida o escribe el nombre del vino abajo.",
+                "entidades_extraidas": {},
             }
         raise HTTPException(
             status_code=400,
@@ -517,6 +529,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                 "vino": vino,
                 "mensaje": "Encontrado en nuestra base de datos por código de barras.",
                 "es_pro": es_pro,
+                "entidades_extraidas": _obtener_entidades_extraidas(None, vino),
             }
         logger.info("[ESCANEAR] Input detectado como código de barras (%s), buscando en Open Food Facts...", ean[:16])
         vino_por_ean = buscar_por_codigo_barras(ean)
@@ -539,6 +552,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                 "mostrar_boton_comprar": True,
                 "mensaje": "Identificado por código de barras. ¿Quieres una recomendación similar de nuestra carta?",
                 "es_pro": es_pro,
+                "entidades_extraidas": _obtener_entidades_extraidas(None, vino_por_ean),
             }
         logger.info("[ESCANEAR] Open Food Facts sin resultado para código %s (no está en la base externa o timeout).", ean[:16])
 
@@ -568,6 +582,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                 "vino": vino,
                 "mensaje": "Encontrado en nuestra base por código del QR.",
                 "es_pro": es_pro,
+                "entidades_extraidas": _obtener_entidades_extraidas(texto_busqueda, vino),
             }
         logger.info("[ESCANEAR] Código extraído de URL/texto: %s, buscando en Open Food Facts...", ean_extraido[:16])
         vino_por_ean = buscar_por_codigo_barras(ean_extraido)
@@ -590,6 +605,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                 "mostrar_boton_comprar": True,
                 "mensaje": "Identificado por código en el QR. ¿Quieres una recomendación similar?",
                 "es_pro": es_pro,
+                "entidades_extraidas": _obtener_entidades_extraidas(texto_busqueda, vino_por_ean),
             }
         logger.info("[ESCANEAR] Open Food Facts sin resultado para código extraído %s.", ean_extraido[:16])
 
@@ -606,6 +622,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
             "error_imagen": True,
             "es_pro": es_pro,
             "mensaje": "No se pudo identificar la etiqueta con claridad. Prueba con otra foto más nítida o escribe el nombre del vino abajo.",
+            "entidades_extraidas": _obtener_entidades_extraidas(texto_limpio or texto_busqueda),
         }
 
     # Buscar en BD con texto normalizado para mejorar match (Viña Pedrosa, Protos, etc.)
@@ -649,6 +666,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                     for c in coincidencias[1:4]
                 ],
                 "es_pro": es_pro,
+                "entidades_extraidas": _obtener_entidades_extraidas(texto_para_buscar),
             }
 
     logger.info("[ESCANEAR] Vino no encontrado en BD local. Buscando en fuente externa (Open Food Facts)...")
@@ -687,6 +705,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                 "mostrar_boton_comprar": True,
                 "mensaje": "Este vino no está en nuestra base de datos. Te mostramos la información que encontramos fuera; ya la hemos guardado. ¿Quieres una recomendación similar de nuestra base?",
                 "es_pro": es_pro,
+                "entidades_extraidas": _obtener_entidades_extraidas(texto_para_buscar),
             }
         except Exception as e:
             logger.warning("[ESCANEAR] Error al guardar vino externo: %s", e)
@@ -731,6 +750,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
         "busqueda_web_url": busqueda_web_url,
         "busqueda_web_label": "Buscar en Vivino",
         "es_pro": es_pro,
+        "entidades_extraidas": _obtener_entidades_extraidas(texto_para_buscar),
     }
 
 

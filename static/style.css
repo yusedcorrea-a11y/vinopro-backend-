@@ -1811,6 +1811,35 @@ textarea {
   display: none !important;
 }
 
+/* Aviso cuando no hay conexión con el servidor (móvil / red local) */
+.aviso-sin-conexion {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  padding: 1rem 1.25rem;
+  background: var(--burdeos-oscuro);
+  color: var(--crema);
+  font-size: 0.9rem;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+}
+.aviso-sin-conexion[hidden] {
+  display: none !important;
+}
+.aviso-sin-conexion p {
+  margin: 0 0 0.75rem 0;
+}
+.aviso-sin-conexion .btn {
+  background: var(--crema);
+  color: var(--burdeos-oscuro);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+}
+
 /* Página pago exitoso / cancelado */
 .pago-container {
   max-width: 560px;

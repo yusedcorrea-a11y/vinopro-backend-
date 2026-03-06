@@ -365,7 +365,47 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                             "mensaje": "Identificado por código de barras. Este vino no está en nuestra base; te mostramos la ficha externa. ¿Quieres una recomendación similar de nuestra carta?",
                             "es_pro": _es_pro((x_session_id or "").strip()),
                         }
-                # 2) Reconocimiento por imagen (API4AI) - opcional, como Vivino
+                # 1b) OCR de la etiqueta ANTES que la API de imagen: si el texto (Viña Pedrosa, Pérez Pascuas, etc.)
+                #     coincide con un vino de nuestra BD, lo devolvemos y no usamos el resultado de la API (que a veces falla).
+                texto_ocr = None
+                try:
+                    texto_ocr = extraer_texto_de_imagen(contenido_imagen)
+                    if texto_ocr:
+                        texto_busqueda = f"{texto_busqueda} {texto_ocr}".strip()
+                except TesseractNoDisponibleError:
+                    error_tesseract = True
+                if texto_busqueda:
+                    texto_limpio_early = normalizar_ocr(texto_busqueda)
+                    texto_para_early = (texto_limpio_early or texto_busqueda).strip()
+                    if len(texto_para_early) >= 2:
+                        coincidencias_early = buscar_vinos_avanzado(vinos, texto_para_early, limite=5)
+                        if coincidencias_early and coincidencias_early[0]["score"] >= 5.0:
+                            mejor_early = coincidencias_early[0]
+                            vino_early = mejor_early.get("vino")
+                            if isinstance(vino_early, dict):
+                                nombre_early = (vino_early.get("nombre") or "").strip()
+                                bodega_early = (vino_early.get("bodega") or "").strip()
+                                if _coincidencia_fiable(texto_para_early, nombre_early, bodega_early):
+                                    logger.info("[ESCANEAR] Encontrado en BD por OCR de etiqueta (antes que IA): %s", nombre_early[:60])
+                                    consulta_id = str(uuid.uuid4())
+                                    consultas[consulta_id] = {"vino": vino_early, "key": mejor_early["key"]}
+                                    try:
+                                        from services import analytics_service
+                                        analytics_service.registrar_escaneo(True, vino_early.get("nombre"), vino_early.get("pais"))
+                                    except Exception:
+                                        pass
+                                    _push_historial(request, (x_session_id or "").strip(), consulta_id, vino_early.get("nombre"), True)
+                                    return {
+                                        "encontrado_en_bd": True,
+                                        "consulta_id": consulta_id,
+                                        "key": mejor_early["key"],
+                                        "vino_key": mejor_early["key"],
+                                        "mostrar_boton_comprar": True,
+                                        "vino": vino_early,
+                                        "mensaje": "Encontrado en nuestra base de datos (etiqueta leída correctamente).",
+                                        "es_pro": _es_pro((x_session_id or "").strip()),
+                                    }
+                # 2) Reconocimiento por imagen (API4AI) - solo si OCR no dio coincidencia fuerte en nuestra BD
                 sugerencias_ia = recognize_wine_from_image(contenido_imagen)
                 if sugerencias_ia and sugerencias_ia[0].get("confidence", 0) >= 0.5:
                     nombre_ia = (sugerencias_ia[0].get("name") or "").strip()
@@ -416,13 +456,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                                 "mensaje": "Identificado por reconocimiento de etiqueta (IA).",
                                 "es_pro": _es_pro((x_session_id or "").strip()),
                             }
-                # 3) OCR sobre la misma imagen
-                try:
-                    texto_ocr = extraer_texto_de_imagen(contenido_imagen)
-                    if texto_ocr:
-                        texto_busqueda = f"{texto_busqueda} {texto_ocr}".strip()
-                except TesseractNoDisponibleError:
-                    error_tesseract = True
+                # OCR ya hecho arriba (1b) para priorizar nuestra BD (Viña Pedrosa, etc.)
         except Exception:
             imagen_enviada = True
 

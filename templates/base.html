@@ -196,5 +196,28 @@
       if (intro) intro.innerHTML = '¡Hola! Soy el asistente de Vino Pro IA. 👔 Resuelvo dudas de <strong>toda</strong> la app. Para vinos y maridajes, usa <strong>Preguntar</strong>. Escribe algo abajo o elige un tema.';
     })();
   </script>
+  <!-- Aviso si no hay conexión con el servidor (móvil / cold start / red local) -->
+  <div id="aviso-sin-conexion" class="aviso-sin-conexion" role="alert" hidden>
+    <p>No se pudo conectar al servidor. Comprueba la WiFi o que la URL sea correcta. Si es la primera vez, espera hasta 1 min.</p>
+    <button type="button" id="aviso-sin-conexion-reintentar" class="btn btn-outline">Reintentar</button>
+  </div>
+  <script>
+    (function() {
+      var banner = document.getElementById('aviso-sin-conexion');
+      var btn = document.getElementById('aviso-sin-conexion-reintentar');
+      if (!banner) return;
+      var timeout = 12000;
+      var controller = new AbortController();
+      var tid = setTimeout(function() { controller.abort(); }, timeout);
+      fetch('/api/status', { signal: controller.signal })
+        .then(function(r) { clearTimeout(tid); return r.ok; })
+        .then(function(ok) { if (!ok && banner) banner.removeAttribute('hidden'); })
+        .catch(function() {
+          clearTimeout(tid);
+          if (banner) banner.removeAttribute('hidden');
+        });
+      if (btn) btn.addEventListener('click', function() { if (banner) banner.setAttribute('hidden', ''); window.location.reload(); });
+    })();
+  </script>
 </body>
 </html>

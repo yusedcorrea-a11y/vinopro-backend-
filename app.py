@@ -67,6 +67,7 @@ def cargar_todos_los_vinos():
         'notificaciones_landing.json',
         'usuarios_perfiles.json', 'seguidores.json', 'actividad.json', 'notificaciones.json',
         'contactos_qr.json', 'lugares_destacados.json', 'chat_mensajes.json',
+        'patrocinadores.json',  # no es catálogo de vinos
     }
     archivos = [f for f in os.listdir(DATA_FOLDER) if f.endswith('.json') and f not in excluir]
     

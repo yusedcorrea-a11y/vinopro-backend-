@@ -141,6 +141,8 @@ def buscar_vinos_avanzado(vinos_dict: dict, texto: str, limite: int = 5, precio_
     resultados = []
 
     for key, vino in vinos_a_buscar.items():
+        if not isinstance(vino, dict):
+            continue
         vino_tipo = (vino.get("tipo") or "").strip().lower()
         if tipo and vino_tipo and tipo not in vino_tipo:
             continue

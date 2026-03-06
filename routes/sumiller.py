@@ -405,10 +405,11 @@ async def preguntar_sumiller(
         import traceback
         print("[SUMILLER] Error en preguntar_sumiller:", e)
         traceback.print_exc()
-        raise HTTPException(
-            status_code=500,
-            detail="Error al procesar la pregunta. Inténtalo de nuevo.",
-        )
+        # Incluir error real en respuesta para depurar (ver en pantalla qué falla)
+        err_msg = str(e)
+        err_tb = traceback.format_exc()
+        detail = f"Error al procesar la pregunta. Inténtalo de nuevo. [Debug: {err_msg}]"
+        raise HTTPException(status_code=500, detail=detail)
 
 
 def _preguntar_sumiller_general(

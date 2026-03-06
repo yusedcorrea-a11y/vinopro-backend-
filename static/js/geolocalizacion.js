@@ -81,26 +81,38 @@
   }
 
   function renderLugarCard(lugar, opts) {
-    opts = opts || {};
-    var dist = lugar.distancia_km != null ? lugar.distancia_km + ' ' + textos.distancia : '';
-    var html = '<h4>' + (lugar.nombre || '—') + (opts.destacado ? ' <span class="mapa-badge-destacado">Recomendado</span>' : '') + '</h4>';
-    if (lugar.direccion) html += '<p class="direccion">' + lugar.direccion + '</p>';
-    if (lugar.descripcion) html += '<p class="direccion">' + lugar.descripcion + '</p>';
-    html += '<p class="meta">' + (lugar.tipo || '') + (dist ? ' · ' + dist : '') + '</p>';
-    html += '<div class="acciones">';
-    var gMaps = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(lugar.lat + ',' + lugar.lon);
-    html += '<a href="' + gMaps + '" target="_blank" rel="noopener" class="btn btn-outline">' + textos.ver_ruta + '</a>';
-    if (lugar.telefono) {
-      html += '<a href="tel:' + encodeURIComponent(lugar.telefono) + '" class="btn btn-outline">' + textos.llamar + '</a>';
+    if (window.LugaresUI && typeof window.LugaresUI.renderLugarCard === 'function') {
+      return window.LugaresUI.renderLugarCard(lugar, opts, textos);
     }
-    if (lugar.email) {
-      html += '<a href="mailto:' + encodeURIComponent(lugar.email) + '" class="btn btn-outline">Email</a>';
-    }
-    if (lugar.web) {
-      html += '<a href="' + encodeURIComponent(lugar.web) + '" target="_blank" rel="noopener" class="btn btn-outline">' + textos.web + '</a>';
-    }
-    html += '</div>';
-    return html;
+    return '<h4>' + (lugar.nombre || '—') + '</h4>';
+  }
+
+  function bindCardActions(card, lugar) {
+    card.addEventListener('click', function(e) {
+      var actionBtn = e.target.closest('[data-action]');
+      if (actionBtn) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (window.LugaresUI && typeof window.LugaresUI.openAction === 'function') {
+          window.LugaresUI.openAction(lugar, actionBtn.getAttribute('data-action'));
+        }
+        return;
+      }
+      if (!map) return;
+      map.setView([lugar.lat, lugar.lon], 17);
+      var m = markers.find(function(x) { return x.getLatLng().lat === lugar.lat && x.getLatLng().lng === lugar.lon; });
+      if (m && m.openPopup) m.openPopup();
+    });
+  }
+
+  function setInputFromCoords(lat, lon) {
+    var input = document.getElementById('mapa-input-ciudad');
+    if (!input) return;
+    var latText = Number(lat).toFixed(5);
+    var lonText = Number(lon).toFixed(5);
+    input.value = latText + ', ' + lonText;
+    input.setAttribute('data-lat', latText);
+    input.setAttribute('data-lon', lonText);
   }
 
   function renderLista(lugares) {
@@ -118,12 +130,7 @@
       card.setAttribute('data-lat', lugar.lat);
       card.setAttribute('data-lon', lugar.lon);
       card.innerHTML = renderLugarCard(lugar);
-      card.addEventListener('click', function(e) {
-        if (e.target.tagName === 'A') return;
-        map.setView([lugar.lat, lugar.lon], 17);
-        var m = markers.find(function(x) { return x.getLatLng().lat === lugar.lat && x.getLatLng().lng === lugar.lon; });
-        if (m && m.openPopup) m.openPopup();
-      });
+      bindCardActions(card, lugar);
       container.appendChild(card);
     });
   }
@@ -147,14 +154,7 @@
           card.setAttribute('data-lat', lugar.lat);
           card.setAttribute('data-lon', lugar.lon);
           card.innerHTML = renderLugarCard(lugar, { destacado: true });
-          card.addEventListener('click', function(e) {
-            if (e.target.tagName === 'A') return;
-            if (map) {
-              map.setView([lugar.lat, lugar.lon], 14);
-              var m = markers.find(function(x) { return x.getLatLng().lat === lugar.lat && x.getLatLng().lng === lugar.lon; });
-              if (m && m.openPopup) m.openPopup();
-            }
-          });
+          bindCardActions(card, lugar);
           container.appendChild(card);
           if (map && lugar.lat != null && lugar.lon != null) {
             var m = L.marker([lugar.lat, lugar.lon])
@@ -237,6 +237,7 @@
           function(pos) {
             var lat = pos.coords.latitude;
             var lon = pos.coords.longitude;
+            setInputFromCoords(lat, lon);
             buscarPorCoords(lat, lon, getRadioKm());
           },
           function() {
@@ -251,6 +252,11 @@
       function buscarCiudad() {
         var ciudad = (inputCiudad.value || '').trim();
         if (ciudad.length < 2) return;
+        var coordsMatch = ciudad.match(/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/);
+        if (coordsMatch) {
+          buscarPorCoords(parseFloat(coordsMatch[1]), parseFloat(coordsMatch[2]), getRadioKm());
+          return;
+        }
         buscarPorCiudad(ciudad, getRadioKm());
       }
       btnCiudad.addEventListener('click', buscarCiudad);

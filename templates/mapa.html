@@ -20,8 +20,10 @@
       align-items: center;
       gap: 0.75rem;
     }
-    .mapa-controls input { padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(107,45,60,0.2); min-width: 200px; }
-    .mapa-controls .btn { padding: 0.5rem 1rem; }
+    .mapa-controls > * { width: 100%; }
+    .mapa-controls input { padding: 0.65rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(107,45,60,0.2); min-width: 200px; }
+    .mapa-controls .btn { padding: 0.65rem 1rem; }
+    .mapa-controls .mapa-select-radio { padding: 0.65rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(107,45,60,0.2); background: rgba(255,255,255,0.9); }
     .mapa-estado { padding: 1rem; border-radius: var(--radius-sm); background: var(--burdeos-suave); color: var(--burdeos); font-weight: 500; }
     .mapa-estado.error { background: rgba(180,60,60,0.15); color: var(--burdeos-oscuro); }
     .mapa-lista { display: grid; gap: 0.75rem; }
@@ -33,15 +35,29 @@
       transition: box-shadow 0.2s;
     }
     .mapa-lugar-card:hover { box-shadow: var(--sombra-md); }
-    .mapa-lugar-card h4 { margin: 0 0 0.35rem 0; font-size: 1.05rem; color: var(--burdeos); }
+    .mapa-lugar-card h4 { margin: 0 0 0.25rem 0; font-size: 1.05rem; color: var(--burdeos); line-height: 1.25; }
     .mapa-lugar-card .direccion { font-size: 0.9rem; color: var(--texto-suave); margin-bottom: 0.35rem; }
     .mapa-lugar-card .meta { font-size: 0.8rem; color: var(--texto-suave); margin-bottom: 0.5rem; }
     .mapa-lugar-card .acciones { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-    .mapa-lugar-card .acciones a { font-size: 0.85rem; }
+    .mapa-lugar-card .acciones .btn { font-size: 0.85rem; }
     [data-theme="dark"] .mapa-lugar-card { background: rgba(26,21,18,0.6); border-color: rgba(212,168,75,0.2); }
     [data-theme="dark"] .mapa-lugar-card h4 { color: var(--dorado-claro); }
     .mapa-badge-destacado { font-size: 0.75rem; font-weight: 600; color: var(--burdeos); background: var(--burdeos-suave); padding: 0.15rem 0.5rem; border-radius: 4px; margin-left: 0.35rem; }
+    .mapa-badge-patrocinador { display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.02em; color: #7a4e00; background: rgba(212,175,55,0.22); border: 1px solid rgba(212,175,55,0.35); padding: 0.15rem 0.45rem; border-radius: 999px; }
+    .mapa-card-top { display: flex; gap: 0.75rem; align-items: flex-start; margin-bottom: 0.45rem; }
+    .mapa-card-media { flex: 0 0 58px; width: 58px; height: 58px; border-radius: 12px; overflow: hidden; background: linear-gradient(135deg, rgba(212,175,55,0.35), rgba(107,45,60,0.28)); border: 1px solid rgba(212,175,55,0.35); display: flex; align-items: center; justify-content: center; }
+    .mapa-sponsor-logo-img { width: 100%; height: 100%; object-fit: cover; }
+    .mapa-sponsor-logo-placeholder { font-size: 1.1rem; font-weight: 700; color: var(--burdeos); }
+    .mapa-card-main { flex: 1 1 auto; min-width: 0; }
+    .mapa-badges-wrap { margin-bottom: 0.4rem; }
+    .mapa-lugar-card-destacado { background: linear-gradient(165deg, rgba(255,255,255,0.96), rgba(250,243,228,0.96)); border: 1px solid rgba(212,175,55,0.28); box-shadow: 0 8px 20px rgba(107,45,60,0.08); }
     .mapa-marker-user { font-size: 24px; line-height: 1; color: var(--burdeos); text-align: center; }
+    @media (min-width: 760px) {
+      .mapa-controls > * { width: auto; }
+    }
+    [data-theme="dark"] .mapa-lugar-card-destacado { background: linear-gradient(165deg, rgba(40,31,26,0.8), rgba(26,21,18,0.8)); border-color: rgba(212,168,75,0.35); }
+    [data-theme="dark"] .mapa-badge-patrocinador { color: #f5d68e; background: rgba(212,175,55,0.2); border-color: rgba(212,175,55,0.4); }
+    [data-theme="dark"] .mapa-sponsor-logo-placeholder { color: var(--dorado-claro); }
   </style>
 {% endblock %}
 
@@ -90,5 +106,6 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="/static/js/lugares.js"></script>
 <script src="/static/js/geolocalizacion.js"></script>
 {% endblock %}

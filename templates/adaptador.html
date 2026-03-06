@@ -13,6 +13,24 @@
     .sync-status { margin-top: 0.75rem; font-size: 0.9rem; color: var(--texto-suave); }
     .sync-status.ok { color: #2f7a3b; }
     .sync-status.err { color: #a33434; }
+    .history-list { margin-top: 1rem; display: grid; gap: 0.75rem; }
+    .history-item { background: rgba(0,0,0,0.2); border-radius: 8px; padding: 0.75rem; }
+    .history-item.ok { border-left: 4px solid #2f7a3b; }
+    .history-item.err { border-left: 4px solid #a33434; }
+    .history-meta { font-size: 0.85rem; color: var(--texto-suave); margin-bottom: 0.35rem; }
+    .history-preview { font-size: 0.9rem; white-space: pre-wrap; word-break: break-word; }
+    .payload-box { margin-top: 1rem; }
+    .test-controls { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: end; margin-top: 0.75rem; }
+    .test-controls .form-group { flex: 1 1 220px; margin-bottom: 0; }
+    .signature-guide { margin-top: 1.5rem; padding: 1.25rem; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.18); }
+    .signature-guide p { color: var(--texto-suave); }
+    .signature-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+    .signature-tab { border: 1px solid rgba(212,175,55,0.24); background: rgba(0,0,0,0.18); color: var(--texto-principal); border-radius: 999px; padding: 0.55rem 0.95rem; font-weight: 600; cursor: pointer; }
+    .signature-tab.active { background: linear-gradient(135deg, rgba(212,175,55,0.24), rgba(107,45,60,0.24)); color: var(--dorado-claro); border-color: rgba(212,175,55,0.45); }
+    .signature-panels { margin-top: 1rem; }
+    .signature-panel { display: none; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 1rem; }
+    .signature-panel.active { display: block; }
+    .signature-panel h4 { margin-top: 0; margin-bottom: 0.5rem; color: var(--dorado-claro); }
   </style>
 {% endblock %}
 
@@ -54,13 +72,61 @@
         <input type="url" id="webhook-url" name="webhook_url" placeholder="https://tu-sistema.com/webhook/vinopro">
         <p class="texto-pequeno">{{ t('adaptador.webhook_help') }}</p>
       </div>
+      <div class="form-group">
+        <label for="webhook-secret">Clave secreta del webhook (opcional)</label>
+        <input type="password" id="webhook-secret" name="webhook_secret" placeholder="Se usa para firmar pruebas y eventos">
+        <p class="texto-pequeno">Si la configuras, VINO podrá enviar una firma `HMAC SHA-256` en la cabecera `X-Vino-Signature`.</p>
+      </div>
       <button type="submit" class="btn btn-block">{{ t('adaptador.guardar_config') }}</button>
     </form>
     <div id="config-msg" class="mensaje hidden" style="margin-top:0.75rem;"></div>
-    <div style="margin-top:0.75rem;">
+    <div class="test-controls">
+      <div class="form-group">
+        <label for="test-webhook-mode">Formato de prueba</label>
+        <select id="test-webhook-mode">
+          <option value="plain">JSON plano</option>
+          <option value="signed">Evento con firma</option>
+        </select>
+      </div>
       <button type="button" id="test-webhook" class="btn btn-outline">Probar Webhook</button>
     </div>
     <div id="test-webhook-msg" class="mensaje hidden" style="margin-top:0.75rem;"></div>
+    <div style="margin-top:1rem;">
+      <h4 style="margin-bottom:0.5rem;">Historial de pruebas</h4>
+      <div id="test-webhook-history" class="history-list">
+        <div class="history-item">
+          <div class="history-meta">Todavía no hay pruebas registradas.</div>
+        </div>
+      </div>
+    </div>
+    <div class="payload-box">
+      <h4 style="margin-bottom:0.5rem;">Payload de prueba</h4>
+      <p class="texto-pequeno">Este es el JSON simulado que puedes copiar para probar la integración en Postman o en tu backend.</p>
+      <pre class="code-block" id="test-webhook-payload">{
+  "event": "bodega.test",
+  "timestamp": "2026-03-06T12:00:00Z",
+  "restaurant_name": "Mi Restaurante",
+  "message": "Evento de prueba desde VINO. No afecta al stock real.",
+  "sample_stock": [
+    {
+      "id": "sample-botella",
+      "vino_nombre": "Vino de prueba",
+      "cantidad": 2,
+      "anada": 2021,
+      "ubicacion": "Bodega principal",
+      "tipo": "tinto"
+    }
+  ]
+}</pre>
+      <h4 style="margin:1rem 0 0.5rem;">Cabeceras de prueba</h4>
+      <pre class="code-block" id="test-webhook-headers">Content-Type: application/json
+X-Vino-Event: bodega.test
+X-Vino-Timestamp: 2026-03-06T12:00:00Z</pre>
+      <div style="margin-top:0.75rem;">
+        <button type="button" id="copy-test-payload" class="btn btn-outline">Copiar payload de prueba</button>
+      </div>
+      <p id="copy-test-payload-msg" class="texto-pequeno hidden" style="margin-top:0.5rem;"></p>
+    </div>
   </section>
 
   <section class="adaptador-section doc-section">
@@ -101,6 +167,71 @@
   -H "Content-Type: application/json" \
   -H "X-API-Token: TU_TOKEN_AQUI" \
   -d "{\"vino_nombre\":\"Marqués de Riscal Reserva\",\"cantidad\":1}"</pre>
+  </section>
+
+  <section class="adaptador-section signature-guide">
+    <h3 class="section-title">Guía para Desarrolladores</h3>
+    <p>Cuando activas el modo firmado, VINO envía la cabecera <code>X-Vino-Signature</code> para que el restaurante verifique que el webhook es auténtico. La firma se genera con <code>hmac_sha256(key=webhook_secret, msg=timestamp + "." + payload)</code>.</p>
+    <p class="texto-pequeno">Debes leer también la cabecera <code>X-Vino-Timestamp</code> y usar el cuerpo JSON exacto recibido, sin modificar espacios ni reserializar el payload antes de calcular la firma.</p>
+
+    <div class="signature-tabs" role="tablist" aria-label="Ejemplos de verificación de firma">
+      <button type="button" class="signature-tab active" data-signature-tab="node" aria-selected="true">Node.js</button>
+      <button type="button" class="signature-tab" data-signature-tab="python" aria-selected="false">Python</button>
+    </div>
+
+    <div class="signature-panels">
+      <div class="signature-panel active" data-signature-panel="node">
+        <h4>Node.js</h4>
+        <pre class="code-block">const crypto = require('crypto');
+
+function verifyVinoSignature(secret, timestamp, rawBody, signatureHeader) {
+  const signedPayload = `${timestamp}.${rawBody}`;
+  const expected = 'sha256=' + crypto
+    .createHmac('sha256', secret)
+    .update(signedPayload, 'utf8')
+    .digest('hex');
+
+  const expectedBuffer = Buffer.from(expected, 'utf8');
+  const receivedBuffer = Buffer.from(signatureHeader || '', 'utf8');
+
+  if (expectedBuffer.length !== receivedBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(expectedBuffer, receivedBuffer);
+}
+
+// Ejemplo de uso en tu endpoint:
+// const timestamp = req.header('X-Vino-Timestamp');
+// const signature = req.header('X-Vino-Signature');
+// const rawBody = req.rawBody.toString('utf8');
+// const isValid = verifyVinoSignature(process.env.VINO_WEBHOOK_SECRET, timestamp, rawBody, signature);</pre>
+      </div>
+
+      <div class="signature-panel" data-signature-panel="python">
+        <h4>Python</h4>
+        <pre class="code-block">import hmac
+import hashlib
+
+
+def verify_vino_signature(secret: str, timestamp: str, raw_body: str, signature_header: str) -> bool:
+    signed_payload = f"{timestamp}.{raw_body}"
+    expected = "sha256=" + hmac.new(
+        secret.encode("utf-8"),
+        signed_payload.encode("utf-8"),
+        hashlib.sha256,
+    ).hexdigest()
+
+    return hmac.compare_digest(expected, signature_header or "")
+
+
+# Ejemplo de uso en tu endpoint:
+# timestamp = request.headers.get("X-Vino-Timestamp", "")
+# signature = request.headers.get("X-Vino-Signature", "")
+# raw_body = request.get_data(as_text=True)
+# is_valid = verify_vino_signature(os.environ["VINO_WEBHOOK_SECRET"], timestamp, raw_body, signature)</pre>
+      </div>
+    </div>
   </section>
 </div>
 {% endblock %}

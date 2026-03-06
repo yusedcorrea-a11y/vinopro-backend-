@@ -8,6 +8,8 @@ import os
 import secrets
 import threading
 import uuid
+import hashlib
+import hmac
 from datetime import datetime, timezone
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -54,10 +56,12 @@ def _ensure_defaults(rest: dict) -> dict:
     rest.setdefault("nombre", "Mi Restaurante")
     rest.setdefault("programas", [])
     rest.setdefault("webhook_url", "")
+    rest.setdefault("webhook_secret", "")
     rest.setdefault("last_sync_at", None)
     rest.setdefault("last_sync_status", "never")
     rest.setdefault("last_sync_error", None)
     rest.setdefault("token_rotated_at", None)
+    rest.setdefault("webhook_test_history", [])
     return rest
 
 
@@ -149,7 +153,13 @@ def get_session_id_for_token(token: str) -> str | None:
     return r.get("session_id") if r else None
 
 
-def update_config(token: str, nombre: str | None = None, programas: list | None = None, webhook_url: str | None = None) -> dict | None:
+def update_config(
+    token: str,
+    nombre: str | None = None,
+    programas: list | None = None,
+    webhook_url: str | None = None,
+    webhook_secret: str | None = None,
+) -> dict | None:
     data = _load_restaurantes()
     rest = data.get("restaurantes", {})
     if token not in rest:
@@ -161,6 +171,8 @@ def update_config(token: str, nombre: str | None = None, programas: list | None 
         rest[token]["programas"] = [p for p in programas if p in PROGRAMAS_DISPONIBLES]
     if webhook_url is not None:
         rest[token]["webhook_url"] = (webhook_url or "").strip()
+    if webhook_secret is not None:
+        rest[token]["webhook_secret"] = (webhook_secret or "").strip()
     _save_restaurantes(data)
     return _response_payload(token, rest[token])
 
@@ -201,6 +213,49 @@ def _cancel_timer(timer_map: dict[str, threading.Timer], session_id: str) -> Non
         timer.cancel()
 
 
+def _append_test_history(token: str, entry: dict) -> list[dict]:
+    data = _load_restaurantes()
+    rest = data.get("restaurantes", {})
+    if token not in rest:
+        return []
+    payload = _ensure_defaults(rest[token])
+    history = payload.get("webhook_test_history") or []
+    history.insert(
+        0,
+        {
+            "attempted_at": _utc_now_iso(),
+            "success": bool(entry.get("success")),
+            "status_code": entry.get("status_code"),
+            "mode": entry.get("mode") or "plain",
+            "message": (entry.get("message") or "")[:200],
+            "response_preview": (entry.get("response_preview") or "")[:300],
+        },
+    )
+    payload["webhook_test_history"] = history[:5]
+    rest[token] = payload
+    data["restaurantes"] = rest
+    _save_restaurantes(data)
+    return payload["webhook_test_history"]
+
+
+def _build_signature(secret: str, timestamp: str, payload: bytes) -> str:
+    raw = timestamp.encode("utf-8") + b"." + payload
+    digest = hmac.new(secret.encode("utf-8"), raw, hashlib.sha256).hexdigest()
+    return f"sha256={digest}"
+
+
+def _build_webhook_headers(event_name: str, payload: bytes, secret: str = "", timestamp: str | None = None) -> dict[str, str]:
+    sent_at = timestamp or _utc_now_iso()
+    headers = {
+        "Content-Type": "application/json",
+        "X-Vino-Event": event_name,
+        "X-Vino-Timestamp": sent_at,
+    }
+    if secret:
+        headers["X-Vino-Signature"] = _build_signature(secret, sent_at, payload)
+    return headers
+
+
 def _send_webhook_now(session_id: str, attempt: int = 1) -> None:
     rest = get_restaurante_by_session(session_id)
     if not rest or not rest.get("webhook_url"):
@@ -210,7 +265,8 @@ def _send_webhook_now(session_id: str, attempt: int = 1) -> None:
         return
     stock = get_stock_export(session_id)
     payload = json.dumps({"event": "bodega.updated", "stock": stock}).encode("utf-8")
-    req = Request(url, data=payload, method="POST", headers={"Content-Type": "application/json"})
+    headers = _build_webhook_headers("bodega.updated", payload, (rest.get("webhook_secret") or "").strip())
+    req = Request(url, data=payload, method="POST", headers=headers)
     try:
         with urlopen(req, timeout=WEBHOOK_TIMEOUT_SECONDS) as response:
             status = getattr(response, "status", 200)
@@ -232,7 +288,7 @@ def _send_webhook_now(session_id: str, attempt: int = 1) -> None:
         _set_sync_status(session_id, "error", str(exc))
 
 
-def test_webhook(token: str) -> dict:
+def test_webhook(token: str, mode: str = "plain") -> dict:
     """
     Envía un evento de prueba al webhook configurado sin tocar el stock real.
     Devuelve estado HTTP y un fragmento de la respuesta remota para depuración.
@@ -240,14 +296,35 @@ def test_webhook(token: str) -> dict:
     rest = get_restaurante_by_token(token)
     if not rest:
         return {"success": False, "status_code": None, "message": "Token no válido."}
+    mode = "signed" if (mode or "").strip().lower() == "signed" else "plain"
     url = (rest.get("webhook_url") or "").strip()
     if not url:
-        return {"success": False, "status_code": None, "message": "No hay webhook configurado."}
+        result = {
+            "success": False,
+            "status_code": None,
+            "mode": mode,
+            "message": "No hay webhook configurado.",
+            "response_preview": "",
+        }
+        result["history"] = _append_test_history(token, result)
+        return result
+    secret = (rest.get("webhook_secret") or "").strip()
+    if mode == "signed" and not secret:
+        result = {
+            "success": False,
+            "status_code": None,
+            "mode": mode,
+            "message": "Para probar con firma primero configura una clave secreta del webhook.",
+            "response_preview": "",
+        }
+        result["history"] = _append_test_history(token, result)
+        return result
 
+    sent_at = _utc_now_iso()
     payload = json.dumps(
         {
             "event": "bodega.test",
-            "timestamp": _utc_now_iso(),
+            "timestamp": sent_at,
             "restaurant_name": rest.get("nombre") or "Mi Restaurante",
             "message": "Evento de prueba desde VINO. No afecta al stock real.",
             "sample_stock": [
@@ -262,37 +339,50 @@ def test_webhook(token: str) -> dict:
             ],
         }
     ).encode("utf-8")
-    req = Request(url, data=payload, method="POST", headers={"Content-Type": "application/json"})
+    headers = _build_webhook_headers("bodega.test", payload, secret if mode == "signed" else "", sent_at)
+    req = Request(url, data=payload, method="POST", headers=headers)
     try:
         with urlopen(req, timeout=WEBHOOK_TIMEOUT_SECONDS) as response:
             status = getattr(response, "status", 200)
             body = response.read().decode("utf-8", errors="replace")[:300]
         ok = 200 <= status < 300
-        return {
+        result = {
             "success": ok,
             "status_code": status,
+            "mode": mode,
             "message": "Webhook de prueba recibido correctamente." if ok else f"Respuesta inesperada del servidor: HTTP {status}",
             "response_preview": body,
+            "request_headers": headers,
         }
+        result["history"] = _append_test_history(token, result)
+        return result
     except HTTPError as exc:
         body = ""
         try:
             body = exc.read().decode("utf-8", errors="replace")[:300]
         except Exception:
             body = str(exc)[:300]
-        return {
+        result = {
             "success": False,
             "status_code": getattr(exc, "code", None),
+            "mode": mode,
             "message": f"El servidor respondió con HTTP {getattr(exc, 'code', 'error')}.",
             "response_preview": body,
+            "request_headers": headers,
         }
+        result["history"] = _append_test_history(token, result)
+        return result
     except (URLError, OSError) as exc:
-        return {
+        result = {
             "success": False,
             "status_code": None,
+            "mode": mode,
             "message": f"No se pudo contactar con el webhook: {str(exc)[:200]}",
             "response_preview": "",
+            "request_headers": headers,
         }
+        result["history"] = _append_test_history(token, result)
+        return result
 
 
 def notify_webhook(session_id: str) -> None:

@@ -43,6 +43,7 @@ class ConfigBody(BaseModel):
     nombre: str | None = Field(None, max_length=200)
     programas: list[str] | None = None
     webhook_url: str | None = Field(None, max_length=500)
+    webhook_secret: str | None = Field(None, max_length=500)
 
 
 @router.post("/config")
@@ -56,6 +57,7 @@ def update_config(body: ConfigBody, token: str = Query(..., description="Token d
         nombre=body.nombre,
         programas=body.programas,
         webhook_url=body.webhook_url,
+        webhook_secret=body.webhook_secret,
     )
     if not rest:
         raise HTTPException(status_code=404, detail="Token no válido.")
@@ -63,11 +65,14 @@ def update_config(body: ConfigBody, token: str = Query(..., description="Token d
 
 
 @router.post("/test-webhook")
-def test_webhook(token: str = Query(..., description="Token del restaurante")):
+def test_webhook(
+    token: str = Query(..., description="Token del restaurante"),
+    mode: str = Query("plain", description="Modo de prueba: plain o signed"),
+):
     """
     Envía un evento de prueba al webhook configurado, sin modificar stock real.
     """
-    result = svc.test_webhook(token.strip())
+    result = svc.test_webhook(token.strip(), mode=mode)
     if result.get("status_code") == 404 and not result.get("success"):
         raise HTTPException(status_code=404, detail=result.get("message") or "Webhook no encontrado.")
     if result.get("message") == "Token no válido.":

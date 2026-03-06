@@ -1,12 +1,12 @@
 # Render Blueprint – backend VINO PRO
+# Usa Docker para incluir Tesseract OCR (requerido para el escáner de etiquetas).
 # Opcional: en el dashboard puedes crear el servicio a mano o importar este archivo.
 services:
   - type: web
     name: vinopro-backend
-    runtime: python
+    runtime: docker
     rootDir: backend_optimized
-    buildCommand: pip install -r requirements.txt
-    startCommand: python render_start.py
+    dockerfilePath: Dockerfile
     envVars:
       - key: CORS_ORIGINS
         value: "*"

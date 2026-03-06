@@ -1,0 +1,10 @@
+# No copiar al contenedor
+__pycache__
+*.pyc
+.venv
+venv
+.env
+.git
+*.md
+.pytest_cache
+tests

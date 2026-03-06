@@ -120,5 +120,24 @@
     "vistos": [],
     "likes": [],
     "dislikes": []
+  },
+  "test-session-123": {
+    "busquedas": [
+      {
+        "q": "hoy toca comida japonesa que vino pongo ?",
+        "keys": [
+          "casas_del_bosque_gran_reserva_sauvignon"
+        ]
+      },
+      {
+        "q": "hoy toca comida japonesa que vino pongo ?",
+        "keys": [
+          "casas_del_bosque_gran_reserva_sauvignon"
+        ]
+      }
+    ],
+    "vistos": [],
+    "likes": [],
+    "dislikes": []
   }
 }

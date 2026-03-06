@@ -58,14 +58,65 @@ Deberías ver la versión de Tesseract. Si el comando no se reconoce, Tesseract 
 
 ---
 
-### 4. Si `tesseract` no se reconoce
+### 4. Si `tesseract` no se reconoce — Comandos exactos para Lenovo IdeaPad 3
 
-- Cierra **todas** las terminales donde esté corriendo el backend y ábrelas de nuevo.
-- Si sigue sin funcionar, comprueba que la carpeta de instalación esté en el PATH:
-  - **Configuración de Windows** → **Sistema** → **Acerca de** → **Configuración avanzada del sistema** → **Variables de entorno**.
-  - En **Variables del sistema**, edita **Path** y añade (si no está):  
-    `C:\Program Files\Tesseract-OCR`
-  - Acepta y vuelve a abrir PowerShell.
+El backend busca Tesseract en `C:\Program Files\Tesseract-OCR\` por defecto. Si no lo encuentra, añade esa ruta al PATH.
+
+**Opción 4a: Solo para la sesión actual (PowerShell)**
+
+```powershell
+$env:Path += ";C:\Program Files\Tesseract-OCR"
+tesseract --version
+```
+
+**Opción 4b: Añadir al PATH del usuario de forma permanente (PowerShell como usuario)**
+
+```powershell
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Tesseract-OCR", "User")
+```
+
+Cierra y vuelve a abrir PowerShell para que el cambio surta efecto.
+
+**Opción 4c: Añadir al PATH del sistema (PowerShell como Administrador)**
+
+```powershell
+$rutaActual = [Environment]::GetEnvironmentVariable("Path", "Machine")
+if ($rutaActual -notlike "*Tesseract-OCR*") {
+    [Environment]::SetEnvironmentVariable("Path", $rutaActual + ";C:\Program Files\Tesseract-OCR", "Machine")
+    Write-Host "PATH actualizado. Cierra y abre una nueva terminal."
+} else {
+    Write-Host "Tesseract ya está en el PATH."
+}
+```
+
+**Opción 4d: Variable de entorno TESSERACT_CMD (alternativa al PATH)**
+
+Si prefieres no modificar el PATH, define la variable antes de arrancar el backend:
+
+```powershell
+$env:TESSERACT_CMD = "C:\Program Files\Tesseract-OCR\tesseract.exe"
+python main.py
+```
+
+O en un archivo `.env` en la carpeta del proyecto:
+
+```
+TESSERACT_CMD=C:\Program Files\Tesseract-OCR\tesseract.exe
+```
+
+**Verificar que funciona**
+
+```powershell
+# Comprobar que el ejecutable existe
+Test-Path "C:\Program Files\Tesseract-OCR\tesseract.exe"
+
+# Debe devolver True. Luego:
+tesseract --version
+```
+
+**Opción 4e: GUI (Configuración de Windows)**
+
+Configuración de Windows → Sistema → Acerca de → Configuración avanzada del sistema → Variables de entorno → Editar Path → Añadir `C:\Program Files\Tesseract-OCR`.
 
 ---
 

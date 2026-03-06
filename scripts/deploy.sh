@@ -36,8 +36,18 @@ rsync -av --delete \
     [ -f "$PROJECT_ROOT/.env" ] && cp "$PROJECT_ROOT/.env" "$TARGET/.env"
   }
 
-# Instalar dependencias
-echo "Instalando dependencias..."
+# Instalar dependencias del sistema (Tesseract OCR para el escáner)
+echo "Instalando Tesseract OCR..."
+if command -v apt-get &>/dev/null; then
+  sudo apt-get update -qq && sudo apt-get install -y -qq tesseract-ocr tesseract-ocr-spa tesseract-ocr-eng || echo "Aviso: apt-get falló. Instala tesseract-ocr manualmente."
+elif command -v yum &>/dev/null; then
+  sudo yum install -y tesseract tesseract-langpack-spa tesseract-langpack-eng || echo "Aviso: yum falló. Instala tesseract manualmente."
+else
+  echo "Aviso: No se detectó apt-get ni yum. Instala tesseract-ocr manualmente para el escáner."
+fi
+
+# Instalar dependencias Python
+echo "Instalando dependencias Python..."
 cd "$TARGET"
 if command -v pip3 &>/dev/null; then
   pip3 install -r requirements_produccion.txt

@@ -11,6 +11,7 @@ Flujo:
 import io
 import logging
 import os
+import shutil
 import sys
 
 logger = logging.getLogger(__name__)
@@ -21,15 +22,58 @@ class TesseractNoDisponibleError(Exception):
     pass
 
 
+def _obtener_ruta_tesseract() -> str | None:
+    """Devuelve la ruta del ejecutable de Tesseract si existe, None si no."""
+    if sys.platform == "win32":
+        ruta = os.environ.get("TESSERACT_CMD") or r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+        return ruta if os.path.isfile(ruta) else None
+    # Linux/macOS: tesseract en PATH o /usr/bin/tesseract
+    ruta_env = os.environ.get("TESSERACT_CMD")
+    if ruta_env and os.path.isfile(ruta_env):
+        return ruta_env
+    tesseract_path = shutil.which("tesseract")
+    return tesseract_path if tesseract_path else None
+
+
+def _verificar_tesseract_disponible() -> tuple[bool, str]:
+    """
+    Verifica si Tesseract está instalado y accesible.
+    :return: (disponible: bool, mensaje: str para log/error)
+    """
+    ruta = _obtener_ruta_tesseract()
+    if not ruta:
+        if sys.platform == "win32":
+            msg = (
+                "Tesseract OCR no encontrado. Instale desde "
+                "https://github.com/UB-Mannheim/tesseract/wiki o ejecute: "
+                "winget install UB-Mannheim.TesseractOCR. "
+                "Ruta esperada: C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+            )
+        else:
+            msg = (
+                "Tesseract OCR no encontrado. Instale con: "
+                "apt-get install tesseract-ocr tesseract-ocr-spa (Debian/Ubuntu) o "
+                "brew install tesseract (macOS). "
+                "O use el Dockerfile incluido en el proyecto."
+            )
+        return False, msg
+    return True, f"Tesseract encontrado: {ruta}"
+
+
 try:
     import pytesseract
     from PIL import Image
     OCR_AVAILABLE = True
     _TesseractNotFoundError = getattr(pytesseract, "TesseractNotFoundError", Exception)
-    if sys.platform == "win32":
-        _tesseract_exe = os.environ.get("TESSERACT_CMD") or r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-        if os.path.isfile(_tesseract_exe):
-            pytesseract.pytesseract.tesseract_cmd = _tesseract_exe
+
+    _tesseract_ruta = _obtener_ruta_tesseract()
+    if _tesseract_ruta:
+        pytesseract.pytesseract.tesseract_cmd = _tesseract_ruta
+        logger.info("[OCR] %s", _verificar_tesseract_disponible()[1])
+    else:
+        ok, msg = _verificar_tesseract_disponible()
+        if not ok:
+            logger.error("[OCR] %s", msg)
 except ImportError:
     OCR_AVAILABLE = False
     pytesseract = None
@@ -90,7 +134,13 @@ def extraer_texto_de_imagen(contenido: bytes, idioma: str = "spa+eng") -> str:
     """
     if not OCR_AVAILABLE:
         logger.warning("OCR no disponible: instalar Pillow y pytesseract (y Tesseract en el sistema)")
-        return ""
+        raise TesseractNoDisponibleError("OCR no disponible: faltan dependencias Python (Pillow, pytesseract).")
+
+    # Validación explícita antes de usar Tesseract
+    disponible, msg = _verificar_tesseract_disponible()
+    if not disponible:
+        logger.error("[OCR] %s", msg)
+        raise TesseractNoDisponibleError(msg)
 
     resultados: list[tuple[str, float]] = []
 

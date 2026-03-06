@@ -5,7 +5,7 @@ Arquitectura de escaneo infalible: OCR local + fallback con IA de visión.
 ## Flujo
 
 1. **OCR local**: OpenCV (CLAHE, bilateral, sharpen) + Tesseract (spa+eng)
-2. **Fallback**: Si OCR vacío, corto (<15 chars) o baja confianza → Google Gemini 1.5 Flash
+2. **Fallback**: Si OCR vacío, corto (<15 chars) o baja confianza → Google Gemini 2.0 Flash
 3. **Refinamiento**: Normalización (2O22→2022, etc.) y estructura JSON consistente
 
 ## Variables de entorno
@@ -21,7 +21,7 @@ GOOGLE_API_KEY=tu-clave-de-google-ai
 ## Instalación de librerías de IA
 
 ```powershell
-pip install google-generativeai
+pip install google-genai
 ```
 
 O con requirements:

@@ -1,7 +1,8 @@
 """
 Servicio de IA de visión para análisis de etiquetas de vino.
 Fallback cuando el OCR local no obtiene texto suficiente.
-Usa Google Gemini 1.5 Flash (GOOGLE_API_KEY).
+Usa Google Gemini 2.0 Flash (google-genai, API v1 estable).
+Variable de entorno: GOOGLE_API_KEY.
 """
 import io
 import json
@@ -10,6 +11,9 @@ import os
 import re
 
 logger = logging.getLogger(__name__)
+
+# Modelo estable (evitar 404 de gemini-1.5-flash)
+MODELO_GEMINI = "gemini-2.0-flash"
 
 # Estructura esperada del JSON
 ESQUEMA_ENTIDADES = {
@@ -36,11 +40,9 @@ def _limpiar_json_vision(texto: str) -> dict:
     if not texto or not texto.strip():
         return dict(ESQUEMA_ENTIDADES)
     t = texto.strip()
-    # Quitar bloques ```json ... ```
     m = re.search(r"```(?:json)?\s*([\s\S]*?)\s*```", t)
     if m:
         t = m.group(1).strip()
-    # Buscar primer { hasta último }
     inicio = t.find("{")
     fin = t.rfind("}")
     if inicio >= 0 and fin > inicio:
@@ -75,7 +77,7 @@ def _normalizar_entidades_vision(ent: dict) -> dict:
             if isinstance(v, int) and 1900 <= v <= 2030:
                 out[k] = v
             elif isinstance(v, str):
-                v_limpio = re.sub(r"[OoIl]", "0", v)  # 2O22 -> 2022
+                v_limpio = re.sub(r"[OoIl]", "0", v)
                 v_limpio = re.sub(r"\D", "", v_limpio)
                 if len(v_limpio) == 4:
                     anio = int(v_limpio)
@@ -87,11 +89,26 @@ def _normalizar_entidades_vision(ent: dict) -> dict:
     return out
 
 
+def _mensaje_error_especifico(exc: Exception) -> str:
+    """Traduce excepciones de Gemini a mensajes claros para el usuario."""
+    err = str(exc).lower()
+    if "404" in err or "not found" in err:
+        return "El modelo de IA no está disponible (404). Contacta al administrador."
+    if "429" in err or "quota" in err or "rate limit" in err or "resource exhausted" in err or "resource_exhausted" in err:
+        return "Límite de uso de la IA alcanzado. Prueba más tarde o escribe el nombre del vino abajo."
+    if "401" in err or "403" in err or "invalid" in err or "api_key" in err or "permission" in err:
+        return "Error de autenticación con la IA. Verifica GOOGLE_API_KEY en el servidor."
+    if "500" in err or "503" in err or "unavailable" in err:
+        return "El servicio de IA no está disponible. Prueba más tarde o escribe el nombre del vino."
+    return f"Error al analizar la imagen con IA: {str(exc)[:150]}"
+
+
 def analizar_etiqueta_vision(imagen_bytes: bytes) -> dict | None:
     """
-    Envía la imagen a Google Gemini 1.5 Flash para extraer datos de la etiqueta.
+    Envía la imagen a Google Gemini 2.0 Flash para extraer datos de la etiqueta.
     :param imagen_bytes: bytes de la imagen (JPEG, PNG)
-    :return: dict con texto, entidades, origen="vision" o None si falla
+    :return: dict con texto, entidades, origen="vision" o None si falla.
+             Si falla con excepción conocida: {"error": "mensaje_especifico"}
     """
     if not imagen_bytes or len(imagen_bytes) < 100:
         return None
@@ -102,24 +119,28 @@ def analizar_etiqueta_vision(imagen_bytes: bytes) -> dict | None:
         return None
 
     try:
-        import google.generativeai as genai
-        from PIL import Image
+        from google import genai
+        from google.genai import types
     except ImportError:
-        logger.warning("[Vision] google-generativeai no instalado: pip install google-generativeai")
-        return None
+        logger.warning("[Vision] google-genai no instalado: pip install google-genai")
+        return {"error": "Falta instalar google-genai. Contacta al administrador."}
 
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    mime = "image/jpeg" if imagen_bytes[:2] == b"\xff\xd8" else "image/png"
 
     try:
-        img = Image.open(io.BytesIO(imagen_bytes))
-        response = model.generate_content(
-            [PROMPT_VISION, img],
-            generation_config={"max_output_tokens": 500},
+        client = genai.Client(api_key=api_key)
+        response = client.models.generate_content(
+            model=MODELO_GEMINI,
+            contents=[
+                types.Part.from_text(text=PROMPT_VISION),
+                types.Part.from_bytes(data=imagen_bytes, mime_type=mime),
+            ],
+            config=types.GenerateContentConfig(max_output_tokens=500),
         )
     except Exception as e:
+        msg = _mensaje_error_especifico(e)
         logger.warning("[Vision] Gemini falló: %s", e)
-        return None
+        return {"error": msg}
 
     try:
         texto_resp = (response.text or "").strip()
@@ -130,6 +151,7 @@ def analizar_etiqueta_vision(imagen_bytes: bytes) -> dict | None:
                 if hasattr(part, "text"):
                     texto_resp += part.text or ""
         texto_resp = texto_resp.strip()
+
     if not texto_resp:
         return None
 

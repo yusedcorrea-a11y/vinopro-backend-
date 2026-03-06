@@ -338,6 +338,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
     vinos = _get_vinos(request)
     consultas = _get_consultas(request)
     entidades_imagen = None  # Del flujo doble capa (OCR + visión) cuando hay imagen
+    error_vision_imagen = None  # Error específico si falla la IA de visión
 
     contenido_tipo = (request.headers.get("content-type") or "").lower()
     texto = None
@@ -398,10 +399,11 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                             "es_pro": _es_pro((x_session_id or "").strip()),
                             "entidades_extraidas": _obtener_entidades_extraidas(None, vino_por_codigo),
                         }
-                # 1b) Doble capa: OCR local + fallback IA visión (GPT-4o/Claude)
+                # 1b) Doble capa: OCR local + fallback IA visión (Gemini 2.0 Flash)
                 resultado_doble = extraer_datos_etiqueta_doble_capa(contenido_imagen)
                 texto_ocr = (resultado_doble.get("texto") or "").strip()
                 entidades_imagen = resultado_doble.get("entidades")
+                error_vision_imagen = resultado_doble.get("error_vision")
                 if texto_ocr:
                     texto_busqueda = f"{texto_busqueda} {texto_ocr}".strip()
                 if texto_busqueda:
@@ -480,11 +482,16 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
     if not texto_busqueda:
         if imagen_enviada:
             logger.info("[ESCANEAR] No se extrajo texto de la imagen.")
+            mensaje_error = (
+                error_vision_imagen
+                if error_vision_imagen
+                else "No pudimos leer la etiqueta. ¿Es una botella de vino? Prueba con otra foto más nítida o escribe el nombre del vino abajo."
+            )
             return {
                 "reconocido": False,
                 "error_imagen": True,
                 "es_pro": es_pro,
-                "mensaje": "No pudimos leer la etiqueta. ¿Es una botella de vino? Prueba con otra foto más nítida o escribe el nombre del vino abajo.",
+                "mensaje": mensaje_error,
                 "entidades_extraidas": {},
             }
         raise HTTPException(

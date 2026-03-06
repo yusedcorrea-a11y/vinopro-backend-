@@ -196,3 +196,62 @@ def extraer_texto_de_imagen(contenido: bytes, idioma: str = "spa+eng") -> str:
     # Elegir el resultado con mayor puntuación; si empatan, el más largo
     mejor = max(resultados, key=lambda x: (x[1], len(x[0])))
     return mejor[0]
+
+
+# Umbrales para activar fallback con IA de visión
+_MIN_LONGITUD_OCR_CONFIABLE = 15
+_MIN_SCORE_OCR_CONFIABLE = 3.0
+
+
+def extraer_datos_etiqueta_doble_capa(contenido: bytes, idioma: str = "spa+eng") -> dict:
+    """
+    Flujo de doble capa: OCR local optimizado + fallback con IA de visión.
+    - Paso 1: OCR con preprocesamiento OpenCV (CLAHE, bilateral, sharpen).
+    - Paso 2: Si OCR vacío, corto o baja confianza -> envía a GPT-4o o Claude 3.5.
+    - Paso 3: Refinamiento (2O22->2022, etc.) y estructura JSON consistente.
+
+    :param contenido: bytes de la imagen
+    :param idioma: idiomas Tesseract (spa+eng)
+    :return: {"texto": str, "entidades": dict, "origen": "ocr"|"vision"}
+    """
+    from services.data_refinement import normalizar_entidades, refinar_texto_ocr
+    from services.entity_extractor import extraer_entidades
+    from services.vision_wine_service import analizar_etiqueta_vision
+
+    resultado_base = {"texto": "", "entidades": {"bodega": None, "nombre": None, "añada": None, "denominacion_origen": None, "variedad": None}, "origen": "ocr"}
+
+    # Paso 1: OCR local
+    texto_ocr = ""
+    try:
+        texto_ocr = extraer_texto_de_imagen(contenido, idioma)
+    except TesseractNoDisponibleError:
+        logger.info("[OCR] Tesseract no disponible, intentando fallback con IA de visión...")
+        vision_result = analizar_etiqueta_vision(contenido)
+        if vision_result:
+            ent = normalizar_entidades(vision_result.get("entidades") or {})
+            return {"texto": vision_result.get("texto") or "", "entidades": ent, "origen": "vision"}
+        return resultado_base
+
+    texto_refinado = refinar_texto_ocr(texto_ocr)
+    score = _score_texto_ocr(texto_refinado) if texto_refinado else 0.0
+
+    # ¿OCR suficientemente bueno?
+    if texto_refinado and len(texto_refinado) >= _MIN_LONGITUD_OCR_CONFIABLE and score >= _MIN_SCORE_OCR_CONFIABLE:
+        ent = extraer_entidades(texto_refinado)
+        ent_norm = normalizar_entidades(ent)
+        return {"texto": texto_refinado, "entidades": ent_norm, "origen": "ocr"}
+
+    # Paso 2: Fallback con IA de visión
+    logger.info("[OCR] Texto insuficiente (len=%d, score=%.1f), usando IA de visión...", len(texto_refinado or ""), score)
+    vision_result = analizar_etiqueta_vision(contenido)
+    if vision_result:
+        ent = normalizar_entidades(vision_result.get("entidades") or {})
+        texto_vision = vision_result.get("texto") or ""
+        return {"texto": texto_vision, "entidades": ent, "origen": "vision"}
+
+    # Sin visión: devolver lo que tengamos del OCR (aunque sea poco)
+    if texto_refinado:
+        ent = extraer_entidades(texto_refinado)
+        ent_norm = normalizar_entidades(ent)
+        return {"texto": texto_refinado, "entidades": ent_norm, "origen": "ocr"}
+    return resultado_base

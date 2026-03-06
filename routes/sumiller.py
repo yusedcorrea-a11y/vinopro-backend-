@@ -437,8 +437,10 @@ def _preguntar_sumiller_general(
     vino_bd = None
     key_bd = None
     if coincidencias_bd and coincidencias_bd[0].get("score", 0) >= 3.0:
-        vino_bd = coincidencias_bd[0].get("vino")
-        key_bd = coincidencias_bd[0].get("key")
+        cand = coincidencias_bd[0].get("vino")
+        if isinstance(cand, dict):
+            vino_bd = cand
+            key_bd = coincidencias_bd[0].get("key")
 
     # Intentar resolver "de esos, ¿cuál es el más económico?" con los vinos de la última respuesta
     vinos_ref = []
@@ -511,15 +513,15 @@ def _preguntar_sumiller_general(
         )
         if coincidencias:
             respuesta = svc_sumiller.formatear_respuesta_maridaje(
-                [{"key": r["key"], "vino": r["vino"]} for r in coincidencias],
+                [{"key": r["key"], "vino": r["vino"]} for r in coincidencias if isinstance(r.get("vino"), dict)],
                 comida,
                 perfil=perfil,
             )
-            vinos_recomendados = [r["vino"] for r in coincidencias]
+            vinos_recomendados = [r["vino"] for r in coincidencias if isinstance(r.get("vino"), dict)]
             vinos_ref_para_guardar = [str(r["key"]) for r in coincidencias if r.get("key")]
         else:
             respuesta, similares = svc_sumiller.fallback_sin_resultados(comida, vinos_dict, exclude_keys=exclude_keys_sesion)
-            vinos_recomendados = [s["vino"] for s in similares] if similares else None
+            vinos_recomendados = [s["vino"] for s in (similares or []) if isinstance(s.get("vino"), dict)] if similares else None
             vinos_ref_para_guardar = [str(s["key"]) for s in similares if s.get("key")] if similares else []
     elif _es_info_vino_concreto(texto_clean):
         # Buscar vino por nombre (ej. "háblame del Marqués de Riscal") con sugerencia "Quizás quisiste decir..."
@@ -536,28 +538,30 @@ def _preguntar_sumiller_general(
             if resultados_busqueda:
                 key_primer = resultados_busqueda[0].get("key")
                 vino_primer = vinos_dict.get(key_primer) or resultados_busqueda[0].get("vino")
+                if not isinstance(vino_primer, dict):
+                    vino_primer = None
                 if vino_primer:
                     respuesta = _responder_pregunta(vino_primer, "descripción y maridaje", perfil=perfil)
                     if quizas_quisiste_decir:
                         respuesta = f"Quizás quisiste decir {quizas_quisiste_decir}. " + respuesta
                     vinos_recomendados = [vinos_dict.get(r.get("key")) or r.get("vino") for r in resultados_busqueda[:5] if r.get("key") or r.get("vino")]
-                    vinos_recomendados = [v for v in vinos_recomendados if v]
+                    vinos_recomendados = [v for v in vinos_recomendados if v and isinstance(v, dict)]
                     vinos_ref_para_guardar = [str(r.get("key")) for r in resultados_busqueda[:5] if r.get("key")]
                 else:
                     respuesta, similares = svc_sumiller.fallback_sin_resultados(texto_clean, vinos_dict, exclude_keys=exclude_keys_sesion)
-                    vinos_recomendados = [s["vino"] for s in similares] if similares else None
+                    vinos_recomendados = [s["vino"] for s in (similares or []) if isinstance(s.get("vino"), dict)] if similares else None
                     vinos_ref_para_guardar = [str(s["key"]) for s in similares if s.get("key")] if similares else []
             else:
                 respuesta, similares = svc_sumiller.fallback_sin_resultados(texto_clean, vinos_dict, exclude_keys=exclude_keys_sesion)
-                vinos_recomendados = [s["vino"] for s in similares] if similares else None
+                vinos_recomendados = [s["vino"] for s in (similares or []) if isinstance(s.get("vino"), dict)] if similares else None
                 vinos_ref_para_guardar = [str(s["key"]) for s in similares if s.get("key")] if similares else []
         else:
             respuesta, similares = svc_sumiller.fallback_sin_resultados(texto_clean, vinos_dict, exclude_keys=exclude_keys_sesion)
-            vinos_recomendados = [s["vino"] for s in similares] if similares else None
+            vinos_recomendados = [s["vino"] for s in (similares or []) if isinstance(s.get("vino"), dict)] if similares else None
             vinos_ref_para_guardar = [str(s["key"]) for s in similares if s.get("key")] if similares else []
     elif _es_pregunta_tipo_famoso(texto_clean):
         respuesta, similares = svc_sumiller.fallback_sin_resultados(texto_clean, vinos_dict, exclude_keys=exclude_keys_sesion)
-        vinos_recomendados = [s["vino"] for s in similares] if similares else None
+        vinos_recomendados = [s["vino"] for s in (similares or []) if isinstance(s.get("vino"), dict)] if similares else None
         vinos_ref_para_guardar = [str(s["key"]) for s in similares if s.get("key")] if similares else []
     elif _es_recomendacion(texto_clean):
         coincidencias = svc_sumiller.buscar_vinos_por_preferencia(
@@ -565,18 +569,18 @@ def _preguntar_sumiller_general(
         )
         if coincidencias:
             respuesta = svc_sumiller.formatear_respuesta_recomendacion(
-                [{"key": r["key"], "vino": r["vino"]} for r in coincidencias],
+                [{"key": r["key"], "vino": r["vino"]} for r in coincidencias if isinstance(r.get("vino"), dict)],
                 perfil=perfil,
             )
-            vinos_recomendados = [r["vino"] for r in coincidencias]
+            vinos_recomendados = [r["vino"] for r in coincidencias if isinstance(r.get("vino"), dict)]
             vinos_ref_para_guardar = [str(r["key"]) for r in coincidencias if r.get("key")]
         else:
             respuesta, similares = svc_sumiller.fallback_sin_resultados(texto_clean, vinos_dict, exclude_keys=exclude_keys_sesion)
-            vinos_recomendados = [s["vino"] for s in similares] if similares else None
+            vinos_recomendados = [s["vino"] for s in (similares or []) if isinstance(s.get("vino"), dict)] if similares else None
             vinos_ref_para_guardar = [str(s["key"]) for s in similares if s.get("key")] if similares else []
     else:
         respuesta, similares = svc_sumiller.fallback_sin_resultados(texto_clean, vinos_dict, exclude_keys=exclude_keys_sesion)
-        vinos_recomendados = [s["vino"] for s in similares] if similares else None
+        vinos_recomendados = [s["vino"] for s in (similares or []) if isinstance(s.get("vino"), dict)] if similares else None
         vinos_ref_para_guardar = [str(s["key"]) for s in similares if s.get("key")] if similares else []
 
     # Guardar en contexto (últimas 3): pregunta, respuesta y keys de vinos recomendados para "de esos..."
@@ -612,6 +616,8 @@ def _preguntar_sumiller_general(
         "perfil": perfil,
     }
     if vinos_recomendados is not None:
+        # Solo incluir entradas que son dict (evitar 500 si el catálogo tiene valores no-ficha)
+        validos = [(i, v) for i, v in enumerate(vinos_recomendados[:5]) if isinstance(v, dict)]
         out["vinos_recomendados"] = [
             {
                 "key": vinos_ref_para_guardar[i] if i < len(vinos_ref_para_guardar) else None,
@@ -620,7 +626,7 @@ def _preguntar_sumiller_general(
                 "region": v.get("region"),
                 "precio_estimado": v.get("precio_estimado"),
             }
-            for i, v in enumerate(vinos_recomendados[:5])
+            for i, v in validos
         ]
     if quizas_quisiste_decir:
         out["quizas_quisiste_decir"] = quizas_quisiste_decir

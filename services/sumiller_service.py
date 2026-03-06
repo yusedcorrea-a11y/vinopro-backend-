@@ -480,7 +480,9 @@ def formatear_respuesta_recomendacion(vinos: list[dict], perfil: str = "aficiona
     intro += ":\n\n"
     lineas = []
     for item in vinos[:5]:
-        v = item["vino"]
+        v = item.get("vino") if isinstance(item, dict) else None
+        if not isinstance(v, dict):
+            continue
         nombre = v.get("nombre") or "—"
         bodega = v.get("bodega") or "—"
         region = (v.get("region") or "").strip()

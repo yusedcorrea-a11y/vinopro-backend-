@@ -12,7 +12,7 @@
     "dashboard": "Dashboard",
     "planes": "Planes",
     "adaptador": "Adaptador",
-    "mapa": "Lugares cerca",
+    "mapa": "Donde me tomo mi vino",
     "comprar": "Comprar",
     "comunidad": "Comunidad",
     "qr_networking": "QR networking",
@@ -65,8 +65,8 @@
     "no_escaneado": "No"
   },
   "geolocalizacion": {
-    "titulo": "Lugares cerca de ti",
-    "subtitulo": "Restaurantes, vinotecas y bares donde tomar vino. Usa tu ubicación o busca por ciudad.",
+    "titulo": "Donde me tomo mi vino",
+    "subtitulo": "Encuentra restaurantes, vinotecas y bares para disfrutar del vino. Usa tu ubicación o busca por ciudad.",
     "buscando": "Buscando lugares...",
     "no_resultados": "No se encontraron lugares cercanos.",
     "permiso_denegado": "No podemos acceder a tu ubicación. Busca manualmente por ciudad arriba.",

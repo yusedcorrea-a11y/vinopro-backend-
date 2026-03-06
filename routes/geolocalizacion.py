@@ -52,6 +52,20 @@ def lugares_cerca(
     )
 
 
+@router.get("/lugares")
+def lugares(
+    lat: float | None = None,
+    lon: float | None = None,
+    ciudad: str | None = None,
+    radio: float = 5.0,
+    tipo: str | None = None,
+):
+    """
+    Alias moderno de /api/lugares-cerca para clientes web/móvil.
+    """
+    return lugares_cerca(lat=lat, lon=lon, ciudad=ciudad, radio=radio, tipo=tipo)
+
+
 def _cargar_lugares_destacados() -> list:
     """
     Lugares recomendados / partners. Orden: patrocinadores primero (patrocinador=true),

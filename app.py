@@ -464,19 +464,20 @@ def analyze_wine(texto: str = Form(...)):
 
 @app.get("/vinos")
 def listar_vinos():
-    """Lista todos los vinos disponibles"""
+    """Lista todos los vinos disponibles (solo entradas que son dict de ficha de vino)."""
+    vinos_validos = [(k, v) for k, v in VINOS_MUNDIALES.items() if isinstance(v, dict)]
     return {
-        "total": len(VINOS_MUNDIALES),
+        "total": len(vinos_validos),
         "vinos": [
             {
                 "key": key,
-                "nombre": vino["nombre"],
-                "bodega": vino["bodega"],
-                "region": vino["region"],
-                "pais": vino["pais"],
-                "puntuacion": vino["puntuacion"]
+                "nombre": vino.get("nombre", ""),
+                "bodega": vino.get("bodega", ""),
+                "region": vino.get("region", ""),
+                "pais": vino.get("pais", ""),
+                "puntuacion": vino.get("puntuacion", 0),
             }
-            for key, vino in VINOS_MUNDIALES.items()
+            for key, vino in vinos_validos
         ]
     }
 

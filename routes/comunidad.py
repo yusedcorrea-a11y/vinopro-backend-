@@ -15,6 +15,169 @@ from services import chat_service as chat_svc
 router = APIRouter(prefix="", tags=["Comunidad"])
 
 
+def _vino_detalle_desde_db(vinos: dict, vino_key: str) -> dict:
+    vino = vinos.get(vino_key, {}) if isinstance(vinos, dict) else {}
+    if not isinstance(vino, dict):
+        vino = {}
+    return {
+        "key": vino_key,
+        "nombre": (vino.get("nombre") or vino.get("name") or vino_key or "Vino seleccionado"),
+        "bodega": vino.get("bodega") or "No especificada",
+        "region": vino.get("region") or "No especificada",
+        "pais": vino.get("pais") or "No especificado",
+        "tipo": vino.get("tipo") or "No especificado",
+        "anada": vino.get("anada"),
+        "puntuacion": vino.get("puntuacion"),
+        "maridaje": vino.get("maridaje"),
+        "precio_estimado": vino.get("precio_estimado"),
+    }
+
+
+def _post_desde_actividad(act: dict, vinos: dict) -> dict:
+    tipo = (act.get("tipo") or "").strip().lower()
+    vino_key = (act.get("vino_key") or "").strip()
+    vino_nombre = (act.get("vino_nombre") or "").strip()
+    if vino_key and not vino_nombre:
+        det = _vino_detalle_desde_db(vinos, vino_key)
+        vino_nombre = det.get("nombre") or vino_key
+    badge = "Evento" if tipo == "evento" else ""
+    if tipo == "valoracion":
+        badge = "Cata"
+    elif tipo == "deseado":
+        badge = "Wishlist"
+    elif tipo == "probado":
+        badge = "Descorche"
+
+    descripcion = (act.get("texto") or "").strip()
+    if not descripcion:
+        if tipo == "valoracion":
+            score = act.get("score")
+            descripcion = f"Ha valorado {vino_nombre or 'un vino'}" + (f" con {score}★." if score else ".")
+        elif tipo == "deseado":
+            descripcion = f"Quiere probar {vino_nombre or 'este vino'}."
+        elif tipo == "probado":
+            descripcion = f"Acaba de probar {vino_nombre or 'este vino'}."
+        elif tipo == "evento":
+            descripcion = (act.get("titulo") or "Evento en VINEROS").strip()
+        else:
+            descripcion = "Nueva actividad en VINEROS."
+
+    return {
+        "id": f"act-{act.get('id') or ''}",
+        "created_at": int(act.get("created_at") or 0),
+        "post_type": "sponsor" if tipo == "evento" else "user",
+        "username": (act.get("username") or "vinero").strip().lower(),
+        "avatar_text": ((act.get("username") or "V").strip()[:1] or "V").upper(),
+        "title": vino_nombre or (act.get("titulo") or "Publicación"),
+        "description": descripcion,
+        "badge": badge,
+        "vino_key": vino_key or None,
+        "vino_detalle": _vino_detalle_desde_db(vinos, vino_key) if vino_key else None,
+        "image_url": None,
+        "brindis_count": 0,
+        "comentarios_count": 0,
+    }
+
+
+def _posts_demo_vineros(vinos: dict) -> list[dict]:
+    keys = []
+    if isinstance(vinos, dict):
+        for k, v in vinos.items():
+            if isinstance(v, dict):
+                keys.append(k)
+            if len(keys) >= 3:
+                break
+    while len(keys) < 3:
+        keys.append("")
+    base = 1760000000
+    return [
+        {
+            "id": "demo-sponsor-casa-paca",
+            "created_at": base + 30,
+            "post_type": "sponsor",
+            "username": "asador_casa_paca",
+            "avatar_text": "C",
+            "title": "Asador Casa Paca · Cena maridaje",
+            "description": "Este viernes: menú degustación con vinos de autor y descorche comentado por el equipo de sala.",
+            "badge": "Evento",
+            "vino_key": None,
+            "vino_detalle": None,
+            "image_url": None,
+            "brindis_count": 18,
+            "comentarios_count": 4,
+        },
+        {
+            "id": "demo-user-1",
+            "created_at": base + 20,
+            "post_type": "user",
+            "username": "sommelier_ana",
+            "avatar_text": "A",
+            "title": "Cata nocturna en casa",
+            "description": "Hoy abro un reserva con carnes a la brasa. Tanino fino y final largo.",
+            "badge": "Descorche",
+            "vino_key": keys[0] or None,
+            "vino_detalle": _vino_detalle_desde_db(vinos, keys[0]) if keys[0] else None,
+            "image_url": None,
+            "brindis_count": 12,
+            "comentarios_count": 3,
+        },
+        {
+            "id": "demo-user-2",
+            "created_at": base + 10,
+            "post_type": "user",
+            "username": "vinero_luca",
+            "avatar_text": "L",
+            "title": "¿Lo habéis probado?",
+            "description": "Busco un tinto elegante para regalar. ¿Con qué plato lo maridaríais?",
+            "badge": "Wishlist",
+            "vino_key": keys[1] or None,
+            "vino_detalle": _vino_detalle_desde_db(vinos, keys[1]) if keys[1] else None,
+            "image_url": None,
+            "brindis_count": 7,
+            "comentarios_count": 5,
+        },
+        {
+            "id": "demo-sponsor-2",
+            "created_at": base,
+            "post_type": "sponsor",
+            "username": "catas_divertidas",
+            "avatar_text": "D",
+            "title": "Promo VINEROS: cata guiada",
+            "description": "Promoción limitada para la comunidad VINEROS: cata guiada + tabla de quesos.",
+            "badge": "Promoción",
+            "vino_key": keys[2] or None,
+            "vino_detalle": _vino_detalle_desde_db(vinos, keys[2]) if keys[2] else None,
+            "image_url": None,
+            "brindis_count": 22,
+            "comentarios_count": 6,
+        },
+    ]
+
+
+def _stories_desde_posts(posts: list[dict], limit: int = 10) -> list[dict]:
+    stories = []
+    seen_users = set()
+    for p in posts:
+        username = (p.get("username") or "").strip().lower()
+        if not username or username in seen_users:
+            continue
+        seen_users.add(username)
+        stories.append(
+            {
+                "id": f"story-{username}",
+                "username": username,
+                "avatar_text": (p.get("avatar_text") or username[:1] or "V").upper(),
+                "badge": p.get("badge") or "",
+                "post_id": p.get("id"),
+                "title": p.get("title") or "Historia de VINEROS",
+                "post_type": p.get("post_type") or "user",
+            }
+        )
+        if len(stories) >= limit:
+            break
+    return stories
+
+
 def _session_and_username(x_session_id: str | None):
     session_id = (x_session_id or "").strip()
     if not session_id:
@@ -149,9 +312,10 @@ async def listar_seguidos(
 async def get_feed(
     request: Request,
     limit: int = 50,
+    offset: int = 0,
     x_session_id: str | None = Header(None, alias="X-Session-ID"),
 ):
-    """Feed de actividad: eventos destacados (partners) + actividad de los usuarios que sigo."""
+    """Feed de actividad: eventos destacados + actividad social en formato VINEROS."""
     eventos = feed_svc.get_eventos_destacados(limit=10)
     session_id = (x_session_id or "").strip()
     mi_username = usuario_svc.get_username_por_session(session_id) if session_id else None
@@ -165,7 +329,39 @@ async def get_feed(
                 v = vinos.get(a["vino_key"], {})
                 if isinstance(v, dict):
                     a["vino_nombre"] = v.get("nombre") or v.get("name") or a.get("vino_key", "")
-    return {"actividad": actividad, "eventos": eventos}
+    vinos = getattr(request.app.state, "vinos_mundiales", None) or {}
+    posts = []
+    for ev in eventos:
+        posts.append(_post_desde_actividad(ev, vinos))
+    for ac in actividad:
+        posts.append(_post_desde_actividad(ac, vinos))
+    posts.extend(_posts_demo_vineros(vinos))
+    posts.sort(key=lambda p: -(p.get("created_at") or 0))
+    dedup = []
+    seen = set()
+    for p in posts:
+        pid = p.get("id") or ""
+        if pid in seen:
+            continue
+        seen.add(pid)
+        dedup.append(p)
+    safe_offset = max(0, int(offset))
+    safe_limit = max(1, min(int(limit), 20))
+    page = dedup[safe_offset:safe_offset + safe_limit]
+    next_offset = safe_offset + len(page)
+    has_more = next_offset < len(dedup)
+    stories = _stories_desde_posts(dedup, limit=10)
+
+    return {
+        "actividad": actividad,
+        "eventos": eventos,
+        "stories": stories,
+        "posts": page,
+        "offset": safe_offset,
+        "next_offset": next_offset,
+        "has_more": has_more,
+        "total": len(dedup),
+    }
 
 
 @router.post("/api/traducir")
@@ -190,6 +386,32 @@ async def traducir_lote(
         textos = textos[:50]
     traducidos = await translation_svc.traducir_lote(textos, idioma_destino, idioma_origen)
     return {"traducidos": traducidos, "idioma_destino": idioma_destino}
+
+
+@router.post("/api/translate-comment")
+async def translate_comment(
+    texto_original: str = Body(..., embed=True),
+    idioma_destino: str = Body(..., embed=True),
+    idioma_origen: str | None = Body(None, embed=True),
+):
+    """
+    Traduce un comentario del feed VINEROS con contexto vinícola.
+    Prioriza Gemini para preservar términos técnicos del vino.
+    """
+    original = (texto_original or "").strip()
+    if not original:
+        raise HTTPException(status_code=400, detail="texto_original es obligatorio")
+    traducido = await translation_svc.traducir_con_gemini_vino(
+        original,
+        idioma_destino=idioma_destino,
+        idioma_origen=idioma_origen,
+    )
+    return {
+        "ok": True,
+        "texto_original": original,
+        "texto_traducido": traducido,
+        "idioma_destino": idioma_destino,
+    }
 
 
 # ----- Chat: cada usuario escribe en su idioma; la app traduce al idioma del lector -----

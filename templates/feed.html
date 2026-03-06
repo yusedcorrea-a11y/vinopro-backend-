@@ -1,77 +1,71 @@
 {% extends "base.html" %}
 
+{% block head %}
+<style>
+  .vineros-wrap { max-width: 680px; margin: 0 auto; padding: 1rem 0.9rem 2rem; }
+  .vineros-stories-wrap { margin: 0.4rem 0 0.9rem; }
+  .vineros-stories { display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 0.35rem; scrollbar-width: thin; }
+  .vineros-story { min-width: 68px; border: 0; background: transparent; padding: 0; color: inherit; cursor: pointer; text-align: center; }
+  .vineros-story-ring { width: 64px; height: 64px; border-radius: 50%; padding: 2px; background: linear-gradient(135deg, rgba(107,45,60,0.98), rgba(138,64,82,0.92)); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.35rem; }
+  .vineros-story-avatar { width: 58px; height: 58px; border-radius: 50%; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--burdeos); }
+  .vineros-story.sponsor .vineros-story-ring { background: linear-gradient(135deg, #ff7f2a, #ff5e00); }
+  .vineros-story-label { font-size: 0.72rem; color: var(--texto-suave); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 68px; display: block; margin: 0 auto; }
+  .vineros-list { display: grid; gap: 1rem; }
+  .vineros-card { background: rgba(255,255,255,0.94); border: 1px solid rgba(107,45,60,0.12); border-radius: 14px; box-shadow: 0 8px 22px rgba(0,0,0,0.06); overflow: hidden; }
+  .vineros-card.sponsor { border-color: rgba(212,175,55,0.35); background: linear-gradient(160deg, rgba(255,255,255,0.98), rgba(250,243,228,0.96)); }
+  .vineros-head { display: flex; align-items: center; gap: 0.65rem; padding: 0.85rem 0.9rem 0.6rem; }
+  .vineros-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, rgba(212,175,55,0.35), rgba(107,45,60,0.35)); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--burdeos); }
+  .vineros-name { font-weight: 700; color: var(--burdeos); line-height: 1.1; }
+  .vineros-badge { display: inline-flex; align-items: center; gap: 0.25rem; margin-left: 0.45rem; font-size: 0.72rem; font-weight: 700; border-radius: 999px; padding: 0.12rem 0.45rem; background: rgba(212,175,55,0.2); color: #7a4e00; border: 1px solid rgba(212,175,55,0.35); }
+  .vineros-media { height: 210px; background: linear-gradient(145deg, rgba(107,45,60,0.22), rgba(212,175,55,0.18)); display: flex; align-items: end; justify-content: start; padding: 0.8rem; color: #fff; font-weight: 700; letter-spacing: 0.02em; }
+  .vineros-media.sponsor-media { background: linear-gradient(145deg, #ff7f2a, #ff5e00); }
+  .vineros-body { padding: 0.8rem 0.9rem 0.9rem; }
+  .vineros-title { margin: 0 0 0.35rem 0; font-size: 1rem; color: var(--texto-principal); }
+  .vineros-desc { margin: 0; color: var(--texto-suave); font-size: 0.93rem; line-height: 1.45; }
+  .vineros-desc.translating { opacity: 0.35; transform: translateY(2px); transition: all 0.18s ease; }
+  .vineros-desc.translated { transition: all 0.2s ease; animation: vinoFadeIn 0.25s ease; }
+  .vineros-actions { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 0.8rem; }
+  .vineros-btn { border: 1px solid rgba(107,45,60,0.2); border-radius: 999px; background: #fff; color: var(--burdeos); padding: 0.45rem 0.75rem; font-weight: 600; font-size: 0.83rem; cursor: pointer; }
+  .vineros-btn.primary { background: var(--burdeos); color: #fff; border-color: var(--burdeos); }
+  .vineros-detail { margin-top: 0.7rem; padding: 0.7rem; border-radius: 10px; background: rgba(107,45,60,0.06); display: none; }
+  .vineros-detail.visible { display: block; }
+  .vineros-detail p { margin: 0.15rem 0; font-size: 0.88rem; }
+  .vineros-footer { margin-top: 1rem; text-align: center; color: var(--texto-suave); font-size: 0.9rem; }
+  #feed-observer { height: 20px; }
+  [data-theme="dark"] .vineros-card { background: rgba(26,21,18,0.72); border-color: rgba(212,168,75,0.24); }
+  [data-theme="dark"] .vineros-story-avatar { background: rgba(26,21,18,0.9); color: var(--dorado-claro); }
+  [data-theme="dark"] .vineros-story-label { color: #d4c3a6; }
+  [data-theme="dark"] .vineros-title { color: var(--dorado-claro); }
+  [data-theme="dark"] .vineros-btn { background: rgba(26,21,18,0.7); color: var(--dorado-claro); border-color: rgba(212,168,75,0.3); }
+  [data-theme="dark"] .vineros-btn.primary { background: rgba(212,175,55,0.24); color: var(--dorado-claro); border-color: rgba(212,175,55,0.5); }
+  @keyframes vinoFadeIn {
+    from { opacity: 0.2; transform: translateY(3px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="feed-container" style="max-width: 640px; margin: 0 auto; padding: 1rem;">
+<div class="vineros-wrap">
   <h1 class="page-title">{{ t('comunidad.feed_title') }}</h1>
   <p class="page-subtitle">{{ t('comunidad.feed_subtitle') }}</p>
 
   <div id="feed-sin-perfil" style="display:none;">
     <p>{{ t('comunidad.feed_vacio') }} <a href="/bodega">{{ t('nav.mi_bodega') }}</a>.</p>
-    <p><a href="/comunidad/feed" id="link-crear-perfil">{{ t('comunidad.crear_perfil') }}</a> (próximamente desde aquí).</p>
   </div>
 
   <div id="feed-list" style="display:none;">
-    <ul id="feed-actividad" class="feed-actividad"></ul>
+    <div id="vineros-stories-wrap" class="vineros-stories-wrap" style="display:none;">
+      <div id="vineros-stories" class="vineros-stories"></div>
+    </div>
+    <div id="vineros-list" class="vineros-list"></div>
+    <div id="feed-observer"></div>
   </div>
 
-  <div id="feed-loading">Cargando…</div>
+  <div id="feed-loading" class="vineros-footer">Cargando VINEROS…</div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script>
-(function() {
-  var sid = window.getSessionId ? window.getSessionId() : '';
-  var feedList = document.getElementById('feed-list');
-  var feedSinPerfil = document.getElementById('feed-sin-perfil');
-  var feedLoading = document.getElementById('feed-loading');
-  var ul = document.getElementById('feed-actividad');
-
-  function showLoading() { feedLoading.style.display = 'block'; feedList.style.display = 'none'; feedSinPerfil.style.display = 'none'; }
-  function showList() { feedLoading.style.display = 'none'; feedList.style.display = 'block'; feedSinPerfil.style.display = 'none'; }
-  function showSinPerfil() { feedLoading.style.display = 'none'; feedList.style.display = 'none'; feedSinPerfil.style.display = 'block'; }
-
-  var headers = { 'Accept': 'application/json' };
-  if (sid) headers['X-Session-ID'] = sid;
-
-  fetch('/api/feed', { headers: headers })
-    .then(function(r) {
-      if (r.status === 401) { showSinPerfil(); return null; }
-      return r.json();
-    })
-    .then(function(data) {
-      if (!data) return;
-      var eventos = data.eventos || [];
-      var acts = data.actividad || [];
-      if (eventos.length === 0 && acts.length === 0) {
-        showSinPerfil();
-        return;
-      }
-      showList();
-      ul.innerHTML = '';
-      var tipos = { 'valoracion': '{{ t("comunidad.valoracion") }}', 'deseado': '{{ t("comunidad.deseado") }}', 'probado': '{{ t("comunidad.probado") }}' };
-      eventos.forEach(function(e) {
-        var li = document.createElement('li');
-        li.className = 'feed-item feed-item-evento';
-        li.style.marginBottom = '1rem'; li.style.padding = '0.75rem'; li.style.background = 'rgba(107,45,60,0.06)'; li.style.borderRadius = '8px';
-        var html = '<strong>' + (e.username || '') + '</strong> <span class="feed-evento-badge">{{ t("comunidad.evento_partner") }}</span><br>';
-        if (e.titulo) html += '<strong style="font-size:1.05rem;">' + (e.titulo || '') + '</strong><br>';
-        if (e.texto) html += '<p style="margin:0.35rem 0 0 0; color: var(--texto-suave, #555);">' + (e.texto || '') + '</p>';
-        if (e.link) html += '<p style="margin:0.35rem 0 0 0;"><a href="' + encodeURI(e.link) + '" target="_blank" rel="noopener">Más información</a></p>';
-        html += '<p style="margin:0.35rem 0 0 0; font-size:0.9rem;"><a href="/comunidad/perfil/' + encodeURIComponent((e.username || '').toLowerCase()) + '">Ver perfil</a></p>';
-        li.innerHTML = html;
-        ul.appendChild(li);
-      });
-      acts.forEach(function(a) {
-        var li = document.createElement('li');
-        li.style.marginBottom = '0.75rem';
-        var nombre = a.vino_nombre || a.vino_key || '';
-        var tipo = tipos[a.tipo] || a.tipo;
-        li.innerHTML = '<strong>' + (a.username || '') + '</strong> ' + tipo + ' <a href="/oferta/crear?key=' + encodeURIComponent(a.vino_key || '') + '">' + (nombre || a.vino_key) + '</a>' + (a.score ? ' (' + a.score + '★)' : '') + '';
-        ul.appendChild(li);
-      });
-    })
-    .catch(function() { showSinPerfil(); });
-})();
-</script>
+<script src="/static/js/feed.js"></script>
 {% endblock %}

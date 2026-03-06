@@ -25,15 +25,16 @@
     .mapa-controls .btn { padding: 0.65rem 1rem; }
     .mapa-controls .mapa-select-radio { padding: 0.65rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(107,45,60,0.2); background: rgba(255,255,255,0.9); }
     .mapa-guide-tabs { display: flex; gap: 0.6rem; margin-top: 0.25rem; }
-    .mapa-guide-tab { flex: 1; border-radius: 999px; border: 1px solid rgba(107,45,60,0.2); background: rgba(255,255,255,0.9); color: var(--burdeos); padding: 0.65rem 0.8rem; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
-    .mapa-guide-tab.active { background: linear-gradient(135deg, rgba(212,175,55,0.25), rgba(107,45,60,0.2)); border-color: rgba(107,45,60,0.35); }
-    .mapa-panel { display: block; }
-    .mapa-panel.hidden { display: none; }
+    .mapa-guide-tab { flex: 1; border-radius: 999px; border: 1px solid rgba(107,45,60,0.2); background: rgba(255,255,255,0.9); color: var(--burdeos); padding: 0.65rem 0.8rem; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s ease; }
+    .mapa-guide-tab.active { background: linear-gradient(135deg, rgba(212,175,55,0.25), rgba(107,45,60,0.2)); border-color: rgba(107,45,60,0.35); box-shadow: 0 6px 16px rgba(107,45,60,0.15); transform: translateY(-1px); }
+    .mapa-panel { display: block; opacity: 1; transform: translateY(0); transition: opacity 0.2s ease, transform 0.2s ease, max-height 0.25s ease; max-height: 5000px; }
+    .mapa-panel.hidden { opacity: 0; transform: translateY(8px); max-height: 0; overflow: hidden; pointer-events: none; margin: 0; }
     .repsol-panel { border-radius: var(--radius); border: 1px solid rgba(238,110,37,0.35); background: linear-gradient(155deg, rgba(255,255,255,0.98), rgba(255,245,236,0.96)); padding: 1rem; box-shadow: var(--sombra-tarjeta); }
     .repsol-logo { width: 100%; max-width: 220px; border-radius: 12px; background: linear-gradient(135deg, #ff7f2a, #ff5e00); color: #fff; padding: 0.8rem 1rem; font-weight: 800; letter-spacing: 0.02em; text-align: center; margin-bottom: 0.75rem; }
     .repsol-sub { color: #8e4b1f; margin: 0 0 1rem 0; font-size: 0.95rem; }
-    .btn-repsol { background: linear-gradient(135deg, #ff7f2a, #ff5e00); color: #fff; border: 0; width: 100%; font-weight: 700; padding: 0.85rem 1rem; border-radius: 12px; cursor: pointer; }
+    .btn-repsol { background: linear-gradient(135deg, #ff7f2a, #ff5e00); color: #fff; border: 0; width: 100%; font-weight: 700; padding: 0.85rem 1rem; border-radius: 12px; cursor: pointer; transition: transform 0.15s ease, filter 0.2s ease; }
     .btn-repsol:hover { filter: brightness(1.03); }
+    .btn-repsol:active { transform: translateY(1px); }
     .mapa-estado { padding: 1rem; border-radius: var(--radius-sm); background: var(--burdeos-suave); color: var(--burdeos); font-weight: 500; }
     .mapa-estado.error { background: rgba(180,60,60,0.15); color: var(--burdeos-oscuro); }
     .mapa-lista { display: grid; gap: 0.75rem; }

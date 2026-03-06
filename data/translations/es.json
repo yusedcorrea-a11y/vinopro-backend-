@@ -14,14 +14,14 @@
     "adaptador": "Adaptador",
     "mapa": "Donde me tomo mi vino",
     "comprar": "Comprar",
-    "comunidad": "Comunidad",
+    "comunidad": "VINEROS",
     "qr_networking": "QR networking",
     "privacidad": "Privacidad"
   },
   "comunidad": {
-    "feed_title": "Actividad",
-    "feed_subtitle": "Lo que hacen las personas que sigues",
-    "feed_vacio": "Sigue a alguien para ver su actividad aquí.",
+    "feed_title": "VINEROS",
+    "feed_subtitle": "Tu red social del vino: catas, recomendaciones y eventos PRO.",
+    "feed_vacio": "Aun no hay actividad en tu timeline. Empieza a explorar publicaciones en VINEROS.",
     "crear_perfil": "Crear perfil",
     "mi_perfil": "Mi perfil",
     "seguidores": "Seguidores",

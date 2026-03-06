@@ -14,19 +14,44 @@
   var tabla = document.getElementById('qr-tabla');
   var tablaBody = document.getElementById('qr-tabla-body');
   var emptyMsg = document.getElementById('qr-empty');
+  var sid = (window.getSessionId ? window.getSessionId() : '').trim();
+
+  function authHeaders(extra) {
+    var h = extra || {};
+    if (sid) h['X-Session-ID'] = sid;
+    return h;
+  }
 
   function showResult(codigo, url) {
+    var sidQ = sid ? ('?sid=' + encodeURIComponent(sid)) : '';
     result.classList.add('visible');
     qrUrl.textContent = url;
-    qrImg.src = '/api/qr/descargar/' + encodeURIComponent(codigo);
-    qrDescargar.href = '/api/qr/descargar/' + encodeURIComponent(codigo);
+    qrImg.src = '/api/qr/descargar/' + encodeURIComponent(codigo) + sidQ;
+    qrDescargar.href = '/api/qr/descargar/' + encodeURIComponent(codigo) + sidQ;
     qrDescargar.download = 'vino-pro-qr-' + codigo + '.png';
   }
 
+  function bloquearPremium() {
+    if (form) form.style.display = 'none';
+    if (result) result.classList.remove('visible');
+    if (loading) loading.style.display = 'none';
+    if (emptyMsg) {
+      emptyMsg.textContent = 'QR Networking está disponible solo para usuarios Premium. Activa Premium en Planes.';
+      emptyMsg.style.display = 'block';
+    }
+  }
+
+  function isPremiumEnabled() {
+    return fetch('/api/check-limit', { headers: authHeaders({ 'Accept': 'application/json' }) })
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(data) { return !!(data && data.es_pro); })
+      .catch(function() { return false; });
+  }
+
   function loadContactos() {
-    if (!tablaWrap) return;
+    if (!tablaBody) return;
     loading.style.display = 'block';
-    fetch('/api/qr/contactos', { headers: { 'Accept': 'application/json' } })
+    fetch('/api/qr/contactos', { headers: authHeaders({ 'Accept': 'application/json' }) })
       .then(function(r) { return r.json(); })
       .then(function(data) {
         loading.style.display = 'none';
@@ -37,21 +62,22 @@
         }
         if (emptyMsg) emptyMsg.style.display = 'none';
         if (tabla) tabla.style.display = 'table';
-        if (tablaBody) {
-          tablaBody.innerHTML = '';
-          contactos.forEach(function(c) {
-            var esc = c.escaneado ? '<span class="badge si">Sí</span>' : '<span class="badge no">No</span>';
-            var fecha = (c.fecha_escaneo || '').slice(0, 10);
-            var pais = c.pais_escaneo || '–';
-            var tr = document.createElement('tr');
-            tr.innerHTML = '<td>' + (c.nombre || '') + '</td><td>' + (c.empresa || '') + '</td><td>' + (c.idioma || '') + '</td><td>' + esc + '</td><td>' + fecha + '</td><td>' + pais + '</td>';
-            tablaBody.appendChild(tr);
-          });
-        }
+        tablaBody.innerHTML = '';
+        contactos.forEach(function(c) {
+          var esc = c.escaneado ? '<span class="badge si">Sí</span>' : '<span class="badge no">No</span>';
+          var fecha = (c.fecha_escaneo || '').slice(0, 10);
+          var pais = c.pais_escaneo || '–';
+          var tr = document.createElement('tr');
+          tr.innerHTML = '<td>' + (c.nombre || '') + '</td><td>' + (c.empresa || '') + '</td><td>' + (c.idioma || '') + '</td><td>' + esc + '</td><td>' + fecha + '</td><td>' + pais + '</td>';
+          tablaBody.appendChild(tr);
+        });
       })
       .catch(function() {
         loading.style.display = 'none';
-        if (emptyMsg) { emptyMsg.textContent = 'Error al cargar contactos.'; emptyMsg.style.display = 'block'; }
+        if (emptyMsg) {
+          emptyMsg.textContent = 'Error al cargar contactos.';
+          emptyMsg.style.display = 'block';
+        }
       });
   }
 
@@ -66,7 +92,7 @@
       if (btn) { btn.disabled = true; btn.textContent = 'Generando…'; }
       fetch('/api/qr/generar', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        headers: authHeaders({ 'Content-Type': 'application/json', 'Accept': 'application/json' }),
         body: JSON.stringify({ nombre: nombre.trim(), empresa: empresa.trim(), idioma: idioma }),
       })
         .then(function(r) { return r.json(); })
@@ -88,5 +114,11 @@
     if (btn) form.setAttribute('data-btn-text', btn.textContent);
   }
 
-  loadContactos();
+  isPremiumEnabled().then(function(isPro) {
+    if (!isPro) {
+      bloquearPremium();
+      return;
+    }
+    loadContactos();
+  });
 })();

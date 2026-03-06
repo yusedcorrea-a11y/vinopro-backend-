@@ -1165,6 +1165,18 @@ body.page-inicio .header-minimal .brand-ia { margin-top: 1px; opacity: 0.95; }
   background: var(--burdeos-suave);
   color: var(--burdeos-oscuro);
 }
+.menu-secreto-badge-pro {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  background: linear-gradient(135deg, var(--dorado), var(--dorado-claro));
+  color: #1a1512;
+  border-radius: 4px;
+  vertical-align: middle;
+}
 .menu-secreto-perfil {
   margin-top: 1rem;
   padding-top: 1rem;
@@ -2867,3 +2879,34 @@ body.page-inicio main::after {
  * Dashboard: photo-1559526324-303c6c1a9c8 (bodega barricas)
  * Más fotos: https://unsplash.com/s/photos/wine https://unsplash.com/s/photos/winery
  */
+
+/* Upsell premium para QR Networking */
+.premium-upsell-modal[hidden] { display: none !important; }
+.premium-upsell-modal { position: fixed; inset: 0; z-index: 1600; }
+.premium-upsell-backdrop { position: absolute; inset: 0; background: rgba(10, 8, 7, 0.55); backdrop-filter: blur(2px); }
+.premium-upsell-content {
+  position: relative;
+  max-width: 420px;
+  margin: 12vh auto 0;
+  background: linear-gradient(170deg, #fffaf1, #f7efe4);
+  color: #4d1f2b;
+  border-radius: 14px;
+  border: 1px solid rgba(107,45,60,0.2);
+  padding: 1rem 1rem 1.1rem;
+  box-shadow: 0 16px 36px rgba(0,0,0,0.22);
+}
+.premium-upsell-content h3 { margin: 0 0 0.45rem 0; color: #6b2d3c; }
+.premium-upsell-content p { margin: 0; color: #6e4a52; }
+.premium-upsell-actions { display: flex; gap: 0.55rem; justify-content: flex-end; margin-top: 0.9rem; }
+[data-theme="dark"] .premium-upsell-content {
+  background: linear-gradient(170deg, #2a1c20, #1a1216);
+  color: #f3ddc2;
+  border-color: rgba(212,168,75,0.3);
+}
+[data-theme="dark"] .premium-upsell-content h3 { color: #e9bf67; }
+[data-theme="dark"] .premium-upsell-content p { color: #e0c8ad; }
+
+/* Modal Próximamente (enlaces en construcción) */
+.modal-proximamente[hidden] { display: none !important; }
+.modal-proximamente-titulo { margin: 0 0 0.5rem 0; color: var(--burdeos); }
+.modal-proximamente-texto { margin: 0 0 1rem 0; color: var(--texto-suave); font-size: 0.95rem; }

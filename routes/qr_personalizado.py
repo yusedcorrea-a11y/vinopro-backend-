@@ -3,11 +3,12 @@ QR personalizados para networking (Turín).
 Página pública /c/{codigo} y panel generador /qr.
 """
 import os
-from fastapi import APIRouter, Request, HTTPException, Body
+from fastapi import APIRouter, Request, HTTPException, Body, Header, Query
 from fastapi.responses import HTMLResponse, Response
 
 from services import qr_service as qr_svc
 from services import i18n as i18n_svc
+from services import freemium_service as freemium_svc
 
 router = APIRouter(tags=["QR personalizados"])
 
@@ -25,6 +26,15 @@ def _pais_desde_request(request: Request) -> str:
     if cf and cf != "XX" and len(cf) == 2:
         return cf.upper()
     return ""
+
+
+def _require_premium(session_id: str | None) -> str:
+    sid = (session_id or "").strip()
+    if not sid:
+        raise HTTPException(status_code=401, detail="X-Session-ID requerido")
+    if not freemium_svc.is_pro(sid):
+        raise HTTPException(status_code=403, detail="QR Networking disponible solo para usuarios Premium.")
+    return sid
 
 
 @router.get("/c/{codigo}", response_class=HTMLResponse)
@@ -84,15 +94,25 @@ async def panel_generador(request: Request):
 
 
 @router.get("/api/qr/contactos")
-async def api_listar_contactos():
+async def api_listar_contactos(
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
     """Lista de contactos para el panel de seguimiento."""
+    _require_premium(x_session_id)
     lista = qr_svc.listar_contactos()
     return {"contactos": lista}
 
 
 @router.post("/api/qr/generar")
-async def api_generar_qr(request: Request, nombre: str = Body(..., embed=True), empresa: str = Body("", embed=True), idioma: str = Body("it", embed=True)):
+async def api_generar_qr(
+    request: Request,
+    nombre: str = Body(..., embed=True),
+    empresa: str = Body("", embed=True),
+    idioma: str = Body("it", embed=True),
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
     """Crea un contacto y devuelve código y URL para el QR."""
+    _require_premium(x_session_id)
     nombre = (nombre or "").strip()
     if not nombre:
         raise HTTPException(status_code=400, detail="Nombre requerido")
@@ -104,8 +124,14 @@ async def api_generar_qr(request: Request, nombre: str = Body(..., embed=True), 
 
 
 @router.get("/api/qr/descargar/{codigo}")
-async def api_descargar_qr(request: Request, codigo: str):
+async def api_descargar_qr(
+    request: Request,
+    codigo: str,
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+    sid: str | None = Query(None, description="Session ID fallback para imagen QR"),
+):
     """Devuelve la imagen PNG del QR para ese código."""
+    _require_premium((x_session_id or "").strip() or sid)
     contacto = qr_svc.get_por_codigo(codigo)
     if not contacto:
         raise HTTPException(status_code=404, detail="Código no encontrado")

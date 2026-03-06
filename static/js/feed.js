@@ -5,7 +5,10 @@
   'use strict';
 
   var sid = window.getSessionId ? window.getSessionId() : '';
-  var userLang = (document.documentElement.getAttribute('lang') || 'es').toLowerCase();
+  var htmlLang = (document.documentElement.getAttribute('lang') || 'es').toLowerCase();
+  var userLang = htmlLang;
+  var LANG_STORAGE_KEY = 'vineros_target_lang';
+  var langSelect = document.getElementById('vineros-lang-select');
   var feedList = document.getElementById('feed-list');
   var feedSinPerfil = document.getElementById('feed-sin-perfil');
   var feedLoading = document.getElementById('feed-loading');
@@ -17,6 +20,46 @@
   var limit = 8;
   var loading = false;
   var hasMore = true;
+
+  function resolveAutoLang() {
+    var navLang = ((navigator.language || navigator.userLanguage || '') + '').toLowerCase();
+    if (navLang.indexOf('ru') === 0) return 'ru';
+    if (navLang.indexOf('hi') === 0) return 'hi';
+    if (navLang.indexOf('en') === 0) return 'en';
+    if (navLang.indexOf('es') === 0) return 'es';
+    return (htmlLang || 'es').slice(0, 2);
+  }
+
+  function getSelectedLangValue() {
+    if (!langSelect) return 'auto';
+    return (langSelect.value || 'auto').toLowerCase();
+  }
+
+  function getEffectiveTargetLang() {
+    var sel = getSelectedLangValue();
+    if (sel === 'auto') {
+      return (htmlLang || 'es').slice(0, 2);
+    }
+    return sel;
+  }
+
+  function initLangSelector() {
+    if (!langSelect) return;
+    var saved = '';
+    try { saved = (localStorage.getItem(LANG_STORAGE_KEY) || '').toLowerCase(); } catch (_) {}
+    var valid = ['auto', 'es', 'en', 'ru', 'hi'];
+    if (saved && valid.indexOf(saved) !== -1) {
+      langSelect.value = saved;
+    } else {
+      langSelect.value = 'auto';
+    }
+    userLang = getEffectiveTargetLang();
+    langSelect.addEventListener('change', function() {
+      var next = getSelectedLangValue();
+      try { localStorage.setItem(LANG_STORAGE_KEY, next); } catch (_) {}
+      userLang = getEffectiveTargetLang();
+    });
+  }
 
   function showLoading() { if (feedLoading) feedLoading.style.display = 'block'; }
   function hideLoading() { if (feedLoading) feedLoading.style.display = 'none'; }
@@ -70,7 +113,7 @@
       headers: headers,
       body: JSON.stringify({
         texto_original: original,
-        idioma_destino: userLang || 'es',
+        idioma_destino: getEffectiveTargetLang(),
       }),
     })
       .then(function(r) {
@@ -222,5 +265,6 @@
     io.observe(observerEl);
   }
 
+  initLangSelector();
   fetchNextPage();
 })();

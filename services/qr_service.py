@@ -69,6 +69,7 @@ def crear_contacto(nombre: str, empresa: str = "", idioma: str = "it") -> dict[s
         "escaneado": False,
         "fecha_escaneo": "",
         "pais_escaneo": "",
+        "escaneos": [],
     }
     _lista.append(contacto)
     _save()
@@ -124,13 +125,22 @@ def registrar_escaneo(codigo: str, pais: str = "") -> bool:
     now = datetime.now(timezone.utc).isoformat()
     for c in _lista:
         if (c.get("codigo") or "").lower() == codigo:
-            if not c.get("escaneado"):
-                c["escaneado"] = True
-                c["fecha_escaneo"] = now
-                c["pais_escaneo"] = (pais or "").strip()[:10]
-                _save()
-                _notificar_escaneo(c)
-                return True
+            c["escaneado"] = True
+            c["fecha_escaneo"] = now
+            c["pais_escaneo"] = (pais or "").strip()[:10]
+            eventos = c.get("escaneos")
+            if not isinstance(eventos, list):
+                eventos = []
+            eventos.append(
+                {
+                    "timestamp": now,
+                    "pais": (pais or "").strip()[:10],
+                    "estado": "ok",
+                }
+            )
+            c["escaneos"] = eventos[-50:]
+            _save()
+            _notificar_escaneo(c)
             return True
     return False
 

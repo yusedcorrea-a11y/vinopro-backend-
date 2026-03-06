@@ -100,11 +100,11 @@
       <ul class="menu-secreto-lista">
         <li><a href="/bodega" class="menu-secreto-link">🍷 {{ t('nav.mi_bodega') }}</a></li>
         <li><a href="/planes" class="menu-secreto-link">📊 {{ t('nav.planes') }}</a></li>
-        <li><a href="/adaptador" class="menu-secreto-link">🏨 {{ t('nav.adaptador') }}</a></li>
+        <li><a href="/adaptador" class="menu-secreto-link">🏨 {{ t('nav.adaptador') }} <span class="menu-secreto-badge-pro" aria-label="Premium">PRO</span></a></li>
         <li><a href="/mapa" class="menu-secreto-link">📍 {{ t('nav.mapa') }}</a></li>
         <li><a href="/comunidad/feed" class="menu-secreto-link">🫂 {{ t('nav.comunidad') }}</a></li>
-        <li><a href="/qr" class="menu-secreto-link">📱 {{ t('nav.qr_networking') }}</a></li>
-        <li><a href="/privacidad" class="menu-secreto-link">🔒 {{ t('nav.privacidad') }}</a></li>
+        <li><a href="/qr" class="menu-secreto-link menu-secreto-link-qr">📱 {{ t('nav.qr_networking') }}</a></li>
+        <li><a href="/privacidad" class="menu-secreto-link" data-proximamente="1">🔒 {{ t('nav.privacidad') }}</a></li>
       </ul>
       <div class="menu-secreto-perfil">
         <h3 class="menu-secreto-subtitulo">👤 Perfil</h3>
@@ -129,6 +129,25 @@
       </div>
     </div>
   </aside>
+  <div id="premium-upsell-modal" class="premium-upsell-modal" hidden>
+    <div class="premium-upsell-backdrop"></div>
+    <div class="premium-upsell-content" role="dialog" aria-modal="true" aria-labelledby="premium-upsell-title">
+      <h3 id="premium-upsell-title">QR Networking Premium</h3>
+      <p>Esta función comercial está disponible en el plan Premium. Activa Premium para generar QRs, captar contactos y medir escaneos.</p>
+      <div class="premium-upsell-actions">
+        <button type="button" id="premium-upsell-close" class="btn btn-outline">Cerrar</button>
+        <a href="/planes" class="btn btn-dorado">Ver Planes Premium</a>
+      </div>
+    </div>
+  </div>
+  <div id="modal-proximamente" class="premium-upsell-modal modal-proximamente" hidden role="dialog" aria-modal="true" aria-labelledby="modal-proximamente-title">
+    <div class="premium-upsell-backdrop modal-proximamente-backdrop"></div>
+    <div class="premium-upsell-content" style="max-width: 340px;">
+      <h3 id="modal-proximamente-title" class="modal-proximamente-titulo">Próximamente</h3>
+      <p class="modal-proximamente-texto">Estamos envejeciendo esta sección en roble… Volveremos con novedades.</p>
+      <button type="button" id="modal-proximamente-close" class="btn btn-outline">Cerrar</button>
+    </div>
+  </div>
 
   <main>
     {% block content %}{% endblock %}

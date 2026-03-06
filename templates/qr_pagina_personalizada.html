@@ -7,58 +7,145 @@
   <meta name="robots" content="noindex">
   <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
   <style>
-    :root { --bg: #0f0f0f; --text: #f0e6d8; --accent: #c9a227; --card: #1a1a1a; }
-    @media (prefers-color-scheme: light) {
-      :root { --bg: #f5f0e8; --text: #1a1a1a; --accent: #a67c00; --card: #fff; }
+    :root {
+      --granate: #6b2d3e;
+      --granate-oscuro: #4a1f2b;
+      --crema: #f5f0e8;
+      --crema-oscuro: #e8dfd0;
+      --dorado: #c9a227;
+      --texto: #2c1810;
+      --texto-claro: #5c4033;
     }
     * { box-sizing: border-box; }
-    body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 1rem; min-height: 100vh; background: var(--bg); color: var(--text); line-height: 1.5; }
-    .qr-wrap { max-width: 420px; margin: 0 auto; }
-    .qr-logo { display: block; text-align: center; margin-bottom: 1.5rem; }
-    .qr-logo a { text-decoration: none; color: inherit; font-size: 1.5rem; font-weight: 700; letter-spacing: 0.05em; }
-    .qr-logo .vino { color: #c9a227; }
-    .qr-mensaje { font-size: 1.15rem; margin-bottom: 1.5rem; padding: 1rem; background: var(--card); border-radius: 10px; border-left: 4px solid var(--accent); }
-    .qr-resumen { font-size: 0.95rem; opacity: 0.9; margin-bottom: 1.5rem; }
-    .qr-beneficios { margin-bottom: 1.5rem; }
-    .qr-beneficios h3 { font-size: 1rem; margin-bottom: 0.5rem; color: var(--accent); }
-    .qr-beneficios ul { margin: 0; padding-left: 1.2rem; font-size: 0.9rem; }
-    .qr-beneficios li { margin-bottom: 0.35rem; }
-    .qr-cta { margin-bottom: 1.5rem; }
-    .qr-cta a { display: inline-block; padding: 0.75rem 1.5rem; background: var(--accent); color: #000; text-decoration: none; border-radius: 8px; font-weight: 600; }
-    .qr-contacto h3 { font-size: 1rem; margin-bottom: 0.5rem; }
-    .qr-contacto a { color: var(--accent); }
-    .qr-contacto p { margin: 0.35rem 0; font-size: 0.9rem; }
-    .qr-lang { margin-top: 1.5rem; font-size: 0.85rem; }
-    .qr-lang a { color: var(--accent); margin-right: 0.75rem; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      background: var(--crema);
+      color: var(--texto);
+      line-height: 1.5;
+    }
+    .qr-wrap {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 1.25rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .qr-logo {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+    .qr-logo a {
+      text-decoration: none;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--granate);
+    }
+    .qr-logo .vino { color: var(--granate-oscuro); }
+    .qr-logo .pro { color: var(--dorado); }
+    .qr-hero {
+      background: var(--granate);
+      color: var(--crema);
+      padding: 1.5rem 1.25rem;
+      border-radius: 14px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 14px rgba(107, 45, 62, 0.25);
+    }
+    .qr-hero h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.35rem;
+      font-weight: 600;
+    }
+    .qr-hero p {
+      margin: 0;
+      font-size: 0.95rem;
+      opacity: 0.95;
+    }
+    .qr-value {
+      background: #fff;
+      color: var(--texto);
+      padding: 1.25rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid var(--dorado);
+      font-size: 0.95rem;
+    }
+    .qr-value strong { color: var(--granate); }
+    .qr-cta-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .qr-cta-wrap a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.9rem 1.25rem;
+      border-radius: 10px;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: opacity 0.2s;
+    }
+    .qr-cta-wrap a:active { opacity: 0.9; }
+    .qr-cta-whatsapp {
+      background: #25d366;
+      color: #fff;
+    }
+    .qr-cta-email {
+      background: var(--granate);
+      color: var(--crema);
+    }
+    .qr-cta-email:hover, .qr-cta-whatsapp:hover { color: inherit; opacity: 0.95; }
+    .qr-lang {
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--texto-claro);
+    }
+    .qr-lang a {
+      color: var(--granate);
+      margin-right: 0.75rem;
+    }
+    @media (min-width: 480px) {
+      .qr-wrap { padding: 2rem; }
+      .qr-hero { padding: 1.75rem; }
+    }
   </style>
 </head>
 <body>
   <div class="qr-wrap">
     <div class="qr-logo">
-      <a href="{{ base_url_str }}/inicio"><span class="vino">VINO</span> PRO <span class="vino">IA</span></a>
+      <a href="{{ base_url_str }}/inicio"><span class="vino">VINO</span> <span class="pro">PRO</span> <span class="vino">IA</span></a>
     </div>
-    <p class="qr-mensaje">{{ (t('qr.mensaje_hola') | replace('{nombre}', contacto.nombre)) }}</p>
-    <p class="qr-resumen">{{ t('qr.resumen_app') }}</p>
-    <section class="qr-beneficios">
-      <h3>{{ t('qr.beneficios_titulo') }}</h3>
-      <ul>
-        <li>{{ t('qr.beneficio_1') }}</li>
-        <li>{{ t('qr.beneficio_2') }}</li>
-        <li>{{ t('qr.beneficio_3') }}</li>
-      </ul>
+    <section class="qr-hero" aria-labelledby="qr-bienvenida">
+      <h1 id="qr-bienvenida">{{ (t('qr.mensaje_hola') | replace('{nombre}', contacto.nombre)) }}</h1>
+      <p>{{ t('qr.resumen_app') }}</p>
     </section>
-    {% if qr_calendly %}
-    <div class="qr-cta">
-      <a href="{{ qr_calendly }}" target="_blank" rel="noopener">{{ t('qr.agendar') }}</a>
+    <section class="qr-value">
+      <strong>{{ t('qr.beneficios_titulo') }}</strong><br>
+      {{ t('qr.beneficio_1') }} · {{ t('qr.beneficio_2') }} · {{ t('qr.beneficio_3') }}
+    </section>
+    <div class="qr-cta-wrap">
+      {% if qr_whatsapp %}
+      <a href="https://wa.me/{{ qr_whatsapp }}" class="qr-cta-whatsapp" target="_blank" rel="noopener">WhatsApp</a>
+      {% endif %}
+      {% if qr_email %}
+      <a href="mailto:{{ qr_email }}" class="qr-cta-email">{{ qr_email }}</a>
+      {% endif %}
+      {% if qr_calendly and not qr_whatsapp and not qr_email %}
+      <a href="{{ qr_calendly }}" class="qr-cta-email" target="_blank" rel="noopener">{{ t('qr.agendar') }}</a>
+      {% elif qr_calendly %}
+      <a href="{{ qr_calendly }}" class="qr-cta-email" target="_blank" rel="noopener">{{ t('qr.agendar') }}</a>
+      {% endif %}
     </div>
-    {% endif %}
-    <section class="qr-contacto">
-      <h3>{{ t('qr.contacto_titulo') }}</h3>
-      {% if qr_email %}<p><a href="mailto:{{ qr_email }}">{{ qr_email }}</a></p>{% endif %}
-      {% if qr_linkedin %}<p><a href="{{ qr_linkedin }}" target="_blank" rel="noopener">LinkedIn</a></p>{% endif %}
-      {% if qr_whatsapp %}<p><a href="https://wa.me/{{ qr_whatsapp }}" target="_blank" rel="noopener">WhatsApp</a></p>{% endif %}
-    </section>
-    <p class="qr-lang">{{ t('qr.idioma') }}: <a href="/c/{{ codigo }}?lang=it">Italiano</a> <a href="/c/{{ codigo }}?lang=es">Español</a> <a href="/c/{{ codigo }}?lang=en">English</a></p>
+    <p class="qr-lang">{{ t('qr.idioma') }}: <a href="/c/{{ codigo }}?lang=es">Español</a> <a href="/c/{{ codigo }}?lang=en">English</a> <a href="/c/{{ codigo }}?lang=it">Italiano</a></p>
   </div>
 </body>
 </html>

@@ -24,6 +24,16 @@
     .mapa-controls input { padding: 0.65rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(107,45,60,0.2); min-width: 200px; }
     .mapa-controls .btn { padding: 0.65rem 1rem; }
     .mapa-controls .mapa-select-radio { padding: 0.65rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(107,45,60,0.2); background: rgba(255,255,255,0.9); }
+    .mapa-guide-tabs { display: flex; gap: 0.6rem; margin-top: 0.25rem; }
+    .mapa-guide-tab { flex: 1; border-radius: 999px; border: 1px solid rgba(107,45,60,0.2); background: rgba(255,255,255,0.9); color: var(--burdeos); padding: 0.65rem 0.8rem; font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+    .mapa-guide-tab.active { background: linear-gradient(135deg, rgba(212,175,55,0.25), rgba(107,45,60,0.2)); border-color: rgba(107,45,60,0.35); }
+    .mapa-panel { display: block; }
+    .mapa-panel.hidden { display: none; }
+    .repsol-panel { border-radius: var(--radius); border: 1px solid rgba(238,110,37,0.35); background: linear-gradient(155deg, rgba(255,255,255,0.98), rgba(255,245,236,0.96)); padding: 1rem; box-shadow: var(--sombra-tarjeta); }
+    .repsol-logo { width: 100%; max-width: 220px; border-radius: 12px; background: linear-gradient(135deg, #ff7f2a, #ff5e00); color: #fff; padding: 0.8rem 1rem; font-weight: 800; letter-spacing: 0.02em; text-align: center; margin-bottom: 0.75rem; }
+    .repsol-sub { color: #8e4b1f; margin: 0 0 1rem 0; font-size: 0.95rem; }
+    .btn-repsol { background: linear-gradient(135deg, #ff7f2a, #ff5e00); color: #fff; border: 0; width: 100%; font-weight: 700; padding: 0.85rem 1rem; border-radius: 12px; cursor: pointer; }
+    .btn-repsol:hover { filter: brightness(1.03); }
     .mapa-estado { padding: 1rem; border-radius: var(--radius-sm); background: var(--burdeos-suave); color: var(--burdeos); font-weight: 500; }
     .mapa-estado.error { background: rgba(180,60,60,0.15); color: var(--burdeos-oscuro); }
     .mapa-lista { display: grid; gap: 0.75rem; }
@@ -58,6 +68,10 @@
     [data-theme="dark"] .mapa-lugar-card-destacado { background: linear-gradient(165deg, rgba(40,31,26,0.8), rgba(26,21,18,0.8)); border-color: rgba(212,168,75,0.35); }
     [data-theme="dark"] .mapa-badge-patrocinador { color: #f5d68e; background: rgba(212,175,55,0.2); border-color: rgba(212,175,55,0.4); }
     [data-theme="dark"] .mapa-sponsor-logo-placeholder { color: var(--dorado-claro); }
+    [data-theme="dark"] .mapa-guide-tab { background: rgba(26,21,18,0.75); color: var(--dorado-claro); border-color: rgba(212,168,75,0.3); }
+    [data-theme="dark"] .mapa-guide-tab.active { background: linear-gradient(135deg, rgba(212,175,55,0.28), rgba(107,45,60,0.3)); }
+    [data-theme="dark"] .repsol-panel { background: linear-gradient(155deg, rgba(44,26,16,0.9), rgba(28,19,14,0.9)); border-color: rgba(255,126,0,0.45); }
+    [data-theme="dark"] .repsol-sub { color: #ffd2ad; }
   </style>
 {% endblock %}
 
@@ -78,30 +92,45 @@
     </select>
   </div>
 
-  <div id="mapa-estado" class="mapa-estado" style="display:none;" aria-live="polite"
-  data-text-buscando="{{ t('geolocalizacion.buscando') }}"
-  data-text-no-resultados="{{ t('geolocalizacion.no_resultados') }}"
-  data-text-permiso-denegado="{{ t('geolocalizacion.permiso_denegado') }}"
-  data-text-error-red="{{ t('geolocalizacion.error_red') }}"
-  data-text-ver-ruta="{{ t('geolocalizacion.ver_ruta') }}"
-  data-text-llamar="{{ t('geolocalizacion.llamar') }}"
-  data-text-web="{{ t('geolocalizacion.web') }}"
-  data-text-distancia="{{ t('geolocalizacion.distancia') }}"
-></div>
-
-  <div class="mapa-mapa-wrap">
-    <div id="mapa-mapa"></div>
+  <div class="mapa-guide-tabs" role="tablist" aria-label="Selecciona una guía">
+    <button type="button" id="mapa-tab-vino" class="mapa-guide-tab active" aria-selected="true">Selección VINO PRO</button>
+    <button type="button" id="mapa-tab-repsol" class="mapa-guide-tab" aria-selected="false">Guía Repsol</button>
   </div>
 
-  <section class="mapa-destacados-wrap" aria-label="{{ t('comunidad.lugares_recomendados') }}" id="mapa-seccion-destacados">
-    <h2 class="section-title">{{ t('comunidad.lugares_recomendados') }}</h2>
-    <div id="mapa-destacados" class="mapa-lista"></div>
-  </section>
+  <div id="mapa-panel-vino" class="mapa-panel">
+    <div id="mapa-estado" class="mapa-estado" style="display:none;" aria-live="polite"
+    data-text-buscando="{{ t('geolocalizacion.buscando') }}"
+    data-text-no-resultados="{{ t('geolocalizacion.no_resultados') }}"
+    data-text-permiso-denegado="{{ t('geolocalizacion.permiso_denegado') }}"
+    data-text-error-red="{{ t('geolocalizacion.error_red') }}"
+    data-text-ver-ruta="{{ t('geolocalizacion.ver_ruta') }}"
+    data-text-llamar="{{ t('geolocalizacion.llamar') }}"
+    data-text-web="{{ t('geolocalizacion.web') }}"
+    data-text-distancia="{{ t('geolocalizacion.distancia') }}"
+  ></div>
 
-  <section class="mapa-lista-wrap" aria-label="{{ t('geolocalizacion.lista_lugares') }}">
-    <h2 class="section-title">{{ t('geolocalizacion.lugares_encontrados') }}</h2>
-    <div id="mapa-lista" class="mapa-lista"></div>
-  </section>
+    <div class="mapa-mapa-wrap">
+      <div id="mapa-mapa"></div>
+    </div>
+
+    <section class="mapa-destacados-wrap" aria-label="{{ t('comunidad.lugares_recomendados') }}" id="mapa-seccion-destacados">
+      <h2 class="section-title">{{ t('comunidad.lugares_recomendados') }}</h2>
+      <div id="mapa-destacados" class="mapa-lista"></div>
+    </section>
+
+    <section class="mapa-lista-wrap" aria-label="{{ t('geolocalizacion.lista_lugares') }}">
+      <h2 class="section-title">{{ t('geolocalizacion.lugares_encontrados') }}</h2>
+      <div id="mapa-lista" class="mapa-lista"></div>
+    </section>
+  </div>
+
+  <div id="mapa-panel-repsol" class="mapa-panel hidden" aria-hidden="true">
+    <section class="repsol-panel">
+      <div class="repsol-logo">GUIA REPSOL</div>
+      <p class="repsol-sub">Descubre restaurantes y experiencias gastronómicas en la guía oficial.</p>
+      <button type="button" id="mapa-btn-repsol-search" class="btn-repsol">Buscar Soles Repsol cerca de mí</button>
+    </section>
+  </div>
 </div>
 {% endblock %}
 

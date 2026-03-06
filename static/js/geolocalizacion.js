@@ -307,6 +307,62 @@
     });
   }
 
+  function parseInputTerm() {
+    var inputCiudad = document.getElementById('mapa-input-ciudad');
+    var raw = inputCiudad ? (inputCiudad.value || '').trim() : '';
+    if (!raw) return '';
+    var coordsMatch = raw.match(/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/);
+    if (coordsMatch) return '';
+    return raw;
+  }
+
+  function buildRepsolUrl() {
+    var base = 'https://www.guiarepsol.com/es/comer/';
+    var term = parseInputTerm();
+    if (!term) return base;
+    return base + '?q=' + encodeURIComponent(term);
+  }
+
+  function initGuideTabs() {
+    var tabVino = document.getElementById('mapa-tab-vino');
+    var tabRepsol = document.getElementById('mapa-tab-repsol');
+    var panelVino = document.getElementById('mapa-panel-vino');
+    var panelRepsol = document.getElementById('mapa-panel-repsol');
+    var btnRepsol = document.getElementById('mapa-btn-repsol-search');
+    if (!tabVino || !tabRepsol || !panelVino || !panelRepsol) return;
+
+    function showVino() {
+      tabVino.classList.add('active');
+      tabRepsol.classList.remove('active');
+      tabVino.setAttribute('aria-selected', 'true');
+      tabRepsol.setAttribute('aria-selected', 'false');
+      panelVino.classList.remove('hidden');
+      panelRepsol.classList.add('hidden');
+      panelRepsol.setAttribute('aria-hidden', 'true');
+      if (map && typeof map.invalidateSize === 'function') {
+        setTimeout(function() { map.invalidateSize(); }, 100);
+      }
+    }
+
+    function showRepsol() {
+      tabRepsol.classList.add('active');
+      tabVino.classList.remove('active');
+      tabRepsol.setAttribute('aria-selected', 'true');
+      tabVino.setAttribute('aria-selected', 'false');
+      panelRepsol.classList.remove('hidden');
+      panelRepsol.setAttribute('aria-hidden', 'false');
+      panelVino.classList.add('hidden');
+    }
+
+    tabVino.addEventListener('click', showVino);
+    tabRepsol.addEventListener('click', showRepsol);
+    if (btnRepsol) {
+      btnRepsol.addEventListener('click', function() {
+        window.open(buildRepsolUrl(), '_blank', 'noopener');
+      });
+    }
+  }
+
   function init() {
     getTextos();
     var btnUbicacion = document.getElementById('mapa-btn-ubicacion');
@@ -369,6 +425,7 @@
 
     initMapa(40.4168, -3.7038, 6);
     cargarLugaresDestacados();
+    initGuideTabs();
   }
 
   if (document.readyState === 'loading') {

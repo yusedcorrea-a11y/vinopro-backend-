@@ -5,10 +5,14 @@
     body.page-adaptador .adaptador-container { max-width: 720px; margin: 0 auto; }
     .adaptador-section { margin-bottom: 2rem; }
     .token-box { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+    .token-box input { flex: 1 1 320px; min-width: 240px; }
     .programas-checkboxes { display: flex; flex-wrap: wrap; gap: 0.75rem; }
     .checkbox-label { display: inline-flex; align-items: center; gap: 0.35rem; }
     .code-block { background: rgba(0,0,0,0.25); padding: 1rem; border-radius: 8px; overflow-x: auto; font-size: 0.9rem; }
     .doc-section h4 { margin-top: 1rem; color: var(--dorado-claro); }
+    .sync-status { margin-top: 0.75rem; font-size: 0.9rem; color: var(--texto-suave); }
+    .sync-status.ok { color: #2f7a3b; }
+    .sync-status.err { color: #a33434; }
   </style>
 {% endblock %}
 
@@ -21,10 +25,13 @@
     <h3 class="section-title">{{ t('adaptador.tu_token') }}</h3>
     <p class="texto-pequeno">{{ t('adaptador.token_help') }} Al cargar esta página se ha vinculado tu sesión de Mi Bodega.</p>
     <div class="token-box">
-      <code id="api-token">Cargando…</code>
-      <button type="button" id="copy-token" class="btn btn-dorado" style="margin-left:0.5rem;">{{ t('common.copiar') }}</button>
+      <input type="password" id="api-token" value="Cargando…" readonly>
+      <button type="button" id="toggle-token" class="btn btn-outline">Revelar</button>
+      <button type="button" id="copy-token" class="btn btn-dorado">{{ t('common.copiar') }}</button>
+      <button type="button" id="regen-token" class="btn btn-outline">Regenerar token</button>
     </div>
     <p id="token-msg" class="texto-pequeno hidden" style="margin-top:0.5rem;"></p>
+    <p id="sync-status" class="sync-status">Última sincronización: todavía no disponible.</p>
   </section>
 
   <section class="adaptador-section">
@@ -62,7 +69,7 @@
       <li><code>X-API-Token: &lt;tu_token&gt;</code></li>
     </ul>
     <p><strong>Ejemplo de solicitud (cURL):</strong></p>
-    <pre class="code-block">curl -X GET "https://tu-dominio.com/api/bodega/stock" \
+    <pre class="code-block" id="curl-stock">curl -X GET "https://tu-dominio.com/api/bodega/stock" \
   -H "X-API-Token: TU_TOKEN_AQUI"</pre>
     <p><strong>Ejemplo de respuesta:</strong></p>
     <pre class="code-block">{
@@ -85,6 +92,11 @@
   "stock": [ ... ]
 }</pre>
     <p class="texto-pequeno">El array <code>stock</code> tiene el mismo formato que la respuesta de GET /api/bodega/stock.</p>
+    <p><strong>Ejemplo para registrar una venta:</strong></p>
+    <pre class="code-block" id="curl-venta">curl -X POST "https://tu-dominio.com/api/adaptador/venta" \
+  -H "Content-Type: application/json" \
+  -H "X-API-Token: TU_TOKEN_AQUI" \
+  -d "{\"vino_nombre\":\"Marqués de Riscal Reserva\",\"cantidad\":1}"</pre>
   </section>
 </div>
 {% endblock %}

@@ -13,12 +13,30 @@ router = APIRouter(prefix="/adaptador", tags=["Adaptador Restaurantes"])
 
 
 @router.get("/token")
-def get_or_create_token():
+def get_or_create_token(
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
     """
     Obtiene o crea un token de API único para el restaurante.
     Solo visible para uso desde la página /adaptador.
     """
-    return svc.get_or_create_restaurante()
+    sid = (x_session_id or "").strip() or None
+    return svc.get_or_create_restaurante(sid)
+
+
+@router.post("/token/regenerate")
+def regenerate_token(
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """
+    Invalida el token anterior y genera uno nuevo.
+    Si hay sesión, rota el token del restaurante asociado.
+    """
+    sid = (x_session_id or "").strip() or None
+    rest = svc.regenerate_token(sid)
+    if not rest:
+        raise HTTPException(status_code=404, detail="No se pudo regenerar el token.")
+    return {"success": True, "token_data": rest}
 
 
 class ConfigBody(BaseModel):

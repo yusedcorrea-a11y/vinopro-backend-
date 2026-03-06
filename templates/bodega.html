@@ -18,6 +18,29 @@
     .registros-hoy-msg { margin-bottom: 0.5rem; }
     .form-botella-error { margin-bottom: 0.75rem; padding: 0.5rem; border-radius: 6px; background: rgba(200,80,80,0.2); color: var(--texto); }
     [data-theme="dark"] .form-botella-error { color: var(--texto); }
+    .dashboard-bodega { display: grid; grid-template-columns: 160px 1fr; gap: 1rem; align-items: center; }
+    .donut-chart { width: 150px; height: 150px; border-radius: 50%; position: relative; background: conic-gradient(#d4d4d4 0deg, #d4d4d4 360deg); }
+    .donut-chart::after { content: ""; position: absolute; inset: 22px; border-radius: 50%; background: var(--fondo, #fff); }
+    .donut-empty { display: flex; align-items: center; justify-content: center; color: var(--texto-suave); font-size: 0.9rem; text-align: center; }
+    .chart-center-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 1; flex-direction: column; font-size: 0.85rem; text-align: center; pointer-events: none; }
+    .chart-center-label strong { font-size: 1.25rem; }
+    .chart-legend { display: grid; gap: 0.5rem; }
+    .chart-legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; }
+    .chart-dot { width: 0.85rem; height: 0.85rem; border-radius: 50%; flex: 0 0 auto; }
+    .bodega-toolbar { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.75rem; align-items: center; }
+    .bodega-toolbar input { flex: 1 1 260px; padding: 0.55rem 0.7rem; border-radius: 6px; border: 1px solid rgba(107,45,60,0.2); }
+    .potencial-badge { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.25rem 0.55rem; border-radius: 999px; font-size: 0.82rem; font-weight: 600; margin-top: 0.5rem; }
+    .potencial-badge.verde { background: rgba(64, 143, 77, 0.18); color: #2f7a3b; }
+    .potencial-badge.amarillo { background: rgba(214, 164, 24, 0.18); color: #9a6a00; }
+    .potencial-badge.rojo { background: rgba(190, 69, 69, 0.18); color: #a33434; }
+    .acciones-bodega { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+    .btn-mini { padding: 0.35rem 0.6rem; font-size: 0.85rem; }
+    .maridaje-tip { margin-top: 0.6rem; padding: 0.65rem 0.75rem; border-left: 3px solid var(--burdeos); background: rgba(107,45,60,0.08); border-radius: 6px; font-size: 0.92rem; }
+    .bodega-resumen { margin-top: 0.4rem; color: var(--texto-suave); font-size: 0.92rem; }
+    @media (max-width: 640px) {
+      .dashboard-bodega { grid-template-columns: 1fr; justify-items: center; }
+      .chart-legend { width: 100%; }
+    }
   </style>
 {% endblock %}
 
@@ -29,6 +52,17 @@
   <section class="bodega-section">
     <h3 class="section-title">{{ t('bodega.valoracion') }}</h3>
     <div id="valoracion" class="valoracion-box">Cargando…</div>
+    <div id="dashboard-bodega" class="dashboard-bodega" style="margin-top:1rem;">
+      <div id="donut-bodega" class="donut-chart donut-empty">
+        <div class="chart-center-label"><strong>0</strong><span>botellas</span></div>
+      </div>
+      <div>
+        <h4 style="margin:0 0 0.5rem 0;">Distribución por tipo</h4>
+        <div id="chart-legend" class="chart-legend">
+          <div class="texto-pequeno">Añade botellas para ver el reparto visual de tu bodega.</div>
+        </div>
+      </div>
+    </div>
     <p class="btn-pdf-wrap"><a href="#" id="btn-pdf-bodega" class="btn btn-dorado">{{ t('bodega.exportar_pdf') }}</a></p>
   </section>
 
@@ -53,12 +87,26 @@
         <label for="ubicacion">{{ t('bodega.ubicacion') }}</label>
         <input type="text" id="ubicacion" placeholder="Ej: Estantería 3">
       </div>
+      <div class="form-group">
+        <label for="tipo_vino">Tipo</label>
+        <select id="tipo_vino">
+          <option value="tinto">Tinto</option>
+          <option value="blanco">Blanco</option>
+          <option value="rosado">Rosado</option>
+          <option value="espumoso">Espumoso</option>
+          <option value="dulce">Dulce</option>
+        </select>
+      </div>
       <button type="submit" class="btn btn-block">{{ t('bodega.btn_anadir') }}</button>
     </form>
   </section>
 
   <section class="bodega-section bodega-section-list">
     <h3 class="section-title">{{ t('bodega.mis_botellas') }}</h3>
+    <div class="bodega-toolbar">
+      <input type="search" id="bodega-search" placeholder="Buscar por nombre o ubicación...">
+      <div id="bodega-resumen" class="bodega-resumen" aria-live="polite"></div>
+    </div>
     <div id="bodega-sort-bar" class="bodega-sort-bar" style="display:none;">
       <label for="bodega-sort-by">{{ t('bodega.ordenar_por') }}</label>
       <select id="bodega-sort-by">

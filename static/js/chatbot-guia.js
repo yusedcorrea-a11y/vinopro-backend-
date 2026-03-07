@@ -33,6 +33,19 @@
     return TEXTS[id] || TEXTS.default;
   }
 
+  function getIntentMeta(topic) {
+    if (topic === 'adaptador') {
+      return { cls: 'intent-b2b', icon: '🔌', label: 'CONECTIVIDAD B2B', ctaPulse: false };
+    }
+    if (topic === 'negocio' || topic === 'planes') {
+      return { cls: 'intent-pro', icon: '💰', label: 'ESTRATEGIA PRO', ctaPulse: true };
+    }
+    if (topic === 'soporte_tecnico' || topic === 'escanear' || topic === 'mapa') {
+      return { cls: 'intent-soporte', icon: '🛠️', label: 'SOPORTE', ctaPulse: false };
+    }
+    return null;
+  }
+
   function openPanel() {
     var panel = document.getElementById(PANEL_ID);
     var backdrop = document.getElementById('chatbot-guia-backdrop');
@@ -50,8 +63,22 @@
   function showAnswer(id) {
     var el = document.getElementById(ANSWERS_ID);
     if (!el) return;
+    var intent = getIntentMeta(id);
+    var badgeHtml = '';
+    if (intent) {
+      badgeHtml = '<span class="chatbot-guia-intent-badge ' + intent.cls + '">' +
+        '<span class="chatbot-guia-intent-ico" aria-hidden="true">' + intent.icon + '</span>' +
+        '<span class="chatbot-guia-intent-text">' + intent.label + '</span>' +
+      '</span>';
+    }
     el.classList.remove('chatbot-guia-answer--visible');
-    el.innerHTML = getAnswer(id);
+    el.innerHTML = badgeHtml + getAnswer(id);
+    el.classList.remove('intent-soporte', 'intent-b2b', 'intent-pro');
+    if (intent && intent.cls) el.classList.add(intent.cls);
+    el.querySelectorAll('a.chatbot-guia-link').forEach(function(a) {
+      if (intent && intent.ctaPulse) a.classList.add('chatbot-guia-cta-pro');
+      else a.classList.remove('chatbot-guia-cta-pro');
+    });
     el.classList.add('chatbot-guia-answer--visible');
     el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }

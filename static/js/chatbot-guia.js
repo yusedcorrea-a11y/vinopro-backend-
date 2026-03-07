@@ -10,27 +10,23 @@
   var DOUBLE_TAP_MS = 400;
 
   var TEXTS = {
-    intro: '¡Hola! Soy el asistente de Vino Pro IA. 👔 Resuelvo dudas de <strong>toda</strong> la app. Para vinos y maridajes, usa <strong>Preguntar</strong>. Escribe algo abajo o elige un tema.',
-    escanear: '🍷 <strong>Escanear</strong><br><br>• <strong>Foto:</strong> Sube una imagen de la etiqueta (JPG, PNG, WebP o GIF; máx. 6 MB). Si viene del móvil en HEIC o muy pesada, puede fallar: redúcela o escribe el nombre.<br>• <strong>Texto:</strong> Escribe el nombre del vino o palabras clave y te buscamos en nuestra base y en Open Food Facts.<br>• <strong>Código de barras:</strong> Si lo tienes, introdúcelo y te devolvemos la ficha.<br>Tras el resultado puedes registrar el vino en tu bodega o ir a Comprar. Si algo no se lee bien, el bloque de respuesta tiene fondo oscuro para que se vea todo.',
-    registrar: '📝 <strong>Registrar</strong><br><br>• <strong>Buscador:</strong> Arriba del formulario busca el vino (como Google). Si sale en "En nuestra base", ya está; si sale en "Encontrados en internet", usa "Usar estos datos" y se rellena solo.<br>• <strong>Gratis:</strong> Solo puedes registrar vinos que el buscador encuentre.<br>• <strong>Premium:</strong> Si no aparece nada, puedes registrarlo tú, añadir una foto y ofrecerlo a otros (aparecerá en Comprar como "Un usuario ofrece este vino"). Para eso hace falta <strong>PRO</strong>.',
-    preguntar: '💬 <strong>Preguntar (sumiller)</strong><br><br>• Aquí preguntas por maridajes, recomendaciones, tipo de vino, etc.<br>• <strong>Modo IA Local 🖥️:</strong> Solo Premium. Usa el agente en tu PC (tienes que tener abierto <code>python agente_local\\server.py</code>).<br>• <strong>Modo Nube ☁️:</strong> Para todos. Respuestas del servidor, sin instalar nada.<br>• <strong>Consulta ID:</strong> Si acabas de escanear un vino, pega el UUID que te damos y el sumiller responde sobre ese vino en concreto.<br>• <strong>Perfil:</strong> Principiante, Aficionado o Profesional, para adaptar el lenguaje.',
-    ia_local: '🖥️ <strong>IA Local</strong> (solo Premium)<br><br>La IA Local es <strong>exclusiva para usuarios PRO</strong>. Si no eres Premium, en Preguntar solo verás modo Nube ☁️.<br><br>Para usarla siendo PRO:<br>1. Abre una terminal en la carpeta del proyecto.<br>2. Ejecuta: <code>python agente_local\\server.py</code> (Windows) o <code>python agente_local/server.py</code> (Mac/Linux).<br>3. Debe salir algo como "Agente Sumiller local en http://0.0.0.0:8080".<br>4. En Preguntar, elige modo <strong>IA Local 🖥️</strong>.<br>Si no tienes el agente abierto, elige <strong>Nube ☁️</strong> y todo funcionará desde el servidor.',
-    bodega: '🏠 <strong>Mi Bodega</strong><br><br>• Aquí ves y gestionas las botellas que añades (desde Escanear o Registrar).<br>• <strong>Límite diario:</strong> Según tu nivel (nuevo, normal, verificado) puedes añadir X registros al día.<br>• <strong>Plan Gratis:</strong> Máximo 50 vinos en la bodega. Si llegas al límite, te pedimos pasar a PRO.<br>• <strong>PRO:</strong> Bodega ilimitada y además puedes ofrecer vinos que no estén en la base (con foto y enlace de contacto en Comprar).<br>• Exportar PDF, valoración y alertas también están aquí.',
-    comprar: '🛒 <strong>Comprar</strong><br><br>• En cada ficha de vino (tras escanear o buscar) tienes "Comprar este vino".<br>• <strong>Pestañas:</strong> Nacional (tu país), Internacional, Subastas.<br>• <strong>¿Dónde tomarlo?</strong> Guía por país (Repsol, Gambero Rosso, etc.) según dónde estés.<br>• Si un usuario <strong>Premium</strong> ha ofrecido ese vino, verás "Un usuario ofrece este vino" y podrás contactarle por correo (sin compromisos de pago ni envío por nuestra parte).',
-    planes: '📋 <strong>Planes y Premium</strong> 👔<br><br><strong>Gratis:</strong> Escaneo, sumiller, bodega hasta 50 vinos, informes PDF. Solo puedes registrar vinos que el buscador encuentre.<br><br><strong>PRO (4,99 €/mes):</strong> Bodega ilimitada, registrar vinos que no estén en la base, subir foto y ofrecerlos a otros (tu enlace de contacto en Comprar). Ideal si tienes botellas raras o eres coleccionista. Los pagos son con Stripe; si no está activo, el administrador puede activarlo.<br><br><strong>Restaurante:</strong> Adaptador para conectar tu sistema con la app (webhook, token).<br><br>👉 <a href="/planes" class="chatbot-guia-link">Ver planes y pasar a PRO</a> — ¡te va a molar! 🍷',
-    adaptador: '🍴 <strong>Adaptador restaurante</strong><br><br>Para bares y restaurantes que quieran enlazar su carta o sistema con Vino Pro IA.<br>• Configuras una <strong>URL de webhook</strong> y te damos un <strong>token</strong>.<br>• Cuando actualices el stock en Mi Bodega, enviamos un POST a esa URL con los datos.<br>• Así mantienes la carta de vinos sincronizada. Si no eres técnico, pásale esto al que gestione la web del local. 😉',
-    default: '👔 No he pillado del todo tu duda. Prueba a escribir "premium", "escanear", "registrar", "preguntar", "IA local", "bodega", "comprar" o "adaptador", o pulsa uno de los temas de arriba.'
+    intro: '👔 <strong>Asistente estratégico VINO PRO IA</strong><br><br>Estoy para ayudarte en tres frentes: <strong>soporte técnico</strong> (escáner y mapa), <strong>integración B2B</strong> (Adaptador/webhooks) y <strong>crecimiento de negocio</strong> (Sponsor + QR Networking Premium).',
+    soporte_tecnico: '🛠️ <strong>Soporte técnico</strong><br><br><strong>Escáner:</strong> usa foto nítida de etiqueta, evita reflejos y prioriza JPG/PNG. Si falla OCR, prueba texto o código de barras.<br><strong>Mapa:</strong> en "Donde me tomo mi vino" puedes usar ubicación, radio por km y tarjetas sponsor con acciones (ruta, email, web).<br><strong>Tip sumiller:</strong> cuando detectes términos como "Crianza" o "Reserva", mantenlos en contexto enológico.',
+    escanear: '🍷 <strong>Escáner de etiquetas</strong><br><br>Sube imagen (máx. 6 MB), o escribe texto/código de barras.<br>Si el móvil guarda en HEIC, conviértelo o reduce la imagen.<br>Tras identificar el vino, puedes llevarlo a bodega, comprar o trabajar ficha técnica.',
+    mapa: '📍 <strong>Donde me tomo mi vino</strong><br><br>Activa ubicación para ver sitios cercanos y filtra por distancia (km).<br>Tienes dos guías: Selección VINO PRO y Guía Repsol.<br>Las tarjetas sponsor permiten abrir ruta, correo y web del local al instante.',
+    adaptador: '🍴 <strong>Integración B2B (Adaptador)</strong><br><br>Ideal para restaurantes y wine bars.<br>1) Configura webhook URL.<br>2) Guarda token API.<br>3) Valida con "Probar webhook".<br>4) Si quieres seguridad extra, activa firma HMAC (<code>X-Vino-Signature</code>) con clave secreta.<br>Resultado: stock sincronizado en tiempo real entre sala y bodega digital.',
+    negocio: '📈 <strong>Estrategia de negocio VINO</strong><br><br><strong>Sponsor PRO (ej. Casa Paca):</strong> más visibilidad en mapa y VINEROS, y mejor captación local.<br><strong>QR Networking Premium:</strong> genera QR comerciales, capta leads y mide escaneos por contacto/país.<br>Si tu objetivo es ventas y networking, este módulo acelera el embudo comercial horeca.<br><br>👉 <a href="/qr" class="chatbot-guia-link">Ir a QR Networking</a><br>👉 <a href="mailto:hola@vinoproia.com?subject=Interes%20comercial%20VINO%20PRO" class="chatbot-guia-link">Contactar administrador</a>',
+    planes: '⭐ <strong>Planes</strong><br><br><strong>Gratis:</strong> escáner, sumiller, bodega limitada.<br><strong>Premium:</strong> bodega avanzada, QR Networking, herramientas comerciales y funciones profesionales para escalar ventas.<br><br>👉 <a href="/planes" class="chatbot-guia-link">Ver planes y activar Premium</a>',
+    default: '👔 Cuéntame tu objetivo y te doy la ruta más directa. Ejemplos: "configurar webhook", "me falla el escáner", "quiero vender más", "negocios", "ventas", "qr networking".'
   };
 
   var KEYWORDS = {
-    planes: ['premium', 'pro', 'plan', 'planes', 'precio', 'pago', 'pagar', 'suscripcion', 'gratis', 'limite', 'ilimitad'],
-    escanear: ['escanear', 'foto', 'imagen', 'etiqueta', 'codigo', 'barras', 'buscar'],
-    registrar: ['registrar', 'registro', 'formulario', 'buscar vino', 'añadir vino'],
-    preguntar: ['preguntar', 'sumiller', 'maridaje', 'recomendacion'],
-    ia_local: ['ia local', 'local', 'agente', '8080', 'terminal', 'servidor local'],
-    bodega: ['bodega', 'mi bodega', 'botellas', 'cantidad'],
-    comprar: ['comprar', 'comprar vino', 'tienda', 'donde tomarlo', 'guia'],
-    adaptador: ['adaptador', 'restaurante', 'webhook', 'token', 'api']
+    negocio: ['negocios', 'ventas', 'vender', 'captar', 'clientes', 'leads', 'sponsor', 'patrocinador', 'casa paca', 'qr', 'networking', 'comercial'],
+    adaptador: ['adaptador', 'restaurante', 'webhook', 'token', 'api', 'integracion', 'tpv'],
+    soporte_tecnico: ['soporte', 'tecnico', 'error', 'falla', 'arreglar', 'problema'],
+    escanear: ['escanear', 'foto', 'imagen', 'etiqueta', 'ocr', 'codigo', 'barras'],
+    mapa: ['mapa', 'donde me tomo', 'ubicacion', 'geolocalizacion', 'repsol', 'ruta', 'distancia'],
+    planes: ['premium', 'pro', 'plan', 'planes', 'precio', 'pago', 'suscripcion', 'gratis']
   };
 
   function getAnswer(id) {
@@ -196,13 +192,6 @@
       trigger.addEventListener('click', function(e) {
         e.preventDefault();
         openPanel();
-      });
-    });
-
-    panel.querySelectorAll('.chatbot-guia-topic').forEach(function(t) {
-      t.addEventListener('click', function() {
-        var id = this.getAttribute('data-topic');
-        showAnswer(id);
       });
     });
 

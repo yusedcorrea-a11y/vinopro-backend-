@@ -191,18 +191,7 @@
         <p class="chatbot-guia-intro" id="chatbot-guia-intro"></p>
         <div class="chatbot-guia-busca">
           <label for="chatbot-guia-input" class="chatbot-guia-busca-label">Escribe tu duda</label>
-          <input type="text" id="chatbot-guia-input" class="chatbot-guia-input" placeholder="Ej: premium, escanear, IA local…" autocomplete="off">
-        </div>
-        <p class="chatbot-guia-topics-label">O elige un tema</p>
-        <div class="chatbot-guia-topics">
-          <button type="button" class="chatbot-guia-topic" data-topic="escanear"><span class="chatbot-guia-topic-ico">🍷</span> Escanear</button>
-          <button type="button" class="chatbot-guia-topic" data-topic="registrar"><span class="chatbot-guia-topic-ico">📝</span> Registrar</button>
-          <button type="button" class="chatbot-guia-topic" data-topic="preguntar"><span class="chatbot-guia-topic-ico">💬</span> Preguntar</button>
-          <button type="button" class="chatbot-guia-topic" data-topic="ia_local"><span class="chatbot-guia-topic-ico">🖥️</span> IA Local</button>
-          <button type="button" class="chatbot-guia-topic" data-topic="bodega"><span class="chatbot-guia-topic-ico">🏠</span> Mi Bodega</button>
-          <button type="button" class="chatbot-guia-topic" data-topic="comprar"><span class="chatbot-guia-topic-ico">🛒</span> Comprar</button>
-          <button type="button" class="chatbot-guia-topic" data-topic="planes"><span class="chatbot-guia-topic-ico">⭐</span> Planes</button>
-          <button type="button" class="chatbot-guia-topic" data-topic="adaptador"><span class="chatbot-guia-topic-ico">🍴</span> Adaptador</button>
+          <input type="text" id="chatbot-guia-input" class="chatbot-guia-input" placeholder="Ej: webhook adaptador, escáner, negocios, ventas…" autocomplete="off">
         </div>
         <div id="chatbot-guia-answer" class="chatbot-guia-answer" role="region" aria-live="polite"></div>
       </div>
@@ -212,7 +201,7 @@
   <script>
     (function() {
       var intro = document.getElementById('chatbot-guia-intro');
-      if (intro) intro.innerHTML = '¡Hola! Soy el asistente de Vino Pro IA. 👔 Resuelvo dudas de <strong>toda</strong> la app. Para vinos y maridajes, usa <strong>Preguntar</strong>. Escribe algo abajo o elige un tema.';
+      if (intro) intro.innerHTML = '¡Hola! Soy tu guía experto de VINO PRO IA. 👔 Te ayudo con <strong>soporte técnico</strong>, <strong>integración B2B</strong> y <strong>estrategia comercial</strong> para vender más y hacer networking.';
     })();
   </script>
   <!-- Aviso si no hay conexión con el servidor (móvil / cold start / red local) -->

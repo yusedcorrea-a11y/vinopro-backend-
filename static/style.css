@@ -2984,24 +2984,26 @@ body.page-inicio main::after {
 .menu-secreto-danger {
   margin-top: 0.9rem;
   width: 100%;
-  border: 1px solid rgba(146, 42, 63, 0.25);
-  background: linear-gradient(180deg, rgba(146, 42, 63, 0.08), rgba(146, 42, 63, 0.14));
-  color: #7e2138;
+  border: 1px solid rgba(176, 72, 88, 0.28);
+  background: linear-gradient(180deg, rgba(190, 92, 108, 0.1), rgba(165, 68, 84, 0.16));
+  color: #8e3144;
   border-radius: 12px;
   padding: 0.8rem 0.95rem;
   font-weight: 700;
+  letter-spacing: 0.01em;
   cursor: pointer;
   transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
 .menu-secreto-danger:hover,
 .menu-secreto-danger:focus-visible {
   transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(107, 45, 60, 0.18);
+  box-shadow: 0 10px 22px rgba(150, 63, 79, 0.2);
+  background: linear-gradient(180deg, rgba(198, 102, 117, 0.14), rgba(173, 74, 91, 0.22));
 }
 [data-theme="dark"] .menu-secreto-danger {
-  color: #ffd7dd;
-  border-color: rgba(255, 172, 189, 0.25);
-  background: linear-gradient(180deg, rgba(122, 34, 53, 0.38), rgba(82, 20, 35, 0.58));
+  color: #ffdbe0;
+  border-color: rgba(255, 178, 192, 0.3);
+  background: linear-gradient(180deg, rgba(133, 46, 62, 0.4), rgba(93, 28, 41, 0.62));
 }
 
 /* Verificación de edad */
@@ -3140,8 +3142,21 @@ body.page-inicio main::after {
 .legal-card {
   padding: 1.05rem;
 }
+.legal-card-reading {
+  padding: 1.15rem 1rem 1.2rem;
+}
+.legal-card-reading h2 {
+  margin-bottom: 0.75rem;
+  font-size: 1.22rem;
+  line-height: 1.25;
+}
+.legal-card-reading p {
+  font-size: 1rem;
+  line-height: 1.78;
+  letter-spacing: 0.004em;
+}
 .legal-card p + p {
-  margin-top: 0.8rem;
+  margin-top: 0.9rem;
 }
 .legal-card-warning {
   border-color: rgba(180, 127, 44, 0.26);
@@ -3194,6 +3209,13 @@ body.page-inicio main::after {
   .legal-note-grid,
   .legal-layout {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .legal-card-reading {
+    padding: 1.35rem 1.3rem 1.45rem;
+  }
+  .legal-card-reading p {
+    font-size: 1.03rem;
+    line-height: 1.82;
   }
   .legal-card:nth-child(1),
   .legal-card:nth-child(2) {

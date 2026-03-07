@@ -111,9 +111,19 @@ def render_page(request: Request, template_name: str, **context):
     # En producción definir BASE_URL (ej. https://vinoproia.com) para canonical y compartir
     base_url_str = os.environ.get("BASE_URL", "").strip() or str(request.base_url).rstrip("/")
     bandera = i18n_svc.BANDERAS.get(lang, "🇪🇸")
+    support_email = os.environ.get("SUPPORT_EMAIL", "").strip() or "soporte@vinoproia.com"
     return templates.TemplateResponse(
         template_name,
-        {"request": request, "t": t, "lang": lang, "recognition_lang": recognition_lang, "base_url_str": base_url_str, "bandera": bandera, **context},
+        {
+            "request": request,
+            "t": t,
+            "lang": lang,
+            "recognition_lang": recognition_lang,
+            "base_url_str": base_url_str,
+            "bandera": bandera,
+            "support_email": support_email,
+            **context,
+        },
     )
 
 

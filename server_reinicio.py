@@ -1,4 +1,4 @@
-﻿from fastapi import FastAPI, Form
+from fastapi import FastAPI, Form
 from fastapi.responses import JSONResponse
 import requests
 import uvicorn
@@ -13,7 +13,7 @@ OLLAMA_URL = "http://localhost:11434/api/generate"
 async def analyze_text(text: str = Form(...)):
     # SYSTEM PROMPT EXPLÍCITO (para evitar italiano)
     prompt = f"""<|start_header_id|>system<|end_header_id|>
-Eres un sommelier experto. Analiza textos sobre vino y extrae datos.
+Eres un experto en vinos. Analiza textos sobre vino y extrae datos.
 Responde SOLO en español y SOLO con JSON.<|eot_id|>
 <|start_header_id|>user<|end_header_id|>
 Extrae JSON con: nombre, bodega, año, color, aroma.

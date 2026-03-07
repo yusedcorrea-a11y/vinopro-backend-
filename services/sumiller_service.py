@@ -1,5 +1,5 @@
 """
-Servicio para el Sumiller Virtual: maridajes y recomendaciones desde la base de vinos,
+Servicio para el Experto en Vinos Virtual: maridajes y recomendaciones desde la base de vinos,
 soporte de contexto (últimas preguntas) y fallback cuando no hay resultados (conocimiento + similares).
 """
 import json

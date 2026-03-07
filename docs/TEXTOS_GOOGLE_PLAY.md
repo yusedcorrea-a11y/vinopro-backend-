@@ -9,7 +9,7 @@ Usa estos textos en la ficha de la aplicación. La **URL de política de privaci
 ```
 VINO PRO
 ```
-*(9 caracteres. Alternativas si quieres más contexto: "VINO PRO – Sumiller" [22] o "VINO PRO – Escáner vinos" [25])*
+*(9 caracteres. Alternativas si quieres más contexto: "VINO PRO – Experto en Vinos" [22] o "VINO PRO – Escáner vinos" [25])*
 
 ---
 
@@ -18,7 +18,7 @@ VINO PRO
 Para el campo "Descripción breve" de la ficha:
 
 ```
-Sumiller en el bolsillo: escanea etiquetas, tu bodega y comunidad. 14 idiomas.
+Experto en Vinos en el bolsillo: escanea etiquetas, tu bodega y comunidad. 14 idiomas.
 ```
 *(79 caracteres)*
 
@@ -35,7 +35,7 @@ Escanea vinos, gestiona tu bodega y únete a la comunidad. 14 idiomas.
 Puedes usar esta descripción completa (ajusta si tu dominio no es vinoproia.com):
 
 ```
-VINO PRO es la herramienta que todo sumiller y amante del vino quería: escanear etiquetas al instante, llevar tu bodega personal y formar parte de una comunidad global, todo en una sola app.
+VINO PRO es la herramienta que todo experto en vinos y amante del vino quería: escanear etiquetas al instante, llevar tu bodega personal y formar parte de una comunidad global, todo en una sola app.
 
 🍷 ESCÁNER INTELIGENTE
 • Enfoca la etiqueta de cualquier botella: reconocimiento óptico (OCR) en tiempo real.
@@ -63,7 +63,7 @@ VINO PRO es la herramienta que todo sumiller y amante del vino quería: escanear
 • Lugares cercanos: restaurantes, bares y tiendas de vino.
 • Geolocalización o búsqueda por ciudad.
 
-Descarga VINO PRO y lleva el sumiller en el bolsillo. Ideal para profesionales, estudiantes y aficionados que quieren profundizar en el mundo del vino.
+Descarga VINO PRO y lleva el experto en vinos en el bolsillo. Ideal para profesionales, estudiantes y aficionados que quieren profundizar en el mundo del vino.
 ```
 
 ---
@@ -88,7 +88,7 @@ Datos que recogemos:
 • Pagos: procesados por Stripe; no almacenamos datos de tarjeta. Consulta la política de Stripe para más información.
 • Si usas ofertas o contactos: el correo se usa solo para poner en contacto a compradores y oferentes según la funcionalidad descrita en la app.
 
-Finalidad: prestar el servicio (sumiller, bodega, escaneo, planes, comunidad), mejorar la app con datos agregados y cumplir obligaciones legales si aplican.
+Finalidad: prestar el servicio (experto en vinos, bodega, escaneo, planes, comunidad), mejorar la app con datos agregados y cumplir obligaciones legales si aplican.
 
 Conservación: los datos de sesión se conservan mientras sea necesario para el servicio; los datos agregados y anónimos pueden conservarse más tiempo. Aplicamos medidas técnicas y organizativas para proteger la información.
 

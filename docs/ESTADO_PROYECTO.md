@@ -20,7 +20,7 @@
 2. **Contenido** – Más vinos en BD y EANs reales donde se tengan.
 3. **Robustez** – Mejor manejo de timeouts (OFF) y mensajes al usuario.
 4. **Funciones de valor** – Maridajes, recomendaciones, precios, dónde comprar.
-5. **Producto redondo** – Sumiller, bodega, comprar y comunidad alineados con el objetivo.
+5. **Producto redondo** – Experto en Vinos, bodega, comprar y comunidad alineados con el objetivo.
 
 ---
 

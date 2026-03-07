@@ -12,7 +12,7 @@ backend_optimized/
 │
 ├── data/
 │   ├── translations/         # es, en, pt, fr, de, it (i18n)
-│   ├── conocimiento_vinos.json   # Tipos: Lambrusco, Malbec, Rioja, Champagne, etc. (fallback sumiller)
+│   ├── conocimiento_vinos.json   # Tipos: Lambrusco, Malbec, Rioja, Champagne, etc. (fallback experto en vinos)
 │   ├── usuarios_pro.json     # IDs PRO (Stripe webhook) — NO se carga en vinos_mundiales
 │   ├── registros_diarios.json
 │   ├── usuarios_reputacion.json
@@ -103,7 +103,7 @@ backend_optimized/
 
 ### Error 2: Pregunta "que lambrusco es la mas famosa" → Error 500 / "Respuesta inválida del servidor"
 
-- **Causa:** El Error 1 provocaba 500 al usar el sumiller; además, el frontend podía mostrar "Respuesta inválida del servidor" si el backend devolvía HTML o cuerpo no-JSON en errores.
+- **Causa:** El Error 1 provocaba 500 al usar el experto en vinos; además, el frontend podía mostrar "Respuesta inválida del servidor" si el backend devolvía HTML o cuerpo no-JSON en errores.
 - **Solución:** Corregido con las mismas medidas del Error 1. Además (en sesión anterior): sin Consulta ID en modo Local se usa GET /preguntar-sumiller (nube), que aplica `_es_pregunta_tipo_famoso` y `fallback_sin_resultados` con `conocimiento_vinos.json` (Lambrusco, ejemplos famosos, maridaje + hasta 3 alternativas de la BD). El frontend usa `.catch()` en `r.json()` para no romper si la respuesta no es JSON.
 
 ### Error 3: Modo local sin escaneo no respondía correctamente
@@ -132,8 +132,8 @@ backend_optimized/
 
 ## 🎯 PRIORIDADES RECOMENDADAS
 
-1. **Verificar sumiller tras los cambios:** Probar "que lambrusco es la mas famosa" en modo Nube y en modo Local (sin Consulta ID). Debe devolver texto de conocimiento + alternativas, sin 500 ni "Respuesta inválida del servidor".
-2. **Probar OpenRouter:** Tener `.env` con `OPENROUTER_API_KEY`, `OPENROUTER_URL` y `OPENROUTER_MODEL`; levantar agente 8080 y llamar a `/test-openrouter`. Si falla, el sumiller local seguirá usando fallback sin romper.
+1. **Verificar experto en vinos tras los cambios:** Probar "que lambrusco es la mas famosa" en modo Nube y en modo Local (sin Consulta ID). Debe devolver texto de conocimiento + alternativas, sin 500 ni "Respuesta inválida del servidor".
+2. **Probar OpenRouter:** Tener `.env` con `OPENROUTER_API_KEY`, `OPENROUTER_URL` y `OPENROUTER_MODEL`; levantar agente 8080 y llamar a `/test-openrouter`. Si falla, el experto en vinos local seguirá usando fallback sin romper.
 3. **Stripe en producción:** Cuando se pase a producción, sustituir claves test por live y configurar el webhook de Stripe.
 4. **Revisar otros consumidores de `vinos_mundiales`:** Asegurarse de que busqueda_service y demás asumen solo claves de vino (ahora que se excluyen los JSON no-vino, no debería haber sorpresas).
 

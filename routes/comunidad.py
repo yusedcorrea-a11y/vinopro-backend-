@@ -110,7 +110,7 @@ def _posts_demo_vineros(vinos: dict) -> list[dict]:
             "id": "demo-user-1",
             "created_at": base + 20,
             "post_type": "user",
-            "username": "sommelier_ana",
+            "username": "experta_vinos_ana",
             "avatar_text": "A",
             "title": "Cata nocturna en casa",
             "description": "Hoy abro un reserva con carnes a la brasa. Tanino fino y final largo.",

@@ -1,5 +1,6 @@
 import json
 import os
+import time
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -11,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from middleware.runtime_protection import RuntimeProtectionMiddleware
 
 # Producción: HOST=0.0.0.0 PORT=8000 (o el que uses). CORS_ORIGINS=https://tudominio.com
 # 0.0.0.0 = aceptar conexiones desde la red local (móvil por WiFi). 127.0.0.1 = solo este PC.
@@ -21,6 +23,13 @@ _PORT = int(os.environ.get("PORT", "8001").strip())
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # startup
+    app.state.runtime_metrics = {
+        "started_at": time.time(),
+        "total_requests": 0,
+        "rate_limited": 0,
+        "errors_5xx": 0,
+        "by_path": {},
+    }
     print(f"VINO PRO IA - Backend listo, aceptando conexiones en http://{_HOST}:{_PORT}")
     yield
     # shutdown (opcional: cerrar conexiones, etc.)
@@ -42,6 +51,12 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+app.add_middleware(
+    RuntimeProtectionMiddleware,
+    default_limit=int(os.environ.get("RATE_LIMIT_DEFAULT_PER_MINUTE", "90") or "90"),
+    hot_limit=int(os.environ.get("RATE_LIMIT_HOT_PER_MINUTE", "12") or "12"),
+    window_seconds=int(os.environ.get("RATE_LIMIT_WINDOW_SECONDS", "60") or "60"),
 )
 
 # Carpeta donde están los archivos JSON (ruta absoluta: no depende del directorio desde el que se ejecuta)
@@ -87,7 +102,7 @@ def cargar_todos_los_vinos():
 VINOS_MUNDIALES = cargar_todos_los_vinos()
 print(f"[INFO] Base de datos lista: {len(VINOS_MUNDIALES)} vinos cargados desde {DATA_FOLDER}")
 
-# Estado para rutas de escaneo, sumiller, bodega y analytics
+# Estado para rutas de escaneo, experto en vinos, bodega y analytics
 from routes import escaneo, sumiller, geolocalizacion, bodega, analytics, informes, adaptador, comprar, planes, pagos, ofertas, valoraciones_wishlist, comunidad, qr, auth
 from services.busqueda_service import buscar_vinos_avanzado
 
@@ -106,7 +121,8 @@ from services import i18n as i18n_svc
 def render_page(request: Request, template_name: str, **context):
     lang = i18n_svc.get_locale(request)
     trans = i18n_svc.load_translations(lang)
-    t = i18n_svc.make_t(trans)
+    trans_fallback = i18n_svc.load_translations(i18n_svc.IDIOMA_POR_DEFECTO)
+    t = i18n_svc.make_t(trans, trans_fallback)
     recognition_lang = i18n_svc.recognition_lang_for(lang)
     # En producción definir BASE_URL (ej. https://vinoproia.com) para canonical y compartir
     base_url_str = os.environ.get("BASE_URL", "").strip() or str(request.base_url).rstrip("/")
@@ -169,7 +185,7 @@ def pagina_landing(request: Request):
 
 @app.get("/inicio", response_class=HTMLResponse)
 def pagina_inicio(request: Request):
-    """Entrada a la app: Preguntar al sumiller y Escanear."""
+    """Entrada a la app: Preguntar al experto en vinos y Escanear."""
     return render_page(request, "index.html", page_class="page-inicio", active_page="inicio")
 
 
@@ -290,13 +306,32 @@ app.include_router(qr.router)
 app.include_router(auth.router)
 
 @app.get("/api/status")
-def api_status():
+def api_status(request: Request):
     """Estado del API (para clientes programáticos)"""
+    metrics = getattr(request.app.state, "runtime_metrics", {}) or {}
+    started_at = float(metrics.get("started_at") or time.time())
+    by_path = metrics.get("by_path", {}) if isinstance(metrics.get("by_path"), dict) else {}
+    hot_paths = {}
+    for path in ("/escanear", "/api/translate-comment", "/api/preguntar-local", "/api/chat"):
+        if path in by_path:
+            hot_paths[path] = by_path[path]
     return {
         "status": "ok",
         "service": "VINO PRO IA",
         "version": "5.0",
-        "vinos_en_db": len(VINOS_MUNDIALES)
+        "vinos_en_db": len(VINOS_MUNDIALES),
+        "uptime_seconds": int(max(0, time.time() - started_at)),
+        "rate_limit": {
+            "window_seconds": int(os.environ.get("RATE_LIMIT_WINDOW_SECONDS", "60") or "60"),
+            "default_per_minute": int(os.environ.get("RATE_LIMIT_DEFAULT_PER_MINUTE", "90") or "90"),
+            "hot_per_minute": int(os.environ.get("RATE_LIMIT_HOT_PER_MINUTE", "12") or "12"),
+        },
+        "runtime": {
+            "total_requests": int(metrics.get("total_requests", 0)),
+            "rate_limited": int(metrics.get("rate_limited", 0)),
+            "errors_5xx": int(metrics.get("errors_5xx", 0)),
+            "hot_paths": hot_paths,
+        },
     }
 
 
@@ -316,7 +351,7 @@ def api_vino_por_consulta(request: Request, consulta_id: str):
 @app.post("/api/preguntar-local")
 async def api_preguntar_local(request: Request):
     """
-    Pregunta al sumiller vía agente local (puerto 8080). Solo usuarios Premium.
+    Pregunta al experto en vinos vía agente local (puerto 8080). Solo usuarios Premium.
     Header X-Session-ID obligatorio. Body: { "consulta_id", "pregunta", "perfil" opcional }.
     Si el agente no responde, fallback a lógica rule-based.
     """
@@ -393,7 +428,7 @@ async def api_preguntar_local(request: Request):
     except (httpx.ConnectError, httpx.TimeoutException, Exception):
         pass
 
-    # Fallback: rule-based como /preguntar-sumiller
+    # Fallback: rule-based como /preguntar-sumiller (endpoint técnico)
     respuesta = _responder_pregunta(vino, pregunta, perfil=perfil)
     try:
         from services import analytics_service

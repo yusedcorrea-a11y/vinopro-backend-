@@ -9,7 +9,7 @@ El script `scripts/verificar_funcionalidades.py` comprueba con el servidor en ma
 - **Búsqueda**: buscar-para-registrar, buscar
 - **Bodega**: lista, registros-hoy
 - **Escaneo**: POST analyze/text
-- **Sumiller**: preguntar-sumiller (Nube)
+- **Experto en Vinos**: endpoint `preguntar-sumiller` (Nube)
 - **IA Local solo Premium**: 401 sin header, 403 con session no PRO
 - **Comprar**: página vino, API enlaces
 - **Ofertas**: listar por vino, mis-ofertas

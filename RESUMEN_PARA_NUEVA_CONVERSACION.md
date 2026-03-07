@@ -7,7 +7,7 @@
 
 ## Qué es el proyecto
 
-**VINO PRO IA** es un backend + frontend (FastAPI + plantillas Jinja2) de una app tipo “sumiller virtual”: escaneo de etiquetas, registro de vinos, bodega virtual, preguntas al sumiller, planes (Gratis/PRO), pagos con Stripe, compra (enlaces por vino), adaptador para restaurantes y dashboard de analytics.
+**VINO PRO IA** es un backend + frontend (FastAPI + plantillas Jinja2) de una app tipo “experto en vinos virtual”: escaneo de etiquetas, registro de vinos, bodega virtual, preguntas al experto en vinos, planes (Gratis/PRO), pagos con Stripe, compra (enlaces por vino), adaptador para restaurantes y dashboard de analytics.
 
 - **Puerto:** 8001  
 - **Arranque:** `uvicorn app:app --host 127.0.0.1 --port 8001` (o `python app.py` si está configurado)
@@ -27,7 +27,7 @@
 - **POST /registrar-vino**: registro de vino con validación y límite diario.
 - Respuesta de escaneo incluye `vino_key`, `mostrar_boton_comprar`; en el front hay botón “Comprar este vino” a `/vino/{vino_key}/comprar`.
 
-### 3. Sumiller (preguntar)
+### 3. Experto en Vinos (preguntar)
 - **GET /preguntar-sumiller**: por `consulta_id` o `vino_key` responde sobre un vino; sin ellos, maridajes/recomendaciones con contexto (últimas 3 preguntas por sesión).
 - **POST /api/preguntar-local**: delega en agente local (puerto 8080) con fallback a lógica rule-based.
 - **GET /api/vino-por-consulta**: devuelve el vino para un `consulta_id` (formato desempaquetado `{ "vino", "key" }`).
@@ -68,7 +68,7 @@
 - **Todas las páginas** usan `base.html`: menú común, selector de idioma, botón modo oscuro. `app.py` usa `render_page(request, "*.html", page_class="page-*", active_page="...")`.
 - **Plantillas migradas a base.html:** index, planes, pago-exitoso, pago-cancelado, comprar_vino, preguntar, escanear, registrar, bodega, dashboard, adaptador.
 - **JS externo** en `static/js/`: preguntar.js, escanear.js, registrar.js, bodega.js, dashboard.js, adaptador.js. Donde hace falta, la plantilla inyecta `window.ERROR_MSGS` y `window.INFO_REGISTROS_HOY` desde `t()` antes de cargar el .js.
-- **Estilos unificados (modo claro):** En `static/style.css`, clases `.page-title`, `.page-subtitle`, `.section-title`, `.stat-number`; Dashboard/Bodega/Adaptador con texto legible en modo claro (`html:not([data-theme="dark"])`) y overlay; sin mensajes de ayuda genéricos en el sumiller.
+- **Estilos unificados (modo claro):** En `static/style.css`, clases `.page-title`, `.page-subtitle`, `.section-title`, `.stat-number`; Dashboard/Bodega/Adaptador con texto legible en modo claro (`html:not([data-theme="dark"])`) y overlay; sin mensajes de ayuda genéricos en el experto en vinos.
 - **Imágenes de fondo por página:** Planes: `vino-pro-ia-fondo-planes-claro.jpg` / `-oscuro.jpg`. Adaptador: `vino-pro-ia-fondo-adaptador-claro.jpg` / `-oscuro.jpg`. Documentadas en `static/images/README-FONDOS.md`.
 
 ### 11. Session ID y app.js
@@ -87,7 +87,7 @@ backend_optimized/
 ├── app.py                 # FastAPI, render_page, rutas /, /escanear, etc., include_router de todos
 ├── data/
 │   ├── translations/      # es, en, pt, fr, de, it .json
-│   ├── conocimiento_vinos.json  # Tipos (Lambrusco, Malbec, Rioja, etc.): origen, ejemplos, maridaje; fallback sumiller
+│   ├── conocimiento_vinos.json  # Tipos (Lambrusco, Malbec, Rioja, etc.): origen, ejemplos, maridaje; fallback experto en vinos
 │   ├── usuarios_pro.json   # IDs de sesión PRO (Stripe webhook)
 │   ├── registros_diarios.json, usuarios_reputacion.json
 │   ├── analytics.json
@@ -116,7 +116,7 @@ backend_optimized/
 │   ├── index.html, planes.html, pago-exitoso.html, pago-cancelado.html, comprar_vino.html
 │   ├── preguntar.html, escanear.html, registrar.html, bodega.html, dashboard.html, adaptador.html
 ├── agente_local/
-│   └── server.py          # Sumiller en 8080; OpenRouter (opcional); GET /test-openrouter para diagnosticar; fallback rule-based sin 500
+│   └── server.py          # Experto en Vinos en 8080; OpenRouter (opcional); GET /test-openrouter para diagnosticar; fallback rule-based sin 500
 ├── static/
 │   ├── style.css, app.js
 │   ├── js/                # preguntar.js, escanear.js, registrar.js, bodega.js, dashboard.js, adaptador.js

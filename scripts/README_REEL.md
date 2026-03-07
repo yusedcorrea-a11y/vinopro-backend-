@@ -42,9 +42,9 @@ python scripts/generar_reel_vino_pro.py --solo-imagenes --idioma en
 
 1. **¿Vino sin información?** – Escanea la etiqueta  
 2. **Escanea y descubre todo** – Nombre, bodega, puntuación, precio  
-3. **Pregunta a nuestro sumiller IA** – ¿Qué vino para carne?  
+3. **Pregunta a nuestro experto en vinos IA** – ¿Qué vino para carne?  
 4. **Recomendaciones, compra y guías** – Comprar · Dónde tomarlo (ES IT FR AR)  
-5. **Vino Pro IA · Tu sommelier personal** – CTA “Descargar ya”
+5. **Vino Pro IA · Tu wine expert personal** – CTA “Descargar ya”
 
 ## Búsquedas para imágenes reales (stock / IA)
 
@@ -54,7 +54,7 @@ Para un reel con fotos de personas (Unsplash, Pexels, Pixabay o generadores IA):
 |--------|----------------------|
 | **1 – Viñedo** | `wine vineyard sunset couple toasting`, `romantic wine tasting sunset`, `wine vineyard sunrise couple`, `couple toasting wine morning vineyard` |
 | **2 – Escaneo** | `woman scanning wine bottle with phone`, `girl using phone wine shop`, `woman scanning wine bottle smartphone`, `woman phone scanning wine label` |
-| **3 – Sumiller IA** | `man talking on phone wine tasting`, `man smiling using smartphone wine bar`, `man talking to phone smiling`, `person asking phone recommendation` |
+| **3 – Experto en Vinos IA** | `man talking on phone wine tasting`, `man smiling using smartphone wine bar`, `man talking to phone smiling`, `person asking phone recommendation` |
 | **4 – Compra/guías** | `world map with flags wine regions`, `wine countries map flags`, `hand holding phone map travel`, `smartphone app world map` |
 | **5 – Cierre** | `couple toasting wine glasses sunset`, `romantic wine toast golden hour`, `couple toasting wine sunset`, `wine toast golden hour couple` |
 
@@ -85,7 +85,7 @@ Filtrar por **vertical (9:16)** y **alta resolución** para 1080×1920.
 ## Mejorar el reel
 
 - **Música:** Añade una pista (electrónica suave / lo-fi) en CapCut, DaVinci o similar.  
-- **Grabación real:** Sustituye las escenas por vídeo real: escaneo con móvil, app en pantalla, sumiller por voz.  
+- **Grabación real:** Sustituye las escenas por vídeo real: escaneo con móvil, app en pantalla, experto en vinos por voz.  
 - **Logo:** Inserta el logo de Vino Pro IA en la escena 5 (asset en `static/` si existe).
 
 ## Entrega

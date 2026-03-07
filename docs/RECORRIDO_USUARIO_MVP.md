@@ -10,7 +10,7 @@ Informe de simulación del estado actual de la app: cómo interactúa un usuario
 
 - **Landing (/)**: Logo VINO PRO IA, tagline, “Probar la app web” → `/inicio`, “Próximamente en Google Play”, formulario “Avísame” (guarda en `notificaciones_landing.json`).
 - **Inicio (/inicio)**: Dos CTAs principales:
-  - **Preguntar al sumiller** → `/preguntar`
+  - **Preguntar al experto en vinos** → `/preguntar`
   - **Escanear etiqueta** → `/escanear`
 
 Las recomendaciones de **Restaurante Asador Casa Paca** no están en la pantalla de inicio; están en la sección **Mapa / Lugares cerca**.
@@ -68,11 +68,11 @@ Las recomendaciones de **Restaurante Asador Casa Paca** no están en la pantalla
 ### 2.3 Respuesta típica al cliente
 
 - `encontrado_en_bd`: true/false  
-- `consulta_id`: para usar en “Preguntar al sumiller” y comprar  
+- `consulta_id`: para usar en “Preguntar al experto en vinos” y comprar  
 - `vino`, `vino_key`, `mostrar_boton_comprar`  
 - `es_pro`: según `freemium_service.is_pro(session_id)`  
 
-**Resumen:** OCR (Tesseract) → texto; texto/código → BD local o Open Food Facts; resultado unificado y, si procede, guardado en JSON. La “IA local” del sumiller no interviene en el escaneo; interviene en **Preguntar** (ver más abajo).
+**Resumen:** OCR (Tesseract) → texto; texto/código → BD local o Open Food Facts; resultado unificado y, si procede, guardado en JSON. La “IA local” del experto en vinos no interviene en el escaneo; interviene en **Preguntar** (ver más abajo).
 
 ---
 

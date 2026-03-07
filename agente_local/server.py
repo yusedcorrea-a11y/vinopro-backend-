@@ -1,5 +1,5 @@
 """
-Agente local Sumiller para VinoPro.
+Agente local Experto en Vinos para VinoPro.
 Escucha en puerto 8080, skill POST /skill/sumiller.
 Obtiene el vino desde el backend (8001) y responde con OpenRouter (modelo gratuito)
 o respuesta rule-based si no hay API key. Errores de IA se capturan y se usa fallback sin devolver 500.
@@ -27,7 +27,7 @@ PORT = int(os.environ.get("AGENTE_PORT", "8080"))
 RATE_LIMIT_PER_MIN = 60
 CACHE_MAX = 200
 
-app = FastAPI(title="VinoPro Agente Sumiller", version="1.0")
+app = FastAPI(title="VinoPro Agente Experto en Vinos", version="1.0")
 
 # Rate limit: ventana 1 minuto
 _rate_ts: list[float] = []
@@ -96,7 +96,7 @@ def health():
 def test_openrouter():
     """
     Prueba de conexión a OpenRouter. Devuelve ok, error detallado o que no hay API key.
-    Útil para diagnosticar sin afectar al sumiller.
+    Útil para diagnosticar sin afectar al experto en vinos.
     """
     if not OPENROUTER_API_KEY:
         return {"ok": False, "error": "OPENROUTER_API_KEY no configurada", "detalle": "Añádala en .env"}
@@ -138,7 +138,7 @@ def test_openrouter():
 @app.post("/skill/sumiller")
 def skill_sumiller(req: SumillerRequest):
     """
-    Skill sumiller: recibe consulta_id y pregunta, obtiene el vino del backend,
+    Skill experto en vinos: recibe consulta_id y pregunta, obtiene el vino del backend,
     responde con OpenRouter (o rule-based si no hay key) y devuelve { respuesta, vino }.
     """
     consulta_id = (req.consulta_id or "").strip()
@@ -204,7 +204,7 @@ def skill_sumiller(req: SumillerRequest):
                             {
                                 "role": "system",
                                 "content": (
-                                    "Eres un sumiller virtual experto. Respondes en 1-3 frases breves, en español, "
+                                    "Eres un experto en vinos virtual. Respondes en 1-3 frases breves, en español, "
                                     "solo con la información del vino que te proporciono. No inventes datos. "
                                     "Perfil del usuario: " + perfil + "."
                                 ),
@@ -251,6 +251,6 @@ def skill_sumiller(req: SumillerRequest):
 
 
 if __name__ == "__main__":
-    print(f"🖥️ Agente Sumiller local en http://0.0.0.0:{PORT}")
+    print(f"🖥️ Agente Experto en Vinos local en http://0.0.0.0:{PORT}")
     print(f"   Backend: {BACKEND_URL} | OpenRouter: {'configurado' if OPENROUTER_API_KEY else 'no (respuestas rule-based)'}")
     uvicorn.run(app, host="0.0.0.0", port=PORT)

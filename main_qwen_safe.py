@@ -1,4 +1,4 @@
-﻿# main_qwen_safe.py
+# main_qwen_safe.py
 # Versión SEGURA para Qwen - NO modifica archivos existentes
 
 from fastapi import FastAPI, Form
@@ -88,7 +88,7 @@ async def analyze_text(text: str = Form(...)):
     try:
         # Prompt para Qwen
         prompt = f"""<|im_start|>system
-Eres un sommelier experto en vinos. Responde en español claro y profesional.<|im_end|>
+Eres un experto en vinos. Responde en español claro y profesional.<|im_end|>
 <|im_start|>user
 Recomendación para: {text}<|im_end|>
 <|im_start|>assistant

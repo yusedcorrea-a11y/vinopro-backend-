@@ -11,12 +11,12 @@
 
   var TEXTS = {
     intro: '👔 <strong>Asistente estratégico VINO PRO IA</strong><br><br>Estoy para ayudarte en tres frentes: <strong>soporte técnico</strong> (escáner y mapa), <strong>integración B2B</strong> (Adaptador/webhooks) y <strong>crecimiento de negocio</strong> (Sponsor + QR Networking Premium).',
-    soporte_tecnico: '🛠️ <strong>Soporte técnico</strong><br><br><strong>Escáner:</strong> usa foto nítida de etiqueta, evita reflejos y prioriza JPG/PNG. Si falla OCR, prueba texto o código de barras.<br><strong>Mapa:</strong> en "Donde me tomo mi vino" puedes usar ubicación, radio por km y tarjetas sponsor con acciones (ruta, email, web).<br><strong>Tip sumiller:</strong> cuando detectes términos como "Crianza" o "Reserva", mantenlos en contexto enológico.',
+    soporte_tecnico: '🛠️ <strong>Soporte técnico</strong><br><br><strong>Escáner:</strong> usa foto nítida de etiqueta, evita reflejos y prioriza JPG/PNG. Si falla OCR, prueba texto o código de barras.<br><strong>Mapa:</strong> en "Donde me tomo mi vino" puedes usar ubicación, radio por km y tarjetas sponsor con acciones (ruta, email, web).<br><strong>Tip experto en vinos:</strong> cuando detectes términos como "Crianza" o "Reserva", mantenlos en contexto enológico.',
     escanear: '🍷 <strong>Escáner de etiquetas</strong><br><br>Sube imagen (máx. 6 MB), o escribe texto/código de barras.<br>Si el móvil guarda en HEIC, conviértelo o reduce la imagen.<br>Tras identificar el vino, puedes llevarlo a bodega, comprar o trabajar ficha técnica.',
     mapa: '📍 <strong>Donde me tomo mi vino</strong><br><br>Activa ubicación para ver sitios cercanos y filtra por distancia (km).<br>Tienes dos guías: Selección VINO PRO y Guía Repsol.<br>Las tarjetas sponsor permiten abrir ruta, correo y web del local al instante.',
     adaptador: '🍴 <strong>Integración B2B (Adaptador)</strong><br><br>Ideal para restaurantes y wine bars.<br>1) Configura webhook URL.<br>2) Guarda token API.<br>3) Valida con "Probar webhook".<br>4) Si quieres seguridad extra, activa firma HMAC (<code>X-Vino-Signature</code>) con clave secreta.<br>Resultado: stock sincronizado en tiempo real entre sala y bodega digital.',
-    negocio: '📈 <strong>Estrategia de negocio VINO</strong><br><br><strong>Sponsor PRO (ej. Casa Paca):</strong> más visibilidad en mapa y VINEROS, y mejor captación local.<br><strong>QR Networking Premium:</strong> genera QR comerciales, capta leads y mide escaneos por contacto/país.<br>Si tu objetivo es ventas y networking, este módulo acelera el embudo comercial horeca.<br><br>👉 <a href="/qr" class="chatbot-guia-link">Ir a QR Networking</a><br>👉 <a href="mailto:hola@vinoproia.com?subject=Interes%20comercial%20VINO%20PRO" class="chatbot-guia-link">Contactar administrador</a>',
-    planes: '⭐ <strong>Planes</strong><br><br><strong>Gratis:</strong> escáner, sumiller, bodega limitada.<br><strong>Premium:</strong> bodega avanzada, QR Networking, herramientas comerciales y funciones profesionales para escalar ventas.<br><br>👉 <a href="/planes" class="chatbot-guia-link">Ver planes y activar Premium</a>',
+    negocio: '📈 <strong>Estrategia de negocio VINO</strong><br><br><strong>Sponsor PRO (ej. Casa Paca):</strong> más visibilidad en mapa y VINEROS, y mejor captación local.<br><strong>QR Networking Premium:</strong> genera QR comerciales, capta leads y mide escaneos por contacto/país.<br>Si tu objetivo es ventas y networking, este módulo acelera el embudo comercial horeca.<br><br>Accede desde el menú principal (☰) → QR Networking.',
+    planes: '⭐ <strong>Planes</strong><br><br><strong>Gratis:</strong> escáner, experto en vinos, bodega limitada.<br><strong>Premium:</strong> bodega avanzada, QR Networking, herramientas comerciales y funciones profesionales para escalar ventas.<br><br>Accede desde el menú principal (☰) → Planes.',
     default: '👔 Cuéntame tu objetivo y te doy la ruta más directa. Ejemplos: "configurar webhook", "me falla el escáner", "quiero vender más", "negocios", "ventas", "qr networking".'
   };
 
@@ -214,13 +214,6 @@
     if (!panel) return;
 
     if (mascot) initMascot(mascot);
-
-    document.querySelectorAll('.chatbot-guia-open-nav').forEach(function(trigger) {
-      trigger.addEventListener('click', function(e) {
-        e.preventDefault();
-        openPanel();
-      });
-    });
 
     if (input) {
       input.addEventListener('keydown', function(e) {

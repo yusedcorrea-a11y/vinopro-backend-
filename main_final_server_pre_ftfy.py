@@ -1,4 +1,4 @@
-﻿from fastapi import FastAPI, Form
+from fastapi import FastAPI, Form
 import logging
 import time
 from llama_cpp import Llama
@@ -43,11 +43,11 @@ async def analyze_text(text: str = Form(...)):
     start = time.time()
     
     # Prompt optimizado para respuestas completas
-    prompt = f"""Eres un sommelier experto. Responde EN ESPAÑOL de forma clara y completa (al menos 2-3 frases).
+    prompt = f"""Eres un experto en vinos. Responde EN ESPAÑOL de forma clara y completa (al menos 2-3 frases).
 
 Pregunta del cliente: {text}
 
-Respuesta del sommelier (sé específico y profesional):"""
+Respuesta del experto en vinos (sé específico y profesional):"""
     
     try:
         response = llm(

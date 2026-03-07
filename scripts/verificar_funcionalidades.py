@@ -109,8 +109,8 @@ def main():
     req("POST", "/analyze/text", data={"texto": "Rioja reserva"}, **{"headers": headers_form})
     print()
 
-    # --- Sumiller (Nube) ---
-    print("[7] Preguntar sumiller (Nube)")
+    # --- Experto en vinos (Nube) ---
+    print("[7] Preguntar experto en vinos (Nube)")
     req("GET", "/preguntar-sumiller?texto=Que+vino+con+carne&perfil=aficionado", **{"headers": headers_json})
     print()
 

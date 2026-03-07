@@ -1,7 +1,6 @@
 {
   "inicio": {
-    "bodega_count": "You have %s wines in your cellar",
-    "bodega_link": "View my cellar"
+    "title": "VINO PRO IA - Virtual Wine Expert"
   },
   "nav": {
     "inicio": "Home",
@@ -43,7 +42,7 @@
   },
   "qr": {
     "mensaje_hola": "Hi {nombre}, great to meet you. Thanks for your time and interest.",
-    "resumen_app": "Vino Pro IA is your virtual sommelier: scan labels, log wines, ask for pairings and manage your cellar from your phone.",
+    "resumen_app": "Vino Pro IA is your virtual wine expert: scan labels, log wines, ask for pairings and manage your cellar from your phone.",
     "beneficios_titulo": "Benefits for your business",
     "beneficio_1": "Direct link in the app to your winery or wine shop",
     "beneficio_2": "Free visibility among our users",
@@ -80,7 +79,11 @@
     "web": "Website",
     "distancia": "km",
     "lugares_encontrados": "Places found",
-    "lista_lugares": "List of places"
+    "lista_lugares": "List of places",
+    "geo_no_disponible": "We could not get your current location. Check GPS signal or search by city.",
+    "geo_timeout": "Location request timed out. Try again or search by city.",
+    "error_init": "Map could not be initialized. Reload the page.",
+    "sin_destacados": "No recommended places right now."
   },
   "error": {
     "nombre_corto": "Name must be at least 3 characters.",
@@ -94,7 +97,7 @@
     "registros_hoy": "Today you have added {n} of {max} bottles."
   },
   "common": {
-    "tagline": "Virtual Sommelier",
+    "tagline": "Virtual Wine Expert",
     "modo_oscuro": "Dark mode",
     "modo_claro": "Light mode",
     "seleccionar": "Select",
@@ -103,9 +106,6 @@
     "copiar": "Copy",
     "cerrar": "Close",
     "comprar_este_vino": "Buy this wine"
-  },
-  "inicio": {
-    "title": "VINO PRO IA - Virtual Sommelier"
   },
   "escanear": {
     "title": "Scan wine label",
@@ -159,8 +159,8 @@
     "oferta_crear_btn": "Create offer"
   },
   "preguntar": {
-    "title": "Ask the sommelier",
-    "subtitle_nube": "In Cloud mode you can ask without scanning: pairings, recommendations or follow-up questions. With Consult ID (after scanning) the sommelier answers about that wine. Choose your profile.",
+    "title": "Ask the wine expert",
+    "subtitle_nube": "In Cloud mode you can ask without scanning: pairings, recommendations or follow-up questions. With Consult ID (after scanning) the wine expert answers about that wine. Choose your profile.",
     "modo": "Mode:",
     "modo_local": "Local AI 🖥️",
     "modo_nube": "Cloud ☁️",
@@ -200,13 +200,13 @@
   },
   "dashboard": {
     "title": "Wine Big Data",
-    "subtitle": "Search trends, scans by country and most frequent sommelier questions (last 30 days).",
+    "subtitle": "Search trends, scans by country and most frequent wine expert questions (last 30 days).",
     "busquedas": "Searches",
     "escaneos": "Scans",
-    "preguntas_sumiller": "Sommelier questions",
+    "preguntas_sumiller": "Wine expert questions",
     "tendencias": "Trends: what's searched most",
     "por_pais": "Statistics by country",
-    "preguntas_frecuentes": "Most frequent sommelier questions"
+    "preguntas_frecuentes": "Most frequent wine expert questions"
   },
   "adaptador": {
     "title": "Adapter for Restaurants",
@@ -309,7 +309,7 @@
     "boton_actual": "Current plan",
     "boton_contactar": "Contact",
     "mas_popular": "MOST POPULAR",
-    "caract_escaneo": "Scan and sommelier",
+    "caract_escaneo": "Scan and wine expert",
     "caract_bodega": "My Cellar (50 limit)",
     "caract_bodega_pro": "Unlimited My Cellar",
     "caract_registrar_raros": "Register wines not in the database and offer them to others",

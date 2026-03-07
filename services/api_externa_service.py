@@ -5,6 +5,7 @@ Extrae información real: nombre, bodega, país/región y descripción genérica
 """
 import logging
 import re
+import time
 from typing import Any
 
 import requests
@@ -14,8 +15,12 @@ logger = logging.getLogger(__name__)
 OFF_API_PRODUCT = "https://world.openfoodfacts.org/api/v0/product/{barcode}.json"
 OFF_API_SEARCH = "https://world.openfoodfacts.org/cgi/search.pl"
 # Timeout y reintentos: OFF a veces responde lento; evitar llenar consola con tracebacks
-OFF_TIMEOUT = 20
-OFF_RETRIES = 3
+OFF_TIMEOUT = 8
+OFF_RETRIES = 2
+OFF_CACHE_TTL_SECONDS = 300
+
+_OFF_CACHE: dict[str, tuple[float, Any]] = {}
+_OFF_CACHE_MISS = object()
 
 # Mapeo de códigos OFF (countries_tags) a nombre legible
 PAISES_OFF = {
@@ -168,6 +173,22 @@ def _mapear_producto_a_vino(product: dict) -> dict:
     }
 
 
+def _cache_get(key: str):
+    cached = _OFF_CACHE.get(key)
+    if not cached:
+        return _OFF_CACHE_MISS
+    ts, value = cached
+    if time.time() - ts > OFF_CACHE_TTL_SECONDS:
+        _OFF_CACHE.pop(key, None)
+        return _OFF_CACHE_MISS
+    return value
+
+
+def _cache_set(key: str, value):
+    _OFF_CACHE[key] = (time.time(), value)
+    return value
+
+
 def buscar_por_codigo_barras(barcode: str) -> dict | None:
     """
     Obtiene un producto de Open Food Facts por código de barras.
@@ -176,14 +197,18 @@ def buscar_por_codigo_barras(barcode: str) -> dict | None:
     barcode = re.sub(r"\D", "", str(barcode))
     if not barcode:
         return None
+    cache_key = f"barcode:{barcode}"
+    cached = _cache_get(cache_key)
+    if cached is not _OFF_CACHE_MISS:
+        return cached
     try:
         url = OFF_API_PRODUCT.format(barcode=barcode)
         r = requests.get(url, timeout=OFF_TIMEOUT)
         r.raise_for_status()
         data = r.json()
         if data.get("status") != 1 or not data.get("product"):
-            return None
-        return _mapear_producto_a_vino(data["product"])
+            return _cache_set(cache_key, None)
+        return _cache_set(cache_key, _mapear_producto_a_vino(data["product"]))
     except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
         logger.warning("Open Food Facts barcode %s: timeout/conexión - %s", barcode, e)
         return None
@@ -201,6 +226,10 @@ def buscar_por_texto(texto: str, limite: int = 5) -> list[dict]:
     texto = (texto or "").strip()
     if not texto or len(texto) < 2:
         return []
+    cache_key = f"search:{texto.lower()}:{int(limite)}"
+    cached = _cache_get(cache_key)
+    if cached is not _OFF_CACHE_MISS:
+        return cached
     params = {
         "search_terms": texto,
         "search_simple": 1,
@@ -232,7 +261,7 @@ def buscar_por_texto(texto: str, limite: int = 5) -> list[dict]:
                         vino = _mapear_producto_a_vino(p)
                         resultados.append(vino)
                         break
-            return resultados
+            return _cache_set(cache_key, resultados)
         except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
             last_error = e
             logger.warning("Open Food Facts timeout/conexión (intento %d/%d) para '%s': %s", intento + 1, OFF_RETRIES, texto[:60], e)

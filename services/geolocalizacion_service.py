@@ -4,6 +4,7 @@ Sin API key; uso conforme a política de uso de OSM (User-Agent identificando la
 """
 import json
 import math
+import os
 import time
 import urllib.parse
 import urllib.request
@@ -11,8 +12,14 @@ from typing import Any
 
 # Nominatim: 1 petición por segundo, User-Agent obligatorio
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/search"
-USER_AGENT = "VinoProIA/1.0 (app sumiller; contacto en web)"
-OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+BASE_URL = (os.environ.get("BASE_URL", "") or "").strip() or "https://vinoproia.com"
+SUPPORT_EMAIL = (os.environ.get("SUPPORT_EMAIL", "") or "").strip() or "soporte@vinoproia.com"
+USER_AGENT = f"VinoProIA/1.1 (+{BASE_URL}; mailto:{SUPPORT_EMAIL})"
+OVERPASS_URLS = (
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass.openstreetmap.ru/api/interpreter",
+)
 
 # Cache simple en memoria para no repetir geocoding (ciudad -> lat, lon)
 _geocode_cache: dict[str, tuple[float, float]] = {}
@@ -86,6 +93,27 @@ def _extraer_centro(elemento: dict) -> tuple[float, float] | None:
     return None
 
 
+def _consultar_overpass(overpass_query: str) -> dict | None:
+    """
+    Ejecuta consulta Overpass con fallback entre mirrors públicos.
+    Devuelve el JSON parseado o None si todos fallan.
+    """
+    body = "data=" + urllib.parse.quote(overpass_query)
+    for url in OVERPASS_URLS:
+        try:
+            req = urllib.request.Request(
+                url,
+                data=body.encode("utf-8"),
+                headers={"User-Agent": USER_AGENT, "Content-Type": "application/x-www-form-urlencoded"},
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=25) as resp:
+                return json.loads(resp.read().decode())
+        except Exception:
+            continue
+    return None
+
+
 def _nombre_y_direccion(tags: dict) -> tuple[str, str]:
     name = (tags.get("name") or tags.get("brand") or "Sin nombre").strip()
     addr = []
@@ -113,7 +141,16 @@ def buscar_lugares_cerca(
     tipo: "restaurante" | "vinoteca" | "bar" | None (todos).
     Devuelve lista de { nombre, direccion, lat, lon, distancia_km, tipo, ... }.
     """
-    radio_m = min(int(radio_km * 1000), 10000)  # máx 10 km
+    # Válido para cualquier país: coordenadas globales y radio acotado.
+    try:
+        lat = float(lat)
+        lon = float(lon)
+    except (TypeError, ValueError):
+        return []
+    if not (-90.0 <= lat <= 90.0 and -180.0 <= lon <= 180.0):
+        return []
+    radio_km = max(0.5, min(float(radio_km or 5.0), 50.0))
+    radio_m = min(int(radio_km * 1000), 50000)  # máx 50 km
     # Consulta: restaurantes, bares, cafés, tiendas de alcohol/vino
     condiciones = []
     if tipo is None or tipo in ("restaurante", "restaurant"):
@@ -127,17 +164,8 @@ def buscar_lugares_cerca(
         condiciones.append('nwr["amenity"="cafe"](around:{},{},{});'.format(radio_m, lat, lon))
 
     overpass_query = "[out:json][timeout:20];(" + " ".join(condiciones) + ");out center;"
-    try:
-        body = "data=" + urllib.parse.quote(overpass_query)
-        req = urllib.request.Request(
-            OVERPASS_URL,
-            data=body.encode("utf-8"),
-            headers={"User-Agent": USER_AGENT, "Content-Type": "application/x-www-form-urlencoded"},
-            method="POST",
-        )
-        with urllib.request.urlopen(req, timeout=25) as resp:
-            data = json.loads(resp.read().decode())
-    except Exception:
+    data = _consultar_overpass(overpass_query)
+    if not data:
         return []
 
     resultados: list[dict[str, Any]] = []

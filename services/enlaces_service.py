@@ -491,7 +491,7 @@ def _get_patrocinadores_enlaces(vino_id: str, pais: str) -> list[TiendaAfiliado]
 
 def enlaces_ordenados_para_app(vino_id: str, vino_nombre: str, pais: str) -> list[TiendaAfiliado]:
     """
-    Enlaces de compra ordenados para la app (Fase 2 Sumiller "Dónde comprarlo"):
+    Enlaces de compra ordenados para la app (Fase 2 Experto en Vinos "Dónde comprarlo"):
     1) Patrocinadores (cuando existan).
     2) Amazon primero si el país tiene marketplace Amazon (prioridad países con Amazon).
     3) Tiendas locales del país (cerca de su ubicación / país).

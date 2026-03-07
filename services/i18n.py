@@ -43,12 +43,21 @@ def load_translations(lang: str) -> dict:
     return _CACHE[lang]
 
 
-def make_t(translations: dict) -> Callable[[str], str]:
+def make_t(translations: dict, fallback_translations: dict | None = None) -> Callable[[str], str]:
     def t(key: str) -> str:
-        obj = translations
-        for part in key.split("."):
-            obj = obj.get(part, {}) if isinstance(obj, dict) else key
-        return obj if isinstance(obj, str) else key
+        def _resolve(src: dict | None) -> str | None:
+            obj = src if isinstance(src, dict) else {}
+            for part in key.split("."):
+                obj = obj.get(part, {}) if isinstance(obj, dict) else None
+            return obj if isinstance(obj, str) else None
+
+        value = _resolve(translations)
+        if value is not None:
+            return value
+        fallback = _resolve(fallback_translations)
+        if fallback is not None:
+            return fallback
+        return key
     return t
 
 

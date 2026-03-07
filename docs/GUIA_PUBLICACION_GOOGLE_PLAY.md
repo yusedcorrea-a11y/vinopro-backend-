@@ -12,7 +12,7 @@ Solo instrucciones, sin código. Prioridad: lo urgente primero.
 ```
 VINO PRO
 ```
-(9 caracteres. Si quieres más contexto: **VINO PRO – Sumiller** [22 caracteres])
+(9 caracteres. Si quieres más contexto: **VINO PRO – Experto en Vinos** [22 caracteres])
 
 ---
 
@@ -20,7 +20,7 @@ VINO PRO
 
 **Opción recomendada (79 caracteres):**
 ```
-Sumiller en el bolsillo: escanea etiquetas, bodega y comunidad. 14 idiomas.
+Experto en Vinos en el bolsillo: escanea etiquetas, bodega y comunidad. 14 idiomas.
 ```
 
 **Alternativa (68 caracteres):**
@@ -35,7 +35,7 @@ Escanea vinos, gestiona tu bodega y únete a la comunidad. 14 idiomas.
 Copia y pega este bloque en el campo "Descripción larga" de la ficha:
 
 ```
-VINO PRO es la herramienta que todo sumiller y amante del vino quería: escanear etiquetas al instante, llevar tu bodega personal y formar parte de una comunidad global, todo en una sola app.
+VINO PRO es la herramienta que todo experto en vinos y amante del vino quería: escanear etiquetas al instante, llevar tu bodega personal y formar parte de una comunidad global, todo en una sola app.
 
 🤖 SUMILLER CON IA
 Recomendaciones personalizadas sobre vinos, maridajes y preguntas. Respuestas adaptadas a tu nivel.
@@ -64,7 +64,7 @@ Adapta la interfaz a tu gusto.
 💳 PLAN PRO
 Plan Gratis para empezar. Plan PRO con más funciones. Pagos seguros con Stripe; no guardamos datos de tarjeta.
 
-Descarga VINO PRO y lleva el sumiller en el bolsillo. Ideal para profesionales, estudiantes y aficionados.
+Descarga VINO PRO y lleva el experto en vinos en el bolsillo. Ideal para profesionales, estudiantes y aficionados.
 ```
 
 ---
@@ -80,7 +80,7 @@ Descarga VINO PRO y lleva el sumiller en el bolsillo. Ideal para profesionales, 
 
 Usa estas ideas en la descripción larga y en el título/descripción corta para que la busquen mejor:
 
-- sumiller, sommelier, vino, wine, escáner etiquetas, OCR vino, bodega virtual, maridaje, catas, comunidad vino, vinoteca, restaurante vino, 14 idiomas, IA vino
+- experto en vinos, wine expert, vino, wine, escáner etiquetas, OCR vino, bodega virtual, maridaje, catas, comunidad vino, vinoteca, restaurante vino, 14 idiomas, IA vino
 
 ---
 
@@ -97,12 +97,12 @@ Usa estas ideas en la descripción larga y en el título/descripción corta para
 
 | Orden | Pantalla | Qué debe verse | Texto opcional (si añades marcos) |
 |-------|----------|----------------|-----------------------------------|
-| 1 | **Inicio** | Los dos botones principales: Preguntar al sumiller y Escanear. Interfaz limpia. | "Tu sumiller en el bolsillo" |
+| 1 | **Inicio** | Los dos botones principales: Preguntar al experto en vinos y Escanear. Interfaz limpia. | "Tu experto en vinos en el bolsillo" |
 | 2 | **Escáner / Escanear** | Pantalla de escaneo (cámara o resultado de un escaneo con datos del vino). | "Escanea etiquetas al instante" |
 | 3 | **Mi Bodega** | Lista de vinos en la bodega (o pantalla vacía con mensaje “Añade tu primer vino”). | "Gestiona tu colección" |
 | 4 | **Comunidad / Feed** | Feed de actividad o evento (ej. Catas Divertidas). | "Comunidad de amantes del vino" |
 | 5 | **Mapa** | Mapa con “Lugares recomendados” o resultados de búsqueda (restaurantes/vinotecas). | "Encuentra lugares cerca" |
-| 6 | **Preguntar al sumiller** | Pantalla de chat o pregunta con una respuesta del sumiller. | "Pregunta lo que quieras" |
+| 6 | **Preguntar al experto en vinos** | Pantalla de chat o pregunta con una respuesta del experto en vinos. | "Pregunta lo que quieras" |
 
 ## Consejos
 
@@ -231,7 +231,7 @@ En el formulario, declara solo los que apliquen a “datos del usuario” (por e
 1. En el menú, **“Producción”** (o “Release” → “Production” / “Production track”).  
 2. **“Crear nueva versión”** (o “Create new release”).  
 3. **“Subir”** (Upload) y selecciona el archivo **.aab** que descargaste de Expo.  
-4. En “Notas de la versión”, escribe algo breve, por ejemplo: “Primera versión. Sumiller IA, escáner, bodega, comunidad y mapas.”  
+4. En “Notas de la versión”, escribe algo breve, por ejemplo: “Primera versión. Experto en Vinos IA, escáner, bodega, comunidad y mapas.”  
 5. **Revisar versión** y, si todo está bien, **“Iniciar rollout para producción”** (o “Start rollout to production”).
 
 ## Fase F — Revisión de Google

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Genera el Reel promocional de Vino Pro IA (15 s, vertical 9:16) para Instagram/TikTok.
-Escenas: escaneo -> info vino -> sumiller IA -> compra/guías -> logo + CTA.
+Escenas: escaneo -> info vino -> experto en vinos IA -> compra/guías -> logo + CTA.
 Requiere: pip install moviepy pillow
 Uso: python scripts/generar_reel_vino_pro.py [--output vino_pro_ia_reel.mp4] [--sin-musica]
 """
@@ -27,25 +27,25 @@ DURACION_ESCENA = 3.0
 ESCENAS = [
     {"titulo": "¿Vino sin información?", "subtitulo": "Escanea la etiqueta"},
     {"titulo": "Descubre todo sobre tu vino", "subtitulo": "Nombre, bodega, puntuación y precio"},
-    {"titulo": "Pregunta a nuestro sumiller IA", "subtitulo": "¿Qué vino para carne?"},
+    {"titulo": "Pregunta a nuestro experto en vinos IA", "subtitulo": "¿Qué vino para carne?"},
     {"titulo": "Compra online o descubre dónde tomarlo", "subtitulo": "Guías en más de 30 países"},
-    {"titulo": "Vino Pro IA", "subtitulo": "Tu sommelier personal"},
+    {"titulo": "Vino Pro IA", "subtitulo": "Tu experto en vinos personal"},
 ]
 
 # Subtítulos para redes (legibles sin sonido): blanco + borde negro, barra semitransparente
 SUBTITULOS_ES = [
     ["¿Vino sin información? Escanea la etiqueta"],
     ["Descubre nombre, bodega, puntuación y precio"],
-    ["Pregunta a nuestro sumiller IA", "¿Qué vino para carne?"],
+    ["Pregunta a nuestro experto en vinos IA", "¿Qué vino para carne?"],
     ["Compra online o descubre dónde tomarlo", "Guías en más de 30 países"],
-    ["Vino Pro IA · Tu sommelier personal", "Descárgala ya (enlace en bio)"],
+    ["Vino Pro IA · Tu experto en vinos personal", "Descárgala ya (enlace en bio)"],
 ]
 SUBTITULOS_EN = [
     ["Wine with no info? Scan the label"],
     ["Discover name, winery, rating and price"],
-    ["Ask our AI sommelier", "What wine for steak?"],
+    ["Ask our AI wine expert", "What wine for steak?"],
     ["Buy online or find where to drink it", "Guides in 30+ countries"],
-    ["Vino Pro IA · Your personal sommelier", "Download now (link in bio)"],
+    ["Vino Pro IA · Your personal wine expert", "Download now (link in bio)"],
 ]
 
 
@@ -88,7 +88,7 @@ def _centrar_texto(draw, texto, font, y, fill=BLANCO, borde=NEGRO):
 
 
 def crear_imagen_escena(escena: dict, indice: int, idioma: str = "es") -> "Image.Image":
-    """Genera 5 escenas TOTALMENTE DIFERENTES: escaneo, info vino, sumiller, compra/guías, logo+CTA."""
+    """Genera 5 escenas TOTALMENTE DIFERENTES: escaneo, info vino, experto en vinos, compra/guías, logo+CTA."""
     try:
         from PIL import Image, ImageDraw, ImageFont
     except ImportError:
@@ -143,7 +143,7 @@ def crear_imagen_escena(escena: dict, indice: int, idioma: str = "es") -> "Image
         # Texto principal arriba
         _centrar_texto(draw, titulo, font_sub, 180, fill=BLANCO, borde=NEGRO)
 
-    # ----- ESCENA 3: Sumiller IA (chat + bocadillo + icono voz) -----
+    # ----- ESCENA 3: Experto en vinos IA (chat + bocadillo + icono voz) -----
     elif indice == 2:
         # Bocadillo de diálogo (usuario)
         bubble = [W//2 - 320, 700, W//2 + 320, 880]
@@ -175,10 +175,10 @@ def crear_imagen_escena(escena: dict, indice: int, idioma: str = "es") -> "Image
         # Texto principal
         _centrar_texto(draw, titulo, font_sub, 180, fill=BLANCO, borde=NEGRO)
 
-    # ----- ESCENA 5: Cierre y CTA (logo grande + Tu sommelier + botón Descargar) -----
+    # ----- ESCENA 5: Cierre y CTA (logo grande + Tu experto en vinos + botón Descargar) -----
     else:
         _centrar_texto(draw, "Vino Pro IA", font_logo, 680, fill=BLANCO, borde=NEGRO)
-        _centrar_texto(draw, "Tu sommelier personal", font_titulo, 820, fill=DORADO, borde=None)
+        _centrar_texto(draw, "Tu experto en vinos personal", font_titulo, 820, fill=DORADO, borde=None)
         # Botón ficticio "Descargar"
         btn_y = 1050
         draw.rounded_rectangle([W//2 - 200, btn_y, W//2 + 200, btn_y + 90], radius=16, fill=DORADO, outline=CREMA, width=2)

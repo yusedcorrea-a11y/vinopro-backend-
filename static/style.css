@@ -1642,7 +1642,7 @@ textarea {
   margin-bottom: 0.6rem;
 }
 
-/* Respuesta sumiller */
+/* Respuesta experto en vinos */
 .respuesta-sumiller {
   background: linear-gradient(135deg, #fffbf5 0%, var(--crema) 100%);
   border-radius: var(--radius);
@@ -1685,7 +1685,7 @@ textarea {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Sumiller: imagen del vino y contenedor de respuesta */
+/* Experto en vinos: imagen del vino y contenedor de respuesta */
 .vino-imagen {
   max-width: 150px;
   max-height: 300px;
@@ -2254,7 +2254,7 @@ body.page-preguntar #respuesta.respuesta-sumiller .respuesta-toolbar .btn-speak 
 .chatbot-guia-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 999;
+  z-index: 1099;
   background: rgba(26, 21, 18, 0.4);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
@@ -2420,8 +2420,8 @@ body.page-inicio .chatbot-guia-mascot:hover {
   right: 0;
   bottom: 0;
   width: 100%;
-  max-width: 400px;
-  z-index: 1000;
+  max-width: 420px;
+  z-index: 1100;
   background: linear-gradient(180deg, var(--crema) 0%, #f5f0e8 100%);
   color: var(--texto);
   box-shadow: -8px 0 40px rgba(0,0,0,0.12);
@@ -2535,46 +2535,7 @@ body.page-inicio .chatbot-guia-mascot:hover {
 .chatbot-guia-input::placeholder {
   color: #999;
 }
-.chatbot-guia-topics-label {
-  margin: 0 0 0.6rem 0;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--texto-suave);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-.chatbot-guia-topics {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1.25rem;
-}
-.chatbot-guia-topic {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.5rem 0.85rem;
-  border-radius: 999px;
-  border: 2px solid rgba(107, 45, 60, 0.25);
-  background: #fff;
-  color: var(--burdeos);
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s, background 0.2s, border-color 0.2s, color 0.2s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-.chatbot-guia-topic:hover {
-  transform: translateY(-2px);
-  background: var(--burdeos);
-  color: #fff;
-  border-color: var(--burdeos);
-  box-shadow: 0 4px 12px rgba(107, 45, 60, 0.25);
-}
-.chatbot-guia-topic-ico {
-  font-size: 1rem;
-  line-height: 1;
-}
+
 .chatbot-guia-answer {
   font-size: 0.9rem;
   line-height: 1.65;
@@ -2660,23 +2621,7 @@ body.page-inicio .chatbot-guia-mascot:hover {
   0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0.0); }
   50% { box-shadow: 0 0 0 6px rgba(212,175,55,0.18); }
 }
-.nav-link-chatbot {
-  background: linear-gradient(145deg, rgba(184, 134, 11, 0.2) 0%, rgba(184, 134, 11, 0.1) 100%);
-  border: 1px solid rgba(184, 134, 11, 0.4);
-  color: inherit;
-  font: inherit;
-  font-weight: 600;
-  padding: 0.45rem 0.75rem;
-  border-radius: 999px;
-  cursor: pointer;
-  text-decoration: none;
-  transition: background 0.2s, transform 0.2s;
-}
-.nav-link-chatbot:hover {
-  background: var(--dorado-suave);
-  color: var(--burdeos);
-  transform: scale(1.03);
-}
+
 [data-theme="dark"] .chatbot-guia-panel {
   background: linear-gradient(180deg, #1e1916 0%, #1a1512 100%);
   color: #faf8f5;
@@ -2689,16 +2634,7 @@ body.page-inicio .chatbot-guia-mascot:hover {
 [data-theme="dark"] .chatbot-guia-input:focus {
   border-color: var(--dorado);
 }
-[data-theme="dark"] .chatbot-guia-topic {
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.2);
-  color: #e8e0d8;
-}
-[data-theme="dark"] .chatbot-guia-topic:hover {
-  background: var(--dorado-suave);
-  color: var(--negro);
-  border-color: var(--dorado);
-}
+
 [data-theme="dark"] .chatbot-guia-answer {
   background: rgba(255,255,255,0.06);
 }
@@ -2757,15 +2693,7 @@ body.page-inicio .chatbot-guia-mascot:hover {
   background: linear-gradient(135deg, var(--dorado-suave) 0%, var(--dorado) 100%);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 4px rgba(0,0,0,0.3);
 }
-[data-theme="dark"] .nav-link-chatbot {
-  background: rgba(184, 134, 11, 0.2);
-  border-color: var(--dorado);
-  color: var(--dorado-claro);
-}
-[data-theme="dark"] .nav-link-chatbot:hover {
-  background: var(--dorado-suave);
-  color: var(--negro);
-}
+
 
 @media (max-width: 600px) {
   .chatbot-guia-panel { max-width: 100%; }

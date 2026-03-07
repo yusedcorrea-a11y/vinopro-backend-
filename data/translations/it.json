@@ -39,7 +39,7 @@
   },
   "qr": {
     "mensaje_hola": "Ciao {nombre}, piacere di conoscerti. Grazie per il tuo tempo e interesse.",
-    "resumen_app": "Vino Pro IA è il tuo sommelier virtuale: scansiona etichette, registra vini, chiedi abbinamenti e gestisci la tua cantina dal cellulare.",
+    "resumen_app": "Vino Pro IA è il tuo esperto di vini virtuale: scansiona etichette, registra vini, chiedi abbinamenti e gestisci la tua cantina dal cellulare.",
     "beneficios_titulo": "Vantaggi per il tuo business",
     "beneficio_1": "Link diretto nell'app alla tua cantina o enoteca",
     "beneficio_2": "Visibilità gratuita tra i nostri utenti",
@@ -76,7 +76,11 @@
     "web": "Sito web",
     "distancia": "km",
     "lugares_encontrados": "Luoghi trovati",
-    "lista_lugares": "Elenco luoghi"
+    "lista_lugares": "Elenco luoghi",
+    "geo_no_disponible": "Non siamo riusciti a ottenere la tua posizione attuale. Verifica il segnale GPS o cerca per città.",
+    "geo_timeout": "La geolocalizzazione ha impiegato troppo tempo. Riprova o cerca per città.",
+    "error_init": "Impossibile inizializzare la mappa. Ricarica la pagina.",
+    "sin_destacados": "Al momento non ci sono luoghi consigliati."
   },
   "error": {
     "nombre_corto": "Il nome deve avere almeno 3 caratteri.",
@@ -90,7 +94,7 @@
     "registros_hoy": "Oggi hai aggiunto {n} di {max} bottiglie."
   },
   "common": {
-    "tagline": "Sommelier Virtuale",
+    "tagline": "Esperto di Vini Virtuale",
     "modo_oscuro": "Modalità scura",
     "modo_claro": "Modalità chiara",
     "seleccionar": "Seleziona",
@@ -100,7 +104,9 @@
     "cerrar": "Chiudi",
     "comprar_este_vino": "Acquista questo vino"
   },
-  "inicio": { "title": "VINO PRO IA - Il tuo sommelier intelligente" },
+  "inicio": {
+    "title": "VINO PRO IA - Il tuo esperto di vini con IA"
+  },
   "escanear": {
     "title": "Scansiona un'etichetta",
     "subtitle": "Carica una foto e scopri tutto su questo vino.",
@@ -148,8 +154,8 @@
     "no_resultados_premium_cta": "Questo vino non è nel nostro database. Passa a Premium per registrarlo e offrirlo ad altri."
   },
   "preguntar": {
-    "title": "Chiedi al sommelier",
-    "subtitle_nube": "In modalità Cloud puoi chiedere senza scansionare: abbinamenti, consigli o domande di follow-up. Con ID consultazione (dopo la scansione) il sommelier risponde su quel vino. Scegli il tuo profilo.",
+    "title": "Chiedi all'esperto di vini",
+    "subtitle_nube": "In modalità Cloud puoi chiedere senza scansionare: abbinamenti, consigli o domande di follow-up. Con ID consultazione (dopo la scansione) l'esperto di vini risponde su quel vino. Scegli il tuo profilo.",
     "modo": "Modalità:",
     "modo_local": "IA locale 🖥️",
     "modo_nube": "Cloud ☁️",
@@ -184,13 +190,13 @@
   },
   "dashboard": {
     "title": "Big Data del Vino",
-    "subtitle": "Tendenze di ricerca, scansioni per paese e domande più frequenti al sommelier (ultimi 30 giorni).",
+    "subtitle": "Tendenze di ricerca, scansioni per paese e domande più frequenti all'esperto di vini (ultimi 30 giorni).",
     "busquedas": "Ricerche",
     "escaneos": "Scansioni",
-    "preguntas_sumiller": "Domande al sommelier",
+    "preguntas_sumiller": "Domande all'esperto di vini",
     "tendencias": "Tendenze: cosa si cerca di più",
     "por_pais": "Statistiche per paese",
-    "preguntas_frecuentes": "Domande più frequenti al sommelier"
+    "preguntas_frecuentes": "Domande più frequenti all'esperto di vini"
   },
   "adaptador": {
     "title": "Adattatore per Ristoranti",
@@ -293,7 +299,7 @@
     "boton_actual": "Piano attuale",
     "boton_contactar": "Contatta",
     "mas_popular": "PIÙ POPOLARE",
-    "caract_escaneo": "Scansione e sommelier",
+    "caract_escaneo": "Scansione e esperto di vini",
     "caract_bodega": "La Mia Cantina (limite 50)",
     "caract_bodega_pro": "La Mia Cantina illimitata",
     "caract_registrar_raros": "Registra vini non in base e offrili ad altri",

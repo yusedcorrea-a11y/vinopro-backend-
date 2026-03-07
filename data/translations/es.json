@@ -1,7 +1,6 @@
 {
   "inicio": {
-    "bodega_count": "Tienes %s vinos en tu bodega",
-    "bodega_link": "Ver mi bodega"
+    "title": "VINO PRO IA - Experto en Vinos Virtual"
   },
   "nav": {
     "inicio": "Inicio",
@@ -43,7 +42,7 @@
   },
   "qr": {
     "mensaje_hola": "Hola {nombre}, un placer conocerte. Gracias por tu tiempo e interés.",
-    "resumen_app": "Vino Pro IA es tu sumiller virtual: escanea etiquetas, registra vinos, pregunta por maridajes y gestiona tu bodega desde el móvil.",
+    "resumen_app": "Vino Pro IA es tu experto en vinos virtual: escanea etiquetas, registra vinos, pregunta por maridajes y gestiona tu bodega desde el móvil.",
     "beneficios_titulo": "Beneficios para tu negocio",
     "beneficio_1": "Enlace directo en la app a tu bodega o vinoteca",
     "beneficio_2": "Visibilidad gratuita entre nuestros usuarios",
@@ -65,13 +64,16 @@
     "no_escaneado": "No"
   },
   "geolocalizacion": {
-    "titulo": "Donde me tomo mi vino",
+    "titulo": "Dónde me tomo mi vino",
     "subtitulo": "Encuentra restaurantes, vinotecas y bares para disfrutar del vino. Usa tu ubicación o busca por ciudad.",
     "buscando": "Buscando lugares...",
+    "cargando_ubicacion": "Obteniendo ubicación...",
+    "cargando_busqueda": "Buscando...",
     "no_resultados": "No se encontraron lugares cercanos.",
     "permiso_denegado": "No podemos acceder a tu ubicación. Busca manualmente por ciudad arriba.",
+    "no_https": "Tu navegador bloquea la ubicación por seguridad. Abre la app en HTTPS para usar GPS.",
     "buscar_manual": "Buscar por ciudad",
-    "placeholder_ciudad": "Ej: Madrid, 28001",
+    "placeholder_ciudad": "Ej: Bogotá, Medellín o 4.7110, -74.0721",
     "usar_ubicacion": "Usar mi ubicación",
     "radio": "Radio (km)",
     "error_red": "Error de conexión. Intenta de nuevo.",
@@ -80,7 +82,11 @@
     "web": "Web",
     "distancia": "km",
     "lugares_encontrados": "Lugares encontrados",
-    "lista_lugares": "Lista de lugares"
+    "lista_lugares": "Lista de lugares",
+    "geo_no_disponible": "No pudimos obtener tu ubicación actual. Verifica señal GPS o busca por ciudad.",
+    "geo_timeout": "La ubicación tardó demasiado. Intenta de nuevo o busca por ciudad.",
+    "error_init": "No se pudo inicializar el mapa. Recarga la página.",
+    "sin_destacados": "No hay lugares recomendados por ahora."
   },
   "error": {
     "nombre_corto": "El nombre debe tener al menos 3 caracteres.",
@@ -94,7 +100,7 @@
     "registros_hoy": "Hoy has añadido {n} de {max} botellas."
   },
   "common": {
-    "tagline": "Sumiller Virtual",
+    "tagline": "Experto en Vinos Virtual",
     "modo_oscuro": "Modo oscuro",
     "modo_claro": "Modo claro",
     "seleccionar": "Seleccionar",
@@ -103,9 +109,6 @@
     "copiar": "Copiar",
     "cerrar": "Cerrar",
     "comprar_este_vino": "Comprar este vino"
-  },
-  "inicio": {
-    "title": "VINO PRO IA - Sumiller Virtual"
   },
   "escanear": {
     "title": "Escanear etiqueta de vino",
@@ -159,8 +162,8 @@
     "oferta_crear_btn": "Crear oferta"
   },
   "preguntar": {
-    "title": "Preguntar al sumiller",
-    "subtitle_nube": "En modo Nube puedes preguntar sin escanear: maridajes, recomendaciones o seguir con preguntas. Con Consulta ID (tras escanear) el sumiller responde sobre ese vino. Elige tu perfil.",
+    "title": "Preguntar al experto en vinos",
+    "subtitle_nube": "En modo Nube puedes preguntar sin escanear: maridajes, recomendaciones o seguir con preguntas. Con Consulta ID (tras escanear) el experto en vinos responde sobre ese vino. Elige tu perfil.",
     "modo": "Modo:",
     "modo_local": "IA Local 🖥️",
     "modo_nube": "Nube ☁️",
@@ -200,13 +203,13 @@
   },
   "dashboard": {
     "title": "Big Data Vinícola",
-    "subtitle": "Tendencias de búsquedas, escaneos por país y preguntas más frecuentes al sumiller (últimos 30 días).",
+    "subtitle": "Tendencias de búsquedas, escaneos por país y preguntas más frecuentes al experto en vinos (últimos 30 días).",
     "busquedas": "Búsquedas",
     "escaneos": "Escaneos",
-    "preguntas_sumiller": "Preguntas sumiller",
+    "preguntas_sumiller": "Preguntas experto en vinos",
     "tendencias": "Tendencias: qué se busca más",
     "por_pais": "Estadísticas por país",
-    "preguntas_frecuentes": "Preguntas más frecuentes al sumiller"
+    "preguntas_frecuentes": "Preguntas más frecuentes al experto en vinos"
   },
   "adaptador": {
     "title": "Adaptador para Restaurantes",
@@ -309,7 +312,7 @@
     "boton_actual": "Plan actual",
     "boton_contactar": "Contactar",
     "mas_popular": "MÁS POPULAR",
-    "caract_escaneo": "Escaneo y sumiller",
+    "caract_escaneo": "Escaneo y experto en vinos",
     "caract_bodega": "Mi Bodega (límite 50)",
     "caract_bodega_pro": "Mi Bodega ilimitada",
     "caract_registrar_raros": "Registra vinos que no estén en la base y ofrécelos a otros",

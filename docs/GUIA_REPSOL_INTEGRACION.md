@@ -24,5 +24,5 @@ En Vino Pro IA hemos añadido un enlace tipo **“¿Dónde tomarlo? Buscar en Gu
 
 - Si Repsol publicara un parámetro de búsqueda (p. ej. `?q=nombre+vino` o `?establecimiento=id`), se podría:
   - Añadir en el backend una función que monte la URL con el nombre del vino (o región).
-  - Mostrar ese enlace en la página de compra o en la respuesta del sumiller como “Dónde tomarlo en Guía Repsol”.
+  - Mostrar ese enlace en la página de compra o en la respuesta del experto en vinos como “Dónde tomarlo en Guía Repsol”.
 - Mientras tanto, el enlace genérico a Vinotecas y Bodegas ya da valor: el usuario ve dónde encontrar sitios para tomar vino.

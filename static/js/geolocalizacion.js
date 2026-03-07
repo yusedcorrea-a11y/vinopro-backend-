@@ -13,6 +13,15 @@
   var userCoords = null;
   var lugaresCache = [];
   var destacadosCache = [];
+  var REQUIRED_IDS = [
+    'mapa-btn-ubicacion',
+    'mapa-btn-buscar-ciudad',
+    'mapa-input-ciudad',
+    'mapa-radio',
+    'mapa-estado',
+    'mapa-lista',
+    'mapa-mapa'
+  ];
 
   function getTextos() {
     var el = document.getElementById('mapa-estado');
@@ -25,7 +34,14 @@
       ver_ruta: el.getAttribute('data-text-ver-ruta') || 'Ver ruta',
       llamar: el.getAttribute('data-text-llamar') || 'Llamar',
       web: el.getAttribute('data-text-web') || 'Web',
-      distancia: el.getAttribute('data-text-distancia') || 'km'
+      distancia: el.getAttribute('data-text-distancia') || 'km',
+      cargando_ubicacion: el.getAttribute('data-text-cargando-ubicacion') || 'Obteniendo ubicación...',
+      cargando_busqueda: el.getAttribute('data-text-cargando-busqueda') || 'Buscando...',
+      no_https: el.getAttribute('data-text-no-https') || 'Tu navegador bloquea la ubicación por seguridad. Abre la app en HTTPS para usar GPS.',
+      geo_no_disponible: el.getAttribute('data-text-geo-no-disponible') || 'No pudimos obtener tu ubicación actual. Verifica señal GPS o busca por ciudad.',
+      geo_timeout: el.getAttribute('data-text-geo-timeout') || 'La ubicación tardó demasiado. Intenta de nuevo o busca por ciudad.',
+      error_init: el.getAttribute('data-text-error-init') || 'No se pudo inicializar el mapa. Recarga la página.',
+      sin_destacados: el.getAttribute('data-text-sin-destacados') || 'No hay lugares recomendados por ahora.'
     };
   }
 
@@ -42,11 +58,52 @@
     if (el) { el.style.display = 'none'; el.classList.remove('error'); }
   }
 
+  function isGeoSecureContext() {
+    if (window.isSecureContext) return true;
+    var host = (window.location && window.location.hostname) || '';
+    return host === 'localhost' || host === '127.0.0.1' || host === '::1';
+  }
+
+  function mapGeoError(error) {
+    var fallback = textos.permiso_denegado || 'No podemos acceder a tu ubicación. Busca por ciudad arriba.';
+    if (!error || typeof error.code !== 'number') return fallback;
+    if (error.code === 1) return textos.permiso_denegado || fallback; // PERMISSION_DENIED
+    if (error.code === 2) return textos.geo_no_disponible || fallback;
+    if (error.code === 3) return textos.geo_timeout || fallback;
+    return fallback;
+  }
+
+  function setButtonLoading(btn, active, text) {
+    if (!btn) return;
+    if (active) {
+      if (!btn.dataset.originalHtml) btn.dataset.originalHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.classList.add('btn-loading');
+      btn.innerHTML = '<span class="btn-spinner" aria-hidden="true"></span><span>' + (text || textos.cargando_busqueda || 'Buscando...') + '</span>';
+      btn.setAttribute('aria-busy', 'true');
+      return;
+    }
+    if (btn.dataset.originalHtml) {
+      btn.innerHTML = btn.dataset.originalHtml;
+    }
+    btn.classList.remove('btn-loading');
+    btn.disabled = false;
+    btn.removeAttribute('aria-busy');
+  }
+
+  function validateRequiredElements() {
+    var missing = REQUIRED_IDS.filter(function(id) { return !document.getElementById(id); });
+    if (!missing.length) return true;
+    console.error('[Mapa] Faltan IDs requeridos en HTML:', missing.join(', '));
+    showEstado(textos.error_init || 'No se pudo inicializar el mapa. Recarga la página.', true);
+    return false;
+  }
+
   function initMapa(centerLat, centerLon, zoom) {
     var container = document.getElementById('mapa-mapa');
     if (!container || map) return map;
     if (typeof L === 'undefined' || !L.map) {
-      showEstado('No se pudo cargar el mapa. Recarga la página.', true);
+      showEstado(textos.error_init || 'No se pudo inicializar el mapa. Recarga la página.', true);
       return null;
     }
     map = L.map('mapa-mapa').setView([centerLat, centerLon], zoom || 14);
@@ -198,7 +255,7 @@
     getTextos();
     container.innerHTML = '';
     if (!lugares || !lugares.length) {
-      container.innerHTML = '<p class="page-subtitle">No hay lugares recomendados por ahora.</p>';
+      container.innerHTML = '<p class="page-subtitle">' + (textos.sin_destacados || 'No hay lugares recomendados por ahora.') + '</p>';
       return;
     }
     lugares.forEach(function(lugar) {
@@ -229,7 +286,7 @@
     getTextos();
     showEstado(textos.buscando, false);
     var url = '/api/lugares?lat=' + encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lon) + '&radio=' + (radioKm || 5);
-    fetchLugares(url)
+    return fetchLugares(url)
       .then(function(data) {
         hideEstado();
         userCoords = { lat: Number(lat), lon: Number(lon) };
@@ -241,6 +298,7 @@
       })
       .catch(function() {
         showEstado(textos.error_red, true);
+        throw new Error('error_red');
       });
   }
 
@@ -248,7 +306,7 @@
     getTextos();
     showEstado(textos.buscando, false);
     var url = '/api/lugares?ciudad=' + encodeURIComponent(ciudad) + '&radio=' + (radioKm || 5);
-    fetchLugares(url)
+    return fetchLugares(url)
       .then(function(data) {
         hideEstado();
         var lat = Number(data.lat), lon = Number(data.lon);
@@ -262,6 +320,7 @@
       })
       .catch(function() {
         showEstado(textos.no_resultados + ' (' + ciudad + ')', true);
+        throw new Error('sin_resultados');
       });
   }
 
@@ -365,6 +424,8 @@
 
   function init() {
     getTextos();
+    if (!validateRequiredElements()) return;
+
     var btnUbicacion = document.getElementById('mapa-btn-ubicacion');
     var btnCiudad = document.getElementById('mapa-btn-buscar-ciudad');
     var inputCiudad = document.getElementById('mapa-input-ciudad');
@@ -375,16 +436,25 @@
           showEstado(textos.permiso_denegado, true);
           return;
         }
-        showEstado(textos.buscando, false);
+        if (!isGeoSecureContext()) {
+          showEstado(textos.no_https, true);
+          return;
+        }
+        setButtonLoading(btnUbicacion, true, textos.cargando_ubicacion);
+        showEstado(textos.cargando_ubicacion || textos.buscando, false);
         navigator.geolocation.getCurrentPosition(
           function(pos) {
             var lat = pos.coords.latitude;
             var lon = pos.coords.longitude;
             setInputFromCoords(lat, lon);
-            buscarPorCoords(lat, lon, getRadioKm());
+            buscarPorCoords(lat, lon, getRadioKm())
+              .finally(function() {
+                setButtonLoading(btnUbicacion, false);
+              });
           },
-          function() {
-            showEstado(textos.permiso_denegado, true);
+          function(err) {
+            showEstado(mapGeoError(err), true);
+            setButtonLoading(btnUbicacion, false);
           },
           { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
         );
@@ -395,12 +465,15 @@
       function buscarCiudad() {
         var ciudad = (inputCiudad.value || '').trim();
         if (ciudad.length < 2) return;
+        setButtonLoading(btnCiudad, true, textos.cargando_busqueda);
         var coordsMatch = ciudad.match(/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/);
         if (coordsMatch) {
-          buscarPorCoords(parseFloat(coordsMatch[1]), parseFloat(coordsMatch[2]), getRadioKm());
+          buscarPorCoords(parseFloat(coordsMatch[1]), parseFloat(coordsMatch[2]), getRadioKm())
+            .finally(function() { setButtonLoading(btnCiudad, false); });
           return;
         }
-        buscarPorCiudad(ciudad, getRadioKm());
+        buscarPorCiudad(ciudad, getRadioKm())
+          .finally(function() { setButtonLoading(btnCiudad, false); });
       }
       btnCiudad.addEventListener('click', buscarCiudad);
       inputCiudad.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); buscarCiudad(); } });
@@ -421,6 +494,10 @@
       estadoEl.setAttribute('data-text-llamar', estadoEl.getAttribute('data-text-llamar') || 'Llamar');
       estadoEl.setAttribute('data-text-web', estadoEl.getAttribute('data-text-web') || 'Web');
       estadoEl.setAttribute('data-text-distancia', estadoEl.getAttribute('data-text-distancia') || 'km');
+      estadoEl.setAttribute('data-text-geo-no-disponible', estadoEl.getAttribute('data-text-geo-no-disponible') || 'No pudimos obtener tu ubicación actual. Verifica señal GPS o busca por ciudad.');
+      estadoEl.setAttribute('data-text-geo-timeout', estadoEl.getAttribute('data-text-geo-timeout') || 'La ubicación tardó demasiado. Intenta de nuevo o busca por ciudad.');
+      estadoEl.setAttribute('data-text-error-init', estadoEl.getAttribute('data-text-error-init') || 'No se pudo inicializar el mapa. Recarga la página.');
+      estadoEl.setAttribute('data-text-sin-destacados', estadoEl.getAttribute('data-text-sin-destacados') || 'No hay lugares recomendados por ahora.');
     }
 
     initMapa(40.4168, -3.7038, 6);

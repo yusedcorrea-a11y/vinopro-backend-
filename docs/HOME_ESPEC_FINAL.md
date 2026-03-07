@@ -22,8 +22,8 @@
 | 2 | **Logo** | **VINO PRO IA** unificado en 1 o 2 líneas. Tipografía **Serif** elegante. Más peso visual (bold). Sin cortes raros entre palabras. |
 | 3 | **Zorrito** | Asset en **PNG transparente**. Sin círculo blanco. Que flote sobre el viñedo en zona equilibrada (esquina o centro según composición). |
 | 4 | **Botones abajo** | En la **parte inferior**. Sobre una **barra con Glassmorphism** suave (traslúcida + blur). Ancho completo, padding vertical cómodo. Botones centrados o con separación equilibrada. |
-| 4a | **Copy de botones** | · **"Habla con el sumiller"** (icono burbuja/conversación). · **"Descubre un vino"** (icono cámara o lupa). |
-| 4b | **Microcopy** | Debajo de los botones: **"Tu sumiller personal con IA"**. Tamaño pequeño, color suave (gris claro o blanco con opacidad). Sin robar protagonismo. |
+| 4a | **Copy de botones** | · **"Habla con el experto en vinos"** (icono burbuja/conversación). · **"Descubre un vino"** (icono cámara o lupa). |
+| 4b | **Microcopy** | Debajo de los botones: **"Tu experto en vinos personal con IA"**. Tamaño pequeño, color suave (gris claro o blanco con opacidad). Sin robar protagonismo. |
 | 5 | **Menú lateral** | Sustituir **emojis por iconos de línea** (Lucide o Ionicons). **Modo oscuro:** color **burdeos** de marca (quitar amarillo). **Glassmorphism** en el panel del menú para que se vea el viñedo detrás. |
 | 6 | **Limpieza** | Eliminar el texto **"Sin escaneos en esta sesión"** de la Home. Si no hay escaneos, no mostrar nada. |
 
@@ -34,8 +34,8 @@
 - [ ] Fondo: imagen viñedo full screen, `cover`
 - [ ] Logo: VINO PRO IA unificado, serif, bold
 - [ ] Zorrito: PNG transparente, sin círculo blanco
-- [ ] Botones: abajo, barra glassmorphism; "Habla con el sumiller" (icono) + "Descubre un vino" (icono)
-- [ ] Microcopy: "Tu sumiller personal con IA" (discreto)
+- [ ] Botones: abajo, barra glassmorphism; "Habla con el experto en vinos" (icono) + "Descubre un vino" (icono)
+- [ ] Microcopy: "Tu experto en vinos personal con IA" (discreto)
 - [ ] Menú: iconos línea, burdeos, glassmorphism
 - [ ] Quitar: "Sin escaneos en esta sesión"
 
@@ -50,9 +50,9 @@ Ejecuta la fase de lujo de la HOME. Solo esta pantalla, sin tocar API ni otras p
 2. Logo: Unificar "VINO PRO IA" en el header con tipografía Serif elegante y mayor peso (bold).
 3. Zorrito: Asset PNG transparente, sin círculo blanco; que flote sobre el viñedo.
 4. Botones: Mover a la parte inferior. Contenedor con Glassmorphism (traslúcido + blur), ancho completo.
-   - "Habla con el sumiller" con icono burbuja.
+   - "Habla con el experto en vinos" con icono burbuja.
    - "Descubre un vino" con icono cámara/lupa.
-5. Microcopy debajo de los botones: "Tu sumiller personal con IA" (tamaño pequeño, color suave).
+5. Microcopy debajo de los botones: "Tu experto en vinos personal con IA" (tamaño pequeño, color suave).
 6. Menú lateral: Sustituir emojis por iconos Lucide/Ionicons. Modo oscuro en burdeos. Fondo del panel con glassmorphism.
 7. Eliminar el texto "Sin escaneos en esta sesión".
 ```

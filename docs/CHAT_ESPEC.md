@@ -1,4 +1,4 @@
-# Pantalla "Preguntar al sumiller" – Especificación (aspecto + función)
+# Pantalla "Preguntar al experto en vinos" – Especificación (aspecto + función)
 
 **Objetivo:** Primero cerrar el aspecto visual (limpieza, jerarquía, glassmorphism). Luego la funcionalidad (modo, perfil, botón Preguntar).
 
@@ -21,7 +21,7 @@
 | **Duplicación de modo** | Aparece "Modo: Nube" y debajo otra vez "Modo: Nube 🎵". Dejar **una sola** línea o chip. |
 | **Jerarquía pobre** | Todo con el mismo peso. Diferenciar cabecera, modo, perfil, pregunta y botón. |
 | **Texto "IA Local es exclusiva para Premium"** | Flota sin contenedor. Poner en **bloque con contenedor suave** (gris claro o glassmorphism). Botón "Pasar a PRO" con estilo burdeos. |
-| **Perfil "Aficionado"** | Parece campo de formulario. Mostrarlo como **tarjeta/chip seleccionable**; si hay más perfiles (Experto, Sumiller), que se vea como selector. |
+| **Perfil "Aficionado"** | Parece campo de formulario. Mostrarlo como **tarjeta/chip seleccionable**; si hay más perfiles (Experto, Experto en Vinos), que se vea como selector. |
 | **"Últimas consultas (local)"** | Con "-- Seleccionar --" que no invita. **Eliminar** si no hay datos, o sustituir por mensaje amable: "Tus consultas aparecerán aquí". |
 | **"Tu pregunta" + botón** | Botón "Preguntar" solo, sin contexto. **Integrar**: campo de texto con botón a la derecha (estilo buscador) o botón debajo con más presencia. |
 | **Sin microcopy** | Añadir línea de apoyo bajo el campo: "Pregunta sobre maridajes, variedades, precios..." que desaparezca al escribir. |
@@ -32,7 +32,7 @@
 ## 3. Propuesta de aspecto (primera pasada)
 
 ### 3.1 Cabecera
-- **Una sola línea clara:** p. ej. "VINO PRO IA" + "Preguntar al sumiller" (o solo "Preguntar al sumiller" si el logo va en la Home).
+- **Una sola línea clara:** p. ej. "VINO PRO IA" + "Preguntar al experto en vinos" (o solo "Preguntar al experto en vinos" si el logo va en la Home).
 - Sin duplicados de título ni de modo.
 
 ### 3.2 Modo
@@ -101,10 +101,10 @@ Cuando el aspecto esté cerrado:
 
 ## 7. Prompt Maestro (para pegar en Cursor)
 
-Abrir **ChatScreen.tsx** o **PreguntarSumillerScreen.tsx** (o el archivo de la pantalla de chat/sumiller) y pegar lo siguiente. **Solo aspecto (UI); no tocar la lógica de la IA.**
+Abrir **ChatScreen.tsx** o **PreguntarExpertoEnVinosScreen.tsx** (o el archivo de la pantalla de chat/experto en vinos) y pegar lo siguiente. **Solo aspecto (UI); no tocar la lógica de la IA.**
 
 ```
-Aplica la especificación de la pantalla "Preguntar al sumiller" (CHAT_ESPEC.md). Concentración total en el ASPECTO. No toques la lógica todavía.
+Aplica la especificación de la pantalla "Preguntar al experto en vinos" (CHAT_ESPEC.md). Concentración total en el ASPECTO. No toques la lógica todavía.
 
 ORDEN DE EJECUCIÓN
 
@@ -112,7 +112,7 @@ ORDEN DE EJECUCIÓN
 
 2. Cabecera limpia:
    - Título: "VINO PRO IA" (o el que use la app)
-   - Subtítulo: "Preguntar al sumiller"
+   - Subtítulo: "Preguntar al experto en vinos"
    - Eliminar cualquier duplicado de "Modo: Nube" en la cabecera.
 
 3. Modo como badge: "Modo: Nube" dentro de un badge/chip (fondo suave azul o gris). Icono ☁️ o 🎵 como detalle, no protagonista. Aviso "IA Local Premium" en línea fina y distinguida.
@@ -125,7 +125,7 @@ ORDEN DE EJECUCIÓN
 
 7. Campo "Tu pregunta" + botón integrados: Diseño tipo buscador (campo a la izquierda, botón "Preguntar" a la derecha) o botón debajo con más presencia. Placeholder: "Ej: ¿Qué vino con carne?"
 
-8. Microcopy: Bajo el campo, texto pequeño "Pregunta sobre maridajes, variedades, precios..." (color suave; puede ocultarse al escribir). Al final del panel, frase discreta: "Tu sumiller personal con IA".
+8. Microcopy: Bajo el campo, texto pequeño "Pregunta sobre maridajes, variedades, precios..." (color suave; puede ocultarse al escribir). Al final del panel, frase discreta: "Tu experto en vinos personal con IA".
 
 9. Limpieza: Eliminar textos duplicados. Jerarquía visual clara: que parezca una conversación de lujo, no un cuestionario.
 

@@ -86,6 +86,11 @@ except ImportError:
     PREPROCESSOR_AVAILABLE = False
     preprocesar_para_ocr = lambda c: []
 
+try:
+    from services.image_quality_service import evaluar_calidad_imagen
+except ImportError:
+    evaluar_calidad_imagen = lambda contenido: {"disponible": False, "ok": True, "motivos": [], "metricas": {}}
+
 MAX_SIDE_OCR = 1200
 
 # Palabras clave que indican texto útil de etiqueta de vino
@@ -218,7 +223,14 @@ def extraer_datos_etiqueta_doble_capa(contenido: bytes, idioma: str = "spa+eng",
     from services.entity_extractor import extraer_entidades
     from services.vision_wine_service import analizar_etiqueta_vision
 
-    resultado_base = {"texto": "", "entidades": {"bodega": None, "nombre": None, "añada": None, "denominacion_origen": None, "variedad": None}, "origen": "ocr", "error_vision": None}
+    calidad = evaluar_calidad_imagen(contenido)
+    resultado_base = {
+        "texto": "",
+        "entidades": {"bodega": None, "nombre": None, "añada": None, "denominacion_origen": None, "variedad": None},
+        "origen": "ocr",
+        "error_vision": None,
+        "calidad_imagen": calidad,
+    }
 
     # Paso 1: OCR local
     texto_ocr = ""
@@ -232,7 +244,13 @@ def extraer_datos_etiqueta_doble_capa(contenido: bytes, idioma: str = "spa+eng",
             return resultado_base
         if vision_result:
             ent = normalizar_entidades(vision_result.get("entidades") or {})
-            return {"texto": vision_result.get("texto") or "", "entidades": ent, "origen": "vision", "error_vision": None}
+            return {
+                "texto": vision_result.get("texto") or "",
+                "entidades": ent,
+                "origen": "vision",
+                "error_vision": None,
+                "calidad_imagen": calidad,
+            }
         return resultado_base
 
     texto_refinado = refinar_texto_ocr(texto_ocr)
@@ -242,7 +260,13 @@ def extraer_datos_etiqueta_doble_capa(contenido: bytes, idioma: str = "spa+eng",
     if texto_refinado and len(texto_refinado) >= _MIN_LONGITUD_OCR_CONFIABLE and score >= _MIN_SCORE_OCR_CONFIABLE:
         ent = extraer_entidades(texto_refinado)
         ent_norm = normalizar_entidades(ent)
-        return {"texto": texto_refinado, "entidades": ent_norm, "origen": "ocr", "error_vision": None}
+        return {
+            "texto": texto_refinado,
+            "entidades": ent_norm,
+            "origen": "ocr",
+            "error_vision": None,
+            "calidad_imagen": calidad,
+        }
 
     # Paso 2: Fallback con IA de visión
     logger.info("[OCR] Texto insuficiente (len=%d, score=%.1f), usando IA de visión...", len(texto_refinado or ""), score)
@@ -252,11 +276,23 @@ def extraer_datos_etiqueta_doble_capa(contenido: bytes, idioma: str = "spa+eng",
     elif vision_result:
         ent = normalizar_entidades(vision_result.get("entidades") or {})
         texto_vision = vision_result.get("texto") or ""
-        return {"texto": texto_vision, "entidades": ent, "origen": "vision", "error_vision": None}
+        return {
+            "texto": texto_vision,
+            "entidades": ent,
+            "origen": "vision",
+            "error_vision": None,
+            "calidad_imagen": calidad,
+        }
 
     # Sin visión: devolver lo que tengamos del OCR (aunque sea poco)
     if texto_refinado:
         ent = extraer_entidades(texto_refinado)
         ent_norm = normalizar_entidades(ent)
-        return {"texto": texto_refinado, "entidades": ent_norm, "origen": "ocr", "error_vision": resultado_base["error_vision"]}
+        return {
+            "texto": texto_refinado,
+            "entidades": ent_norm,
+            "origen": "ocr",
+            "error_vision": resultado_base["error_vision"],
+            "calidad_imagen": calidad,
+        }
     return resultado_base

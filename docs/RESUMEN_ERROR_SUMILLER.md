@@ -1,8 +1,8 @@
-# Resumen: Error en Preguntar al sumiller
+# Resumen: Error en Preguntar al experto en vinos
 
 ## Qué pasa
 
-En la página **Preguntar al sumiller**, al enviar preguntas como:
+En la página **Preguntar al experto en vinos**, al enviar preguntas como:
 - *"hoy toca comida japonesa que vino pongo ?"*
 - *"tengo pelmeni para cenar que vino me aconsejas para acompañar mis pelmeni"*
 - *"tengo cocido hoy que vino me aconsejas..."*
@@ -18,7 +18,7 @@ El backend devuelve **HTTP 500** y el frontend muestra ese mensaje (en `static/j
 
 1. **Respuesta inválida / JSON**
    - Se dejó de devolver un *generador* en `fallback_sin_resultados` y se devuelve una **lista** para no agotar el iterador al usarlo dos veces en la ruta.
-   - Se envolvió la lógica en **try/except** en la ruta del sumiller y se devuelve JSON con `detail` en el 500 (ya no HTML).
+   - Se envolvió la lógica en **try/except** en la ruta del experto en vinos y se devuelve JSON con `detail` en el 500 (ya no HTML).
 
 2. **Defensas en datos**
    - **Keys solo string:** `vinos_ref_para_guardar` se filtra para que solo contenga strings (evitar dicts en historial que rompían `registrar_busqueda` / `get_recomendaciones_personalizadas`).
@@ -33,7 +33,7 @@ El backend devuelve **HTTP 500** y el frontend muestra ese mensaje (en `static/j
    - **Solución aplicada:** Se añadió `patrocinadores.json` a la lista **excluir** en `app.py` y se añadió en `busqueda_service.py` un `if not isinstance(vino, dict): continue` al iterar en `buscar_vinos_avanzado`.
 
 4. **Depuración**
-   - En el 500 del sumiller se incluye el mensaje de la excepción en el JSON: `detail = "... [Debug: {err_msg}]"` para poder ver en pantalla qué falla si sigue ocurriendo.
+   - En el 500 del experto en vinos se incluye el mensaje de la excepción en el JSON: `detail = "... [Debug: {err_msg}]"` para poder ver en pantalla qué falla si sigue ocurriendo.
    - Script de prueba: `scripts/test_sumiller_flow.py` (simula request y llama a `_preguntar_sumiller_general` con BD real). Usar **scope como dict** (`{"type": "http", "method": "GET", ...}`), no `Scope(...)`. En local, con `patrocinadores.json` excluido, el test pasa (899 vinos, respuesta OK).
 
 5. **Defensa extra en `app.py`**
@@ -59,7 +59,7 @@ El backend devuelve **HTTP 500** y el frontend muestra ese mensaje (en `static/j
    - exclusión de `patrocinadores.json` en `app.py`,
    - `isinstance(vino, dict)` en `buscar_vinos_avanzado`,
    - defensa en `listar_vinos` (solo entradas dict),
-   - y el `[Debug: ...]` en el 500 del sumiller.
+   - y el `[Debug: ...]` en el 500 del experto en vinos.
    - Si en local `python scripts/test_sumiller_flow.py` pasa pero en producción sigue el 500, el fallo es casi seguro por **código no desplegado** o por **otro JSON en data/** con estructura no-catálogo cargado solo en producción.
 2. **Si el error continúa:** Pedir que se copie el mensaje completo que aparece en pantalla (incluido el texto después de `[Debug: ...]`) y pegarlo en el nuevo chat.
 3. **En local:** Ejecutar `python scripts/test_sumiller_flow.py` desde la raíz del backend; si falla, el traceback indicará la línea exacta.

@@ -1,5 +1,5 @@
 """
-Big Data vinícola: registro de búsquedas, escaneos y preguntas al sumiller.
+Big Data vinícola: registro de búsquedas, escaneos y preguntas al experto en vinos.
 """
 import json
 import os

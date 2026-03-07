@@ -1,6 +1,7 @@
 """
 Endpoints de escaneo de etiquetas y registro de vinos.
 """
+import asyncio
 import json
 import logging
 import os
@@ -54,11 +55,15 @@ from services.ocr_normalizer import limpiar as normalizar_ocr
 from services.codigos_service import extraer_primer_ean_de_imagen
 from services.wine_label_api4ai_service import recognize_wine_from_image
 from services.entity_extractor import extraer_entidades, formatear_entidades_para_json
+from services.image_quality_service import evaluar_calidad_imagen, mensaje_calidad_imagen
 
 router = APIRouter(prefix="", tags=["Escaneo"])
 
 DATA_FOLDER = os.environ.get("DATA_FOLDER", "data")
 REGISTRADOS_PATH = os.path.join(DATA_FOLDER, "registrados.json")
+ESCANEO_MAX_CONCURRENT = max(1, int(os.environ.get("ESCANEO_MAX_CONCURRENT", "4") or "4"))
+ESCANEO_SEMAPHORE = asyncio.Semaphore(ESCANEO_MAX_CONCURRENT)
+API4AI_HINTS_ENABLED = os.environ.get("ENABLE_API4AI_SCAN_HINTS", "").strip().lower() in {"1", "true", "yes"}
 
 
 # Palabras que no llevamos a la query corta para OFF (solo las más cortas/ruido)
@@ -274,6 +279,16 @@ def _detail_escanear(falta: str) -> str:
     )
 
 
+def _respuesta_servicio_ocupado(session_id: str | None) -> dict:
+    return {
+        "reconocido": False,
+        "error_imagen": False,
+        "es_pro": _es_pro(session_id),
+        "mensaje": "Estamos procesando muchos escaneos a la vez. Prueba de nuevo en unos segundos o escribe el nombre del vino manualmente.",
+        "entidades_extraidas": {},
+    }
+
+
 @router.post("/escanear")
 async def escanear_etiqueta(
     request: Request,
@@ -282,7 +297,7 @@ async def escanear_etiqueta(
     """
     Escanea una etiqueta de vino por imagen y/o texto. Identifica vinos en local o en línea.
 
-    Flujo (los ojos del sumiller — una foto, varias señales):
+    Flujo (los ojos del experto en vinos — una foto, varias señales):
     1. Imagen: se intenta leer código de barras y QR en la misma foto (pyzbar). Si hay EAN y OFF devuelve vino, se responde al momento.
     2. Código de barras en formulario: si el cliente envía codigo_barras, búsqueda en OFF.
     3. OCR + normalizador sobre la imagen (texto de la etiqueta).
@@ -294,7 +309,15 @@ async def escanear_etiqueta(
     Acepta: multipart/form-data (texto, imagen, codigo_barras) o JSON (texto, codigo_barras).
     """
     try:
-        return await _escanear_etiqueta_impl(request, x_session_id)
+        try:
+            await asyncio.wait_for(ESCANEO_SEMAPHORE.acquire(), timeout=0.25)
+        except asyncio.TimeoutError:
+            logger.warning("[ESCANEAR] Saturación: sin slot libre de escaneo.")
+            return _respuesta_servicio_ocupado(x_session_id)
+        try:
+            return await _escanear_etiqueta_impl(request, x_session_id)
+        finally:
+            ESCANEO_SEMAPHORE.release()
     except HTTPException:
         raise
     except Exception as e:
@@ -313,7 +336,7 @@ async def escanear_etiqueta(
             "tipo": "tinto",
             "puntuacion": None,
             "precio_estimado": None,
-            "descripcion": "No pudimos identificar la etiqueta con seguridad. Puedes preguntar al sumiller por un vino similar o añadirlo manualmente.",
+            "descripcion": "No pudimos identificar la etiqueta con seguridad. Puedes preguntar al experto en vinos por un vino similar o añadirlo manualmente.",
             "notas_cata": "No disponibles.",
             "maridaje": "Información no disponible.",
             "_origen": "generico",
@@ -339,6 +362,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
     consultas = _get_consultas(request)
     entidades_imagen = None  # Del flujo doble capa (OCR + visión) cuando hay imagen
     error_vision_imagen = None  # Error específico si falla la IA de visión
+    calidad_imagen = None
 
     contenido_tipo = (request.headers.get("content-type") or "").lower()
     texto = None
@@ -373,6 +397,26 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
             contenido_imagen = await imagen.read()
             if contenido_imagen:
                 imagen_enviada = True
+                calidad_imagen = evaluar_calidad_imagen(contenido_imagen)
+                mensaje_calidad = mensaje_calidad_imagen(calidad_imagen)
+                if calidad_imagen and "imagen_invalida" in (calidad_imagen.get("motivos") or []):
+                    return {
+                        "reconocido": False,
+                        "error_imagen": True,
+                        "es_pro": _es_pro((x_session_id or "").strip()),
+                        "mensaje": mensaje_calidad or "La imagen no se pudo procesar. Prueba con otra foto.",
+                        "entidades_extraidas": {},
+                        "diagnostico_imagen": calidad_imagen,
+                    }
+                if calidad_imagen and "borrosa" in (calidad_imagen.get("motivos") or []) and not texto_busqueda and not codigo_barras:
+                    return {
+                        "reconocido": False,
+                        "error_imagen": True,
+                        "es_pro": _es_pro((x_session_id or "").strip()),
+                        "mensaje": mensaje_calidad or "La foto está borrosa. Prueba una captura más nítida.",
+                        "entidades_extraidas": {},
+                        "diagnostico_imagen": calidad_imagen,
+                    }
                 # 1) Códigos de barras / QR en la imagen (prioridad: identificación inequívoca)
                 ean_imagen = extraer_primer_ean_de_imagen(contenido_imagen)
                 if ean_imagen:
@@ -407,6 +451,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                 texto_ocr = (resultado_doble.get("texto") or "").strip()
                 entidades_imagen = resultado_doble.get("entidades")
                 error_vision_imagen = resultado_doble.get("error_vision")
+                calidad_imagen = resultado_doble.get("calidad_imagen") or calidad_imagen
                 if texto_ocr:
                     texto_busqueda = f"{texto_busqueda} {texto_ocr}".strip()
                 if texto_busqueda:
@@ -441,15 +486,13 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                                         "es_pro": _es_pro((x_session_id or "").strip()),
                                         "entidades_extraidas": _obtener_entidades_extraidas(texto_para_early, entidades_override=entidades_imagen),
                                     }
-                # 2) Reconocimiento por imagen (API4AI): NO usamos el resultado para devolver vino.
-                # La API suele devolver siempre el mismo vino (ej. Changyu Icewine) para fotos distintas;
-                # como Changyu está en nuestra BD, antes devolvíamos ese vino para cualquier escaneo.
-                # Solo confiamos en OCR + nuestra BD o en texto/código que escriba el usuario.
-                sugerencias_ia = recognize_wine_from_image(contenido_imagen)
-                if sugerencias_ia and sugerencias_ia[0].get("confidence", 0) >= 0.5:
-                    nombre_ia = (sugerencias_ia[0].get("name") or "").strip()
-                    if nombre_ia:
-                        logger.info("[ESCANEAR] API4AI sugirió %s; no usamos para devolver (evitar mismo vino para todas las fotos).", nombre_ia[:50])
+                # 2) API4AI queda desactivada por defecto para evitar latencia extra sin impacto en la respuesta final.
+                if API4AI_HINTS_ENABLED:
+                    sugerencias_ia = recognize_wine_from_image(contenido_imagen)
+                    if sugerencias_ia and sugerencias_ia[0].get("confidence", 0) >= 0.5:
+                        nombre_ia = (sugerencias_ia[0].get("name") or "").strip()
+                        if nombre_ia:
+                            logger.info("[ESCANEAR] API4AI sugirió %s; solo se usa como pista diagnóstica.", nombre_ia[:50])
                 # OCR ya hecho arriba (1b) para priorizar nuestra BD (Viña Pedrosa, etc.)
         except Exception:
             imagen_enviada = True
@@ -496,6 +539,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                 "es_pro": es_pro,
                 "mensaje": mensaje_error,
                 "entidades_extraidas": {},
+                "diagnostico_imagen": calidad_imagen or {},
             }
         raise HTTPException(
             status_code=400,
@@ -628,6 +672,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                 else "No se pudo identificar la etiqueta con claridad. Prueba con otra foto más nítida o escribe el nombre del vino abajo."
             ),
             "entidades_extraidas": _obtener_entidades_extraidas(texto_limpio or texto_busqueda, entidades_override=entidades_imagen),
+            "diagnostico_imagen": calidad_imagen or {},
         }
 
     # Buscar en BD con texto normalizado para mejorar match (Viña Pedrosa, Protos, etc.)
@@ -727,7 +772,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
         "tipo": "tinto",
         "puntuacion": None,
         "precio_estimado": None,
-        "descripcion": f"No tenemos información de «{nombre_busqueda}» en nuestra base de datos. Puedes buscar en Vivino (como un buscador de vinos) o preguntar al sumiller: «¿Qué vino me recomiendas similar a {nombre_busqueda}?».",
+        "descripcion": f"No tenemos información de «{nombre_busqueda}» en nuestra base de datos. Puedes buscar en Vivino (como un buscador de vinos) o preguntar al experto en vinos: «¿Qué vino me recomiendas similar a {nombre_busqueda}?».",
         "notas_cata": "No disponibles.",
         "maridaje": "Información no disponible.",
         "_origen": "generico",
@@ -756,6 +801,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
         "busqueda_web_label": "Buscar en Vivino",
         "es_pro": es_pro,
         "entidades_extraidas": _obtener_entidades_extraidas(texto_para_buscar, entidades_override=entidades_imagen),
+        "diagnostico_imagen": calidad_imagen or {},
     }
 
 

@@ -42,7 +42,7 @@ def main():
         ("/", "Inicio"),
         ("/escanear", "Escanear"),
         ("/registrar", "Registrar vino"),
-        ("/preguntar", "Preguntar (sumiller)"),
+        ("/preguntar", "Preguntar (experto en vinos)"),
         ("/bodega", "Mi Bodega"),
         ("/planes", "Planes"),
         ("/vino/vega_sicilia_unico/comprar", "Comprar (ejemplo)"),
@@ -70,18 +70,18 @@ def main():
         print(f"  FAIL Historial escaneos: {e}")
         fallos += 1
 
-    # 3. Sumiller (parametro es "texto", no "pregunta")
-    print("\n3. Sumiller")
+    # 3. Experto en vinos (parametro es "texto", no "pregunta")
+    print("\n3. Experto en vinos")
     try:
         r = client.get(
             BASE + "/preguntar-sumiller",
             params={"texto": "Que vino va bien con carne?"},
             headers=HEADERS,
         )
-        if not ok("Preguntar sumiller (recomendacion)", r):
+        if not ok("Preguntar experto en vinos (recomendacion)", r):
             fallos += 1
     except Exception as e:
-        print(f"  FAIL Preguntar sumiller: {e}")
+        print(f"  FAIL Preguntar experto en vinos: {e}")
         fallos += 1
 
     # 4. Bodega API
@@ -204,7 +204,7 @@ def main():
 
     print("-" * 50)
     if fallos == 0:
-        print("Resultado: TODO OK. Revisa en el navegador los flujos que uses (escaneo con imagen, sumiller con contexto, etc.).")
+        print("Resultado: TODO OK. Revisa en el navegador los flujos que uses (escaneo con imagen, experto en vinos con contexto, etc.).")
     else:
         print(f"Resultado: {fallos} fallo(s). Comprueba que el servidor esta en marcha (uvicorn app:app --host 127.0.0.1 --port 8001).")
     return 0 if fallos == 0 else 1

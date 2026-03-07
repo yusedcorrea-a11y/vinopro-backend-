@@ -1,6 +1,6 @@
-# Agente local Sumiller - VinoPro
+# Agente local Experto en Vinos - VinoPro
 
-El **agente local** permite usar el Sumiller Virtual con IA generativa (OpenRouter, modelos gratuitos) o con respuestas rule-based **sin conexión a APIs de pago**, optimizado para hardware modesto (p. ej. Lenovo IdeaPad 3 Slim).
+El **agente local** permite usar el Experto en Vinos Virtual con IA generativa (OpenRouter, modelos gratuitos) o con respuestas rule-based **sin conexión a APIs de pago**, optimizado para hardware modesto (p. ej. Lenovo IdeaPad 3 Slim).
 
 ## Requisitos
 
@@ -90,7 +90,7 @@ Con **OpenRouter** puedes usar modelos gratuitos sin tarjeta:
 ## Uso en la interfaz
 
 1. Arranque el backend (`uvicorn` en 8001) y el agente (`install_local_agent.bat` o `python -m agente_local.server`).
-2. En **Preguntar al sumiller** elija **Modo: IA Local**.
+2. En **Preguntar al experto en vinos** elija **Modo: IA Local**.
 3. Indique un Consulta ID (obtenido al escanear un vino) y haga la pregunta.
 4. Se mostrará el tiempo de respuesta y si la respuesta viene de **IA Local** o **Nube** (fallback).
 

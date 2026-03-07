@@ -51,7 +51,11 @@
     "web": "Site",
     "distancia": "km",
     "lugares_encontrados": "Lugares encontrados",
-    "lista_lugares": "Lista de lugares"
+    "lista_lugares": "Lista de lugares",
+    "geo_no_disponible": "Não foi possível obter sua localização atual. Verifique o sinal GPS ou pesquise por cidade.",
+    "geo_timeout": "A localização demorou demais. Tente novamente ou pesquise por cidade.",
+    "error_init": "Não foi possível inicializar o mapa. Recarregue a página.",
+    "sin_destacados": "Não há lugares recomendados no momento."
   },
   "error": {
     "nombre_corto": "O nome deve ter pelo menos 3 caracteres.",
@@ -65,7 +69,7 @@
     "registros_hoy": "Hoje adicionou {n} de {max} garrafas."
   },
   "common": {
-    "tagline": "Sommelier Virtual",
+    "tagline": "Especialista em Vinhos Virtual",
     "modo_oscuro": "Modo escuro",
     "modo_claro": "Modo claro",
     "seleccionar": "Selecionar",
@@ -75,7 +79,9 @@
     "cerrar": "Fechar",
     "comprar_este_vino": "Comprar este vinho"
   },
-  "inicio": { "title": "VINO PRO IA - Seu sommelier inteligente" },
+  "inicio": {
+    "title": "VINO PRO IA - Seu especialista em vinhos inteligente"
+  },
   "escanear": {
     "title": "Escanear um rótulo",
     "subtitle": "Envie uma foto e descubra tudo sobre esse vinho.",
@@ -123,8 +129,8 @@
     "no_resultados_premium_cta": "Este vinho não está na nossa base de dados. Passe a Premium para o registar e oferecer a outros."
   },
   "preguntar": {
-    "title": "Pergunte ao sommelier",
-    "subtitle_nube": "No modo Nuvem pode perguntar sem escanear: harmonizações, recomendações ou perguntas de seguimento. Com ID de Consulta (após escanear) o sommelier responde sobre esse vinho. Escolha o seu perfil.",
+    "title": "Pergunte ao especialista em vinhos",
+    "subtitle_nube": "No modo Nuvem pode perguntar sem escanear: harmonizações, recomendações ou perguntas de seguimento. Com ID de Consulta (após escanear) o especialista em vinhos responde sobre esse vinho. Escolha o seu perfil.",
     "modo": "Modo:",
     "modo_local": "IA Local 🖥️",
     "modo_nube": "Nuvem ☁️",
@@ -159,13 +165,13 @@
   },
   "dashboard": {
     "title": "Big Data Vinícola",
-    "subtitle": "Tendências de pesquisas, digitalizações por país e perguntas mais frequentes ao sommelier (últimos 30 dias).",
+    "subtitle": "Tendências de pesquisas, digitalizações por país e perguntas mais frequentes ao especialista em vinhos (últimos 30 dias).",
     "busquedas": "Pesquisas",
     "escaneos": "Digitalizações",
-    "preguntas_sumiller": "Perguntas ao sommelier",
+    "preguntas_sumiller": "Perguntas ao especialista em vinhos",
     "tendencias": "Tendências: o que mais se procura",
     "por_pais": "Estatísticas por país",
-    "preguntas_frecuentes": "Perguntas mais frequentes ao sommelier"
+    "preguntas_frecuentes": "Perguntas mais frequentes ao especialista em vinhos"
   },
   "adaptador": {
     "title": "Adaptador para Restaurantes",
@@ -268,7 +274,7 @@
     "boton_actual": "Plano atual",
     "boton_contactar": "Contactar",
     "mas_popular": "MAIS POPULAR",
-    "caract_escaneo": "Digitalização e sommelier",
+    "caract_escaneo": "Digitalização e especialista em vinhos",
     "caract_bodega": "Minha Adega (limite 50)",
     "caract_bodega_pro": "Minha Adega ilimitada",
     "caract_registrar_raros": "Registe vinhos que não estejam na base e ofereça-os a outros",

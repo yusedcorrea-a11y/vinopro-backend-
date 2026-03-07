@@ -15,8 +15,8 @@ El CSS está configurado para usar estas imágenes. Si no existen, se verá el c
 - **Modo oscuro:** `vino-pro-ia-fondo-planes-oscuro.jpg` — Hombre en bodega con iluminación tenue, junto a barrica, copa de vino y teléfono con opciones. Ambiente nocturno elegante.
 
 ## Página Adaptador (restaurantes)
-- **Modo claro:** `vino-pro-ia-fondo-adaptador-claro.jpg` — La Sumiller: mujer sumiller en restaurante de alta gama, traje profesional, cerca de barra o bodega; al fondo camarero lleva vino a la mesa. Iluminación cálida, ambiente sofisticado.
-- **Modo oscuro:** `vino-pro-ia-fondo-adaptador-oscuro.jpg` — El Sumiller: hombre sumiller en restaurante elegante con luz tenue, chaqueta profesional, junto a bodega o estantería de vinos; al fondo camarero sirve vino a mesa con velas. Ambiente nocturno, tonos cálidos, elegancia.
+- **Modo claro:** `vino-pro-ia-fondo-adaptador-claro.jpg` — La Experto en Vinos: mujer experto en vinos en restaurante de alta gama, traje profesional, cerca de barra o bodega; al fondo camarero lleva vino a la mesa. Iluminación cálida, ambiente sofisticado.
+- **Modo oscuro:** `vino-pro-ia-fondo-adaptador-oscuro.jpg` — El Experto en Vinos: hombre experto en vinos en restaurante elegante con luz tenue, chaqueta profesional, junto a bodega o estantería de vinos; al fondo camarero sirve vino a mesa con velas. Ambiente nocturno, tonos cálidos, elegancia.
 
 Puedes generarlas con la herramienta de imágenes del proyecto o añadir aquí tus propias fotos con estos nombres.
 

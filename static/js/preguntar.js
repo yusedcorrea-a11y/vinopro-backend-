@@ -1,5 +1,5 @@
 /**
- * Preguntar al sumiller: formulario, voz, historial y respuesta.
+ * Preguntar al experto en vinos: formulario, voz, historial y respuesta.
  * Requiere: app.js (getSessionId), DOM con formPregunta, consulta_id, texto, etc.
  */
 (function() {

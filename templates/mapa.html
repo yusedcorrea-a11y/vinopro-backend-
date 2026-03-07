@@ -23,6 +23,23 @@
     .mapa-controls > * { width: 100%; }
     .mapa-controls input { padding: 0.65rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(107,45,60,0.2); min-width: 200px; }
     .mapa-controls .btn { padding: 0.65rem 1rem; }
+    .btn-loading { display: inline-flex; align-items: center; gap: 0.45rem; }
+    .btn-spinner {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.45);
+      border-top-color: rgba(255, 255, 255, 0.95);
+      animation: mapa-spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+    .btn-outline .btn-spinner {
+      border-color: rgba(107, 45, 60, 0.22);
+      border-top-color: rgba(107, 45, 60, 0.95);
+    }
+    @keyframes mapa-spin {
+      to { transform: rotate(360deg); }
+    }
     .mapa-controls .mapa-select-radio { padding: 0.65rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(107,45,60,0.2); background: rgba(255,255,255,0.9); }
     .mapa-guide-tabs { display: flex; gap: 0.6rem; margin-top: 0.25rem; }
     .mapa-guide-tab { flex: 1; border-radius: 999px; border: 1px solid rgba(107,45,60,0.2); background: rgba(255,255,255,0.9); color: var(--burdeos); padding: 0.65rem 0.8rem; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s ease; }
@@ -108,6 +125,13 @@
     data-text-llamar="{{ t('geolocalizacion.llamar') }}"
     data-text-web="{{ t('geolocalizacion.web') }}"
     data-text-distancia="{{ t('geolocalizacion.distancia') }}"
+    data-text-cargando-ubicacion="{{ t('geolocalizacion.cargando_ubicacion') }}"
+    data-text-cargando-busqueda="{{ t('geolocalizacion.cargando_busqueda') }}"
+    data-text-no-https="{{ t('geolocalizacion.no_https') }}"
+    data-text-geo-no-disponible="{{ t('geolocalizacion.geo_no_disponible') }}"
+    data-text-geo-timeout="{{ t('geolocalizacion.geo_timeout') }}"
+    data-text-error-init="{{ t('geolocalizacion.error_init') }}"
+    data-text-sin-destacados="{{ t('geolocalizacion.sin_destacados') }}"
   ></div>
 
     <div class="mapa-mapa-wrap">

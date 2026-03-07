@@ -40,7 +40,7 @@
     var html = '<h3>No pudimos leer la etiqueta</h3>';
     html += '<p class="aviso-no-reconocido">' + escapeHtml(mensaje) + '</p>';
     html += '<p>Prueba con otra foto más nítida o <strong>escribe el nombre del vino</strong> en el cuadro de texto de arriba y pulsa Escanear.</p>';
-    html += '<p class="premium-sutil">Con la opción gratuita ya tienes escaneo, sumiller y bodega. Si te pasas a Premium podrás registrar cualquier vino y ofrecerlo a otros. <a href="/planes">Ver planes</a></p>';
+    html += '<p class="premium-sutil">Con la opción gratuita ya tienes escaneo, experto en vinos y bodega. Si te pasas a Premium podrás registrar cualquier vino y ofrecerlo a otros. <a href="/planes">Ver planes</a></p>';
     div.innerHTML = html;
     return div;
   }
@@ -74,7 +74,7 @@
       html += '<p style="margin-top:0.5rem"><a href="#" class="btn btn-dorado" id="btnRegistrarEste">Registrar este vino</a></p>';
     }
     if (!enBd) {
-      html += '<p class="premium-sutil">Con la opción gratuita ya tienes escaneo, sumiller y bodega. Si te pasas a Premium podrás registrar cualquier vino y ofrecerlo a otros. <a href="/planes">Ver planes</a></p>';
+      html += '<p class="premium-sutil">Con la opción gratuita ya tienes escaneo, experto en vinos y bodega. Si te pasas a Premium podrás registrar cualquier vino y ofrecerlo a otros. <a href="/planes">Ver planes</a></p>';
     }
     div.innerHTML = html;
     var btnPdf = div.querySelector('#btnPdfCata');
@@ -117,6 +117,8 @@
   var MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024;
   var FETCH_TIMEOUT_MS = 60000;
   var SUBMIT_DEBOUNCE_MS = 1200;
+  var MAX_UPLOAD_SIDE = 1600;
+  var JPEG_QUALITY = 0.86;
   var isSubmitting = false;
   var lastSubmitAt = 0;
   var submitBtn = form.querySelector('button[type="submit"]');
@@ -134,6 +136,67 @@
     if (now - lastSubmitAt < SUBMIT_DEBOUNCE_MS) return false;
     lastSubmitAt = now;
     return true;
+  }
+
+  function resizeDimensions(width, height, maxSide) {
+    if (!width || !height || Math.max(width, height) <= maxSide) {
+      return { width: width, height: height };
+    }
+    var ratio = maxSide / Math.max(width, height);
+    return {
+      width: Math.round(width * ratio),
+      height: Math.round(height * ratio)
+    };
+  }
+
+  function compressImageFile(file) {
+    return new Promise(function(resolve) {
+      if (!file || !file.type || file.type.indexOf('image/') !== 0) {
+        resolve(file);
+        return;
+      }
+      var reader = new FileReader();
+      reader.onerror = function() { resolve(file); };
+      reader.onload = function() {
+        var img = new Image();
+        img.onerror = function() { resolve(file); };
+        img.onload = function() {
+          var dims = resizeDimensions(img.width, img.height, MAX_UPLOAD_SIDE);
+          var canvas = document.createElement('canvas');
+          canvas.width = dims.width;
+          canvas.height = dims.height;
+          var ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve(file);
+            return;
+          }
+          ctx.drawImage(img, 0, 0, dims.width, dims.height);
+          canvas.toBlob(function(blob) {
+            if (!blob) {
+              resolve(file);
+              return;
+            }
+            var compressed = new File([blob], (file.name || 'captura').replace(/\.\w+$/, '') + '.jpg', {
+              type: 'image/jpeg'
+            });
+            resolve(compressed.size < file.size ? compressed : file);
+          }, 'image/jpeg', JPEG_QUALITY);
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function buildFormData(imagen, texto, codigo_barras) {
+    var formData = new FormData();
+    if (imagen) {
+      var processedImage = await compressImageFile(imagen);
+      formData.append('imagen', processedImage, processedImage.name || 'captura.jpg');
+    }
+    if (texto) formData.append('texto', texto);
+    if (codigo_barras) formData.append('codigo_barras', codigo_barras);
+    return formData;
   }
 
   form.addEventListener('submit', async function(e) {
@@ -161,11 +224,8 @@
     }
     setSubmittingState(true);
     cargando.classList.remove('hidden');
-    const formData = new FormData();
-    if (imagen) formData.append('imagen', imagen);
-    if (texto) formData.append('texto', texto);
-    if (codigo_barras) formData.append('codigo_barras', codigo_barras);
     try {
+      const formData = await buildFormData(imagen, texto, codigo_barras);
       const opts = { method: 'POST', body: formData };
       if (typeof window.getSessionId === 'function') {
         var sid = window.getSessionId();
@@ -308,10 +368,11 @@
       if (isSubmitting) return;
       if (!cameraStream || !cameraPreview.videoWidth) return;
       var canvas = document.createElement('canvas');
-      canvas.width = cameraPreview.videoWidth;
-      canvas.height = cameraPreview.videoHeight;
+      var dims = resizeDimensions(cameraPreview.videoWidth, cameraPreview.videoHeight, MAX_UPLOAD_SIDE);
+      canvas.width = dims.width;
+      canvas.height = dims.height;
       var ctx = canvas.getContext('2d');
-      ctx.drawImage(cameraPreview, 0, 0);
+      ctx.drawImage(cameraPreview, 0, 0, dims.width, dims.height);
       canvas.toBlob(function(blob) {
         if (!blob) return;
         cerrarCamara();

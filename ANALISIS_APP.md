@@ -59,12 +59,12 @@ No se usan en las rutas actuales. Puedes borrarlos o moverlos a una carpeta `tem
 
 ## 3. Comprobaciones realizadas (sin problemas)
 
-- **Rutas:** Todos los routers están incluidos en `app.py` (escaneo, sumiller, bodega con prefix `/api`, analytics, informes, adaptador con prefix `/api`, comprar, planes, pagos).
+- **Rutas:** Todos los routers están incluidos en `app.py` (escaneo, experto en vinos, bodega con prefix `/api`, analytics, informes, adaptador con prefix `/api`, comprar, planes, pagos).
 - **GET /historial-escaneos:** Definido en `routes/escaneo.py`; `preguntar.html` lo llama con `X-Session-ID`. OK.
 - **Bodega API:** Las llamadas desde `bodega.html` y `registrar.html` usan `/api/bodega/...` correctamente (router con prefix `/api`).
 - **Session ID:** `static/app.js` define `window.getSessionId()`; las páginas que envían `X-Session-ID` (bodega, escanear, preguntar, registrar, planes) pueden usarlo. La clave en `localStorage` es `vino_pro_session_id`.
 - **Comprar:** `comprar_vino.html` extiende `base.html` y usa `t()` para i18n. Coherente con el resto.
-- **Consultas de escaneo:** Escaneo guarda `{ "vino", "key" }`; sumiller y `api_preguntar_local` desempaquetan bien; `api_vino_por_consulta` ya devuelve solo el vino (corregido arriba).
+- **Consultas de escaneo:** Escaneo guarda `{ "vino", "key" }`; experto en vinos y `api_preguntar_local` desempaquetan bien; `api_vino_por_consulta` ya devuelve solo el vino (corregido arriba).
 
 ---
 
@@ -75,7 +75,7 @@ No se usan en las rutas actuales. Puedes borrarlos o moverlos a una carpeta `tem
 | Páginas    | `/`, `/escanear`, `/registrar`, `/preguntar`, `/bodega`, `/dashboard`, `/adaptador`, `/planes`, `/pago-exitoso`, `/pago-cancelado`, `/vino/{id}/comprar` |
 | API bodega | `/api/bodega`, `/api/bodega/registros-hoy`, `/api/bodega/botellas`, PUT/DELETE botellas, `/api/bodega/alertas`, `/api/bodega/valoracion`, `/api/bodega/stock` |
 | Escaneo    | POST `/escanear`, POST `/registrar-vino`, GET `/historial-escaneos` |
-| Sumiller   | GET `/preguntar-sumiller`, POST `/api/preguntar-local` (en app.py) |
+| Experto en Vinos   | GET `/preguntar-sumiller`, POST `/api/preguntar-local` (en app.py) |
 | Pagos      | POST `/crear-checkout-session`, GET `/pago-exitoso`, GET `/pago-cancelado`, POST `/webhook-stripe` |
 | Otros      | `/api/status`, `/api/vino-por-consulta`, `/api/check-limit`, `/analytics/*`, `/informes/*`, `/api/token`, `/api/config`, POST `/analyze/text`, GET `/vinos`, GET `/buscar` |
 

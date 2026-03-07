@@ -1,5 +1,5 @@
 """
-Endpoint del sumiller virtual: responde preguntas sobre el vino escaneado
+Endpoint del experto en vinos virtual: responde preguntas sobre el vino escaneado
 o preguntas generales (maridajes, recomendaciones) usando la base de 539 vinos.
 Mantiene contexto de las últimas 3 preguntas por sesión.
 """
@@ -16,7 +16,7 @@ from services.ocr_normalizer import limpiar as normalizar_ocr
 from services import enlaces_service as enlaces_svc
 from routes.escaneo import _guardar_vino_consulta
 
-router = APIRouter(prefix="", tags=["Sumiller"])
+router = APIRouter(prefix="", tags=["Experto en Vinos"])
 
 MAX_CONTEXTO = 3
 
@@ -178,7 +178,7 @@ def _maridaje_por_tipo(tipo: str) -> str:
 
 
 def _construir_ficha_respuesta(vino: dict, key_used: str | None) -> dict:
-    """Construye la respuesta estándar de sumiller-ficha a partir de un dict vino."""
+    """Construye la respuesta estándar de experto-en-vinos-ficha a partir de un dict vino."""
     nombre = (vino.get("nombre") or "").strip() or "Sin nombre"
     info_basica = {
         "nombre": nombre,
@@ -292,7 +292,7 @@ async def preguntar_sumiller(
     x_session_id: str | None = Header(None, alias="X-Session-ID"),
 ):
     """
-    Pregunta al sumiller virtual.
+    Pregunta al experto en vinos virtual.
     - Con consulta_id o vino_key: responde sobre ese vino (rule-based).
     - Sin ellos: responde con maridajes o recomendaciones de la base de 539 vinos,
       y usa el contexto de las últimas 3 preguntas (X-Session-ID) para "Y de esos, ¿cuál...?"
@@ -403,7 +403,7 @@ async def preguntar_sumiller(
         raise
     except Exception as e:
         import traceback
-        print("[SUMILLER] Error en preguntar_sumiller:", e)
+        print("[EXPERTO_EN_VINOS] Error en preguntar_sumiller:", e)
         traceback.print_exc()
         # Incluir error real en respuesta para depurar (ver en pantalla qué falla)
         err_msg = str(e)

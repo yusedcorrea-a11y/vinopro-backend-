@@ -51,7 +51,11 @@
     "web": "Site web",
     "distancia": "km",
     "lugares_encontrados": "Lieux trouvés",
-    "lista_lugares": "Liste des lieux"
+    "lista_lugares": "Liste des lieux",
+    "geo_no_disponible": "Impossible d'obtenir votre position actuelle. Vérifiez le signal GPS ou recherchez par ville.",
+    "geo_timeout": "La géolocalisation a pris trop de temps. Réessayez ou recherchez par ville.",
+    "error_init": "Impossible d'initialiser la carte. Rechargez la page.",
+    "sin_destacados": "Aucun lieu recommandé pour le moment."
   },
   "error": {
     "nombre_corto": "Le nom doit contenir au moins 3 caractères.",
@@ -65,7 +69,7 @@
     "registros_hoy": "Aujourd'hui vous avez ajouté {n} sur {max} bouteilles."
   },
   "common": {
-    "tagline": "Sommelier Virtuel",
+    "tagline": "Expert en Vins Virtuel",
     "modo_oscuro": "Mode sombre",
     "modo_claro": "Mode clair",
     "seleccionar": "Sélectionner",
@@ -75,7 +79,9 @@
     "cerrar": "Fermer",
     "comprar_este_vino": "Acheter ce vin"
   },
-  "inicio": { "title": "VINO PRO IA - Votre sommelier intelligent" },
+  "inicio": {
+    "title": "VINO PRO IA - Votre expert en vins intelligent"
+  },
   "escanear": {
     "title": "Scanner une étiquette",
     "subtitle": "Téléchargez une photo et découvrez tout sur ce vin.",
@@ -123,8 +129,8 @@
     "no_resultados_premium_cta": "Ce vin n'est pas dans notre base. Passez à Premium pour l'enregistrer et le proposer aux autres."
   },
   "preguntar": {
-    "title": "Demander au sommelier",
-    "subtitle_nube": "En mode Nuage vous pouvez poser des questions sans scanner : accords, recommandations ou suivi. Avec l'ID de consultation (après scan) le sommelier répond sur ce vin. Choisissez votre profil.",
+    "title": "Demander à l'expert en vins",
+    "subtitle_nube": "En mode Nuage vous pouvez poser des questions sans scanner : accords, recommandations ou suivi. Avec l'ID de consultation (après scan) l'expert en vins répond sur ce vin. Choisissez votre profil.",
     "modo": "Mode :",
     "modo_local": "IA locale 🖥️",
     "modo_nube": "Nuage ☁️",
@@ -159,13 +165,13 @@
   },
   "dashboard": {
     "title": "Big Data Vinicole",
-    "subtitle": "Tendances des recherches, scans par pays et questions les plus fréquentes au sommelier (30 derniers jours).",
+    "subtitle": "Tendances des recherches, scans par pays et questions les plus fréquentes à l'expert en vins (30 derniers jours).",
     "busquedas": "Recherches",
     "escaneos": "Scans",
-    "preguntas_sumiller": "Questions sommelier",
+    "preguntas_sumiller": "Questions expert en vins",
     "tendencias": "Tendances : ce qui est le plus recherché",
     "por_pais": "Statistiques par pays",
-    "preguntas_frecuentes": "Questions les plus fréquentes au sommelier"
+    "preguntas_frecuentes": "Questions les plus fréquentes à l'expert en vins"
   },
   "adaptador": {
     "title": "Adaptateur pour Restaurants",
@@ -268,7 +274,7 @@
     "boton_actual": "Offre actuelle",
     "boton_contactar": "Contact",
     "mas_popular": "LE PLUS POPULAIRE",
-    "caract_escaneo": "Scan et sommelier",
+    "caract_escaneo": "Scan et expert en vins",
     "caract_bodega": "Ma Cave (limite 50)",
     "caract_bodega_pro": "Ma Cave illimitée",
     "caract_registrar_raros": "Enregistrez les vins absents de la base et proposez-les aux autres",

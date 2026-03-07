@@ -28,5 +28,5 @@ def por_pais(dias: int = 30):
 
 @router.get("/analytics/preguntas-frecuentes")
 def preguntas_frecuentes(limite: int = 15, dias: int = 30):
-    """Preguntas más repetidas al sumiller."""
+    """Preguntas más repetidas al experto en vinos."""
     return {"preguntas": svc.preguntas_frecuentes(limite=limite, dias=dias)}

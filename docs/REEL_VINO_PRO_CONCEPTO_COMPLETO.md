@@ -12,7 +12,7 @@ Estructura: **portada en modo oscuro** → escenas de cada función de la app, c
 "Vino Pro IA" (o solo el logo)
 
 **Voz (opcional en portada):**  
-*"Tu sommelier en el bolsillo."*  
+*"Tu wine expert en el bolsillo."*  
 O silencio y música; la voz empieza en la siguiente escena.
 
 ---
@@ -45,17 +45,17 @@ O silencio y música; la voz empieza en la siguiente escena.
 
 ---
 
-## Imagen 3 – Sumiller IA
+## Imagen 3 – Experto en Vinos IA
 
 **Argumento:** Puedes preguntar en lenguaje natural: “¿Qué vino para carne?”, “¿Qué marida con pescado?”. La IA te recomienda y explica.
 
-**Qué se ve:** Persona hablando o escribiendo al móvil; en pantalla un chat con una pregunta (ej. “¿Qué vino para carne?”) y la respuesta del sumiller IA.
+**Qué se ve:** Persona hablando o escribiendo al móvil; en pantalla un chat con una pregunta (ej. “¿Qué vino para carne?”) y la respuesta del experto en vinos IA.
 
 **Texto en pantalla:**  
-"Pregunta a nuestro sumiller IA – Recomendaciones personalizadas"
+"Pregunta a nuestro experto en vinos IA – Recomendaciones personalizadas"
 
 **Guion de voz:**  
-*"Pregunta lo que quieras: qué vino para carne, para pescado, para una ocasión especial. Nuestro sumiller IA te responde al momento."*
+*"Pregunta lo que quieras: qué vino para carne, para pescado, para una ocasión especial. Nuestro experto en vinos IA te responde al momento."*
 
 ---
 
@@ -75,15 +75,15 @@ O silencio y música; la voz empieza en la siguiente escena.
 
 ## Imagen 5 – Cierre y llamada a la acción
 
-**Argumento:** Cierre de marca: Vino Pro IA como tu sommelier personal, siempre disponible. Llamada a descargar.
+**Argumento:** Cierre de marca: Vino Pro IA como tu wine expert personal, siempre disponible. Llamada a descargar.
 
-**Qué se ve:** Logo o nombre “Vino Pro IA” grande, mensaje “Tu sommelier personal”, espacio para botón o texto “Descárgala ya” / “Enlace en bio”. Estilo burdeos/dorado, coherente con la portada.
+**Qué se ve:** Logo o nombre “Vino Pro IA” grande, mensaje “Tu wine expert personal”, espacio para botón o texto “Descárgala ya” / “Enlace en bio”. Estilo burdeos/dorado, coherente con la portada.
 
 **Texto en pantalla:**  
-"Vino Pro IA – Tu sommelier personal · Descárgala ya (enlace en bio)"
+"Vino Pro IA – Tu wine expert personal · Descárgala ya (enlace en bio)"
 
 **Guion de voz:**  
-*"Vino Pro IA. Tu sommelier personal. Descárgala ya; enlace en bio."*
+*"Vino Pro IA. Tu wine expert personal. Descárgala ya; enlace en bio."*
 
 ---
 
@@ -94,7 +94,7 @@ O silencio y música; la voz empieza en la siguiente escena.
 | 0 | Portada / modo oscuro (identidad de la app) |
 | 1 | Escaneo de etiqueta con la cámara |
 | 2 | Ficha del vino: nombre, bodega, puntuación, precio |
-| 3 | Sumiller IA: preguntas y recomendaciones por voz/chat |
+| 3 | Experto en Vinos IA: preguntas y recomendaciones por voz/chat |
 | 4 | Compra online + “¿Dónde tomarlo?” con guías por país (Repsol, Gambero Rosso, Guide Hachette, etc., 30+ países) |
 | 5 | Marca y CTA: descargar la app |
 
@@ -105,7 +105,7 @@ O silencio y música; la voz empieza en la siguiente escena.
 1. **Portada** (modo oscuro) – 2–3 s  
 2. **Escaneo** – 3 s  
 3. **Ficha del vino** – 3 s  
-4. **Sumiller IA** – 3 s  
+4. **Experto en Vinos IA** – 3 s  
 5. **Compra y guías** – 3 s  
 6. **Cierre** – 3 s  
 
@@ -120,7 +120,7 @@ Total aprox. 17–18 s (o recortas portada/cierre para dejarlo en 15 s).
 | `reel_portada_modo_oscuro.png` | Portada app modo oscuro |
 | `reel_escaneo_etiqueta.png` | Persona escaneando botella con el móvil |
 | `reel_ficha_vino.png` | Pantalla con ficha del vino |
-| `reel_sumiller_ia.png` | Persona hablando al móvil, chat sumiller IA |
+| `reel_sumiller_ia.png` | Persona hablando al móvil, chat experto en vinos IA |
 | `reel_compra_guias_paises.png` | Compra + Dónde tomarlo con mapa/países |
 | `reel_cierre_cta.png` | Cierre: logo y CTA |
 

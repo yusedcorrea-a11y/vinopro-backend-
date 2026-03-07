@@ -7,7 +7,7 @@
 
 ## 1. RESUMEN EJECUTIVO
 
-**VINO PRO IA** es un backend en **Python** basado en **FastAPI** que sirve una aplicación web de vinos: escaneo de etiquetas (OCR), sumiller virtual (rule-based + opcional IA local), Mi Bodega virtual, planes freemium/PRO, pagos con Stripe, comunidad (perfiles, feed, seguimiento), ofertas entre usuarios, geolocalización, QR personalizados y múltiples idiomas (i18n). Los datos se persisten en **archivos JSON** en la carpeta `data/`; no hay base de datos relacional. La versión declarada del API es **5.0**.
+**VINO PRO IA** es un backend en **Python** basado en **FastAPI** que sirve una aplicación web de vinos: escaneo de etiquetas (OCR), experto en vinos virtual (rule-based + opcional IA local), Mi Bodega virtual, planes freemium/PRO, pagos con Stripe, comunidad (perfiles, feed, seguimiento), ofertas entre usuarios, geolocalización, QR personalizados y múltiples idiomas (i18n). Los datos se persisten en **archivos JSON** en la carpeta `data/`; no hay base de datos relacional. La versión declarada del API es **5.0**.
 
 ---
 
@@ -35,8 +35,8 @@
 - **Entrada única:** `app.py` crea la instancia FastAPI, monta estáticos (`/static`), define directorio de plantillas y registra todos los routers.
 - **Estado en memoria:** `app.state.vinos_mundiales` (catálogo cargado al arranque), `app.state.consultas_escaneo` (consulta_id → { vino, key }), `app.state.historial_escaneos` y `app.state.historial_sumiller` por sesión.
 - **Persistencia:** Carpeta `data/`: JSON para vinos (por país/región), `registrados.json`, `bodegas.json`, `usuarios_pro.json`, `analytics.json`, `valoraciones.json`, `wishlist.json`, perfiles, seguidores, actividad, notificaciones, ofertas, contactos QR, notificaciones landing, etc.
-- **Rutas:** Organizadas por dominio en `routes/` (escaneo, sumiller, bodega, planes, pagos, ofertas, comunidad, geolocalización, analytics, informes, adaptador, comprar, valoraciones_wishlist, qr_personalizado). Bodega, ofertas y geolocalización usan prefijo `/api` al incluir el router.
-- **Servicios:** Lógica de negocio en `services/` (busqueda, ocr, api_externa, bodega, freemium, stripe, sumiller, recomendaciones, validación, límite diario, usuario, seguidores, feed, notificaciones, valoraciones, wishlist, ofertas, imagen, i18n, geolocalización, etc.).
+- **Rutas:** Organizadas por dominio en `routes/` (escaneo, experto en vinos, bodega, planes, pagos, ofertas, comunidad, geolocalización, analytics, informes, adaptador, comprar, valoraciones_wishlist, qr_personalizado). Bodega, ofertas y geolocalización usan prefijo `/api` al incluir el router.
+- **Servicios:** Lógica de negocio en `services/` (busqueda, ocr, api_externa, bodega, freemium, stripe, experto en vinos, recomendaciones, validación, límite diario, usuario, seguidores, feed, notificaciones, valoraciones, wishlist, ofertas, imagen, i18n, geolocalización, etc.).
 - **Modelos:** `models/` con dataclasses (comunidad: PerfilUsuario, ValoracionPublica, etc.), y esquemas Pydantic en las propias rutas (BotellaCreate, VinoRegistro, etc.).
 
 ---
@@ -52,7 +52,7 @@
 ## 5. IDENTIFICACIÓN Y SESIÓN
 
 - **Sin login tradicional:** No hay usuarios con email/contraseña. La identificación es por **X-Session-ID** (header), generado en el front (por ejemplo UUID en `localStorage` como `vino_pro_session_id`).
-- **Uso:** Bodega, escaneo (historial), sumiller (contexto), planes, pagos, comunidad, ofertas, valoraciones, wishlist y límite diario se apoyan en este session_id.
+- **Uso:** Bodega, escaneo (historial), experto en vinos (contexto), planes, pagos, comunidad, ofertas, valoraciones, wishlist y límite diario se apoyan en este session_id.
 - **PRO:** Lista en `data/usuarios_pro.json` (`pro_users`: array de session_id). Stripe webhook, al completar checkout, añade el `client_reference_id` (session_id) a esa lista.
 
 ---
@@ -64,7 +64,7 @@
 - **POST /registrar-vino:** Alta de vino en `registrados.json` con validación (validacion_service) y límite diario (limite_diario_service); requiere X-Session-ID para límite.
 - **GET /historial-escaneos:** Historial de escaneos del usuario (X-Session-ID), último N.
 
-### 6.2 Sumiller virtual
+### 6.2 Experto en Vinos virtual
 - **GET /preguntar-sumiller:** Con `consulta_id` o `vino_key` responde sobre ese vino (rule-based: maridaje, descripción, notas, bodega, región, tipo, precio, puntuación) con perfil principiante/aficionado/profesional. Sin vino: maridajes, recomendaciones, “de esos cuál…”, navegación (mapa, bodega, planes, adaptador, menú, idioma). Mantiene contexto de últimas 3 preguntas por session_id para “de esos”.
 - **POST /api/preguntar-local:** Solo PRO. Llama al agente local (http://127.0.0.1:8080/skill/sumiller); si falla, fallback a la misma lógica rule-based.
 - **POST /api/feedback-vino:** Registra like/dislike para recomendaciones personalizadas.
@@ -174,8 +174,8 @@
 | POST | /escanear | Escanear etiqueta |
 | POST | /registrar-vino | Registrar vino |
 | GET | /historial-escaneos | Historial escaneos |
-| GET | /preguntar-sumiller | Sumiller (rule-based) |
-| POST | /api/preguntar-local | Sumiller IA local (PRO) |
+| GET | /preguntar-sumiller | Experto en Vinos (rule-based) |
+| POST | /api/preguntar-local | Experto en Vinos IA local (PRO) |
 | POST | /api/feedback-vino | Feedback vino |
 | GET | /api/vino-por-consulta | Vino por consulta_id (agente) |
 | POST | /analyze/text | Análisis por texto |

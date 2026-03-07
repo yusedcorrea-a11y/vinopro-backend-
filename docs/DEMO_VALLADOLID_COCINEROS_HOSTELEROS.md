@@ -22,7 +22,7 @@ Tu app ya está preparada para impresionar a profesionales del sector en Vallado
    Abre `http://127.0.0.1:8001` y prueba:
    - Buscar **"Vega Sicilia"**, **"Ribera del Duero"**, **"Verdejo Rueda"**, **"Pingus"**, **"Belondrade"**, **"Numanthia"**, **"Cigales"**.
    - Escanear una etiqueta (si Tesseract está instalado).
-   - Preguntar al sumiller por un vino para cordero o para pescado.
+   - Preguntar al experto en vinos por un vino para cordero o para pescado.
 
 4. **Si quieres enseñarla en el móvil**  
    Ejecuta `.\scripts\iniciar_ngrok.ps1` y comparte el enlace (ver `docs/USO_NGROK.md`).
@@ -38,7 +38,7 @@ Tu app ya está preparada para impresionar a profesionales del sector en Vallado
 - **Escaneo de etiqueta**  
   Escanear una botella (p. ej. un Ribera o un Verdejo) y que vean el resultado al momento.
 
-- **Sumiller virtual**  
+- **Experto en Vinos virtual**  
   Preguntas del tipo: "¿Qué vino me recomiendas para un lechazo asado?" o "¿Un blanco para mariscos?".
 
 - **Detalle del vino**  
@@ -48,7 +48,7 @@ Tu app ya está preparada para impresionar a profesionales del sector en Vallado
 
 ## Mensaje clave
 
-"Con Vino Pro tenéis en un solo sitio un catálogo serio de vinos, con Ribera, Rueda, Toro, Cigales y el resto de España, descripciones y maridajes útiles para carta y sala, escaneo de etiqueta y un sumiller virtual para recomendar. Pensado para hostelería y cocina."
+"Con Vino Pro tenéis en un solo sitio un catálogo serio de vinos, con Ribera, Rueda, Toro, Cigales y el resto de España, descripciones y maridajes útiles para carta y sala, escaneo de etiqueta y un experto en vinos virtual para recomendar. Pensado para hostelería y cocina."
 
 ---
 

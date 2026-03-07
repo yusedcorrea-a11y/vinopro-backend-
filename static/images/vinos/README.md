@@ -1,6 +1,6 @@
 # Imágenes de vinos
 
-Coloca aquí imágenes genéricas por tipo (JPG) para que el sumiller las muestre:
+Coloca aquí imágenes genéricas por tipo (JPG) para que el experto en vinos las muestre:
 
 - **tinto.jpg** – vino tinto genérico  
 - **blanco.jpg** – vino blanco genérico  

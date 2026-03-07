@@ -16,12 +16,12 @@ logger = logging.getLogger(__name__)
 
 MODELO_GEMINI = os.environ.get("VINO_VISION_MODEL", "gemini-2.0-flash").strip() or "gemini-2.0-flash"
 MAX_IMAGE_SIDE_VISION = 1280
-MAX_OUTPUT_TOKENS_VISION = 150
+MAX_OUTPUT_TOKENS_VISION = 280
 CACHE_TTL_SECONDS = 600
 VISION_LIMIT_PER_MINUTE = 3
 VISION_LIMIT_PER_HOUR = 10
 VISION_COOLDOWN_429_SECONDS = 60
-RETRY_DELAYS_SECONDS = (1.0, 2.0)
+RETRY_DELAYS_SECONDS = (0.5, 1.0)
 
 _VISION_CACHE: dict[str, dict] = {}
 _VISION_CALLS_BY_SESSION: dict[str, list[float]] = {}
@@ -33,11 +33,46 @@ ESQUEMA_ENTIDADES = {
     "añada": None,
     "denominacion_origen": None,
     "variedad": None,
+    "tipo_vino": None,
+    "pais": None,
+    "crianza": None,
 }
 
-PROMPT_VISION = """Extrae SOLO este JSON de la etiqueta de vino:
-{"bodega": null, "nombre": null, "añada": null, "denominacion_origen": null, "variedad": null}
-Usa null si no estás seguro. Sin markdown ni texto extra."""
+PROMPT_VISION = """Analiza UNA etiqueta de vino y devuelve SOLO JSON válido, sin markdown ni texto extra.
+
+Reglas:
+- No inventes datos.
+- Usa null si no estás seguro.
+- Prioriza lo que realmente se ve en la etiqueta.
+- Si la identidad no es fiable, deja la ficha del experto en vinos en null.
+
+Devuelve exactamente este objeto:
+{
+  "texto_visible": [],
+  "confidence_global": 0.0,
+  "calidad_imagen": {
+    "baja_luz": false,
+    "reflejos": false,
+    "borrosa": false,
+    "texto_parcial": false
+  },
+  "entidades": {
+    "bodega": {"valor": null, "confianza": 0.0},
+    "nombre": {"valor": null, "confianza": 0.0},
+    "añada": {"valor": null, "confianza": 0.0},
+    "denominacion_origen": {"valor": null, "confianza": 0.0},
+    "variedad": {"valor": null, "confianza": 0.0},
+    "tipo_vino": {"valor": null, "confianza": 0.0},
+    "pais": {"valor": null, "confianza": 0.0},
+    "crianza": {"valor": null, "confianza": 0.0}
+  },
+  "ficha_sumiller": {
+    "notas_cata": null,
+    "maridaje": null,
+    "temperatura_servicio_c": null,
+    "potencial_guarda": null
+  }
+}"""
 
 
 def _limpiar_json_vision(texto: str) -> dict:
@@ -62,19 +97,28 @@ def _entidades_a_texto_busqueda(ent: dict) -> str:
     partes = []
     for k in ("nombre", "bodega", "denominacion_origen", "variedad"):
         v = ent.get(k)
+        if isinstance(v, dict):
+            v = v.get("valor")
         if v and isinstance(v, str) and v.strip():
             partes.append(v.strip())
-    if ent.get("añada"):
-        partes.append(str(ent["añada"]))
+    anada = ent.get("añada")
+    if isinstance(anada, dict):
+        anada = anada.get("valor")
+    if anada:
+        partes.append(str(anada))
     return " ".join(partes) if partes else ""
 
 
 def _normalizar_entidades_vision(ent: dict) -> dict:
     out = dict(ESQUEMA_ENTIDADES)
+    if ent.get("entidades") and isinstance(ent.get("entidades"), dict):
+        ent = ent.get("entidades") or {}
     for k in out:
         v = ent.get(k)
         if v is None:
             continue
+        if isinstance(v, dict):
+            v = v.get("valor")
         if k == "añada":
             if isinstance(v, int) and 1900 <= v <= 2030:
                 out[k] = v
@@ -86,7 +130,8 @@ def _normalizar_entidades_vision(ent: dict) -> dict:
                     if 1900 <= anio <= 2030:
                         out[k] = anio
         elif isinstance(v, str) and v.strip():
-            out[k] = v.strip()[:200] if k in ("bodega", "nombre") else v.strip()[:150]
+            max_len = 200 if k in ("bodega", "nombre") else 150
+            out[k] = v.strip()[:max_len]
     return out
 
 
@@ -231,7 +276,12 @@ def analizar_etiqueta_vision(imagen_bytes: bytes, session_key: str | None = None
             texto = _entidades_a_texto_busqueda(entidades)
             if not texto:
                 return None
-            result = {"texto": texto, "entidades": entidades, "origen": "vision"}
+            result = {
+                "texto": texto,
+                "entidades": entidades,
+                "origen": "vision",
+                "structured": entidades_raw if isinstance(entidades_raw, dict) else {},
+            }
             _VISION_CACHE[cache_key] = {"ts": now, "value": result}
             logger.info("[Vision] Gemini extrajo: %s", texto[:80])
             return result

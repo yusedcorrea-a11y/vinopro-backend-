@@ -1,6 +1,6 @@
 # Comercial Vino Pro IA – Guion y prompts para IA
 
-Objetivo: un comercial donde **se ve a gente usando cada función de la app** (escaneo, ficha del vino, sumiller IA, compra/guías, cierre). Así sabes qué pedirle a una IA de imágenes o de video.
+Objetivo: un comercial donde **se ve a gente usando cada función de la app** (escaneo, ficha del vino, experto en vinos IA, compra/guías, cierre). Así sabes qué pedirle a una IA de imágenes o de video.
 
 ---
 
@@ -10,9 +10,9 @@ Objetivo: un comercial donde **se ve a gente usando cada función de la app** (e
 |---|-------------------|----------------------|-----------------------------|
 | 1 | **Escaneo de etiqueta** | Abre la app y apunta la cámara a la etiqueta de una botella | Persona con móvil enfocando una botella; en el móvil se intuye escaneo/cámara |
 | 2 | **Ficha del vino** | Tras escanear, ve nombre, bodega, puntuación, precio | Pantalla del móvil con datos de un vino (nombre, estrellas, precio) bien visibles |
-| 3 | **Sumiller IA** | Escribe o habla una pregunta (ej. "¿Qué vino para carne?") | Persona hablando o escribiendo al móvil; en pantalla un chat o respuesta del sumiller |
+| 3 | **Experto en Vinos IA** | Escribe o habla una pregunta (ej. "¿Qué vino para carne?") | Persona hablando o escribiendo al móvil; en pantalla un chat o respuesta del experto en vinos |
 | 4 | **Compra y guías** | Ve enlaces de compra y "¿Dónde tomarlo?" por países | Móvil mostrando comprar + mapa/banderas o lista de países (ES, IT, FR, etc.) |
-| 5 | **Cierre / marca** | Descarga o recuerda la app | Logo "Vino Pro IA", mensaje "Tu sommelier personal", llamada a descargar |
+| 5 | **Cierre / marca** | Descarga o recuerda la app | Logo "Vino Pro IA", mensaje "Tu wine expert personal", llamada a descargar |
 
 ---
 
@@ -72,9 +72,9 @@ Woman showing her phone screen with wine details visible: wine name, winery, 5 s
 
 ---
 
-### ESCENA 3 – Sumiller IA (3 s)
+### ESCENA 3 – Experto en Vinos IA (3 s)
 
-**Función que se muestra:** Preguntar al sumiller IA (voz o chat).
+**Función que se muestra:** Preguntar al experto en vinos IA (voz o chat).
 
 **Qué pasa en la escena:**
 - Una persona **habla al móvil** o **escribe** en la pantalla (gesto de preguntar).
@@ -83,7 +83,7 @@ Woman showing her phone screen with wine details visible: wine name, winery, 5 s
 - Ambiente: bar de vinos, restaurante, o casa; ambiente relajado.
 
 **Texto en pantalla:**  
-"Pregunta a nuestro sumiller IA – ¿Qué vino para carne?"
+"Pregunta a nuestro experto en vinos IA – ¿Qué vino para carne?"
 
 **Prompt para IA de imagen:**
 ```
@@ -127,12 +127,12 @@ Smartphone in hand displaying app with buy button and map with flags of wine cou
 
 **Qué pasa en la escena:**
 - **Logo o nombre "Vino Pro IA"** bien visible (puede ser en pantalla del móvil o como gráfico).
-- Mensaje: **"Tu sommelier personal"**.
+- Mensaje: **"Tu wine expert personal"**.
 - Opcional: misma pareja del inicio brindando con vino (cierre emocional).
 - Texto final: **"Descárgala ya"** o "Enlace en bio".
 
 **Texto en pantalla:**  
-"Vino Pro IA · Tu sommelier personal – Descárgala ya (enlace en bio)"
+"Vino Pro IA · Tu wine expert personal – Descárgala ya (enlace en bio)"
 
 **Prompt para IA de imagen (solo ambiente; el texto lo añades tú después):**
 ```
@@ -141,7 +141,7 @@ Couple toasting with wine glasses at sunset, warm golden hour, romantic and prem
 
 **Prompt alternativo (pantalla de móvil con logo):**
 ```
-Smartphone screen showing app logo and tagline "Your personal sommelier", download button, dark elegant background, vertical 9:16.
+Smartphone screen showing app logo and tagline "Your personal wine expert", download button, dark elegant background, vertical 9:16.
 ```
 
 ---
@@ -174,7 +174,7 @@ Smartphone screen showing app logo and tagline "Your personal sommelier", downlo
 |--------|----------------------|
 | 1 | Person scans wine bottle label with phone camera in wine shop. |
 | 2 | Person shows phone screen with wine details: name, winery, stars, price. |
-| 3 | Person talking to phone, screen shows chat with question and AI sommelier reply. |
+| 3 | Person talking to phone, screen shows chat with question and AI wine expert reply. |
 | 4 | Hand holding phone with app showing "Buy" and "Where to drink" with country flags. |
 | 5 | Couple toasting with wine at sunset, or phone with "Vino Pro IA" logo and "Download". |
 

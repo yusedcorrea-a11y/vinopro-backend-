@@ -5,7 +5,7 @@
 ## Lo que ya tenemos hecho
 
 ### Backend y app web (vinoproia.com)
-- **Funcionalidad:** Escanear, registrar, sumiller, mi bodega, comprar (Amazon + tiendas locales), planes Gratis/PRO, Stripe, valoraciones, wishlist, mapa, comunidad (perfiles, feed, seguir), QR networking.
+- **Funcionalidad:** Escanear, registrar, experto en vinos, mi bodega, comprar (Amazon + tiendas locales), planes Gratis/PRO, Stripe, valoraciones, wishlist, mapa, comunidad (perfiles, feed, seguir), QR networking.
 - **Idiomas:** 14 (es, en, pt, fr, de, it, ar, ru, tr, zh, ja, ko, hi, he).
 - **Landing:** Logo, “Probar la app web”, “Próximamente en Google Play”, formulario “Avísame”.
 - **Privacidad:** Página `/privacidad` (política de privacidad) — **requerida para Google Play**.
@@ -30,7 +30,7 @@
 ### 2. Cuenta y ficha en Google Play
 - [ ] **Cuenta de desarrollador:** [Google Play Console](https://play.google.com/console) — pago único (~25 USD).
 - [ ] **Ficha de la aplicación:**
-  - Título: ej. “Vino Pro IA – Sumiller virtual”
+  - Título: ej. “Vino Pro IA – Experto en Vinos virtual”
   - Descripción corta y larga (qué hace la app, idiomas, planes).
   - **Icono 512×512** (PNG, sin transparencia).
   - **Gráfico de función** (feature graphic) 1024×500.

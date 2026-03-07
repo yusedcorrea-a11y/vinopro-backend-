@@ -23,7 +23,7 @@ Lista para revisar **cada acción** de la app y confirmar que funciona. Marca �
 | 1.1 | Inicio | `/` | Página de inicio carga, menú visible, selector de idioma | |
 | 1.2 | Escanear | `/escanear` | Página de escaneo (subir imagen / texto / código de barras) | |
 | 1.3 | Registrar vino | `/registrar` | Formulario de registro manual de vino | |
-| 1.4 | Preguntar (sumiller) | `/preguntar` | Página del sumiller IA (preguntas por texto/voz) | |
+| 1.4 | Preguntar (experto en vinos) | `/preguntar` | Página del experto en vinos IA (preguntas por texto/voz) | |
 | 1.5 | Mi Bodega | `/bodega` | Página de la bodega virtual | |
 | 1.6 | Planes | `/planes` | Página de planes Gratis/PRO y precio 4,99 €/mes | |
 | 1.7 | Comprar (ejemplo) | `/vino/vega_sicilia_unico/comprar` | Página de compra con pestañas y guía "¿Dónde tomarlo?" | |
@@ -43,7 +43,7 @@ Lista para revisar **cada acción** de la app y confirmar que funciona. Marca �
 
 ---
 
-## 3. Sumiller (preguntar)
+## 3. Experto en Vinos (preguntar)
 
 | # | Acción | Cómo probar | Qué comprobar | ✅ |
 |---|--------|-------------|----------------|---|

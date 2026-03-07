@@ -38,7 +38,7 @@ for f in Path(DATA_FOLDER).glob("*.json"):
 # Comprobar entradas no-dict (causa del error en producción si algún JSON no es catálogo)
 non_dict = [(k, type(v).__name__) for k, v in vinos.items() if not isinstance(v, dict)]
 if non_dict:
-    print(f"[!] Entradas que NO son dict (pueden romper sumiller): {non_dict[:10]}")
+    print(f"[!] Entradas que NO son dict (pueden romper experto en vinos): {non_dict[:10]}")
 
 print(f"[OK] Vinos cargados: {len(vinos)}")
 
@@ -65,7 +65,7 @@ texto = "hoy toca comida japonesa que vino pongo ?"
 perfil = "aficionado"
 x_session_id = "test-session-123"
 
-# Llamar a la lógica del sumiller (igual que el endpoint)
+# Llamar a la lógica del experto en vinos (igual que el endpoint)
 from routes.sumiller import _get_vinos, _preguntar_sumiller_general
 
 vinos_dict = _get_vinos(request)
@@ -73,7 +73,7 @@ if not isinstance(vinos_dict, dict):
     vinos_dict = {}
 texto_clean = (texto or "").strip()
 
-print("[1] Llamando _preguntar_sumiller_general...")
+print("[1] Llamando _preguntar_sumiller_general (experto en vinos)...")
 try:
     out = _preguntar_sumiller_general(request, vinos_dict, texto_clean, perfil, x_session_id)
     print("[OK] Respuesta:", out.get("respuesta", "")[:150] + "...")

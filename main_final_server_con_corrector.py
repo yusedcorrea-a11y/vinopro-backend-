@@ -1,4 +1,4 @@
-﻿from fastapi import FastAPI, Form
+from fastapi import FastAPI, Form
 import logging
 import time
 from llama_cpp import Llama
@@ -51,7 +51,7 @@ async def analyze_text(text: str = Form(...)):
     start = time.time()
     
     # Prompt optimizado - MÁS SIMPLE para TinyLlama
-    prompt = f"""Responde como sommelier experto EN ESPAÑOL.
+    prompt = f"""Responde como experto en vinos EN ESPAÑOL.
 
 Pregunta: {text}
 

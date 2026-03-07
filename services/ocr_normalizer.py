@@ -1,6 +1,6 @@
 """
 Normalizador de texto OCR: corrige errores típicos de lectura (Tesseract) en etiquetas
-para mejorar el match en BD y la experiencia con el sumiller.
+para mejorar el match en BD y la experiencia con el experto en vinos.
 """
 import re
 

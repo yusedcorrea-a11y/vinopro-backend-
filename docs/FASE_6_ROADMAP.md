@@ -23,7 +23,7 @@ Este documento describe el estado de la Fase 6 y el plan para las subfases **6A 
 
 - **Traducciones**: claves `pais_LB`, `pais_MA`, `pais_DZ`, `pais_TN`, `pais_IL` en los 14 idiomas (es, en, pt, fr, de, it, ar, ru, tr, zh, ja, ko, hi, he).
 
-- **Sumiller**: en `PAIS_REGION_PALABRAS` se añadieron Líbano, Marruecos, Argelia, Túnez e Israel para recomendaciones por país/región.
+- **Experto en Vinos**: en `PAIS_REGION_PALABRAS` se añadieron Líbano, Marruecos, Argelia, Túnez e Israel para recomendaciones por país/región.
 
 ---
 
@@ -42,7 +42,7 @@ Objetivo: app móvil iOS/Android que reutilice el backend actual.
 |-------|--------|--------|
 | 1 | Inicializar proyecto React Native (TypeScript) | `npx react-native init VinoProIA --template react-native-template-typescript` o Expo |
 | 2 | Configurar API base URL (env) y cliente HTTP (fetch/axios) | Apuntar a tu backend (ej. `https://api.vinopro.com` o IP local en dev) |
-| 3 | Pantalla Sumiller: chat + envío de pregunta + voz (opcional) | GET `/preguntar-sumiller?texto=...`, header `X-Session-ID` |
+| 3 | Pantalla Experto en Vinos: chat + envío de pregunta + voz (opcional) | GET `/preguntar-sumiller?texto=...`, header `X-Session-ID` |
 | 4 | Pantalla Escanear: cámara + subida de imagen o texto | POST a `/analyze/image` o `/analyze/text` según rutas actuales |
 | 5 | Pantalla Mapa / Lugares cercanos | Reutilizar lógica de geolocalización del backend |
 | 6 | Pantalla Mi Bodega | Endpoints de bodega existentes; auth/sesión según tu modelo |
@@ -54,7 +54,7 @@ Objetivo: app móvil iOS/Android que reutilice el backend actual.
 
 ### Endpoints del backend que la app puede usar
 
-- `GET /preguntar-sumiller?texto=...&perfil=...` – Sumiller (header `X-Session-ID`)
+- `GET /preguntar-sumiller?texto=...&perfil=...` – Experto en Vinos (header `X-Session-ID`)
 - `POST /api/feedback-vino` – Me gusta / No me gusta
 - `POST /analyze/image` o `/analyze/text` – Escaneo
 - Rutas de comprar, bodega, geolocalización, etc. (según documentación actual)
@@ -99,7 +99,7 @@ Implementar por capas en el **backend** primero; luego consumir desde web y/o ap
 - [ ] Los nuevos JSON (libano, marruecos, argelia, tunez, israel) se cargan al arrancar el backend y los vinos aparecen en búsquedas.
 - [ ] En “Comprar” / “Dónde tomarlo”, al detectar país LB, MA, DZ, TN, IL o RU se muestra la guía local correcta.
 - [ ] Las traducciones de países nuevos se muestran en el selector de país según idioma.
-- [ ] Preguntas al sumiller tipo “recomiéndame un vino libanés” o “israelí” devuelven vinos de los nuevos catálogos.
+- [ ] Preguntas al experto en vinos tipo “recomiéndame un vino libanés” o “israelí” devuelven vinos de los nuevos catálogos.
 
 ---
 

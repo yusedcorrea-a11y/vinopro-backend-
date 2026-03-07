@@ -16,8 +16,8 @@ Resumen básico de todo lo que hace la app (vinoproia.com). Para cuando el domin
 - Búsqueda previa para rellenar datos automáticamente si el vino existe.
 - Plan Premium: registrar vinos que no estén en la base y crear ofertas (foto + contacto) para que otros los compren.
 
-### 3. **Preguntar al sumiller**
-- Chat con el sumiller virtual: maridajes, recomendaciones por país o tipo de vino, preguntas sobre un vino escaneado.
+### 3. **Preguntar al experto en vinos**
+- Chat con el experto en vinos virtual: maridajes, recomendaciones por país o tipo de vino, preguntas sobre un vino escaneado.
 - Modo Nube (IA) y modo Local (opcional).
 - Perfiles: principiante, aficionado, profesional.
 - Posibilidad de preguntar por voz.
@@ -44,7 +44,7 @@ Resumen básico de todo lo que hace la app (vinoproia.com). Para cuando el domin
 - Ver ruta, llamar, web.
 
 ### 8. **Planes y pagos**
-- **Gratis:** escaneo, sumiller, bodega (50 vinos), informes PDF.
+- **Gratis:** escaneo, experto en vinos, bodega (50 vinos), informes PDF.
 - **PRO (4,99 €/mes):** bodega ilimitada, registrar vinos raros, ofertas con foto.
 - **Restaurante:** adaptador para conectar con sistemas de gestión (stock, webhooks).
 - Pagos con Stripe.
@@ -63,7 +63,7 @@ Resumen básico de todo lo que hace la app (vinoproia.com). Para cuando el domin
 ## Técnico / Backend
 
 - **Health check:** `/health` y `/ready` para monitoreo y despliegue.
-- **API REST** para escaneo, sumiller, bodega, comprar, planes, valoraciones, wishlist, ofertas.
+- **API REST** para escaneo, experto en vinos, bodega, comprar, planes, valoraciones, wishlist, ofertas.
 - **Base de datos:** catálogos de vinos en JSON (España, Francia, Italia, Argentina, Chile, Israel, Líbano, Marruecos, etc.) — más de 899 vinos.
 - **Email profesional:** guía para configurar hola@vinoproia.com (reenvío a Gmail vía Cloudflare).
 - **Monetización:** Amazon Associates por país; tiendas locales con afiliados en países sin Amazon (variables en .env).
@@ -73,4 +73,4 @@ Resumen básico de todo lo que hace la app (vinoproia.com). Para cuando el domin
 
 ## Resumen en una frase
 
-**VINO PRO IA** es una app web que permite escanear etiquetas de vino, preguntar al sumiller virtual, llevar una bodega personal, comprar con enlaces por país (Amazon y tiendas locales) y recibir recomendaciones, en 14 idiomas, con planes Gratis y PRO.
+**VINO PRO IA** es una app web que permite escanear etiquetas de vino, preguntar al experto en vinos virtual, llevar una bodega personal, comprar con enlaces por país (Amazon y tiendas locales) y recibir recomendaciones, en 14 idiomas, con planes Gratis y PRO.

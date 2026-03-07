@@ -19,8 +19,8 @@
   <meta name="twitter:title" content="VINO PRO IA - {{ t('common.tagline') }}">
   <meta name="twitter:description" content="{% block twitter_description %}Escanea, registra y pregunta sobre vinos. Tu experto en vinos con IA.{% endblock %}">
   <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
-  <link rel="stylesheet" href="/static/style.css">
-  <script src="/static/app.js"></script>
+  <link rel="stylesheet" href="/static/style.css?v=1.0.1">
+  <script src="/static/app.js?v=1.0.1"></script>
   {% block head %}{% endblock %}
 </head>
 <body class="{{ page_class }}">
@@ -197,7 +197,7 @@
       });
     })();
   </script>
-  <script src="/static/js/menu-secreto.js"></script>
+  <script src="/static/js/menu-secreto.js?v=1.0.1"></script>
   {% block scripts %}{% endblock %}
 
   <div id="chatbot-guia-mascot" class="chatbot-guia-mascot" role="button" tabindex="0" aria-label="Ayudante experto en vinos: arrastra para mover, doble toque para abrir la guía o doble clic para abrir el menú">
@@ -233,7 +233,7 @@
       </div>
     </div>
   </div>
-  <script src="/static/js/chatbot-guia.js"></script>
+  <script src="/static/js/chatbot-guia.js?v=1.0.1"></script>
   <script>
     (function() {
       var intro = document.getElementById('chatbot-guia-intro');

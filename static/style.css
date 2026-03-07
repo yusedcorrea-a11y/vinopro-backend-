@@ -43,9 +43,10 @@ body {
 
 /* Fondos por sección - Modo claro: viñedo espectacular; modo oscuro = bodega (más abajo) */
 body.page-inicio {
-  background: var(--crema) url('/static/images/vino-pro-ia-fondo-claro-espectacular.jpg') no-repeat fixed;
+  background: var(--negro) url('/static/images/vino-pro-ia-fondo-claro-espectacular.jpg') no-repeat fixed;
   background-size: cover;
-  background-position: center;
+  background-position: center 35%;
+  min-height: 100dvh;
 }
 /* Inicio: imagen full screen, barra abajo con glassmorphism */
 body.page-inicio main {
@@ -68,7 +69,7 @@ body.page-inicio main::before {
 .inicio-wrap {
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 56px);
+  min-height: calc(100dvh - 56px);
   width: 100%;
 }
 .inicio-spacer {
@@ -1903,9 +1904,10 @@ textarea {
   color: var(--texto);
 }
 [data-theme="dark"] body[class^="page-"] {
-  background: var(--crema) url('/static/images/vino-pro-ia-fondo-oscuro-espectacular.jpg') no-repeat fixed;
+  background: var(--negro) url('/static/images/vino-pro-ia-fondo-oscuro-espectacular.jpg') no-repeat fixed;
   background-size: cover;
-  background-position: center;
+  background-position: center 35%;
+  min-height: 100dvh;
 }
 [data-theme="dark"] body.page-escanear {
   background-image: url('/static/images/vino-pro-ia-fondo-escanear-oscuro.jpg');
@@ -2757,9 +2759,12 @@ body.page-inicio .chatbot-guia-mascot:hover {
   body.page-adaptador,
   body.page-planes,
   body.page-comprar {
-    background-size: contain !important;
+    /* fixed es buggy en Android/iOS → scroll llena la pantalla correctamente */
+    background-attachment: scroll !important;
+    background-size: cover !important;
     background-position: center center !important;
     background-color: #1a1512;
+    min-height: 100dvh;
   }
   [data-theme="dark"] body.page-inicio,
   [data-theme="dark"] body.page-escanear,
@@ -2770,9 +2775,11 @@ body.page-inicio .chatbot-guia-mascot:hover {
   [data-theme="dark"] body.page-adaptador,
   [data-theme="dark"] body.page-planes,
   [data-theme="dark"] body.page-comprar {
-    background-size: contain !important;
+    background-attachment: scroll !important;
+    background-size: cover !important;
     background-position: center center !important;
     background-color: #0d0b0a;
+    min-height: 100dvh;
   }
 }
 

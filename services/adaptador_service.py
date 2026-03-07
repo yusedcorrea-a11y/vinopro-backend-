@@ -134,6 +134,24 @@ def regenerate_token(session_id: str | None = None) -> dict | None:
     return _response_payload(new_token, payload)
 
 
+def delete_session(session_id: str) -> bool:
+    sid = (session_id or "").strip()
+    if not sid:
+        return False
+    with _TIMER_LOCK:
+        _cancel_timer(_DEBOUNCE_TIMERS, sid)
+        _cancel_timer(_RETRY_TIMERS, sid)
+    data = _load_restaurantes()
+    rest = data.get("restaurantes", {})
+    token = _find_token_by_session(data, sid)
+    if not token or token not in rest:
+        return False
+    rest.pop(token, None)
+    data["restaurantes"] = rest
+    _save_restaurantes(data)
+    return True
+
+
 def get_restaurante_by_token(token: str) -> dict | None:
     data = _load_restaurantes()
     rest = data.get("restaurantes", {}).get(token.strip())

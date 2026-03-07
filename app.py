@@ -88,7 +88,7 @@ VINOS_MUNDIALES = cargar_todos_los_vinos()
 print(f"[INFO] Base de datos lista: {len(VINOS_MUNDIALES)} vinos cargados desde {DATA_FOLDER}")
 
 # Estado para rutas de escaneo, sumiller, bodega y analytics
-from routes import escaneo, sumiller, geolocalizacion, bodega, analytics, informes, adaptador, comprar, planes, pagos, ofertas, valoraciones_wishlist, comunidad, qr
+from routes import escaneo, sumiller, geolocalizacion, bodega, analytics, informes, adaptador, comprar, planes, pagos, ofertas, valoraciones_wishlist, comunidad, qr, auth
 from services.busqueda_service import buscar_vinos_avanzado
 
 app.state.vinos_mundiales = VINOS_MUNDIALES
@@ -213,7 +213,13 @@ def pagina_mis_ofertas(request: Request):
 @app.get("/privacidad", response_class=HTMLResponse)
 def pagina_privacidad(request: Request):
     """Página de política de privacidad (requerida para Google Play y buenas prácticas)."""
-    return render_page(request, "privacidad.html", page_class="page-privacidad", active_page="")
+    return render_page(request, "legal.html", page_class="page-legal", active_page="")
+
+
+@app.get("/legal", response_class=HTMLResponse)
+def pagina_legal(request: Request):
+    """Página legal consolidada: privacidad, términos y consumo responsable."""
+    return render_page(request, "legal.html", page_class="page-legal", active_page="")
 
 
 @app.get("/comunidad/feed", response_class=HTMLResponse)
@@ -271,6 +277,7 @@ app.include_router(ofertas.router)
 app.include_router(valoraciones_wishlist.router)
 app.include_router(comunidad.router)
 app.include_router(qr.router)
+app.include_router(auth.router)
 
 @app.get("/api/status")
 def api_status():
@@ -549,7 +556,7 @@ def listar_paises():
 def sitemap_xml(request: Request):
     """Sitemap para buscadores. BASE_URL en .env para producción (ej. https://tudominio.com)."""
     base = os.environ.get("BASE_URL", "").strip() or str(request.base_url).rstrip("/")
-    pages = ["/", "/inicio", "/escanear", "/registrar", "/preguntar", "/bodega", "/dashboard", "/planes", "/adaptador", "/privacidad"]
+    pages = ["/", "/inicio", "/escanear", "/registrar", "/preguntar", "/bodega", "/dashboard", "/planes", "/adaptador", "/privacidad", "/legal"]
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     for path in pages:
         xml += f"  <url><loc>{base}{path}</loc><changefreq>weekly</changefreq></url>\n"

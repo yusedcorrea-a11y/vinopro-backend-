@@ -24,6 +24,18 @@
   {% block head %}{% endblock %}
 </head>
 <body class="{{ page_class }}">
+  <div id="age-gate-modal" class="age-gate-modal" hidden role="dialog" aria-modal="true" aria-labelledby="age-gate-title">
+    <div class="age-gate-backdrop"></div>
+    <div class="age-gate-content">
+      <span class="age-gate-pill">Acceso responsable</span>
+      <h2 id="age-gate-title">¿Eres mayor de 18 años?</h2>
+      <p id="age-gate-text" class="age-gate-text">VINO PRO IA muestra contenido relacionado con vino, restauración y networking profesional. Solo puedes continuar si confirmas que eres mayor de edad.</p>
+      <div id="age-gate-actions" class="age-gate-actions">
+        <button type="button" id="age-gate-confirm" class="btn">Sí, soy mayor de 18</button>
+        <button type="button" id="age-gate-deny" class="btn btn-outline">No</button>
+      </div>
+    </div>
+  </div>
   <!-- Modal de bienvenida: elegir idioma (solo primera visita, sin cookie vino_pro_lang) -->
   <div id="modal-bienvenida-idioma" class="modal-bienvenida-idioma modal-bienvenida-idioma--cerrado" role="dialog" aria-labelledby="modal-bienvenida-titulo" aria-modal="true" hidden>
     <div class="modal-bienvenida-idioma-backdrop"></div>
@@ -54,6 +66,7 @@
   </div>
   <script>
     (function() {
+      var AGE_KEY = 'vino_pro_age_verified';
       var cookieName = 'vino_pro_lang';
       function getCookie(n) {
         var m = document.cookie.match(new RegExp('(^| )' + n + '=([^;]+)'));
@@ -81,6 +94,36 @@
           if (selectedLang) window.location.href = '/set-lang?lang=' + encodeURIComponent(selectedLang);
         });
       }
+
+      var ageModal = document.getElementById('age-gate-modal');
+      var ageConfirm = document.getElementById('age-gate-confirm');
+      var ageDeny = document.getElementById('age-gate-deny');
+      var ageText = document.getElementById('age-gate-text');
+      var ageActions = document.getElementById('age-gate-actions');
+      var hasLang = !!getCookie(cookieName);
+      var isLegalPage = window.location.pathname === '/legal' || window.location.pathname === '/privacidad';
+      var ageVerified = '';
+      try { ageVerified = localStorage.getItem(AGE_KEY) || ''; } catch (_) {}
+      if (ageModal && hasLang && !isLegalPage && ageVerified !== 'yes') {
+        ageModal.removeAttribute('hidden');
+      }
+      if (ageConfirm) {
+        ageConfirm.addEventListener('click', function() {
+          try { localStorage.setItem(AGE_KEY, 'yes'); } catch (_) {}
+          if (ageModal) ageModal.setAttribute('hidden', '');
+        });
+      }
+      if (ageDeny) {
+        ageDeny.addEventListener('click', function() {
+          try { localStorage.setItem(AGE_KEY, 'no'); } catch (_) {}
+          if (ageText) {
+            ageText.textContent = 'El acceso a VINO PRO IA está restringido a mayores de 18 años. Si has respondido por error, vuelve a abrir la app cuando puedas confirmar tu mayoría de edad.';
+          }
+          if (ageActions) {
+            ageActions.innerHTML = '<a href="/legal" class="btn btn-outline">Ver información legal</a>';
+          }
+        });
+      }
     })();
   </script>
   <header class="header-minimal">
@@ -104,7 +147,8 @@
         <li><a href="/mapa" class="menu-secreto-link">📍 {{ t('nav.mapa') }}</a></li>
         <li><a href="/comunidad/feed" class="menu-secreto-link">🫂 {{ t('nav.comunidad') }}</a></li>
         <li><a href="/qr" class="menu-secreto-link menu-secreto-link-qr">📱 {{ t('nav.qr_networking') }}</a></li>
-        <li><a href="/privacidad" class="menu-secreto-link" data-proximamente="1">🔒 {{ t('nav.privacidad') }}</a></li>
+        <li><a href="/legal" class="menu-secreto-link">🔒 {{ t('nav.privacidad') }}</a></li>
+        <li><a href="mailto:soporte@vinoproia.com?subject=Soporte%20VINO%20PRO%20IA" class="menu-secreto-link">✉️ Soporte</a></li>
       </ul>
       <div class="menu-secreto-perfil">
         <h3 class="menu-secreto-subtitulo">👤 Perfil</h3>
@@ -126,6 +170,7 @@
           <option value="he" {% if lang == 'he' %}selected{% endif %}>🇮🇱 עברית</option>
         </select>
         <button type="button" id="toggle-theme-btn" class="menu-secreto-theme" aria-label="{{ t('common.modo_oscuro') }}">{{ t('common.modo_oscuro') }}</button>
+        <button type="button" id="delete-account-btn" class="menu-secreto-danger">Eliminar mi cuenta</button>
       </div>
     </div>
   </aside>
@@ -140,15 +185,6 @@
       </div>
     </div>
   </div>
-  <div id="modal-proximamente" class="premium-upsell-modal modal-proximamente" hidden role="dialog" aria-modal="true" aria-labelledby="modal-proximamente-title">
-    <div class="premium-upsell-backdrop modal-proximamente-backdrop"></div>
-    <div class="premium-upsell-content" style="max-width: 340px;">
-      <h3 id="modal-proximamente-title" class="modal-proximamente-titulo">Próximamente</h3>
-      <p class="modal-proximamente-texto">Estamos envejeciendo esta sección en roble… Volveremos con novedades.</p>
-      <button type="button" id="modal-proximamente-close" class="btn btn-outline">Cerrar</button>
-    </div>
-  </div>
-
   <main>
     {% block content %}{% endblock %}
   </main>

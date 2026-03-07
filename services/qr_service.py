@@ -48,7 +48,12 @@ def _generar_codigo_unico() -> str:
     return "".join(random.choices(_ALFABETO, k=_CODIGO_LEN + 2))
 
 
-def crear_contacto(nombre: str, empresa: str = "", idioma: str = "it") -> dict[str, Any]:
+def crear_contacto(
+    nombre: str,
+    empresa: str = "",
+    idioma: str = "it",
+    owner_session_id: str = "",
+) -> dict[str, Any]:
     """
     Crea un contacto con código único. Devuelve el contacto creado (con codigo, created_at, etc.).
     """
@@ -65,6 +70,7 @@ def crear_contacto(nombre: str, empresa: str = "", idioma: str = "it") -> dict[s
         "nombre": nombre,
         "empresa": empresa,
         "idioma": idioma,
+        "owner_session_id": (owner_session_id or "").strip(),
         "created_at": now,
         "escaneado": False,
         "fecha_escaneo": "",
@@ -145,10 +151,28 @@ def registrar_escaneo(codigo: str, pais: str = "") -> bool:
     return False
 
 
-def listar_contactos() -> list[dict[str, Any]]:
-    """Todos los contactos, más recientes primero."""
+def listar_contactos(owner_session_id: str | None = None) -> list[dict[str, Any]]:
+    """Contactos, más recientes primero. Si se indica sesión, solo devuelve los de esa sesión."""
     _load()
-    return sorted(_lista, key=lambda x: -(x.get("created_at") or "").strip())
+    sid = (owner_session_id or "").strip()
+    lista = _lista
+    if sid:
+        lista = [item for item in _lista if (item.get("owner_session_id") or "").strip() == sid]
+    return sorted(lista, key=lambda x: -(x.get("created_at") or "").strip())
+
+
+def delete_by_session(owner_session_id: str) -> int:
+    sid = (owner_session_id or "").strip()
+    if not sid:
+        return 0
+    _load()
+    global _lista
+    original = len(_lista)
+    _lista = [item for item in _lista if (item.get("owner_session_id") or "").strip() != sid]
+    removed = original - len(_lista)
+    if removed:
+        _save()
+    return removed
 
 
 def generar_imagen_qr(url: str, size_px: int = 280) -> bytes:

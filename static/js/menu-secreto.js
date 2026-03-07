@@ -8,8 +8,8 @@
   var MASCOT_ID = 'chatbot-guia-mascot';
   var PREMIUM_MODAL_ID = 'premium-upsell-modal';
   var PREMIUM_CLOSE_ID = 'premium-upsell-close';
-  var PROXIMAMENTE_MODAL_ID = 'modal-proximamente';
-  var PROXIMAMENTE_CLOSE_ID = 'modal-proximamente-close';
+  var DELETE_ACCOUNT_BTN_ID = 'delete-account-btn';
+  var SESSION_KEY = 'vino_pro_session_id';
 
   function getMenu() { return document.getElementById(MENU_ID); }
   function getBackdrop() { return document.getElementById(BACKDROP_ID); }
@@ -17,8 +17,7 @@
   function getMascot() { return document.getElementById(MASCOT_ID); }
   function getPremiumModal() { return document.getElementById(PREMIUM_MODAL_ID); }
   function getPremiumCloseBtn() { return document.getElementById(PREMIUM_CLOSE_ID); }
-  function getProximamenteModal() { return document.getElementById(PROXIMAMENTE_MODAL_ID); }
-  function getProximamenteCloseBtn() { return document.getElementById(PROXIMAMENTE_CLOSE_ID); }
+  function getDeleteAccountBtn() { return document.getElementById(DELETE_ACCOUNT_BTN_ID); }
 
   function openMenu() {
     var menu = getMenu();
@@ -63,6 +62,48 @@
     var modal = getPremiumModal();
     if (!modal) return;
     modal.setAttribute('hidden', '');
+  }
+
+  function deleteAccount() {
+    var sid = '';
+    try { sid = (window.getSessionId ? window.getSessionId() : '') || ''; } catch (_) {}
+    if (!sid) {
+      window.alert('No se ha encontrado una sesión activa para eliminar.');
+      return;
+    }
+    var confirmed = window.confirm('Se eliminarán tu perfil, bodega, escaneos, valoraciones, contactos QR y datos asociados. Esta acción no se puede deshacer. ¿Deseas continuar?');
+    if (!confirmed) return;
+    fetch('/api/auth/eliminar-cuenta', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-Session-ID': sid
+      },
+      body: '{}'
+    })
+      .then(function(r) {
+        return r.json().then(function(data) {
+          return { ok: r.ok, data: data };
+        }).catch(function() {
+          return { ok: r.ok, data: null };
+        });
+      })
+      .then(function(result) {
+        if (!result.ok) {
+          var detail = result.data && (result.data.detail || result.data.error);
+          throw new Error(detail || 'No se pudo eliminar la cuenta.');
+        }
+        try {
+          localStorage.removeItem(SESSION_KEY);
+          localStorage.removeItem('vineros_target_lang');
+        } catch (_) {}
+        window.alert('Tu cuenta se ha eliminado de forma definitiva.');
+        window.location.href = '/inicio';
+      })
+      .catch(function(err) {
+        window.alert(err && err.message ? err.message : 'No se pudo eliminar la cuenta.');
+      });
   }
 
   function checkPremiumForQr() {
@@ -117,12 +158,6 @@
         links[i].addEventListener('click', function(e) {
           var link = e.currentTarget;
           var href = (link.getAttribute('href') || '').trim();
-          if (link.getAttribute('data-proximamente') === '1') {
-            e.preventDefault();
-            closeMenu();
-            showProximamente();
-            return;
-          }
           if (href === '/qr') {
             e.preventDefault();
             closeMenu();
@@ -136,19 +171,18 @@
       }
     }
 
-    var proximamenteClose = getProximamenteCloseBtn();
-    if (proximamenteClose) proximamenteClose.addEventListener('click', hideProximamente);
-    var proximamenteModal = getProximamenteModal();
-    if (proximamenteModal) {
-      proximamenteModal.addEventListener('click', function(e) {
-        if (e.target && e.target.classList.contains('modal-proximamente-backdrop')) hideProximamente();
-      });
-    }
-
     if (premiumClose) premiumClose.addEventListener('click', hidePremiumUpsell);
     if (premiumModal) {
       premiumModal.addEventListener('click', function(e) {
         if (e.target && e.target.classList.contains('premium-upsell-backdrop')) hidePremiumUpsell();
+      });
+    }
+
+    var deleteBtn = getDeleteAccountBtn();
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', function() {
+        closeMenu();
+        deleteAccount();
       });
     }
   }

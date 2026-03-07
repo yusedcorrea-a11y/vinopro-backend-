@@ -98,8 +98,8 @@ async def api_listar_contactos(
     x_session_id: str | None = Header(None, alias="X-Session-ID"),
 ):
     """Lista de contactos para el panel de seguimiento."""
-    _require_premium(x_session_id)
-    lista = qr_svc.listar_contactos()
+    sid = _require_premium(x_session_id)
+    lista = qr_svc.listar_contactos(owner_session_id=sid)
     return {"contactos": lista}
 
 
@@ -112,11 +112,11 @@ async def api_generar_qr(
     x_session_id: str | None = Header(None, alias="X-Session-ID"),
 ):
     """Crea un contacto y devuelve código y URL para el QR."""
-    _require_premium(x_session_id)
+    sid = _require_premium(x_session_id)
     nombre = (nombre or "").strip()
     if not nombre:
         raise HTTPException(status_code=400, detail="Nombre requerido")
-    contacto = qr_svc.crear_contacto(nombre, empresa=empresa, idioma=idioma)
+    contacto = qr_svc.crear_contacto(nombre, empresa=empresa, idioma=idioma, owner_session_id=sid)
     base = _base_url(request)
     codigo = contacto["codigo"]
     url = f"{base}/c/{codigo}"

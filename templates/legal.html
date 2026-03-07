@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block meta_description %}Información legal de VINO PRO IA: política de privacidad, términos de uso, tratamiento de imágenes con Google Gemini, uso de ubicación y consumo responsable.{% endblock %}
+{% block content %}
+<section class="legal-shell">
+  <div class="legal-hero">
+    <span class="legal-kicker">VINO PRO IA</span>
+    <h1 class="legal-title">Privacidad, términos y consumo responsable</h1>
+    <p class="legal-intro">
+      Hemos preparado esta página para ofrecer una experiencia más sólida, transparente y alineada con los requisitos de distribución en tiendas como Google Play.
+    </p>
+    <div class="legal-note-grid">
+      <article class="legal-note-card">
+        <h2>Tratamiento de imágenes</h2>
+        <p>Las imágenes de etiquetas que subes para escanear se procesan para identificar datos del vino. Cuando la lógica del escáner lo requiere, ese procesamiento puede apoyarse en la API de Google Gemini.</p>
+      </article>
+      <article class="legal-note-card">
+        <h2>Uso de ubicación</h2>
+        <p>La ubicación del dispositivo se utiliza exclusivamente en la sección <strong>Donde me tomo mi vino</strong> para mostrar vinotecas, restaurantes y lugares cercanos.</p>
+      </article>
+      <article class="legal-note-card">
+        <h2>Mayoría de edad</h2>
+        <p>VINO PRO IA es un servicio informativo y comercial orientado a personas mayores de 18 años. Promovemos un consumo de alcohol moderado y responsable.</p>
+      </article>
+    </div>
+  </div>
+
+  <div class="legal-layout">
+    <article class="legal-card" id="politica-privacidad">
+      <h2>Política de Privacidad</h2>
+      <p>VINO PRO IA trata datos mínimos necesarios para prestar sus funcionalidades, como el identificador de sesión del dispositivo, preferencias de idioma, inventario de bodega, valoraciones, wishlist, configuración del adaptador, QR Networking y otras interacciones realizadas dentro de la app.</p>
+      <p>Si utilizas el escáner, la imagen de la etiqueta puede ser procesada mediante tecnologías de OCR y, cuando proceda, mediante la API de Google Gemini con el único fin de interpretar la etiqueta y estructurar la información del vino.</p>
+      <p>Si utilizas el mapa, la ubicación solo se consulta para buscar vinotecas, bares o restaurantes cercanos. No se utiliza para publicidad comportamental ni para elaborar perfiles comerciales externos.</p>
+      <p>No almacenamos datos bancarios. Si contratas funcionalidades Premium, el pago se procesa a través del proveedor correspondiente. También podemos recibir y almacenar datos funcionales como nombre de contacto, empresa o correo cuando tú mismo los introduces en módulos como QR Networking u ofertas.</p>
+      <p>Puedes solicitar la eliminación definitiva de tus datos desde la propia app mediante la opción <strong>Eliminar mi cuenta</strong>. Esa acción borra la información asociada a tu sesión y no es reversible.</p>
+    </article>
+
+    <article class="legal-card" id="terminos-uso">
+      <h2>Términos de Uso</h2>
+      <p>VINO PRO IA ofrece herramientas de consulta, organización, escaneo, networking y apoyo comercial relacionadas con el mundo del vino. El usuario se compromete a utilizar la aplicación de forma lícita, respetuosa y conforme a la normativa aplicable en su país.</p>
+      <p>No está permitido usar la app para actividades fraudulentas, envío de contenido ilícito, suplantación de identidad, scraping abusivo, manipulación de integraciones, ni para vulnerar sistemas de terceros mediante el módulo Adaptador o cualquier otra funcionalidad.</p>
+      <p>Las recomendaciones, traducciones, respuestas del chatbot y resultados del escáner tienen carácter asistencial e informativo. Aunque buscamos precisión y calidad profesional, el usuario debe validar cualquier decisión comercial, técnica o de compra antes de ejecutarla.</p>
+      <p>Podremos actualizar estas condiciones para reflejar mejoras del producto, cambios regulatorios o nuevas funciones. El uso continuado de la app tras dichas actualizaciones supone la aceptación de la versión vigente.</p>
+    </article>
+
+    <article class="legal-card legal-card-warning" id="consumo-responsable">
+      <h2>Responsabilidad de Consumo de Alcohol</h2>
+      <p>Esta aplicación está dirigida exclusivamente a personas mayores de 18 años o a la edad legal requerida en su jurisdicción para acceder a contenidos relacionados con bebidas alcohólicas.</p>
+      <p>VINO PRO IA promueve un consumo responsable, moderado y consciente. Nunca recomendamos el consumo abusivo de alcohol, ni el consumo antes de conducir, operar maquinaria, practicar actividades de riesgo o en situaciones incompatibles con la salud.</p>
+      <p>Si eres profesional del sector Horeca, distribuidor o patrocinador, te recordamos que cualquier acción comercial vinculada al vino debe respetar la normativa local de publicidad, venta y protección del consumidor.</p>
+    </article>
+  </div>
+
+  <div class="legal-footer">
+    <p>Para soporte o ejercicio de derechos, puedes escribir a <a href="mailto:soporte@vinoproia.com">soporte@vinoproia.com</a>.</p>
+    <p class="legal-updated">Última actualización: marzo 2026</p>
+  </div>
+</section>
+{% endblock %}

@@ -1241,6 +1241,18 @@ body.page-inicio .header-minimal .brand-ia { margin-top: 1px; opacity: 0.95; }
   border-color: var(--dorado);
   color: var(--dorado-claro);
 }
+[data-theme="dark"] .menu-secreto-subtitulo {
+  color: var(--crema);
+}
+[data-theme="dark"] .menu-secreto-label {
+  color: rgba(250, 248, 245, 0.65);
+}
+[data-theme="dark"] .menu-secreto-perfil {
+  border-top-color: rgba(212, 168, 75, 0.25);
+}
+[data-theme="dark"] .menu-secreto-inner {
+  color: var(--crema);
+}
 
 /* Main - tarjeta con transparencia sobre fondo de sección */
 main {

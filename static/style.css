@@ -1046,6 +1046,7 @@ nav a.activo {
   z-index: 10;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
+.header-minimal-actions { display: flex; align-items: center; gap: 0.35rem; flex-shrink: 0; }
 .header-minimal .header-minimal-logo {
   text-decoration: none;
   display: flex;
@@ -1103,10 +1104,11 @@ body.page-inicio .header-minimal .brand-ia { margin-top: 1px; opacity: 0.95; }
   width: 100%;
   height: 100%;
 }
+a.btn-menu-botella { text-decoration: none; color: inherit; }
 .btn-menu-botella .btn-botella-svg {
-  height: 32px;
+  height: 36px;
   width: auto;
-  max-width: 22px;
+  max-width: 24px;
   color: #fff;
 }
 .btn-menu-botella .btn-botella-label {

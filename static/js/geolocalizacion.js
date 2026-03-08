@@ -424,11 +424,18 @@
 
   function init() {
     getTextos();
-    if (!validateRequiredElements()) return;
-
     var btnUbicacion = document.getElementById('mapa-btn-ubicacion');
     var btnCiudad = document.getElementById('mapa-btn-buscar-ciudad');
     var inputCiudad = document.getElementById('mapa-input-ciudad');
+    if (!btnUbicacion || !btnCiudad || !inputCiudad) {
+      if (document.getElementById('mapa-estado')) {
+        showEstado(textos.error_init || 'No se pudo inicializar el mapa. Recarga la página.', true);
+      }
+      return;
+    }
+    if (!validateRequiredElements()) {
+      showEstado(textos.error_init || 'No se pudo inicializar el mapa. Recarga la página.', true);
+    }
 
     if (btnUbicacion) {
       btnUbicacion.addEventListener('click', function() {
@@ -500,9 +507,14 @@
       estadoEl.setAttribute('data-text-sin-destacados', estadoEl.getAttribute('data-text-sin-destacados') || 'No hay lugares recomendados por ahora.');
     }
 
-    initMapa(40.4168, -3.7038, 6);
-    cargarLugaresDestacados();
     initGuideTabs();
+    try {
+      initMapa(40.4168, -3.7038, 6);
+      cargarLugaresDestacados();
+    } catch (err) {
+      if (typeof console !== 'undefined' && console.error) console.error('[Mapa] initMapa/L:', err);
+      showEstado(textos.error_init || 'No se pudo cargar el mapa. Recarga la página.', true);
+    }
   }
 
   if (document.readyState === 'loading') {

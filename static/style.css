@@ -45,7 +45,7 @@ body {
 body.page-inicio {
   background: var(--negro) url('/static/images/vino-pro-ia-fondo-claro-espectacular.jpg') no-repeat fixed;
   background-size: cover;
-  background-position: center 35%;
+  background-position: center 55%;
   min-height: 100dvh;
 }
 /* Inicio: imagen full screen, barra abajo con glassmorphism */
@@ -1227,32 +1227,42 @@ body.page-inicio .header-minimal .brand-ia { margin-top: 1px; opacity: 0.95; }
   border-left-color: rgba(212, 168, 75, 0.2);
 }
 [data-theme="dark"] .menu-secreto-titulo,
-[data-theme="dark"] .menu-secreto-link { color: var(--crema); }
+[data-theme="dark"] .menu-secreto-link {
+  color: #fff;
+}
 [data-theme="dark"] .menu-secreto-link:hover {
   background: rgba(212, 168, 75, 0.15);
-  color: var(--dorado-claro);
+  color: #ffecd2;
 }
 [data-theme="dark"] .menu-secreto-select {
-  background: var(--negro);
+  background: #1a1512;
   border-color: rgba(212, 168, 75, 0.3);
-  color: var(--crema);
+  color: #fff;
 }
 [data-theme="dark"] .menu-secreto-theme {
   background: rgba(212, 168, 75, 0.2);
   border-color: var(--dorado);
-  color: var(--dorado-claro);
+  color: #ffecd2;
 }
 [data-theme="dark"] .menu-secreto-subtitulo {
-  color: var(--crema);
+  color: #fff;
 }
 [data-theme="dark"] .menu-secreto-label {
-  color: rgba(250, 248, 245, 0.65);
+  color: rgba(255, 255, 255, 0.85);
 }
 [data-theme="dark"] .menu-secreto-perfil {
   border-top-color: rgba(212, 168, 75, 0.25);
 }
 [data-theme="dark"] .menu-secreto-inner {
-  color: var(--crema);
+  color: #fff;
+}
+[data-theme="dark"] .menu-secreto-select option {
+  background: #1a1512;
+  color: #fff;
+}
+[data-theme="dark"] .menu-secreto-badge-pro {
+  color: #1a1512;
+  background: linear-gradient(135deg, #d4af37, #e8c954);
 }
 
 /* Main - tarjeta con transparencia sobre fondo de sección */
@@ -1908,6 +1918,9 @@ textarea {
   background-size: cover;
   background-position: center 35%;
   min-height: 100dvh;
+}
+[data-theme="dark"] body.page-inicio {
+  background-position: center 55%;
 }
 [data-theme="dark"] body.page-escanear {
   background-image: url('/static/images/vino-pro-ia-fondo-escanear-oscuro.jpg');
@@ -2780,6 +2793,11 @@ body.page-inicio .chatbot-guia-mascot:hover {
     background-position: center center !important;
     background-color: #0d0b0a;
     min-height: 100dvh;
+  }
+  /* Inicio: bajar el encuadre para que se vean mesa y copas en primer plano */
+  body.page-inicio,
+  [data-theme="dark"] body.page-inicio {
+    background-position: center 55% !important;
   }
 }
 

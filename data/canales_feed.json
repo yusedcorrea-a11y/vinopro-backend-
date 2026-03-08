@@ -1,0 +1,108 @@
+{
+  "noticias": [
+    {
+      "id": "not-1",
+      "created_at": 1738700000,
+      "titulo": "Tendencias 2025: vinos naturales y sostenibilidad",
+      "descripcion": "El sector apuesta por viticultura ecológica y reducción de huella de carbono en bodega. Cada vez más bodegas certifican su compromiso ambiental.",
+      "link": "https://www.decanter.com/wine-news/sustainable-wine-growing-trends-2025/",
+      "fuente": "Decanter",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&fit=crop"
+    },
+    {
+      "id": "not-2",
+      "created_at": 1738613600,
+      "titulo": "Nuevas denominaciones: actualización de la DO en España",
+      "descripcion": "Resumen de las últimas incorporaciones y cambios en denominaciones de origen españolas. La DO Cangas y otras en proceso de reconocimiento.",
+      "link": "https://www.mapa.gob.es/es/alimentacion/temas/calidad-diferenciada/denominacion-origen/",
+      "fuente": "MAPA",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1596363505729-2b22f4a95a8b?w=600&fit=crop"
+    },
+    {
+      "id": "not-3",
+      "created_at": 1738527200,
+      "titulo": "Cata a ciegas: cómo entrenar el paladar",
+      "descripcion": "Consejos de sumilleres para identificar variedades y procedencias en catas. Ejercicios prácticos para afinar la memoria sensorial.",
+      "link": "https://www.wineenthusiast.com/culture/wine/blind-tasting-tips/",
+      "fuente": "Wine Enthusiast",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&fit=crop"
+    },
+    {
+      "id": "not-4",
+      "created_at": 1738440800,
+      "titulo": "Rioja y Ribera del Duero: cosecha 2024",
+      "descripcion": "Primeras valoraciones de la vendimia en las dos grandes regiones tintas españolas. Calidad y cantidades esperadas.",
+      "link": "https://www.riojawine.com/",
+      "fuente": "Rioja Wine",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1474722883778-792e2290308b?w=600&fit=crop"
+    }
+  ],
+  "eventos": [
+    {
+      "id": "ev-1",
+      "created_at": 1738786400,
+      "titulo": "Catas y maridajes en tu ciudad",
+      "descripcion": "Encuentra catas guiadas, cursos de sumiller y eventos de maridaje cerca de ti. Desde iniciación hasta nivel avanzado.",
+      "link": "https://www.eventbrite.com/d/spain--madrid/wine-tasting/",
+      "fuente": "Eventbrite",
+      "badge": "Eventos",
+      "imagen": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&fit=crop"
+    },
+    {
+      "id": "ev-2",
+      "created_at": 1738699200,
+      "titulo": "Feria del Vino: salones y ferias en España",
+      "descripcion": "FIMA, Fenavin, Salón del Gourmet y otras ferias donde probar y comprar vino directamente de bodegas.",
+      "link": "https://www.ferias.info/ferias-vino-espana/",
+      "fuente": "Ferias",
+      "badge": "Ferias",
+      "imagen": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&fit=crop"
+    }
+  ],
+  "enoturismo": [
+    {
+      "id": "eno-1",
+      "created_at": 1738700000,
+      "titulo": "Ruta del vino Ribera del Duero",
+      "descripcion": "Visita a bodegas emblemáticas, almuerzo entre viñas y cata comentada. La Ribera ofrece experiencias de uno o varios días.",
+      "link": "https://www.rutadelvinoriberadelduero.es/",
+      "fuente": "Ruta Ribera del Duero",
+      "badge": "Ruta",
+      "imagen": "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&fit=crop"
+    },
+    {
+      "id": "eno-2",
+      "created_at": 1738613600,
+      "titulo": "Priorat: bodegas de altura",
+      "descripcion": "Experiencias en viñedos de pendiente y elaboradores de vinos de autor. Visitas a cellers y paisajes declarados Patrimonio de la Humanidad.",
+      "link": "https://www.dopriorat.com/enoturismo/",
+      "fuente": "DO Priorat",
+      "badge": "Experiencia",
+      "imagen": "https://images.unsplash.com/photo-1474722883778-792e2290308b?w=600&fit=crop"
+    },
+    {
+      "id": "eno-3",
+      "created_at": 1738527200,
+      "titulo": "Alojamientos con bodega incluida",
+      "descripcion": "Selección de hoteles y casas rurales con visita y cata en la misma finca. Dormir entre viñedos en España.",
+      "link": "https://www.rutadelvino.es/alojamientos/",
+      "fuente": "Rutas del Vino",
+      "badge": "Alojamiento",
+      "imagen": "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=600&fit=crop"
+    },
+    {
+      "id": "eno-4",
+      "created_at": 1738440800,
+      "titulo": "Rioja: bodegas centenarias y arquitectura",
+      "descripcion": "Frank Gehry, Calatrava y bodegas históricas. La Rioja combina enoturismo con arte y gastronomía.",
+      "link": "https://www.lariojaturismo.com/en/experiencias/enoturismo/",
+      "fuente": "La Rioja Turismo",
+      "badge": "Ruta",
+      "imagen": "https://images.unsplash.com/photo-1596363505729-2b22f4a95a8b?w=600&fit=crop"
+    }
+  ]
+}

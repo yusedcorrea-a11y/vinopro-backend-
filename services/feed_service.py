@@ -11,8 +11,12 @@ from models.comunidad import Actividad
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 ACTIVIDAD_PATH = DATA_DIR / "actividad.json"
+CANALES_FEED_PATH = DATA_DIR / "canales_feed.json"
+
+LISTA_CANALES = ["para_ti", "noticias", "eventos", "enoturismo", "vineros"]
 
 _lista: list[dict] = []
+_canales_data: dict = {}
 
 
 def _load() -> list[dict]:
@@ -113,3 +117,37 @@ def get_actividad_de_usuario(username: str, limit: int = 30) -> list[dict]:
     filtradas = [a for a in _lista if (a.get("username") or "").strip().lower() == username]
     filtradas.sort(key=lambda x: -(x.get("created_at") or 0))
     return filtradas[:limit]
+
+
+def _load_canales() -> dict:
+    global _canales_data
+    if _canales_data:
+        return _canales_data
+    if CANALES_FEED_PATH.is_file():
+        try:
+            with open(CANALES_FEED_PATH, "r", encoding="utf-8") as f:
+                _canales_data = json.load(f)
+            if not isinstance(_canales_data, dict):
+                _canales_data = {}
+        except Exception:
+            _canales_data = {}
+    else:
+        _canales_data = {}
+    return _canales_data
+
+
+def get_contenido_canal(canal: str, limit: int = 20) -> list[dict]:
+    """
+    Contenido estático de un canal (noticias, eventos, enoturismo).
+    Cada item: id, created_at, titulo, descripcion, link, fuente, badge.
+    Para "eventos" solo devuelve los del JSON; la API mezclará con get_eventos_destacados.
+    """
+    if canal not in ("noticias", "eventos", "enoturismo"):
+        return []
+    data = _load_canales()
+    raw = data.get(canal)
+    if not isinstance(raw, list):
+        return []
+    items = [x for x in raw if isinstance(x, dict)]
+    items.sort(key=lambda x: -(x.get("created_at") or 0))
+    return items[:limit]

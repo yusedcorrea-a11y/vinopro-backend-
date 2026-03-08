@@ -38,7 +38,13 @@
     "sin_perfil": "This user has no public profile.",
     "usuario_no_encontrado": "User not found",
     "evento_partner": "Event",
-    "lugares_recomendados": "Recommended places"
+    "lugares_recomendados": "Recommended places",
+    "feed_para_ti": "For you",
+    "feed_noticias": "News",
+    "feed_eventos": "Events & tastings",
+    "feed_enoturismo": "Wine tourism",
+    "feed_vineros": "VINEROs",
+    "ad_slot_placeholder": "Ad space"
   },
   "qr": {
     "mensaje_hola": "Hi {nombre}, great to meet you. Thanks for your time and interest.",

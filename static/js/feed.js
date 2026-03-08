@@ -16,10 +16,12 @@
   var storiesWrap = document.getElementById('vineros-stories-wrap');
   var storiesEl = document.getElementById('vineros-stories');
   var observerEl = document.getElementById('feed-observer');
+  var feedTabs = document.getElementById('feed-tabs');
   var offset = 0;
   var limit = 8;
   var loading = false;
   var hasMore = true;
+  var currentCanal = 'para_ti';
 
   function resolveAutoLang() {
     var navLang = ((navigator.language || navigator.userLanguage || '') + '').toLowerCase();
@@ -142,15 +144,27 @@
     card.setAttribute('data-post-id', post.id || '');
     card.setAttribute('data-post-username', post.username || '');
     var badge = post.badge ? '<span class="vineros-badge">' + escapeHtml(post.badge) + '</span>' : '';
-    var mediaClass = post.post_type === 'sponsor' ? 'vineros-media sponsor-media' : 'vineros-media';
-    var mediaText = post.post_type === 'sponsor' ? 'Patrocinador PRO' : 'VINEROS';
+    var mediaClass = post.post_type === 'sponsor' ? 'vineros-media sponsor-media' : (post.post_type === 'canal' ? 'vineros-media vineros-media--img' : 'vineros-media');
+    var mediaContent = '';
+    if (post.post_type === 'canal' && post.image_url) {
+      mediaContent = '<img class="vineros-media-img" src="' + escapeHtml(post.image_url) + '" alt="" loading="lazy" />';
+    } else {
+      var mediaText = post.post_type === 'sponsor' ? 'Patrocinador PRO' : (post.post_type === 'canal' ? (post.badge || 'Canal') : 'VINEROS');
+      mediaContent = mediaText;
+    }
     var safeDescription = escapeHtml(post.description || '');
+    var extraBtn = '';
+    if (post.post_type === 'canal' && post.link) {
+      extraBtn = '<a class="vineros-btn primary" href="' + escapeHtml(post.link) + '" target="_blank" rel="noopener">Leer más</a>';
+    } else if (post.vino_detalle) {
+      extraBtn = '<button class="vineros-btn primary" data-action="bodega">Ver en Bodega</button>';
+    }
     card.innerHTML =
       '<div class="vineros-head">' +
         '<div class="vineros-avatar">' + escapeHtml(post.avatar_text || 'V') + '</div>' +
         '<div><div class="vineros-name">' + escapeHtml(post.username || 'vinero') + badge + '</div></div>' +
       '</div>' +
-      '<div class="' + mediaClass + '">' + mediaText + '</div>' +
+      '<div class="' + mediaClass + '">' + mediaContent + '</div>' +
       '<div class="vineros-body">' +
         '<h3 class="vineros-title">' + escapeHtml(post.title || 'Publicación') + '</h3>' +
         '<p class="vineros-desc" data-comment data-original-text="' + safeDescription + '" data-translated="0">' + safeDescription + '</p>' +
@@ -158,7 +172,7 @@
           '<button class="vineros-btn" data-action="brindar">🍷 Brindar ' + (post.brindis_count ? '(' + post.brindis_count + ')' : '') + '</button>' +
           '<button class="vineros-btn" data-action="comentar">Comentar ' + (post.comentarios_count ? '(' + post.comentarios_count + ')' : '') + '</button>' +
           '<button class="vineros-btn" data-action="translate">🌐 Traducir</button>' +
-          (post.vino_detalle ? '<button class="vineros-btn primary" data-action="bodega">Ver en Bodega</button>' : '') +
+          extraBtn +
         '</div>' +
         renderDetail(post.vino_detalle) +
       '</div>';
@@ -220,13 +234,30 @@
     });
   }
 
+  function setCanal(canal) {
+    currentCanal = canal || 'para_ti';
+    offset = 0;
+    hasMore = true;
+    if (listEl) listEl.innerHTML = '';
+    if (feedTabs) {
+      var tabs = feedTabs.querySelectorAll('.feed-tab');
+      tabs.forEach(function(t) {
+        t.classList.toggle('active', (t.getAttribute('data-canal') || '') === currentCanal);
+      });
+    }
+    if (storiesWrap) storiesWrap.style.display = 'none';
+    if (storiesEl) storiesEl.innerHTML = '';
+    fetchNextPage();
+  }
+
   function fetchNextPage() {
     if (loading || !hasMore) return;
     loading = true;
     showLoading();
     var headers = { 'Accept': 'application/json' };
     if (sid) headers['X-Session-ID'] = sid;
-    fetch('/api/feed?offset=' + encodeURIComponent(offset) + '&limit=' + encodeURIComponent(limit), { headers: headers })
+    var url = '/api/feed?canal=' + encodeURIComponent(currentCanal) + '&offset=' + encodeURIComponent(offset) + '&limit=' + encodeURIComponent(limit);
+    fetch(url, { headers: headers })
       .then(function(r) {
         if (r.status === 401) { showSinPerfil(); return null; }
         return r.json();
@@ -254,6 +285,16 @@
         loading = false;
         showSinPerfil();
       });
+  }
+
+  if (feedTabs) {
+    feedTabs.querySelectorAll('.feed-tab').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var canal = btn.getAttribute('data-canal') || 'para_ti';
+        if (canal === currentCanal) return;
+        setCanal(canal);
+      });
+    });
   }
 
   if ('IntersectionObserver' in window && observerEl) {

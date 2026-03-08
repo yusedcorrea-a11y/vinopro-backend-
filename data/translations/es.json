@@ -38,7 +38,13 @@
     "sin_perfil": "Este usuario no tiene perfil público.",
     "usuario_no_encontrado": "Usuario no encontrado",
     "evento_partner": "Evento",
-    "lugares_recomendados": "Lugares recomendados"
+    "lugares_recomendados": "Lugares recomendados",
+    "feed_para_ti": "Para ti",
+    "feed_noticias": "Noticias",
+    "feed_eventos": "Eventos y catas",
+    "feed_enoturismo": "Enoturismo",
+    "feed_vineros": "VINEROs",
+    "ad_slot_placeholder": "Espacio publicitario"
   },
   "qr": {
     "mensaje_hola": "Hola {nombre}, un placer conocerte. Gracias por tu tiempo e interés.",

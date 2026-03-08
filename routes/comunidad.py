@@ -33,6 +33,29 @@ def _vino_detalle_desde_db(vinos: dict, vino_key: str) -> dict:
     }
 
 
+def _post_desde_canal(item: dict) -> dict:
+    """Convierte un item de canales_feed (noticias/eventos/enoturismo) al formato post del feed."""
+    fuente = (item.get("fuente") or "VINO PRO").strip()
+    avatar = (fuente[:1] or "V").upper()
+    imagen = (item.get("imagen") or item.get("image_url") or "").strip()
+    return {
+        "id": f"canal-{item.get('id') or ''}",
+        "created_at": int(item.get("created_at") or 0),
+        "post_type": "canal",
+        "username": fuente,
+        "avatar_text": avatar,
+        "title": (item.get("titulo") or "Sin título").strip(),
+        "description": (item.get("descripcion") or "").strip(),
+        "badge": (item.get("badge") or "").strip(),
+        "vino_key": None,
+        "vino_detalle": None,
+        "image_url": imagen if imagen else None,
+        "brindis_count": 0,
+        "comentarios_count": 0,
+        "link": (item.get("link") or "").strip(),
+    }
+
+
 def _post_desde_actividad(act: dict, vinos: dict) -> dict:
     tipo = (act.get("tipo") or "").strip().lower()
     vino_key = (act.get("vino_key") or "").strip()
@@ -311,31 +334,68 @@ async def listar_seguidos(
 @router.get("/api/feed")
 async def get_feed(
     request: Request,
+    canal: str = "para_ti",
     limit: int = 50,
     offset: int = 0,
     x_session_id: str | None = Header(None, alias="X-Session-ID"),
 ):
-    """Feed de actividad: eventos destacados + actividad social en formato VINEROS."""
-    eventos = feed_svc.get_eventos_destacados(limit=10)
+    """
+    Feed por canal: para_ti (mezcla), noticias, eventos, enoturismo, vineros (solo comunidad).
+    """
+    canal = (canal or "para_ti").strip().lower()
+    if canal not in feed_svc.LISTA_CANALES:
+        canal = "para_ti"
+    vinos = getattr(request.app.state, "vinos_mundiales", None) or {}
     session_id = (x_session_id or "").strip()
     mi_username = usuario_svc.get_username_por_session(session_id) if session_id else None
-    actividad = []
-    if mi_username:
-        seguidos = seg_svc.get_seguidos(mi_username)
-        actividad = feed_svc.get_feed_para_usuario(seguidos, limit=limit)
-        vinos = getattr(request.app.state, "vinos_mundiales", None) or {}
-        for a in actividad:
-            if not a.get("vino_nombre") and a.get("vino_key"):
-                v = vinos.get(a["vino_key"], {})
-                if isinstance(v, dict):
-                    a["vino_nombre"] = v.get("nombre") or v.get("name") or a.get("vino_key", "")
-    vinos = getattr(request.app.state, "vinos_mundiales", None) or {}
     posts = []
-    for ev in eventos:
-        posts.append(_post_desde_actividad(ev, vinos))
-    for ac in actividad:
-        posts.append(_post_desde_actividad(ac, vinos))
-    posts.extend(_posts_demo_vineros(vinos))
+    actividad = []
+    eventos = []
+
+    if canal == "para_ti":
+        eventos = feed_svc.get_eventos_destacados(limit=10)
+        if mi_username:
+            seguidos = seg_svc.get_seguidos(mi_username)
+            actividad = feed_svc.get_feed_para_usuario(seguidos, limit=limit)
+            for a in actividad:
+                if not a.get("vino_nombre") and a.get("vino_key"):
+                    v = vinos.get(a.get("vino_key", ""), {})
+                    if isinstance(v, dict):
+                        a["vino_nombre"] = v.get("nombre") or v.get("name") or a.get("vino_key", "")
+        for ev in eventos:
+            posts.append(_post_desde_actividad(ev, vinos))
+        for ac in actividad:
+            posts.append(_post_desde_actividad(ac, vinos))
+        posts.extend(_posts_demo_vineros(vinos))
+
+    elif canal == "vineros":
+        if mi_username:
+            seguidos = seg_svc.get_seguidos(mi_username)
+            actividad = feed_svc.get_feed_para_usuario(seguidos, limit=limit)
+            for a in actividad:
+                if not a.get("vino_nombre") and a.get("vino_key"):
+                    v = vinos.get(a.get("vino_key", ""), {})
+                    if isinstance(v, dict):
+                        a["vino_nombre"] = v.get("nombre") or v.get("name") or a.get("vino_key", "")
+        for ac in actividad:
+            posts.append(_post_desde_actividad(ac, vinos))
+        posts.extend(_posts_demo_vineros(vinos))
+
+    elif canal == "noticias":
+        for item in feed_svc.get_contenido_canal("noticias", limit=limit):
+            posts.append(_post_desde_canal(item))
+
+    elif canal == "eventos":
+        eventos = feed_svc.get_eventos_destacados(limit=15)
+        for ev in eventos:
+            posts.append(_post_desde_actividad(ev, vinos))
+        for item in feed_svc.get_contenido_canal("eventos", limit=10):
+            posts.append(_post_desde_canal(item))
+
+    elif canal == "enoturismo":
+        for item in feed_svc.get_contenido_canal("enoturismo", limit=limit):
+            posts.append(_post_desde_canal(item))
+
     posts.sort(key=lambda p: -(p.get("created_at") or 0))
     dedup = []
     seen = set()
@@ -350,9 +410,10 @@ async def get_feed(
     page = dedup[safe_offset:safe_offset + safe_limit]
     next_offset = safe_offset + len(page)
     has_more = next_offset < len(dedup)
-    stories = _stories_desde_posts(dedup, limit=10)
+    stories = _stories_desde_posts(dedup, limit=10) if canal in ("para_ti", "vineros") else []
 
     return {
+        "canal": canal,
         "actividad": actividad,
         "eventos": eventos,
         "stories": stories,

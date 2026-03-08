@@ -19,8 +19,10 @@
   .vineros-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, rgba(212,175,55,0.35), rgba(107,45,60,0.35)); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--burdeos); }
   .vineros-name { font-weight: 700; color: var(--burdeos); line-height: 1.1; }
   .vineros-badge { display: inline-flex; align-items: center; gap: 0.25rem; margin-left: 0.45rem; font-size: 0.72rem; font-weight: 700; border-radius: 999px; padding: 0.12rem 0.45rem; background: rgba(212,175,55,0.2); color: #7a4e00; border: 1px solid rgba(212,175,55,0.35); }
-  .vineros-media { height: 210px; background: linear-gradient(145deg, rgba(107,45,60,0.22), rgba(212,175,55,0.18)); display: flex; align-items: end; justify-content: start; padding: 0.8rem; color: #fff; font-weight: 700; letter-spacing: 0.02em; }
+  .vineros-media { height: 210px; background: linear-gradient(145deg, rgba(107,45,60,0.22), rgba(212,175,55,0.18)); display: flex; align-items: end; justify-content: start; padding: 0.8rem; color: #fff; font-weight: 700; letter-spacing: 0.02em; overflow: hidden; }
   .vineros-media.sponsor-media { background: linear-gradient(145deg, #ff7f2a, #ff5e00); }
+  .vineros-media--img { padding: 0; align-items: stretch; justify-content: stretch; }
+  .vineros-media-img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .vineros-body { padding: 0.8rem 0.9rem 0.9rem; }
   .vineros-title { margin: 0 0 0.35rem 0; font-size: 1rem; color: var(--texto-principal); }
   .vineros-desc { margin: 0; color: var(--texto-suave); font-size: 0.93rem; line-height: 1.45; }
@@ -34,6 +36,14 @@
   .vineros-detail p { margin: 0.15rem 0; font-size: 0.88rem; }
   .vineros-footer { margin-top: 1rem; text-align: center; color: var(--texto-suave); font-size: 0.9rem; }
   #feed-observer { height: 20px; }
+  .feed-tabs { display: flex; gap: 0.25rem; overflow-x: auto; padding: 0.5rem 0 0.75rem; margin-bottom: 0.5rem; scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
+  .feed-tab { flex: 0 0 auto; padding: 0.5rem 0.75rem; border-radius: 999px; border: 1px solid rgba(107,45,60,0.25); background: rgba(255,255,255,0.9); color: var(--burdeos); font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .feed-tab:hover { background: rgba(107,45,60,0.08); }
+  .feed-tab.active { background: var(--burdeos); color: #fff; border-color: var(--burdeos); }
+  .ad-slot { min-height: 70px; margin: 0.75rem 0; padding: 0.75rem; border: 1px dashed rgba(107,45,60,0.2); border-radius: 12px; background: rgba(107,45,60,0.04); display: flex; align-items: center; justify-content: center; color: var(--texto-suave); font-size: 0.8rem; }
+  [data-theme="dark"] .feed-tab { background: rgba(26,21,18,0.8); color: var(--dorado-claro); border-color: rgba(212,168,75,0.3); }
+  [data-theme="dark"] .feed-tab.active { background: rgba(212,175,55,0.3); color: var(--dorado-claro); border-color: rgba(212,175,55,0.5); }
+  [data-theme="dark"] .ad-slot { border-color: rgba(212,168,75,0.2); background: rgba(26,21,18,0.4); color: #d4c3a6; }
   [data-theme="dark"] .vineros-card { background: rgba(26,21,18,0.72); border-color: rgba(212,168,75,0.24); }
   [data-theme="dark"] .vineros-lang-select { background: rgba(26,21,18,0.85); color: var(--dorado-claro); border-color: rgba(212,168,75,0.3); }
   [data-theme="dark"] .vineros-story-avatar { background: rgba(26,21,18,0.9); color: var(--dorado-claro); }
@@ -52,6 +62,17 @@
 <div class="vineros-wrap">
   <h1 class="page-title">{{ t('comunidad.feed_title') }}</h1>
   <p class="page-subtitle">{{ t('comunidad.feed_subtitle') }}</p>
+
+  <nav class="feed-tabs" id="feed-tabs" role="tablist">
+    <button type="button" class="feed-tab active" data-canal="para_ti" role="tab">{{ t('comunidad.feed_para_ti') }}</button>
+    <button type="button" class="feed-tab" data-canal="noticias" role="tab">{{ t('comunidad.feed_noticias') }}</button>
+    <button type="button" class="feed-tab" data-canal="eventos" role="tab">{{ t('comunidad.feed_eventos') }}</button>
+    <button type="button" class="feed-tab" data-canal="enoturismo" role="tab">{{ t('comunidad.feed_enoturismo') }}</button>
+    <button type="button" class="feed-tab" data-canal="vineros" role="tab">{{ t('comunidad.feed_vineros') }}</button>
+  </nav>
+
+  <div class="ad-slot" id="ad-slot-feed-top" data-slot-id="feed-top" aria-hidden="true">{{ t('comunidad.ad_slot_placeholder') }}</div>
+
   <div class="vineros-tools">
     <select id="vineros-lang-select" class="vineros-lang-select" title="Idioma de traducción">
       <option value="auto">Auto</option>
@@ -71,6 +92,7 @@
       <div id="vineros-stories" class="vineros-stories"></div>
     </div>
     <div id="vineros-list" class="vineros-list"></div>
+    <div class="ad-slot" id="ad-slot-feed-mid" data-slot-id="feed-mid" aria-hidden="true">{{ t('comunidad.ad_slot_placeholder') }}</div>
     <div id="feed-observer"></div>
   </div>
 

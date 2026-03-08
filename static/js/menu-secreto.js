@@ -9,6 +9,7 @@
   var PREMIUM_MODAL_ID = 'premium-upsell-modal';
   var PREMIUM_CLOSE_ID = 'premium-upsell-close';
   var DELETE_ACCOUNT_BTN_ID = 'delete-account-btn';
+  var LINK_MI_PERFIL_ID = 'link-mi-perfil';
   var SESSION_KEY = 'vino_pro_session_id';
 
   function getMenu() { return document.getElementById(MENU_ID); }
@@ -153,11 +154,45 @@
     }
 
     if (menu) {
+      var linkMiPerfil = document.getElementById(LINK_MI_PERFIL_ID);
+      if (linkMiPerfil) {
+        linkMiPerfil.addEventListener('click', function(e) {
+          e.preventDefault();
+          closeMenu();
+          var sid = '';
+          try { sid = (window.getSessionId ? window.getSessionId() : '') || ''; } catch (_) {}
+          if (!sid) {
+            window.location.href = '/comunidad/feed';
+            return;
+          }
+          fetch('/api/mi-perfil', {
+            headers: { 'Accept': 'application/json', 'X-Session-ID': sid }
+          })
+            .then(function(r) {
+              if (r.status === 404) {
+                window.location.href = '/comunidad/feed';
+                return null;
+              }
+              return r.ok ? r.json() : null;
+            })
+            .then(function(data) {
+              if (data && data.username) {
+                window.location.href = '/comunidad/perfil/' + encodeURIComponent(data.username);
+              } else {
+                window.location.href = '/comunidad/feed';
+              }
+            })
+            .catch(function() {
+              window.location.href = '/comunidad/feed';
+            });
+        });
+      }
       var links = menu.querySelectorAll('.menu-secreto-link');
       for (var i = 0; i < links.length; i++) {
         links[i].addEventListener('click', function(e) {
           var link = e.currentTarget;
           var href = (link.getAttribute('href') || '').trim();
+          if (link.id === LINK_MI_PERFIL_ID) return;
           if (href === '/qr') {
             e.preventDefault();
             closeMenu();

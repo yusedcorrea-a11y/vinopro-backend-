@@ -48,10 +48,11 @@ def username_valido(username: str) -> bool:
     return bool(username and _USERNAME_RE.match(username.strip()))
 
 
-def crear_perfil(session_id: str, username: str, bio: str = "", ubicacion: str = "", idioma: str = "") -> tuple[bool, str]:
+def crear_perfil(session_id: str, username: str, bio: str = "", ubicacion: str = "", idioma: str = "", avatar_path: str = "") -> tuple[bool, str]:
     """
     Crea perfil para esta sesión. username debe ser único.
     idioma: código preferido para leer contenido (es, en, ru, hi, etc.).
+    avatar_path: ruta relativa de la foto de perfil (ej. /static/uploads/avatars/xxx.jpg).
     Devuelve (True, "") o (False, "mensaje_error").
     """
     if not session_id:
@@ -71,7 +72,7 @@ def crear_perfil(session_id: str, username: str, bio: str = "", ubicacion: str =
         "session_id": session_id,
         "bio": (bio or "").strip()[:500],
         "ubicacion": (ubicacion or "").strip()[:200],
-        "avatar_path": "",
+        "avatar_path": (avatar_path or "").strip()[:500] or "",
         "privado": False,
         "created_at": now,
         "idioma": (idioma or "").strip()[:10] or "",
@@ -92,9 +93,21 @@ def get_perfil_por_username(username: str) -> PerfilUsuario | None:
 
 
 def get_username_por_session(session_id: str) -> str | None:
-    """Devuelve el username asociado a esta sesión o None."""
+    """Devuelve el username asociado a esta sesión (perfil JSON o usuario registrado en DB) o None."""
     _load()
-    return _data["session_to_username"].get(session_id)
+    username = _data["session_to_username"].get(session_id)
+    if username:
+        return username
+    try:
+        from db import database as db
+        user_id = db.get_user_id_by_session(session_id)
+        if user_id:
+            user = db.get_user_by_id(user_id)
+            if user and user.get("display_name"):
+                return user["display_name"].strip().lower()
+    except Exception:
+        pass
+    return None
 
 
 def get_perfil_por_session(session_id: str) -> PerfilUsuario | None:
@@ -105,8 +118,8 @@ def get_perfil_por_session(session_id: str) -> PerfilUsuario | None:
     return get_perfil_por_username(username)
 
 
-def actualizar_perfil(session_id: str, bio: str | None = None, ubicacion: str | None = None, privado: bool | None = None, idioma: str | None = None) -> bool:
-    """Actualiza bio, ubicación, privado o idioma del perfil de esta sesión."""
+def actualizar_perfil(session_id: str, bio: str | None = None, ubicacion: str | None = None, privado: bool | None = None, idioma: str | None = None, avatar_path: str | None = None) -> bool:
+    """Actualiza bio, ubicación, privado, idioma o avatar del perfil de esta sesión."""
     perfil = get_perfil_por_session(session_id)
     if not perfil:
         return False
@@ -121,6 +134,8 @@ def actualizar_perfil(session_id: str, bio: str | None = None, ubicacion: str | 
                 p["privado"] = bool(privado)
             if idioma is not None:
                 p["idioma"] = (idioma or "").strip()[:10] or ""
+            if avatar_path is not None:
+                p["avatar_path"] = (avatar_path or "").strip()[:500] or ""
             _save()
             return True
     return False

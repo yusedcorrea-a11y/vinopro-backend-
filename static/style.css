@@ -1209,6 +1209,10 @@ a.btn-menu-botella { text-decoration: none; color: inherit; }
   padding-top: 1rem;
   border-top: 1px solid rgba(107, 45, 60, 0.12);
 }
+.menu-secreto-link-perfil {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
 .menu-secreto-subtitulo {
   font-size: 1rem;
   font-weight: 700;

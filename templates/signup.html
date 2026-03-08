@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+  .signup-wrap { max-width: 420px; margin: 0 auto; padding: 2rem 1rem; }
+  .signup-title { font-size: 1.5rem; font-weight: 800; color: var(--burdeos); margin-bottom: 0.35rem; }
+  .signup-sub { color: var(--texto-suave); font-size: 0.95rem; margin-bottom: 1.5rem; }
+  .signup-form .field { margin-bottom: 1rem; }
+  .signup-form label { display: block; font-weight: 600; color: var(--burdeos); margin-bottom: 0.35rem; font-size: 0.9rem; }
+  .signup-form input[type="email"],
+  .signup-form input[type="password"],
+  .signup-form input[type="text"] {
+    width: 100%; padding: 0.7rem 0.9rem; border-radius: 12px;
+    border: 1px solid rgba(107,45,60,0.25); font-size: 1rem;
+    box-sizing: border-box;
+  }
+  .signup-form input[type="file"] { font-size: 0.88rem; margin-top: 0.25rem; }
+  .signup-divider { text-align: center; margin: 1.25rem 0; color: var(--texto-suave); font-size: 0.85rem; }
+  .signup-social { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1rem; }
+  .signup-social-btn {
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    padding: 0.75rem 1rem; border-radius: 12px; border: 1px solid rgba(107,45,60,0.25);
+    background: #fff; color: var(--texto-principal); font-weight: 600; cursor: pointer;
+    text-decoration: none; font-size: 0.95rem;
+  }
+  .signup-social-btn:hover { background: rgba(107,45,60,0.06); }
+  .signup-social-btn.pronto { opacity: 0.7; cursor: not-allowed; }
+  .signup-submit { width: 100%; padding: 0.85rem; border-radius: 12px; background: var(--burdeos); color: #fff; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 0.5rem; }
+  .signup-submit:hover { filter: brightness(1.08); }
+  .signup-toggle { text-align: center; margin-top: 1.25rem; }
+  .signup-toggle a { color: var(--burdeos); font-weight: 600; text-decoration: none; }
+  .signup-msg { padding: 0.65rem; border-radius: 10px; margin-bottom: 1rem; display: none; }
+  .signup-msg.error { background: rgba(180,50,50,0.12); color: #8b2a2a; }
+  .signup-msg.ok { background: rgba(40,120,60,0.12); color: #1a5c2e; }
+  #login-form { display: none; }
+  #login-form.visible { display: block; }
+  #register-form.oculto { display: none; }
+  [data-theme="dark"] .signup-form input { background: rgba(26,21,18,0.6); color: var(--dorado-claro); border-color: rgba(212,168,75,0.3); }
+  [data-theme="dark"] .signup-social-btn { background: rgba(26,21,18,0.7); color: var(--dorado-claro); border-color: rgba(212,168,75,0.3); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="signup-wrap">
+  <h1 class="signup-title">Entra en VINEROs</h1>
+  <p class="signup-sub">Regístrate con tu correo o con Google o Facebook. Sube tu foto y empieza a compartir.</p>
+
+  <div id="signup-msg" class="signup-msg"></div>
+
+  <div id="register-form">
+    <form id="form-register" class="signup-form" enctype="multipart/form-data">
+      <div class="field">
+        <label for="reg-email">Correo</label>
+        <input type="email" id="reg-email" name="email" required placeholder="tu@correo.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="reg-password">Contraseña (mín. 6)</label>
+        <input type="password" id="reg-password" name="password" required minlength="6" placeholder="••••••••" autocomplete="new-password">
+      </div>
+      <div class="field">
+        <label for="reg-username">Nombre de usuario (VINEROs)</label>
+        <input type="text" id="reg-username" name="username" required minlength="3" maxlength="30" placeholder="ej: mi_nick_vinos" autocomplete="username" pattern="[a-zA-Z0-9_]+" title="Solo letras, números y _">
+      </div>
+      <div class="field">
+        <label for="reg-avatar">Foto de perfil (opcional)</label>
+        <input type="file" id="reg-avatar" name="avatar" accept="image/jpeg,image/png,image/webp,image/gif">
+      </div>
+      <button type="submit" class="signup-submit" id="btn-register">Registrarme y entrar a VINEROs</button>
+    </form>
+  </div>
+
+  <div class="signup-divider">— o continúa con —</div>
+  <div class="signup-social">
+    <button type="button" class="signup-social-btn pronto" disabled title="Próximamente">Google — Próximamente</button>
+    <button type="button" class="signup-social-btn pronto" disabled title="Próximamente">Facebook — Próximamente</button>
+  </div>
+
+  <div id="login-form">
+    <form id="form-login" class="signup-form">
+      <div class="field">
+        <label for="login-email">Correo</label>
+        <input type="email" id="login-email" name="email" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="login-password">Contraseña</label>
+        <input type="password" id="login-password" name="password" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="signup-submit">Iniciar sesión</button>
+    </form>
+  </div>
+
+  <p class="signup-toggle">
+    <a href="#" id="toggle-login">¿Ya tienes cuenta? Inicia sesión</a><br>
+    <a href="#" id="toggle-register" style="display:none;">Crear cuenta nueva</a>
+  </p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  var SESSION_KEY = 'vino_pro_session_id';
+  var msgEl = document.getElementById('signup-msg');
+  var registerForm = document.getElementById('register-form');
+  var loginForm = document.getElementById('login-form');
+  var formRegister = document.getElementById('form-register');
+  var formLogin = document.getElementById('form-login');
+  var toggleLogin = document.getElementById('toggle-login');
+  var toggleRegister = document.getElementById('toggle-register');
+
+  function showMsg(text, isError) {
+    if (!msgEl) return;
+    msgEl.textContent = text;
+    msgEl.className = 'signup-msg ' + (isError ? 'error' : 'ok');
+    msgEl.style.display = 'block';
+  }
+  function hideMsg() { if (msgEl) { msgEl.style.display = 'none'; } }
+
+  function setSession(sid) {
+    try { localStorage.setItem(SESSION_KEY, sid); } catch (e) {}
+  }
+
+  formRegister.addEventListener('submit', function(e) {
+    e.preventDefault();
+    hideMsg();
+    var fd = new FormData();
+    fd.append('email', document.getElementById('reg-email').value.trim());
+    fd.append('password', document.getElementById('reg-password').value);
+    fd.append('username', document.getElementById('reg-username').value.trim());
+    var avatar = document.getElementById('reg-avatar');
+    if (avatar && avatar.files && avatar.files[0]) fd.append('avatar', avatar.files[0]);
+    var btn = document.getElementById('btn-register');
+    if (btn) btn.disabled = true;
+    fetch('/api/auth/register', { method: 'POST', body: fd })
+      .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+      .then(function(result) {
+        if (btn) btn.disabled = false;
+        if (result.ok && result.data.session_id) {
+          setSession(result.data.session_id);
+          showMsg('Cuenta creada. Redirigiendo a VINEROs…', false);
+          setTimeout(function() { window.location.href = '/comunidad/feed'; }, 800);
+        } else {
+          showMsg(result.data.detail || 'Error al registrarse', true);
+        }
+      })
+      .catch(function() {
+        if (btn) btn.disabled = false;
+        showMsg('Error de conexión. Intenta de nuevo.', true);
+      });
+  });
+
+  formLogin.addEventListener('submit', function(e) {
+    e.preventDefault();
+    hideMsg();
+    var fd = new FormData();
+    fd.append('email', document.getElementById('login-email').value.trim());
+    fd.append('password', document.getElementById('login-password').value);
+    fetch('/api/auth/login', { method: 'POST', body: fd })
+      .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+      .then(function(result) {
+        if (result.ok && result.data.session_id) {
+          setSession(result.data.session_id);
+          showMsg('Sesión iniciada. Redirigiendo…', false);
+          setTimeout(function() { window.location.href = '/comunidad/feed'; }, 600);
+        } else {
+          showMsg(result.data.detail || 'Correo o contraseña incorrectos', true);
+        }
+      })
+      .catch(function() { showMsg('Error de conexión.', true); });
+  });
+
+  toggleLogin.addEventListener('click', function(e) { e.preventDefault(); registerForm.classList.add('oculto'); loginForm.classList.add('visible'); toggleLogin.style.display = 'none'; toggleRegister.style.display = 'inline'; });
+  toggleRegister.addEventListener('click', function(e) { e.preventDefault(); registerForm.classList.remove('oculto'); loginForm.classList.remove('visible'); toggleLogin.style.display = 'inline'; toggleRegister.style.display = 'none'; });
+})();
+</script>
+{% endblock %}

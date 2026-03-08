@@ -23,6 +23,11 @@ _PORT = int(os.environ.get("PORT", "8001").strip())
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # startup
+    try:
+        from db.database import init_db
+        init_db()
+    except Exception as e:
+        print(f"[WARN] DB init: {e}")
     app.state.runtime_metrics = {
         "started_at": time.time(),
         "total_requests": 0,
@@ -199,6 +204,12 @@ def pagina_escanear(request: Request):
 @app.get("/registrar", response_class=HTMLResponse)
 def pagina_registrar(request: Request):
     return render_page(request, "registrar.html", page_class="page-registrar", active_page="registrar")
+
+
+@app.get("/signup", response_class=HTMLResponse)
+def pagina_signup(request: Request):
+    """Segunda pantalla: registro para entrar a VINEROs (correo, Google, Facebook) y subir foto."""
+    return render_page(request, "signup.html", page_class="page-signup", active_page="")
 
 
 @app.get("/preguntar", response_class=HTMLResponse)

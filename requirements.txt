@@ -11,5 +11,6 @@ reportlab>=4.0.0
 httpx>=0.25.0
 stripe>=7.0.0
 python-dotenv>=1.0.0
+passlib[bcrypt]>=1.7.4
 # IA de visión (fallback OCR): Google Gemini 2.0 Flash (API v1 estable)
 google-genai>=1.0.0

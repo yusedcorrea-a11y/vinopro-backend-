@@ -44,6 +44,21 @@ def similitud_palabras(a: str, b: str) -> float:
     return difflib.SequenceMatcher(None, a, b).ratio()
 
 
+# Código país (IP / cabecera) -> nombre exacto en BD (campo "pais"). Prioridad por región del usuario.
+# Debe coincidir con el valor "pais" en data/*.json (italia.json -> Italia, corea.json -> Corea, etc.).
+# Incluye todos los países con catálogo en la app + otros por si se añaden después o ip-api devuelve más códigos.
+CODIGO_A_NOMBRE_PAIS: dict[str, str] = {
+    "ES": "España", "IT": "Italia", "FR": "Francia", "DE": "Alemania", "PT": "Portugal",
+    "GB": "Reino Unido", "UK": "Reino Unido", "US": "Estados Unidos", "AR": "Argentina",
+    "CL": "Chile", "MX": "México", "BR": "Brasil", "CO": "Colombia", "PE": "Perú", "UY": "Uruguay",
+    "CA": "Canadá", "AU": "Australia", "NZ": "Nueva Zelanda", "ZA": "Sudáfrica",
+    "JP": "Japón", "CN": "China", "IN": "India", "RU": "Rusia", "TR": "Turquía",
+    "GR": "Grecia", "AT": "Austria", "CH": "Suiza", "IL": "Israel", "LB": "Líbano",
+    "MA": "Marruecos", "DZ": "Argelia", "TN": "Túnez", "HU": "Hungría", "KR": "Corea",
+    "BE": "Bélgica", "NL": "Países Bajos", "PL": "Polonia", "CZ": "República Checa",
+    "SE": "Suecia", "NO": "Noruega", "DK": "Dinamarca", "FI": "Finlandia",
+}
+
 # Regiones con prioridad: si el usuario menciona estas claves, se filtra por esa región (nombre en BD)
 REGION_PRIORITARIA = [
     (["ribera", "duero"], "Ribera del Duero"),
@@ -112,15 +127,26 @@ def buscar_por_codigo_barras_bd(vinos_dict: dict, codigo: str) -> dict | None:
     return None
 
 
-def buscar_vinos_avanzado(vinos_dict: dict, texto: str, limite: int = 5, precio_max: float | None = None, tipo: str | None = None) -> list:
+def buscar_vinos_avanzado(
+    vinos_dict: dict,
+    texto: str,
+    limite: int = 5,
+    precio_max: float | None = None,
+    tipo: str | None = None,
+    pais_usuario: str | None = None,
+) -> list:
     """
     Búsqueda mejorada en el diccionario de vinos:
+    - Prioridad por región del usuario: si pais_usuario es código (IT, ES...), se da más peso a vinos de ese país.
     - Prioridad: si se menciona "ribera" / "ribera del duero", solo vinos de esa región
     - Usa nombre, bodega, región y uva_principal; tolera errores ortográficos (fuzzy matching)
     - Acepta filtros en el texto: precio máximo (menos de 20€) y tipo (tinto, blanco, etc.)
     - Ordena por relevancia (score)
     """
     texto_norm = normalizar_texto(texto)
+    nombre_pais_bd = None
+    if pais_usuario and len(pais_usuario.strip()) == 2:
+        nombre_pais_bd = CODIGO_A_NOMBRE_PAIS.get(pais_usuario.strip().upper())
     if precio_max is None:
         precio_max = _extraer_precio_max(texto_norm)
     if tipo is None:
@@ -181,6 +207,9 @@ def buscar_vinos_avanzado(vinos_dict: dict, texto: str, limite: int = 5, precio_
                         score += peso * mejor_sim
 
         if score > 0:
+            # Prioridad región del usuario: más peso a vinos del país donde está
+            if nombre_pais_bd and (vino.get("pais") or "").strip() == nombre_pais_bd:
+                score += 25.0
             resultados.append({
                 "score": score,
                 "key": key,
@@ -195,13 +224,17 @@ def buscar_vinos_avanzado(vinos_dict: dict, texto: str, limite: int = 5, precio_
     return resultados[:limite]
 
 
-def buscar_vinos_con_sugerencia(vinos_dict: dict, texto: str, limite: int = 5) -> dict:
+def buscar_vinos_con_sugerencia(
+    vinos_dict: dict, texto: str, limite: int = 5, pais_usuario: str | None = None
+) -> dict:
     """
     Igual que buscar_vinos_avanzado pero devuelve además 'quizas_quisiste_decir' cuando
     la búsqueda es de un solo token y el mejor resultado coincide por fuzzy (no exacto).
     Return: {"resultados": list, "quizas_quisiste_decir": str | None}
     """
-    resultados = buscar_vinos_avanzado(vinos_dict, texto, limite=limite)
+    resultados = buscar_vinos_avanzado(
+        vinos_dict, texto, limite=limite, pais_usuario=pais_usuario
+    )
     tokens = obtener_tokens_busqueda(texto)
     sugerencia = None
     if len(tokens) == 1 and resultados:

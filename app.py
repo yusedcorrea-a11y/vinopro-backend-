@@ -105,6 +105,7 @@ print(f"[INFO] Base de datos lista: {len(VINOS_MUNDIALES)} vinos cargados desde 
 # Estado para rutas de escaneo, experto en vinos, bodega y analytics
 from routes import escaneo, sumiller, geolocalizacion, bodega, analytics, informes, adaptador, comprar, planes, pagos, ofertas, valoraciones_wishlist, comunidad, qr, auth
 from services.busqueda_service import buscar_vinos_avanzado
+from services.enlaces_service import detectar_pais_por_ip
 
 app.state.vinos_mundiales = VINOS_MUNDIALES
 app.state.consultas_escaneo = {}
@@ -454,16 +455,18 @@ async def api_preguntar_local(request: Request):
     }
 
 @app.post("/analyze/text")
-def analyze_wine(texto: str = Form(...)):
+def analyze_wine(request: Request, texto: str = Form(...)):
     """
-    Analiza un vino por texto
-    - Busca en el diccionario por nombre o palabras clave
-    - Si no encuentra, devuelve análisis genérico
+    Analiza un vino por texto.
+    Prioriza vinos del país del usuario (por IP) para que el resultado y el enlace de compra coincidan.
     """
     texto_lower = texto.lower().strip()
+    client_ip = request.client.host if request.client else None
+    pais_usuario = detectar_pais_por_ip(client_ip)
 
-    # Búsqueda avanzada unificada (services.busqueda_service)
-    coincidencias = buscar_vinos_avanzado(VINOS_MUNDIALES, texto_lower, limite=5)
+    coincidencias = buscar_vinos_avanzado(
+        VINOS_MUNDIALES, texto_lower, limite=5, pais_usuario=pais_usuario
+    )
     if coincidencias and coincidencias[0]["score"] >= 1.0:
         mejor = coincidencias[0]
         vino_encontrado = mejor["vino"]
@@ -534,16 +537,19 @@ def listar_vinos():
     }
 
 @app.get("/api/buscar-para-registrar")
-def buscar_para_registrar(q: str):
+def buscar_para_registrar(request: Request, q: str):
     """
-    Busca vinos para el flujo 'Registrar': primero en nuestra BD, luego en Open Food Facts.
-    Devuelve en_bd (ya en nuestra base) y externos (para que el usuario elija y registre).
+    Busca vinos para el flujo 'Registrar'. Prioriza vinos del país del usuario (por IP).
     """
     q = (q or "").strip()
     if len(q) < 2:
         return {"query": q, "en_bd": [], "externos": []}
+    client_ip = request.client.host if request.client else None
+    pais_usuario = detectar_pais_por_ip(client_ip)
     from services.api_externa_service import buscar_por_texto as off_buscar
-    coincidencias = buscar_vinos_avanzado(VINOS_MUNDIALES, q, limite=10)
+    coincidencias = buscar_vinos_avanzado(
+        VINOS_MUNDIALES, q, limite=10, pais_usuario=pais_usuario
+    )
     en_bd = [
         {"key": c["key"], "vino": c["vino"]}
         for c in coincidencias
@@ -560,9 +566,13 @@ def buscar_para_registrar(q: str):
 
 
 @app.get("/buscar")
-def buscar_vino(q: str):
-    """Busca vinos por nombre, bodega o región (búsqueda unificada en busqueda_service)."""
-    coincidencias = buscar_vinos_avanzado(VINOS_MUNDIALES, q, limite=20)
+def buscar_vino(request: Request, q: str):
+    """Busca vinos por nombre, bodega o región. Prioriza vinos del país del usuario (por IP)."""
+    client_ip = request.client.host if request.client else None
+    pais_usuario = detectar_pais_por_ip(client_ip)
+    coincidencias = buscar_vinos_avanzado(
+        VINOS_MUNDIALES, q, limite=20, pais_usuario=pais_usuario
+    )
     resultados = [
         {
             "key": c["key"],

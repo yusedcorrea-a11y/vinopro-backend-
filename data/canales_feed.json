@@ -39,6 +39,56 @@
       "fuente": "Rioja Wine",
       "badge": "Noticias",
       "imagen": "https://images.unsplash.com/photo-1474722883778-792e2290308b?w=600&fit=crop"
+    },
+    {
+      "id": "not-5",
+      "created_at": 1738354400,
+      "titulo": "Borgoña y Champaña: actualidad de Francia",
+      "descripcion": "Noticias de las regiones más emblemáticas del vino francés. Cosechas, subidas de precios y tendencias.",
+      "link": "https://www.decanter.com/wine-news/",
+      "fuente": "Decanter",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&fit=crop"
+    },
+    {
+      "id": "not-6",
+      "created_at": 1738268000,
+      "titulo": "Italia: Toscana, Piamonte y Veneto",
+      "descripcion": "Lo último del vino italiano: DOCG, cosechas y novedades de las regiones más famosas.",
+      "link": "https://www.wine-searcher.com/regions-italy",
+      "fuente": "Wine-Searcher",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1596363505729-2b22f4a95a8b?w=600&fit=crop"
+    },
+    {
+      "id": "not-7",
+      "created_at": 1738181600,
+      "titulo": "Napa Valley y California: novedades USA",
+      "descripcion": "Actualidad del vino californiano: incendios, cosechas y las bodegas que marcan tendencia.",
+      "link": "https://www.wineenthusiast.com/culture/wine/",
+      "fuente": "Wine Enthusiast",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1474722883778-792e2290308b?w=600&fit=crop"
+    },
+    {
+      "id": "not-8",
+      "created_at": 1738095200,
+      "titulo": "Mendoza y Argentina: Malbec y altura",
+      "descripcion": "Vinos de altura y nuevas bodegas en Mendoza. El Malbec argentino sigue conquistando mercados.",
+      "link": "https://www.winesofargentina.org/",
+      "fuente": "Wines of Argentina",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&fit=crop"
+    },
+    {
+      "id": "not-9",
+      "created_at": 1738008800,
+      "titulo": "Chile: Valle del Maipo y Casablanca",
+      "descripcion": "Actualidad vitivinícola chilena: Carmenère, Cabernet y vinos costeros. Calidad y sostenibilidad.",
+      "link": "https://www.winesofchile.org/",
+      "fuente": "Wines of Chile",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&fit=crop"
     }
   ],
   "eventos": [
@@ -61,6 +111,16 @@
       "fuente": "Ferias",
       "badge": "Ferias",
       "imagen": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&fit=crop"
+    },
+    {
+      "id": "ev-3",
+      "created_at": 1738612800,
+      "titulo": "Wine events worldwide",
+      "descripcion": "Vinexpo, ProWein, tastings and wine fairs around the world. Find events in Europe, Americas and Asia.",
+      "link": "https://www.eventbrite.com/d/online/wine-tasting/",
+      "fuente": "Eventbrite",
+      "badge": "Eventos",
+      "imagen": "https://images.unsplash.com/photo-1474722883778-792e2290308b?w=600&fit=crop"
     }
   ],
   "enoturismo": [
@@ -103,6 +163,56 @@
       "fuente": "La Rioja Turismo",
       "badge": "Ruta",
       "imagen": "https://images.unsplash.com/photo-1596363505729-2b22f4a95a8b?w=600&fit=crop"
+    },
+    {
+      "id": "eno-5",
+      "created_at": 1738354400,
+      "titulo": "Borgoña: Côte de Beaune y Côte de Nuits",
+      "descripcion": "Ruta por los viñedos más famosos del mundo. Domaine, cavas y pueblos con denominación de origen.",
+      "link": "https://www.burgundy-tourism.com/",
+      "fuente": "Burgundy Tourism",
+      "badge": "Ruta",
+      "imagen": "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&fit=crop"
+    },
+    {
+      "id": "eno-6",
+      "created_at": 1738268000,
+      "titulo": "Toscana: Chianti y Val d'Orcia",
+      "descripcion": "Castillos, agriturismos y bodegas entre colinas. La Toscana es el corazón del enoturismo italiano.",
+      "link": "https://www.visittuscany.com/en/ideas/wine-and-food/",
+      "fuente": "Visit Tuscany",
+      "badge": "Ruta",
+      "imagen": "https://images.unsplash.com/photo-1474722883778-792e2290308b?w=600&fit=crop"
+    },
+    {
+      "id": "eno-7",
+      "created_at": 1738181600,
+      "titulo": "Napa Valley: bodegas y experiencias",
+      "descripcion": "Visitas a bodegas, tren del vino y restaurantes con estrella. La meca del vino americano.",
+      "link": "https://www.visitnapavalley.com/",
+      "fuente": "Visit Napa Valley",
+      "badge": "Ruta",
+      "imagen": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&fit=crop"
+    },
+    {
+      "id": "eno-8",
+      "created_at": 1738095200,
+      "titulo": "Mendoza: viñas al pie de los Andes",
+      "descripcion": "Bodegas de altura, Malbec y gastronomía argentina. Luján de Cuyo y Valle de Uco.",
+      "link": "https://www.argentina.travel/en/experiences/mendoza-wine-region",
+      "fuente": "Argentina Travel",
+      "badge": "Ruta",
+      "imagen": "https://images.unsplash.com/photo-1596363505729-2b22f4a95a8b?w=600&fit=crop"
+    },
+    {
+      "id": "eno-9",
+      "created_at": 1738008800,
+      "titulo": "Valle de Colchagua y Casablanca (Chile)",
+      "descripcion": "Rutas del vino chileno: Carmenère, Cabernet y viñas entre cordillera y mar.",
+      "link": "https://www.chile.travel/",
+      "fuente": "Chile Travel",
+      "badge": "Ruta",
+      "imagen": "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&fit=crop"
     }
   ]
 }

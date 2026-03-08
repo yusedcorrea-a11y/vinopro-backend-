@@ -22,6 +22,7 @@
   var loading = false;
   var hasMore = true;
   var currentCanal = 'para_ti';
+  var FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&fit=crop';
 
   function resolveAutoLang() {
     var navLang = ((navigator.language || navigator.userLanguage || '') + '').toLowerCase();
@@ -60,6 +61,7 @@
       var next = getSelectedLangValue();
       try { localStorage.setItem(LANG_STORAGE_KEY, next); } catch (_) {}
       userLang = getEffectiveTargetLang();
+      if (feedList && feedList.style.display !== 'none') setCanal(currentCanal);
     });
   }
 
@@ -146,11 +148,13 @@
     var badge = post.badge ? '<span class="vineros-badge">' + escapeHtml(post.badge) + '</span>' : '';
     var mediaClass = post.post_type === 'sponsor' ? 'vineros-media sponsor-media' : (post.post_type === 'canal' ? 'vineros-media vineros-media--img' : 'vineros-media');
     var mediaContent = '';
-    if (post.post_type === 'canal' && post.image_url) {
-      mediaContent = '<img class="vineros-media-img" src="' + escapeHtml(post.image_url) + '" alt="" loading="lazy" />';
+    if (post.post_type === 'canal') {
+      var imgUrl = post.image_url || FALLBACK_IMAGE;
+      mediaContent = '<img class="vineros-media-img" src="' + escapeHtml(imgUrl) + '" alt="" loading="lazy" />';
+    } else if (post.post_type === 'sponsor') {
+      mediaContent = 'Patrocinador PRO';
     } else {
-      var mediaText = post.post_type === 'sponsor' ? 'Patrocinador PRO' : (post.post_type === 'canal' ? (post.badge || 'Canal') : 'VINEROS');
-      mediaContent = mediaText;
+      mediaContent = 'VINEROS';
     }
     var safeDescription = escapeHtml(post.description || '');
     var extraBtn = '';
@@ -256,7 +260,8 @@
     showLoading();
     var headers = { 'Accept': 'application/json' };
     if (sid) headers['X-Session-ID'] = sid;
-    var url = '/api/feed?canal=' + encodeURIComponent(currentCanal) + '&offset=' + encodeURIComponent(offset) + '&limit=' + encodeURIComponent(limit);
+    var lang = getEffectiveTargetLang() || 'es';
+    var url = '/api/feed?canal=' + encodeURIComponent(currentCanal) + '&offset=' + encodeURIComponent(offset) + '&limit=' + encodeURIComponent(limit) + '&lang=' + encodeURIComponent(lang);
     fetch(url, { headers: headers })
       .then(function(r) {
         if (r.status === 401) { showSinPerfil(); return null; }

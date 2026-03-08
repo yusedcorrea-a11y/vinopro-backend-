@@ -337,10 +337,12 @@ async def get_feed(
     canal: str = "para_ti",
     limit: int = 50,
     offset: int = 0,
+    lang: str | None = None,
     x_session_id: str | None = Header(None, alias="X-Session-ID"),
 ):
     """
-    Feed por canal: para_ti (mezcla), noticias, eventos, enoturismo, vineros (solo comunidad).
+    Feed por canal. Si lang está definido y no es 'es', títulos y descripciones de posts
+    de canal (noticias/eventos/enoturismo) se traducen al idioma del usuario. Sin barreras de idioma.
     """
     canal = (canal or "para_ti").strip().lower()
     if canal not in feed_svc.LISTA_CANALES:
@@ -411,6 +413,23 @@ async def get_feed(
     next_offset = safe_offset + len(page)
     has_more = next_offset < len(dedup)
     stories = _stories_desde_posts(dedup, limit=10) if canal in ("para_ti", "vineros") else []
+
+    target_lang = (lang or "").strip().lower()
+    if target_lang and target_lang != "es":
+        canal_indices = [i for i, p in enumerate(page) if p.get("post_type") == "canal"]
+        if canal_indices:
+            titles = [page[i].get("title") or "" for i in canal_indices]
+            descs = [page[i].get("description") or "" for i in canal_indices]
+            try:
+                trans_titles = await translation_svc.traducir_lote(titles, target_lang, "es")
+                trans_descs = await translation_svc.traducir_lote(descs, target_lang, "es")
+                for k, i in enumerate(canal_indices):
+                    if k < len(trans_titles):
+                        page[i]["title"] = trans_titles[k]
+                    if k < len(trans_descs):
+                        page[i]["description"] = trans_descs[k]
+            except Exception:
+                pass
 
     return {
         "canal": canal,

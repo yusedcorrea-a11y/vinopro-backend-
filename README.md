@@ -28,6 +28,46 @@ Una herramienta avanzada diseñada para expertos en vinos profesionales que auto
 
 ---
 
+## 🏗 Architecture
+
+End-to-end flow from label scan to storage and AI:
+
+```mermaid
+flowchart LR
+  subgraph Client
+    A[📱 Scanner / Web]
+  end
+  subgraph API
+    B[FastAPI]
+    B --> C[OCR / Quality Gates]
+    B --> D[Gemini Vision]
+    B --> E[Bodega / Auth / Community]
+  end
+  subgraph Data
+    F[(SQLite / JSON)]
+    G[Open Food Facts cache]
+  end
+  A --> B
+  C --> D
+  B --> F
+  B --> G
+```
+
+*Current deployment: single service on Render. Reference AWS layout (S3, RDS, optional Lambda) lives in `infrastructure/` for future scaling.*
+
+---
+
+## 📈 Escalability
+
+The system is designed so that growth in users or scan volume can be handled without a full rewrite:
+
+- **Stateless API**: Session and user state are stored in the database and (where needed) in external storage. The app layer can be replicated behind a load balancer (e.g. multiple Render instances or ECS tasks).
+- **Async-ready**: Heavy work (OCR, vision, notifications) can be moved to background jobs or serverless functions (e.g. Lambda, Celery, or a queue) so the HTTP API stays fast and resilient.
+- **Event streaming**: If event volume grows (scans, analytics, feeds), the architecture is ready to integrate with a message bus (e.g. **Kafka**) or an orchestration layer (e.g. **Airflow**) for batch or real-time pipelines without changing core business logic.
+- **Infrastructure as code**: The `infrastructure/` folder contains reference Terraform for an AWS deployment (S3 for uploads, RDS for the database, optional Lambda). This documents the target shape for an enterprise-grade rollout when needed.
+
+---
+
 ## ⚙️ Instalación
 
 ```bash
@@ -95,6 +135,8 @@ backend_optimized/
 │   └── ...
 ├── middleware/
 │   └── runtime_protection.py    # Rate limiting, semáforos
+├── infrastructure/              # Reference Terraform (AWS), not used by Render
+│   └── main.tf
 └── data/                  # Catálogos JSON, config
 ```
 
@@ -108,6 +150,16 @@ El pipeline de escaneo incluye Quality Gates que verifican:
 - **Control de semáforos** para evitar saturación en procesos intensivos de CPU/red.
 - **Rechazo temprano** de imágenes borrosas, oscuras o con reflejos (OpenCV).
 - **Caché TTL** para reducir llamadas repetidas a Open Food Facts.
+
+---
+
+## 👨‍💻 About the Lead Architect
+
+**Yused Correa Mercado** — Project Director & Backend Engineer
+
+*"I specialize in bridging the gap between business needs and high-scale technical solutions. VINO PRO IA is a testament to this, combining computer vision and cloud-native architecture to solve real-world problems in the wine industry.*
+
+*My focus remains on stability, scalability, and security, ensuring that every MVP is built with an enterprise-ready mindset. I am passionate about building APIs that don't just work, but scale."*
 
 ---
 

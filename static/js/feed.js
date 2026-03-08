@@ -146,9 +146,10 @@
     card.setAttribute('data-post-id', post.id || '');
     card.setAttribute('data-post-username', post.username || '');
     var badge = post.badge ? '<span class="vineros-badge">' + escapeHtml(post.badge) + '</span>' : '';
-    var mediaClass = post.post_type === 'sponsor' ? 'vineros-media sponsor-media' : (post.post_type === 'canal' ? 'vineros-media vineros-media--img' : 'vineros-media');
+    var hasSponsorImg = post.post_type === 'sponsor' && post.image_url;
+    var mediaClass = post.post_type === 'sponsor' ? ('vineros-media sponsor-media' + (hasSponsorImg ? ' vineros-media--img' : '')) : (post.post_type === 'canal' ? 'vineros-media vineros-media--img' : 'vineros-media');
     var mediaContent = '';
-    if (post.post_type === 'canal') {
+    if (post.post_type === 'canal' || hasSponsorImg) {
       var imgUrl = post.image_url || FALLBACK_IMAGE;
       mediaContent = '<img class="vineros-media-img" src="' + escapeHtml(imgUrl) + '" alt="" loading="lazy" />';
     } else if (post.post_type === 'sponsor') {
@@ -160,6 +161,8 @@
     var extraBtn = '';
     if (post.post_type === 'canal' && post.link) {
       extraBtn = '<a class="vineros-btn primary" href="' + escapeHtml(post.link) + '" target="_blank" rel="noopener">Leer más</a>';
+    } else if (post.post_type === 'sponsor' && post.link) {
+      extraBtn = '<a class="vineros-btn primary" href="' + escapeHtml(post.link) + '">Descubre</a>';
     } else if (post.vino_detalle) {
       extraBtn = '<button class="vineros-btn primary" data-action="bodega">Ver en Bodega</button>';
     }

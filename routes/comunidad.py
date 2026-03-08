@@ -102,6 +102,26 @@ def _post_desde_actividad(act: dict, vinos: dict) -> dict:
     }
 
 
+def _spot_vino_pro() -> dict:
+    """Spot de autopromoción VINO PRO IA: ejemplo para patrocinadores de cómo se verá su producto en la app."""
+    return {
+        "id": "spot-vino-pro-ia",
+        "created_at": 9999999999,
+        "post_type": "sponsor",
+        "username": "vino_pro_ia",
+        "avatar_text": "V",
+        "title": "VINO PRO IA – Tu experto en vinos",
+        "description": "Escanea etiquetas, pregunta por maridajes, guarda en tu bodega y comparte en VINEROS. Sin barreras de idioma. Así es como los patrocinadores promocionan su marca aquí.",
+        "badge": "Spot ejemplo",
+        "vino_key": None,
+        "vino_detalle": None,
+        "image_url": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&fit=crop",
+        "brindis_count": 0,
+        "comentarios_count": 0,
+        "link": "/inicio",
+    }
+
+
 def _posts_demo_vineros(vinos: dict) -> list[dict]:
     keys = []
     if isinstance(vinos, dict):
@@ -410,13 +430,19 @@ async def get_feed(
     safe_offset = max(0, int(offset))
     safe_limit = max(1, min(int(limit), 20))
     page = dedup[safe_offset:safe_offset + safe_limit]
-    next_offset = safe_offset + len(page)
+    original_len = len(page)
+    if canal == "para_ti" and safe_offset == 0:
+        page = [_spot_vino_pro()] + page
+    next_offset = safe_offset + original_len
     has_more = next_offset < len(dedup)
     stories = _stories_desde_posts(dedup, limit=10) if canal in ("para_ti", "vineros") else []
 
     target_lang = (lang or "").strip().lower()
     if target_lang and target_lang != "es":
-        canal_indices = [i for i, p in enumerate(page) if p.get("post_type") == "canal"]
+        canal_indices = [
+            i for i, p in enumerate(page)
+            if p.get("post_type") == "canal" or p.get("id") == "spot-vino-pro-ia"
+        ]
         if canal_indices:
             titles = [page[i].get("title") or "" for i in canal_indices]
             descs = [page[i].get("description") or "" for i in canal_indices]

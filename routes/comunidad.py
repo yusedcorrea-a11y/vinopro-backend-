@@ -539,9 +539,13 @@ async def listar_conversaciones(
 async def get_chat(
     username: str,
     limit: int = 100,
+    lang: str | None = None,
     x_session_id: str | None = Header(None, alias="X-Session-ID"),
 ):
-    """Mensajes con ese usuario. Cada mensaje: id, from_username, texto (idioma original), created_at. La app traduce al idioma del lector."""
+    """
+    Mensajes con ese usuario. Si lang está definido, los mensajes del otro usuario
+    se traducen al idioma del lector (texto_traducido). Sin barreras de idioma en VINEROS.
+    """
     _, mi_username = _session_and_username(x_session_id)
     if not mi_username:
         raise HTTPException(status_code=401, detail="Necesitas perfil para chatear")
@@ -551,7 +555,22 @@ async def get_chat(
     if usuario_svc.get_perfil_por_username(other) is None:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     msgs = chat_svc.get_mensajes(mi_username, other, limit=limit)
-    return {"username": other, "mensajes": msgs}
+    target_lang = (lang or "").strip().lower()
+    if target_lang:
+        to_translate = [m for m in msgs if (m.get("from_username") or "").strip().lower() != mi_username and (m.get("texto") or "").strip()]
+        if to_translate:
+            textos = [m.get("texto", "") for m in to_translate]
+            try:
+                traducidos = await translation_svc.traducir_lote(textos, target_lang, "auto")
+                idx = 0
+                for m in msgs:
+                    if (m.get("from_username") or "").strip().lower() != mi_username and (m.get("texto") or "").strip():
+                        if idx < len(traducidos):
+                            m["texto_traducido"] = traducidos[idx]
+                        idx += 1
+            except Exception:
+                pass
+    return {"username": other, "mi_username": mi_username, "mensajes": msgs}
 
 
 @router.post("/api/chat/{username}")

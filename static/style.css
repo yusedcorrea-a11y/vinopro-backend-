@@ -1095,6 +1095,30 @@ body.page-inicio .header-minimal .brand-ia { margin-top: 1px; opacity: 0.95; }
   transform: scale(1.05);
 }
 
+/* Botella con etiqueta CHAT como botón de menú */
+.btn-menu-botella .btn-botella-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+.btn-menu-botella .btn-botella-svg {
+  height: 32px;
+  width: auto;
+  max-width: 22px;
+  color: #fff;
+}
+.btn-menu-botella .btn-botella-label {
+  fill: var(--burdeos, #6b2d3c);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+.btn-menu-botella:hover .btn-botella-svg {
+  color: rgba(255,255,255,0.95);
+}
+[data-theme="dark"] .btn-menu-botella .btn-botella-svg { color: var(--dorado-claro, #d4a84b); }
+[data-theme="dark"] .btn-menu-botella .btn-botella-label { fill: var(--burdeos, #6b2d3c); }
+
 /* Menú secreto (desplegable lateral, estilo glass) */
 .menu-secreto-backdrop {
   position: fixed;

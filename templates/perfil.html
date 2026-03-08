@@ -14,7 +14,10 @@
       <p id="perfil-bio"></p>
       <p id="perfil-ubicacion" class="texto-pequeno"></p>
       <p id="perfil-stats"><span id="perfil-seguidores">0</span> {{ t('comunidad.seguidores') }} · <span id="perfil-seguidos">0</span> {{ t('comunidad.seguidos') }}</p>
-      <p id="perfil-btn-seguir"></p>
+      <p id="perfil-actions">
+        <span id="perfil-btn-seguir"></span>
+        <a href="/comunidad/chat/{{ perfil_username | e }}" class="btn btn-outline" style="margin-left:0.5rem;">{{ t('comunidad.chatear') }}</a>
+      </p>
     </div>
     <h3 class="section-title">{{ t('comunidad.valoraciones') }}</h3>
     <ul id="perfil-valoraciones"></ul>

@@ -132,7 +132,15 @@
       <span class="brand-line brand-pro">PRO</span>
       <span class="brand-line brand-ia">IA</span>
     </a>
-    <button type="button" id="btn-menu-secreto" class="btn-menu-secreto" aria-label="Menú" title="Menú">☰</button>
+    <button type="button" id="btn-menu-secreto" class="btn-menu-secreto btn-menu-botella" aria-label="Menú" title="Menú">
+      <span class="btn-botella-wrap" aria-hidden="true">
+        <svg class="btn-botella-svg" viewBox="0 0 24 44" fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
+          <path d="M10 0h4v6h-4V0zM8 6h8l-1 4c0 1 .5 2 1 3v25H8V13c.5-1 1-2 1-3L8 6z" fill="currentColor"/>
+          <rect x="9" y="16" width="6" height="11" rx="0.6" fill="rgba(255,255,255,0.96)" stroke="currentColor" stroke-width="0.35"/>
+          <text x="12" y="23.5" text-anchor="middle" font-size="3.5" font-weight="700" class="btn-botella-label">CHAT</text>
+        </svg>
+      </span>
+    </button>
   </header>
 
   <!-- Menú secreto (desplegable lateral) -->
@@ -146,6 +154,7 @@
         <li><a href="/adaptador" class="menu-secreto-link">🏨 {{ t('nav.adaptador') }} <span class="menu-secreto-badge-pro" aria-label="Premium">PRO</span></a></li>
         <li><a href="/mapa" class="menu-secreto-link">📍 {{ t('nav.mapa') }}</a></li>
         <li><a href="/comunidad/feed" class="menu-secreto-link">🫂 {{ t('nav.comunidad') }}</a></li>
+        <li><a href="/comunidad/chat" class="menu-secreto-link">💬 {{ t('comunidad.chat_titulo') }}</a></li>
         <li><a href="/qr" class="menu-secreto-link menu-secreto-link-qr">📱 {{ t('nav.qr_networking') }}</a></li>
         <li><a href="/legal" class="menu-secreto-link">🔒 {{ t('nav.privacidad') }}</a></li>
         <li><a href="mailto:{{ support_email }}?subject=Soporte%20VINO%20PRO%20IA" class="menu-secreto-link">✉️ Soporte</a></li>

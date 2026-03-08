@@ -44,7 +44,15 @@
     "feed_eventos": "Events & tastings",
     "feed_enoturismo": "Wine tourism",
     "feed_vineros": "VINEROs",
-    "ad_slot_placeholder": "Ad space"
+    "ad_slot_placeholder": "Ad space",
+    "chat_titulo": "VINEROS Chat",
+    "chat_subtitulo": "Speak in your language; the other person reads in theirs. No barriers.",
+    "chat_conversaciones": "Conversations",
+    "chat_sin_conversaciones": "You have no conversations yet. Go to a profile and tap Chat.",
+    "chat_placeholder": "Type your message…",
+    "chat_enviar": "Send",
+    "chat_volver": "Back",
+    "chatear": "Chat"
   },
   "qr": {
     "mensaje_hola": "Hi {nombre}, great to meet you. Thanks for your time and interest.",

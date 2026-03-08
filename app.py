@@ -256,6 +256,16 @@ def pagina_feed(request: Request):
     return render_page(request, "feed.html", page_class="page-feed", active_page="comunidad")
 
 
+@app.get("/comunidad/chat", response_class=HTMLResponse)
+def pagina_chat_list(request: Request):
+    """Lista de conversaciones del usuario."""
+    return render_page(request, "chat.html", page_class="page-chat", active_page="comunidad")
+
+@app.get("/comunidad/chat/{username:path}", response_class=HTMLResponse)
+def pagina_chat_thread(request: Request, username: str):
+    """Chat con un usuario. Habla en tu idioma; el otro te lee en el suyo."""
+    return render_page(request, "chat.html", page_class="page-chat", active_page="comunidad", chat_username=username)
+
 @app.get("/comunidad/perfil/{username:path}", response_class=HTMLResponse)
 def pagina_perfil(request: Request, username: str):
     """Perfil público de un usuario."""

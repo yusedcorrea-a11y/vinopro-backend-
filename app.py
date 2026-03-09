@@ -10,7 +10,7 @@ import httpx
 from dotenv import load_dotenv
 load_dotenv()
 
-from fastapi import FastAPI, Form, Request
+from fastapi import FastAPI, Form, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
@@ -248,6 +248,34 @@ def render_page(request: Request, template_name: str, **context):
     )
 
 
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    if exc.status_code == 404:
+        response = render_page(request, "404.html", page_class="page-error", active_page="")
+        response.status_code = 404
+        return response
+    from fastapi.responses import JSONResponse
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+
+
+@app.exception_handler(Exception)
+async def generic_exception_handler(request: Request, exc: Exception):
+    import traceback
+    print("500 Internal Server Error:", traceback.format_exc())
+    if hasattr(app.state, "runtime_metrics"):
+        app.state.runtime_metrics["errors_5xx"] = app.state.runtime_metrics.get("errors_5xx", 0) + 1
+    try:
+        response = render_page(request, "500.html", page_class="page-error", active_page="")
+        response.status_code = 500
+        return response
+    except Exception:
+        from fastapi.responses import HTMLResponse
+        return HTMLResponse(
+            content="<h1>Error del servidor</h1><p><a href='/inicio'>Volver al inicio</a></p>",
+            status_code=500,
+        )
+
+
 @app.get("/set-lang", response_class=RedirectResponse)
 def set_lang(request: Request, lang: str = "es"):
     """Establece cookie de idioma (1 año) y redirige a la página anterior (o a /inicio si venían de /)."""
@@ -308,6 +336,12 @@ def pagina_registrar(request: Request):
 def pagina_signup(request: Request):
     """Segunda pantalla: registro para entrar a VINEROs (correo, Google, Facebook) y subir foto."""
     return render_page(request, "signup.html", page_class="page-signup", active_page="")
+
+
+@app.get("/recuperar-password", response_class=HTMLResponse)
+def pagina_recuperar_password(request: Request):
+    """Página de recuperación de contraseña: enlace a soporte por email."""
+    return render_page(request, "recuperar-password.html", page_class="page-signup", active_page="")
 
 
 @app.get("/preguntar", response_class=HTMLResponse)

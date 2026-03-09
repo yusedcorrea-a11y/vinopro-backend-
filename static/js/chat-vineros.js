@@ -48,9 +48,21 @@
     if (threadView) { threadView.classList.add('visible'); threadView.style.display = 'block'; }
   }
 
-  function showErr(msg) {
+  var CHAT_SIGNUP_URL = '/signup?next=' + encodeURIComponent('/comunidad/chat');
+
+  function showErr(msg, showAuthCta) {
     if (chatLoading) chatLoading.style.display = 'none';
-    if (chatError) { chatError.textContent = msg || 'Error'; chatError.style.display = 'block'; }
+    if (!chatError) return;
+    chatError.style.display = 'block';
+    if (showAuthCta) {
+      chatError.innerHTML = (msg || 'Necesitas perfil para usar el chat.') +
+        '<div class="chat-error-ctas">' +
+        '<a href="' + CHAT_SIGNUP_URL + '" class="btn btn-dorado">Registrarme</a> ' +
+        '<a href="' + CHAT_SIGNUP_URL + '" class="btn btn-outline">Iniciar sesión</a>' +
+        '</div>';
+    } else {
+      chatError.textContent = msg || 'Error';
+    }
   }
 
   function initLangSelect() {
@@ -73,7 +85,7 @@
     if (chatLoading) chatLoading.style.display = 'block';
     fetch('/api/conversaciones', { headers: headers() })
       .then(function(r) {
-        if (r.status === 401) { showErr('Necesitas crear perfil para usar el chat.'); return null; }
+        if (r.status === 401) { showErr('Necesitas crear perfil para usar el chat.', true); return null; }
         return r.json();
       })
       .then(function(data) {
@@ -117,7 +129,7 @@
     if (lang) url += '&lang=' + encodeURIComponent(lang);
     fetch(url, { headers: headers() })
       .then(function(r) {
-        if (r.status === 401) { showErr('Necesitas perfil para chatear.'); return null; }
+        if (r.status === 401) { showErr('Necesitas perfil para chatear.', true); return null; }
         if (r.status === 404) { showErr('Usuario no encontrado.'); return null; }
         return r.json();
       })

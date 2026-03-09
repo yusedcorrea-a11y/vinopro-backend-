@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block meta_description %}Error del servidor - VINO PRO IA.{% endblock %}
+{% block content %}
+<section class="error-page">
+  <div class="error-box">
+    <span class="error-code">500</span>
+    <h1 class="error-title">Algo ha fallado</h1>
+    <p class="error-text">Hemos tenido un problema en el servidor. Inténtalo de nuevo en unos instantes.</p>
+    <a href="/inicio" class="btn">Volver al inicio</a>
+  </div>
+</section>
+<style>
+  .error-page { min-height: 60vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+  .error-box { text-align: center; max-width: 420px; }
+  .error-code { font-size: 4rem; font-weight: 800; color: var(--burdeos); line-height: 1; display: block; margin-bottom: 0.5rem; }
+  .error-title { font-size: 1.5rem; margin-bottom: 0.75rem; color: var(--texto-principal); }
+  .error-text { color: var(--texto-suave); margin-bottom: 1.5rem; }
+  .error-box .btn { min-width: 200px; }
+</style>
+{% endblock %}

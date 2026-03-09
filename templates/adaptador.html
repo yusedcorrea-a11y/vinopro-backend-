@@ -8,29 +8,30 @@
     .token-box input { flex: 1 1 320px; min-width: 240px; }
     .programas-checkboxes { display: flex; flex-wrap: wrap; gap: 0.75rem; }
     .checkbox-label { display: inline-flex; align-items: center; gap: 0.35rem; }
-    .code-block { background: rgba(0,0,0,0.25); padding: 1rem; border-radius: 8px; overflow-x: auto; font-size: 0.9rem; }
-    .doc-section h4 { margin-top: 1rem; color: var(--dorado-claro); }
-    .sync-status { margin-top: 0.75rem; font-size: 0.9rem; color: var(--texto-suave); }
-    .sync-status.ok { color: #2f7a3b; }
-    .sync-status.err { color: #a33434; }
+    .code-block { background: rgba(0,0,0,0.35); padding: 1rem 1.1rem; border-radius: 8px; overflow-x: auto; font-size: 0.95rem; line-height: 1.5; }
+    .doc-section h4 { margin-top: 1rem; font-size: 1.1rem; color: var(--dorado-claro); }
+    .sync-status { margin-top: 0.75rem; font-size: 0.98rem; color: rgba(255,255,255,0.9); }
+    .sync-status.ok { color: #4caf50; }
+    .sync-status.err { color: #ef5350; }
     .history-list { margin-top: 1rem; display: grid; gap: 0.75rem; }
-    .history-item { background: rgba(0,0,0,0.2); border-radius: 8px; padding: 0.75rem; }
-    .history-item.ok { border-left: 4px solid #2f7a3b; }
-    .history-item.err { border-left: 4px solid #a33434; }
-    .history-meta { font-size: 0.85rem; color: var(--texto-suave); margin-bottom: 0.35rem; }
-    .history-preview { font-size: 0.9rem; white-space: pre-wrap; word-break: break-word; }
+    .history-item { background: rgba(0,0,0,0.25); border-radius: 8px; padding: 0.9rem; }
+    .history-item.ok { border-left: 4px solid #4caf50; }
+    .history-item.err { border-left: 4px solid #ef5350; }
+    .history-meta { font-size: 0.95rem; color: rgba(255,255,255,0.85); margin-bottom: 0.4rem; }
+    .history-preview { font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; color: rgba(255,255,255,0.92); }
     .payload-box { margin-top: 1rem; }
     .test-controls { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: end; margin-top: 0.75rem; }
     .test-controls .form-group { flex: 1 1 220px; margin-bottom: 0; }
-    .signature-guide { margin-top: 1.5rem; padding: 1.25rem; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(212,175,55,0.18); }
-    .signature-guide p { color: var(--texto-suave); }
+    .signature-guide { margin-top: 1.5rem; padding: 1.25rem; border-radius: 12px; background: rgba(255,255,255,0.06); border: 1px solid rgba(212,175,55,0.22); }
+    .signature-guide p { color: rgba(255,255,255,0.92); font-size: 0.98rem; line-height: 1.55; }
     .signature-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
-    .signature-tab { border: 1px solid rgba(212,175,55,0.24); background: rgba(0,0,0,0.18); color: var(--texto-principal); border-radius: 999px; padding: 0.55rem 0.95rem; font-weight: 600; cursor: pointer; }
-    .signature-tab.active { background: linear-gradient(135deg, rgba(212,175,55,0.24), rgba(107,45,60,0.24)); color: var(--dorado-claro); border-color: rgba(212,175,55,0.45); }
+    .signature-tab { border: 1px solid rgba(212,175,55,0.24); background: rgba(0,0,0,0.2); color: #f2ede8; border-radius: 999px; padding: 0.6rem 1rem; font-weight: 600; font-size: 0.95rem; cursor: pointer; }
+    .signature-tab.active { background: linear-gradient(135deg, rgba(212,175,55,0.28), rgba(107,45,60,0.28)); color: var(--dorado-claro); border-color: rgba(212,175,55,0.5); }
     .signature-panels { margin-top: 1rem; }
-    .signature-panel { display: none; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 1rem; }
+    .signature-panel { display: none; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 1.1rem; }
     .signature-panel.active { display: block; }
-    .signature-panel h4 { margin-top: 0; margin-bottom: 0.5rem; color: var(--dorado-claro); }
+    .signature-panel h4 { margin-top: 0; margin-bottom: 0.5rem; font-size: 1.1rem; color: var(--dorado-claro); }
+    .signature-panel .code-block { font-size: 0.95rem; line-height: 1.5; }
 
     /* --- Bloque técnico colapsable --- */
     .bloque-tecnico { overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease; max-height: 0; opacity: 0; }
@@ -48,9 +49,9 @@
     .btn-tecnico-toggle.abierto .arrow { transform: rotate(180deg); }
     .tecnico-aviso {
       display: flex; align-items: flex-start; gap: 0.6rem;
-      padding: 0.85rem 1rem; border-radius: 10px; margin-bottom: 1.5rem;
-      background: rgba(212,175,55,0.07); border: 1px solid rgba(212,175,55,0.2);
-      font-size: 0.9rem; color: var(--texto-suave);
+      padding: 1rem 1.15rem; border-radius: 10px; margin-bottom: 1.5rem;
+      background: rgba(212,175,55,0.1); border: 1px solid rgba(212,175,55,0.25);
+      font-size: 0.98rem; line-height: 1.55; color: rgba(255,255,255,0.92);
     }
     .tecnico-aviso strong { color: var(--dorado-claro); }
   </style>

@@ -21,7 +21,7 @@
   var limit = 8;
   var loading = false;
   var hasMore = true;
-  var currentCanal = 'para_ti';
+  var currentCanal = 'noticias';
   var FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&fit=crop';
 
   function resolveAutoLang() {
@@ -139,12 +139,14 @@
       });
   }
 
-  function renderPost(post) {
+  function renderPost(post, isNoticias) {
     if (!listEl) return;
+    isNoticias = !!isNoticias;
     var card = document.createElement('article');
-    card.className = 'vineros-card' + (post.post_type === 'sponsor' ? ' sponsor' : '');
+    card.className = 'vineros-card' + (post.post_type === 'sponsor' ? ' sponsor' : '') + (isNoticias ? ' vineros-card--noticia' : '');
     card.setAttribute('data-post-id', post.id || '');
     card.setAttribute('data-post-username', post.username || '');
+    if (isNoticias && post.link) card.setAttribute('data-noticia-link', post.link);
     var badge = post.badge ? '<span class="vineros-badge">' + escapeHtml(post.badge) + '</span>' : '';
     var hasSponsorImg = post.post_type === 'sponsor' && post.image_url;
     var mediaClass = post.post_type === 'sponsor' ? ('vineros-media sponsor-media' + (hasSponsorImg ? ' vineros-media--img' : '')) : (post.post_type === 'canal' ? 'vineros-media vineros-media--img' : 'vineros-media');
@@ -166,6 +168,14 @@
     } else if (post.vino_detalle) {
       extraBtn = '<button class="vineros-btn primary" data-action="bodega">Ver en Bodega</button>';
     }
+    var actionsHtml = isNoticias
+      ? '<div class="vineros-actions">' + (post.link ? ('<a class="vineros-btn primary" href="' + escapeHtml(post.link) + '" target="_blank" rel="noopener">Leer más</a>') : '') + '</div>'
+      : '<div class="vineros-actions">' +
+          '<button class="vineros-btn" data-action="brindar">🍷 Brindar ' + (post.brindis_count ? '(' + post.brindis_count + ')' : '') + '</button>' +
+          '<button class="vineros-btn" data-action="comentar">Comentar ' + (post.comentarios_count ? '(' + post.comentarios_count + ')' : '') + '</button>' +
+          '<button class="vineros-btn" data-action="translate">🌐 Traducir</button>' +
+          extraBtn +
+        '</div>';
     card.innerHTML =
       '<div class="vineros-head">' +
         '<div class="vineros-avatar">' + escapeHtml(post.avatar_text || 'V') + '</div>' +
@@ -175,40 +185,43 @@
       '<div class="vineros-body">' +
         '<h3 class="vineros-title">' + escapeHtml(post.title || 'Publicación') + '</h3>' +
         '<p class="vineros-desc" data-comment data-original-text="' + safeDescription + '" data-translated="0">' + safeDescription + '</p>' +
-        '<div class="vineros-actions">' +
-          '<button class="vineros-btn" data-action="brindar">🍷 Brindar ' + (post.brindis_count ? '(' + post.brindis_count + ')' : '') + '</button>' +
-          '<button class="vineros-btn" data-action="comentar">Comentar ' + (post.comentarios_count ? '(' + post.comentarios_count + ')' : '') + '</button>' +
-          '<button class="vineros-btn" data-action="translate">🌐 Traducir</button>' +
-          extraBtn +
-        '</div>' +
-        renderDetail(post.vino_detalle) +
+        actionsHtml +
+        (isNoticias ? '' : renderDetail(post.vino_detalle)) +
       '</div>';
 
-    card.addEventListener('click', function(e) {
-      var btn = e.target.closest('[data-action]');
-      if (!btn) return;
-      var action = btn.getAttribute('data-action');
-      if (action === 'brindar') {
-        var n = parseInt((btn.getAttribute('data-count') || '0'), 10) + 1;
-        btn.setAttribute('data-count', String(n));
-        btn.textContent = '🍷 Brindar (' + n + ')';
-        return;
-      }
-      if (action === 'comentar') {
-        var texto = window.prompt('Escribe tu comentario rápido:');
-        if (texto && texto.trim()) window.alert('Comentario enviado en VINEROS 🍷');
-        return;
-      }
-      if (action === 'translate') {
-        var desc = card.querySelector('[data-comment]');
-        translateComment(desc, btn);
-        return;
-      }
-      if (action === 'bodega') {
-        var detail = card.querySelector('[data-detail]');
-        if (detail) detail.classList.toggle('visible');
-      }
-    });
+    if (isNoticias && post.link) {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', function(e) {
+        if (e.target.closest('a, button')) return;
+        window.open(post.link, '_blank', 'noopener');
+      });
+    } else {
+      card.addEventListener('click', function(e) {
+        var btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        var action = btn.getAttribute('data-action');
+        if (action === 'brindar') {
+          var n = parseInt((btn.getAttribute('data-count') || '0'), 10) + 1;
+          btn.setAttribute('data-count', String(n));
+          btn.textContent = '🍷 Brindar (' + n + ')';
+          return;
+        }
+        if (action === 'comentar') {
+          var texto = window.prompt('Escribe tu comentario rápido:');
+          if (texto && texto.trim()) window.alert('Comentario enviado en VINEROS 🍷');
+          return;
+        }
+        if (action === 'translate') {
+          var desc = card.querySelector('[data-comment]');
+          translateComment(desc, btn);
+          return;
+        }
+        if (action === 'bodega') {
+          var detail = card.querySelector('[data-detail]');
+          if (detail) detail.classList.toggle('visible');
+        }
+      });
+    }
 
     listEl.appendChild(card);
   }
@@ -244,7 +257,7 @@
   function setCanal(canal) {
     currentCanal = canal || 'para_ti';
     offset = 0;
-    hasMore = true;
+    hasMore = currentCanal !== 'noticias';
     if (listEl) listEl.innerHTML = '';
     if (feedTabs) {
       var tabs = feedTabs.querySelectorAll('.feed-tab');
@@ -252,9 +265,45 @@
         t.classList.toggle('active', (t.getAttribute('data-canal') || '') === currentCanal);
       });
     }
-    if (storiesWrap) storiesWrap.style.display = 'none';
+    var noticiasTools = document.getElementById('noticias-tools');
+    if (noticiasTools) noticiasTools.style.display = currentCanal === 'noticias' ? 'flex' : 'none';
+    if (storiesWrap) storiesWrap.style.display = (currentCanal === 'para_ti' || currentCanal === 'vineros') ? 'block' : 'none';
     if (storiesEl) storiesEl.innerHTML = '';
-    fetchNextPage();
+    if (currentCanal === 'noticias') fetchNoticias(); else fetchNextPage();
+  }
+
+  function fetchNoticias() {
+    if (loading) return;
+    loading = true;
+    showLoading();
+    if (feedLoading) feedLoading.textContent = 'Cargando noticias de vino…';
+    fetch('/api/noticias?limit=20', { headers: { 'Accept': 'application/json' } })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        loading = false;
+        hideLoading();
+        var posts = (data && data.posts) ? data.posts : [];
+        if (!posts.length) {
+          if (feedLoading) feedLoading.textContent = 'No hay noticias por ahora. Toca actualizar en un momento.';
+          feedLoading.style.display = 'block';
+          showList();
+          return;
+        }
+        showList();
+        if (listEl) listEl.innerHTML = '';
+        posts.forEach(function(p) { renderPost(p, true); });
+        if (feedLoading) {
+          feedLoading.textContent = 'Canal de noticias de vino. Arriba/abajo para ver más.';
+          feedLoading.style.display = 'block';
+        }
+      })
+      .catch(function() {
+        loading = false;
+        hideLoading();
+        if (feedLoading) feedLoading.textContent = 'Error al cargar noticias. Toca actualizar.';
+        feedLoading.style.display = 'block';
+        showList();
+      });
   }
 
   function fetchNextPage() {
@@ -281,7 +330,7 @@
           return;
         }
         showList();
-        posts.forEach(renderPost);
+        posts.forEach(function(p) { renderPost(p, false); });
         offset = data.next_offset || (offset + posts.length);
         hasMore = !!data.has_more;
         if (!hasMore && feedLoading) {
@@ -308,12 +357,36 @@
   if ('IntersectionObserver' in window && observerEl) {
     var io = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
-        if (entry.isIntersecting) fetchNextPage();
+        if (entry.isIntersecting && currentCanal !== 'noticias') fetchNextPage();
       });
     }, { rootMargin: '500px 0px' });
     io.observe(observerEl);
   }
 
+  var noticiasRefresh = document.getElementById('noticias-refresh');
+  if (noticiasRefresh) {
+    noticiasRefresh.addEventListener('click', function() {
+      if (currentCanal === 'noticias') fetchNoticias();
+    });
+  }
+  var noticiasMute = document.getElementById('noticias-mute');
+  if (noticiasMute) {
+    var muted = false;
+    try { muted = localStorage.getItem('vineros_sound_muted') === '1'; } catch (_) {}
+    noticiasMute.setAttribute('aria-pressed', muted ? 'true' : 'false');
+    var muteIcon = noticiasMute.querySelector('.noticias-mute-icon');
+    var muteLabel = noticiasMute.querySelector('.noticias-mute-label');
+    if (muteIcon) muteIcon.textContent = muted ? '🔇' : '🔊';
+    if (muteLabel) muteLabel.textContent = muted ? 'Silenciado' : 'Sonido';
+    noticiasMute.addEventListener('click', function() {
+      muted = !muted;
+      try { localStorage.setItem('vineros_sound_muted', muted ? '1' : '0'); } catch (_) {}
+      noticiasMute.setAttribute('aria-pressed', muted ? 'true' : 'false');
+      if (muteIcon) muteIcon.textContent = muted ? '🔇' : '🔊';
+      if (muteLabel) muteLabel.textContent = muted ? 'Silenciado' : 'Sonido';
+    });
+  }
+
   initLangSelector();
-  fetchNextPage();
+  setCanal('noticias');
 })();

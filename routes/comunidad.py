@@ -11,6 +11,7 @@ from services import valoraciones_service as val_svc
 from services import wishlist_service as wish_svc
 from services import translation_service as translation_svc
 from services import chat_service as chat_svc
+from services import news_service as news_svc
 
 router = APIRouter(prefix="", tags=["Comunidad"])
 
@@ -468,6 +469,17 @@ async def get_feed(
         "has_more": has_more,
         "total": len(dedup),
     }
+
+
+@router.get("/api/noticias")
+async def get_noticias(limit: int = 20):
+    """
+    Canal de noticias de vino: siempre activo. GNews con caché 2h o fallback estático.
+    Formato igual que posts del feed (post_type canal) para reutilizar tarjetas.
+    """
+    items = news_svc.get_wine_news(limit=max(1, min(int(limit), 30)))
+    posts = [_post_desde_canal(item) for item in items]
+    return {"canal": "noticias", "posts": posts, "has_more": False}
 
 
 @router.post("/api/traducir")

@@ -5,6 +5,7 @@ import json
 import os
 import time
 from pathlib import Path
+from urllib.parse import quote
 
 import httpx
 
@@ -89,12 +90,17 @@ def get_wine_news(limit: int = 20) -> list[dict]:
         _cached_at = cached_at
         return _cached[:limit]
 
-    api_key = os.getenv("GNEWS_API_KEY", "").strip()
+    # GNews exige el parámetro "apikey" (minúsculas) en la URL; el valor debe venir de la variable de entorno
+    api_key = (os.environ.get("GNEWS_API_KEY") or os.getenv("GNEWS_API_KEY") or "").strip()
     if not api_key:
+        print("[GNews] No se encontró GNEWS_API_KEY en el entorno; se usan noticias de respaldo.")
         return _fallback_noticias(limit)
 
+    print(f"[GNews] Enviando petición con API key (longitud {len(api_key)})")
     query = "wine"
-    url = f"https://gnews.io/api/v4/search?q={query}&max=20&apikey={api_key}"
+    # apikey en minúsculas; valor codificado por si tiene caracteres especiales
+    apikey_encoded = quote(api_key, safe="")
+    url = f"https://gnews.io/api/v4/search?q={query}&max=20&apikey={apikey_encoded}"
     raw = []
     try:
         with httpx.Client(timeout=15.0) as client:
@@ -120,7 +126,7 @@ def get_wine_news(limit: int = 20) -> list[dict]:
 
     if not isinstance(raw, list) or len(raw) == 0:
         try:
-            url_es = f"https://gnews.io/api/v4/search?q=vino&lang=es&max=20&apikey={api_key}"
+            url_es = f"https://gnews.io/api/v4/search?q=vino&lang=es&max=20&apikey={apikey_encoded}"
             with httpx.Client(timeout=12.0) as client:
                 r2 = client.get(url_es)
                 if r2.status_code == 400:

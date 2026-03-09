@@ -127,13 +127,18 @@ async def international_logger(request: Request, call_next):
         if now - ts < _INTERNATIONAL_LOGGER_CACHE_TTL:
             return await call_next(request)
     try:
-        # Timeout más alto para Latam (peticiones pueden tardar más)
         async with httpx.AsyncClient(timeout=6.0) as client:
             res = await client.get(
                 f"https://ipapi.co/{ip}/json/",
                 headers={"User-Agent": "VINO-PRO-IA-Backend/1.0 (observability)"},
             )
+            if res.status_code == 429:
+                # Cachear IP 1 h para no volver a llamar a ipapi.co y evitar más 429
+                _INTERNATIONAL_LOGGER_CACHE[ip] = (now, "")
+                print(f"⚠️ Geolocalización IP {ip}: 429 (rate limit); cacheada 1 h para no repetir petición.")
+                return await call_next(request)
             if res.status_code != 200:
+                _INTERNATIONAL_LOGGER_CACHE[ip] = (now, "")
                 print(f"⚠️ Geolocalización IP {ip}: API respondió {res.status_code} | body: {res.text[:200]}")
                 return await call_next(request)
             data = res.json()

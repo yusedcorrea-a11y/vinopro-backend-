@@ -187,11 +187,6 @@ body.page-inicio main::before {
 .inicio-ya-cuenta a:hover { text-decoration: underline; }
 [data-theme="dark"] .inicio-ya-cuenta a { color: var(--dorado-claro); }
 
-.inicio-noticias-link { margin: 0.5rem 0 0; font-size: 0.88rem; text-align: center; }
-.inicio-noticias-link a { color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 600; }
-.inicio-noticias-link a:hover { text-decoration: underline; }
-[data-theme="dark"] .inicio-noticias-link a { color: var(--dorado-claro); }
-
 .inicio-microcopy {
   margin: 0.85rem 0 0;
   font-size: 0.8rem;
@@ -3192,8 +3187,8 @@ body.page-inicio main::after {
 .legal-note-card,
 .legal-card {
   border-radius: 18px;
-  border: 1px solid rgba(107, 45, 60, 0.12);
-  background: linear-gradient(180deg, #fffaf3, #f7eee3);
+  border: 1px solid rgba(107, 45, 60, 0.14);
+  background: #fffefc;
   box-shadow: 0 12px 28px rgba(67, 29, 38, 0.08);
 }
 .legal-note-card {
@@ -3202,13 +3197,15 @@ body.page-inicio main::after {
 .legal-note-card h2,
 .legal-card h2 {
   margin: 0 0 0.5rem 0;
-  color: #6b2d3c;
+  color: #4a1f2a;
+  font-weight: 700;
 }
 .legal-note-card p,
 .legal-card p {
   margin: 0;
-  color: #5e4951;
-  line-height: 1.65;
+  color: #2d2428;
+  line-height: 1.7;
+  font-size: 1rem;
 }
 .legal-layout {
   display: grid;
@@ -3228,29 +3225,33 @@ body.page-inicio main::after {
   line-height: 1.25;
 }
 .legal-card-reading p {
-  font-size: 1rem;
+  font-size: 1.02rem;
   line-height: 1.78;
   letter-spacing: 0.004em;
+  color: #2d2428;
 }
 .legal-card p + p {
   margin-top: 0.9rem;
 }
 .legal-card-warning {
   border-color: rgba(180, 127, 44, 0.26);
-  background: linear-gradient(180deg, #fff7ea, #f8ecd5);
+  background: #fffbf5;
+}
+.legal-card-warning p {
+  color: #2d2428;
 }
 .legal-footer {
   padding: 1rem 0 0.25rem;
-  color: #654e56;
+  color: #3d3236;
 }
 .legal-footer a {
-  color: #7b243c;
+  color: #6b2d3c;
   font-weight: 700;
 }
 .legal-updated {
   margin-top: 0.35rem;
   font-size: 0.92rem;
-  color: #8f737a;
+  color: #5c4a42;
 }
 [data-theme="dark"] .legal-note-card,
 [data-theme="dark"] .legal-card {
@@ -3265,13 +3266,13 @@ body.page-inicio main::after {
 [data-theme="dark"] .legal-note-card p,
 [data-theme="dark"] .legal-card p,
 [data-theme="dark"] .legal-footer {
-  color: #e6cfb5;
+  color: #f0e6d8;
 }
 [data-theme="dark"] .legal-footer a {
   color: #f4cf82;
 }
 [data-theme="dark"] .legal-updated {
-  color: #c4aeb4;
+  color: #d4c4b0;
 }
 
 @media (min-width: 760px) {

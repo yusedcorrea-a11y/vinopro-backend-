@@ -93,11 +93,11 @@ def get_wine_news(limit: int = 20) -> list[dict]:
     if not api_key:
         return _fallback_noticias(limit)
 
-    # Búsqueda: wine OR vino para cobertura internacional
+    # Búsqueda "wine" sin restricción de idioma para más noticias en vivo (luego se puede filtrar por lang=es si se quiere)
     query = "wine"
-    url = f"https://gnews.io/api/v4/search?q={query}&lang=es&max=20&apikey={api_key}"
+    url = f"https://gnews.io/api/v4/search?q={query}&max=20&apikey={api_key}"
     try:
-        with httpx.Client(timeout=12.0) as client:
+        with httpx.Client(timeout=15.0) as client:
             r = client.get(url)
             r.raise_for_status()
             data = r.json()
@@ -106,7 +106,18 @@ def get_wine_news(limit: int = 20) -> list[dict]:
         return _fallback_noticias(limit)
 
     raw = data.get("articles") if isinstance(data, dict) else []
-    if not isinstance(raw, list):
+    if not isinstance(raw, list) or len(raw) == 0:
+        # Si no hay resultados, probar en español
+        try:
+            url_es = f"https://gnews.io/api/v4/search?q=vino&lang=es&max=20&apikey={api_key}"
+            with httpx.Client(timeout=12.0) as client:
+                r2 = client.get(url_es)
+                if r2.is_success:
+                    data = r2.json()
+                    raw = data.get("articles") if isinstance(data, dict) else []
+        except Exception:
+            pass
+    if not isinstance(raw, list) or len(raw) == 0:
         return _fallback_noticias(limit)
 
     items = []

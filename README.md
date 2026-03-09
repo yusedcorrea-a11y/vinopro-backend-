@@ -104,6 +104,10 @@ cp .env.example .env
 
 Ver `.env.example` para la lista completa.
 
+### Seguridad y secretos
+
+Las claves de API (Gemini, Stripe), la configuración de base de datos y cualquier secreto se gestionan **solo con variables de entorno**; **nunca** se suben al repositorio. El fichero `.env` está en `.gitignore` y no se hace commit. Esto evita el error típico de exponer credenciales en el código y demuestra control de seguridad a nivel producción.
+
 ---
 
 ## 💻 Ejecución
@@ -150,6 +154,18 @@ El pipeline de escaneo incluye Quality Gates que verifican:
 - **Control de semáforos** para evitar saturación en procesos intensivos de CPU/red.
 - **Rechazo temprano** de imágenes borrosas, oscuras o con reflejos (OpenCV).
 - **Caché TTL** para reducir llamadas repetidas a Open Food Facts.
+
+---
+
+## 📊 Observabilidad y métricas
+
+El proyecto está preparado para **métricas internacionales**: con el logger de tráfico por país/ciudad (solo en rutas clave o con caché por IP), se podrá registrar desde qué regiones entran los beta testers (Latinoamérica vs Europa) y, si se desea, tiempos de respuesta por origen. Los datos estarán disponibles en los logs de Render o en un futuro módulo de analítica, para tomar decisiones basadas en datos reales y demostrar que la app es *Global Ready*.
+
+---
+
+## 🚀 Despliegue y CI/CD
+
+El despliegue en producción se hace por **push a `main`**: Render (u otro host configurado) construye y sirve la aplicación. Se recomienda —y el repo incluye un flujo mínimo— **GitHub Actions** para ejecutar los tests automáticamente en cada push antes de que los cambios lleguen a producción, asegurando que solo se despliega código que pasa las pruebas.
 
 ---
 

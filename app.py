@@ -4,6 +4,7 @@ import time
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+import httpx
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -63,6 +64,39 @@ app.add_middleware(
     hot_limit=int(os.environ.get("RATE_LIMIT_HOT_PER_MINUTE", "12") or "12"),
     window_seconds=int(os.environ.get("RATE_LIMIT_WINDOW_SECONDS", "60") or "60"),
 )
+
+# Logger internacional: solo rutas clave + caché por IP (1 h) para no saturar ipapi.co ni añadir latencia en cada petición
+_INTERNATIONAL_LOGGER_ROUTES = ("/", "/inicio", "/comunidad/feed", "/signup", "/comunidad/chat")
+_INTERNATIONAL_LOGGER_CACHE: dict[str, tuple[float, str]] = {}  # ip -> (timestamp, location)
+_INTERNATIONAL_LOGGER_CACHE_TTL = int(os.environ.get("INTERNATIONAL_LOGGER_CACHE_SECONDS", "3600") or "3600")
+
+
+@app.middleware("http")
+async def international_logger(request: Request, call_next):
+    path = (request.url.path or "").rstrip("/") or "/"
+    is_key_route = path in _INTERNATIONAL_LOGGER_ROUTES or path.startswith("/comunidad/chat/")
+    if not is_key_route or request.method != "GET":
+        return await call_next(request)
+    ip = (request.headers.get("x-forwarded-for") or getattr(request.client, "host", "") or "").strip().split(",")[0].strip()
+    if not ip or ip in ("127.0.0.1", "localhost"):
+        return await call_next(request)
+    now = time.time()
+    if ip in _INTERNATIONAL_LOGGER_CACHE:
+        ts, _ = _INTERNATIONAL_LOGGER_CACHE[ip]
+        if now - ts < _INTERNATIONAL_LOGGER_CACHE_TTL:
+            return await call_next(request)
+    try:
+        async with httpx.AsyncClient(timeout=3.0) as client:
+            res = await client.get(f"https://ipapi.co/{ip}/json/")
+            data = res.json()
+            city = data.get("city") or "Desconocida"
+            country = data.get("country_name") or "Desconocido"
+            location = f"{city}, {country}"
+            _INTERNATIONAL_LOGGER_CACHE[ip] = (now, location)
+            print(f"🚩 [BETA TESTER] Acceso detectado desde: {location} (IP: {ip})")
+    except Exception:
+        print(f"⚠️ No se pudo determinar la ubicación de la IP: {ip}")
+    return await call_next(request)
 
 # Carpeta donde están los archivos JSON (ruta absoluta: no depende del directorio desde el que se ejecuta)
 BASE_DIR = Path(__file__).resolve().parent

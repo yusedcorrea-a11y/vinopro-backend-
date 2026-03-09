@@ -231,8 +231,9 @@ En el formulario, declara solo los que apliquen a “datos del usuario” (por e
 1. En el menú, **“Producción”** (o “Release” → “Production” / “Production track”).  
 2. **“Crear nueva versión”** (o “Create new release”).  
 3. **“Subir”** (Upload) y selecciona el archivo **.aab** que descargaste de Expo.  
-4. En “Notas de la versión”, escribe algo breve, por ejemplo: “Primera versión. Experto en Vinos IA, escáner, bodega, comunidad y mapas.”  
-5. **Revisar versión** y, si todo está bien, **“Iniciar rollout para producción”** (o “Start rollout to production”).
+4. **Subir el archivo de desofuscación (mapping):** para que los crashes en producción se vean legibles en Play Console, sube el **mapping.txt** de esta misma build en **Archivos de desofuscación** / **Deobfuscation files**. Ver guía detallada: **`docs/OBFUSCACION_GOOGLE_PLAY_R8_MAPPING.md`**.  
+5. En “Notas de la versión”, escribe algo breve, por ejemplo: “Primera versión. Experto en Vinos IA, escáner, bodega, comunidad y mapas.”  
+6. **Revisar versión** y, si todo está bien, **“Iniciar rollout para producción”** (o “Start rollout to production”).
 
 ## Fase F — Revisión de Google
 

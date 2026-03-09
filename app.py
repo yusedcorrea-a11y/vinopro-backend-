@@ -127,9 +127,20 @@ async def international_logger(request: Request, call_next):
         if now - ts < _INTERNATIONAL_LOGGER_CACHE_TTL:
             return await call_next(request)
     try:
-        async with httpx.AsyncClient(timeout=3.0) as client:
-            res = await client.get(f"https://ipapi.co/{ip}/json/")
+        # Timeout más alto para Latam (peticiones pueden tardar más)
+        async with httpx.AsyncClient(timeout=6.0) as client:
+            res = await client.get(
+                f"https://ipapi.co/{ip}/json/",
+                headers={"User-Agent": "VINO-PRO-IA-Backend/1.0 (observability)"},
+            )
+            if res.status_code != 200:
+                print(f"⚠️ Geolocalización IP {ip}: API respondió {res.status_code} | body: {res.text[:200]}")
+                return await call_next(request)
             data = res.json()
+            if data.get("error"):
+                reason = data.get("reason", "unknown")
+                print(f"⚠️ Geolocalización IP {ip}: API error | reason: {reason}")
+                return await call_next(request)
             city = data.get("city") or "Desconocida"
             country = data.get("country_name") or "Desconocido"
             location = f"{city}, {country}"
@@ -145,8 +156,10 @@ async def international_logger(request: Request, call_next):
                 except Exception:
                     pass
             asyncio.create_task(_save_visita_async())
-    except Exception:
-        print(f"⚠️ No se pudo determinar la ubicación de la IP: {ip}")
+    except httpx.TimeoutException as e:
+        print(f"⚠️ Geolocalización IP {ip}: timeout (Latam puede tardar más) | {e}")
+    except Exception as e:
+        print(f"⚠️ No se pudo determinar la ubicación de la IP: {ip} | Error: {type(e).__name__}: {e}")
     return await call_next(request)
 
 # Carpeta donde están los archivos JSON (ruta absoluta: no depende del directorio desde el que se ejecuta)

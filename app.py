@@ -1,7 +1,9 @@
+import asyncio
 import json
 import os
 import time
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 from pathlib import Path
 
 import httpx
@@ -69,6 +71,45 @@ app.add_middleware(
 _INTERNATIONAL_LOGGER_ROUTES = ("/", "/inicio", "/comunidad/feed", "/signup", "/comunidad/chat")
 _INTERNATIONAL_LOGGER_CACHE: dict[str, tuple[float, str]] = {}  # ip -> (timestamp, location)
 _INTERNATIONAL_LOGGER_CACHE_TTL = int(os.environ.get("INTERNATIONAL_LOGGER_CACHE_SECONDS", "3600") or "3600")
+_VISITAS_BETA_LOCK = asyncio.Lock()
+_VISITAS_BETA_FILE = "visitas_beta.json"
+
+
+def _anonymize_ip(ip: str) -> str:
+    """IPv4: último octeto a 0. Resto: anon."""
+    parts = (ip or "").strip().split(".")
+    if len(parts) == 4 and all(p.isdigit() for p in parts):
+        return ".".join(parts[:3] + ["0"])
+    return "anon"
+
+
+def _append_visita_beta_sync(fecha: str, ciudad: str, pais: str, ip_anonimizada: str) -> None:
+    """Escribe una visita en data/visitas_beta.json. Síncrono; no bloquea la API si falla."""
+    try:
+        base_dir = Path(__file__).resolve().parent
+        data_folder = base_dir / "data"
+        data_folder.mkdir(parents=True, exist_ok=True)
+        path = data_folder / _VISITAS_BETA_FILE
+        data: dict = {"visitas": [], "updated": ""}
+        if path.exists():
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+            except Exception:
+                pass
+        if "visitas" not in data or not isinstance(data["visitas"], list):
+            data["visitas"] = []
+        data["visitas"].append({
+            "fecha": fecha,
+            "ciudad": ciudad,
+            "pais": pais,
+            "ip_anonimizada": ip_anonimizada,
+        })
+        data["updated"] = datetime.now(timezone.utc).isoformat()
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass  # No bloquear ni fallar la API por un error de escritura
 
 
 @app.middleware("http")
@@ -94,6 +135,16 @@ async def international_logger(request: Request, call_next):
             location = f"{city}, {country}"
             _INTERNATIONAL_LOGGER_CACHE[ip] = (now, location)
             print(f"🚩 [BETA TESTER] Acceso detectado desde: {location} (IP: {ip})")
+            # Persistencia silenciosa en data/visitas_beta.json (no bloquea la respuesta)
+            fecha = datetime.now(timezone.utc).isoformat()
+            ip_anon = _anonymize_ip(ip)
+            async def _save_visita_async() -> None:
+                try:
+                    async with _VISITAS_BETA_LOCK:
+                        await asyncio.to_thread(_append_visita_beta_sync, fecha, city, country, ip_anon)
+                except Exception:
+                    pass
+            asyncio.create_task(_save_visita_async())
     except Exception:
         print(f"⚠️ No se pudo determinar la ubicación de la IP: {ip}")
     return await call_next(request)

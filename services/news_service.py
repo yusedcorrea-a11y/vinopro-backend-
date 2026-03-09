@@ -97,10 +97,11 @@ def get_wine_news(limit: int = 20) -> list[dict]:
         return _fallback_noticias(limit)
 
     print(f"[GNews] Enviando petición con API key (longitud {len(api_key)})")
-    query = "wine"
-    # apikey en minúsculas; valor codificado por si tiene caracteres especiales
+    # Búsqueda enológica restrictiva: evita "Wine" (Cavaliers/NBA) con NOT; prioriza términos del sector
+    query = '(vino OR enología OR bodega OR viticultura OR sommelier) AND NOT NBA AND NOT "Cleveland Cavaliers" AND NOT basketball'
     apikey_encoded = quote(api_key, safe="")
-    url = f"https://gnews.io/api/v4/search?q={query}&max=20&apikey={apikey_encoded}"
+    query_encoded = quote(query, safe="")
+    url = f"https://gnews.io/api/v4/search?q={query_encoded}&lang=es&max=20&apikey={apikey_encoded}"
     raw = []
     try:
         with httpx.Client(timeout=15.0) as client:
@@ -126,11 +127,13 @@ def get_wine_news(limit: int = 20) -> list[dict]:
 
     if not isinstance(raw, list) or len(raw) == 0:
         try:
-            url_es = f"https://gnews.io/api/v4/search?q=vino&lang=es&max=20&apikey={apikey_encoded}"
+            # Fallback: búsqueda por frase enológica en español
+            query_fallback = quote("cultura del vino", safe="")
+            url_es = f"https://gnews.io/api/v4/search?q={query_fallback}&lang=es&max=20&apikey={apikey_encoded}"
             with httpx.Client(timeout=12.0) as client:
                 r2 = client.get(url_es)
                 if r2.status_code == 400:
-                    print(f"DEBUG GNews Error (vino es): {r2.text}")
+                    print(f"DEBUG GNews Error (cultura del vino): {r2.text}")
                 elif r2.is_success:
                     data = r2.json()
                     raw = data.get("articles") if isinstance(data, dict) else []

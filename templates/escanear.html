@@ -45,7 +45,10 @@
   </form>
 
   <div id="cargando" class="hidden mensaje info">{{ t('escanear.cargando') }}</div>
-  <div id="error" class="hidden mensaje error"></div>
+  <div id="error-wrap" class="hidden">
+    <div id="error" class="mensaje error"></div>
+    <button type="button" id="btnReintentarEscaneo" class="btn btn-outline" style="margin-top:0.5rem">Reintentar</button>
+  </div>
   <div id="resultado" class="hidden"></div>
 </div>
 {% endblock %}

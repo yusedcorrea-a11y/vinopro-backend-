@@ -278,8 +278,19 @@
     showLoading();
     if (feedLoading) feedLoading.textContent = 'Cargando noticias de vino…';
     fetch('/api/noticias?limit=20', { headers: { 'Accept': 'application/json' } })
-      .then(function(r) { return r.json(); })
+      .then(function(r) {
+        if (r.status === 429) return { posts: [], _429: true };
+        return r.json();
+      })
       .then(function(data) {
+        if (data && data._429) {
+          loading = false;
+          hideLoading();
+          if (feedLoading) feedLoading.textContent = 'Demasiadas solicitudes. Espera un momento e inténtalo de nuevo.';
+          feedLoading.style.display = 'block';
+          showList();
+          return;
+        }
         loading = false;
         hideLoading();
         var posts = (data && data.posts) ? data.posts : [];
@@ -317,12 +328,19 @@
     fetch(url, { headers: headers })
       .then(function(r) {
         if (r.status === 401) { showSinPerfil(); return null; }
+        if (r.status === 429) return r.json().then(function(d) { return { _429: true, detail: d && d.detail }; });
         return r.json();
       })
       .then(function(data) {
         loading = false;
         hideLoading();
         if (!data) return;
+        if (data._429) {
+          if (feedLoading) feedLoading.textContent = (data.detail && (typeof data.detail === 'string' ? data.detail : data.detail.detail)) || 'Demasiadas solicitudes. Espera un momento e inténtalo de nuevo.';
+          feedLoading.style.display = 'block';
+          showList();
+          return;
+        }
         if (offset === 0) renderStories(data.stories || []);
         var posts = data.posts || [];
         if (!posts.length && offset === 0) {

@@ -5,10 +5,20 @@
 (function() {
   const form = document.getElementById('formEscaneo');
   const cargando = document.getElementById('cargando');
+  const errorWrap = document.getElementById('error-wrap');
   const errorDiv = document.getElementById('error');
   const resultadoDiv = document.getElementById('resultado');
 
   if (!form) return;
+
+  function showError(msg) {
+    if (errorDiv) errorDiv.textContent = msg || '';
+    if (errorWrap) errorWrap.classList.remove('hidden');
+  }
+  function hideError() {
+    if (errorDiv) errorDiv.textContent = '';
+    if (errorWrap) errorWrap.classList.add('hidden');
+  }
 
   function guardarConsultaId(id) {
     try {
@@ -202,24 +212,21 @@
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
     if (!canSubmitNow()) return;
-    errorDiv.classList.add('hidden');
+    hideError();
     resultadoDiv.classList.add('hidden');
     const imagen = document.getElementById('imagen').files[0];
     const texto = document.getElementById('texto').value.trim();
     const codigo_barras = document.getElementById('codigo_barras').value.trim();
     if (!imagen && !texto && !codigo_barras) {
-      errorDiv.textContent = 'Introduce al menos: imagen, texto o código de barras.';
-      errorDiv.classList.remove('hidden');
+      showError('Introduce al menos: imagen, texto o código de barras.');
       return;
     }
     if (imagen && imagen.size > MAX_SIZE_BYTES) {
-      errorDiv.textContent = 'La imagen es demasiado grande (máx. ' + MAX_SIZE_MB + ' MB). Redúcela o usa una foto más pequeña. También puedes escribir el nombre del vino abajo.';
-      errorDiv.classList.remove('hidden');
+      showError('La imagen es demasiado grande (máx. ' + MAX_SIZE_MB + ' MB). Redúcela o usa una foto más pequeña. También puedes escribir el nombre del vino abajo.');
       return;
     }
     if (imagen && imagen.type && imagen.type.indexOf('heic') !== -1) {
-      errorDiv.textContent = 'Formato HEIC no soportado. Guarda la foto como JPG o PNG en tu móvil, o escribe el nombre del vino abajo.';
-      errorDiv.classList.remove('hidden');
+      showError('Formato HEIC no soportado. Guarda la foto como JPG o PNG en tu móvil, o escribe el nombre del vino abajo.');
       return;
     }
     setSubmittingState(true);
@@ -251,11 +258,11 @@
           var d = data.detail[0];
           msg = (d.msg || (d.loc && d.loc.join(' ')) || msg);
         }
-        if (r.status === 400 && (msg.indexOf('imagen') !== -1 || msg.indexOf('texto') !== -1)) {
+        if (r.status === 429) msg = (data && data.detail) || 'Demasiadas solicitudes. Espera un momento e inténtalo de nuevo.';
+        else if (r.status === 400 && (msg.indexOf('imagen') !== -1 || msg.indexOf('texto') !== -1)) {
           msg = 'No pudimos leer la imagen. Prueba con otra foto (JPG o PNG, menos de ' + MAX_SIZE_MB + ' MB) o escribe el nombre del vino en el cuadro de texto.';
         }
-        errorDiv.textContent = msg;
-        errorDiv.classList.remove('hidden');
+        showError(msg);
         return;
       }
       if (data.reconocido === false) {
@@ -273,11 +280,10 @@
       cargando.classList.add('hidden');
       setSubmittingState(false);
       if (err.name === 'AbortError') {
-        errorDiv.textContent = 'La operación tardó demasiado. Prueba con una imagen más pequeña o escribe el nombre del vino en el cuadro de texto.';
+        showError('La operación tardó demasiado. Prueba con una imagen más pequeña o escribe el nombre del vino en el cuadro de texto.');
       } else {
-        errorDiv.textContent = 'Error de conexión: ' + (err.message || 'Comprueba tu conexión e inténtalo de nuevo.');
+        showError('Error de conexión: ' + (err.message || 'Comprueba tu conexión e inténtalo de nuevo.'));
       }
-      errorDiv.classList.remove('hidden');
     }
   });
 
@@ -298,7 +304,7 @@
 
   function enviarFormData(formData) {
     if (!canSubmitNow()) return;
-    errorDiv.classList.add('hidden');
+    hideError();
     resultadoDiv.classList.add('hidden');
     setSubmittingState(true);
     cargando.classList.remove('hidden');
@@ -313,15 +319,16 @@
     fetch('/escanear', opts)
       .then(function(r) {
         clearTimeout(timeoutId);
-        return r.json().then(function(data) { return { ok: r.ok, data: data }; });
+        return r.json().then(function(data) { return { ok: r.ok, status: r.status, data: data }; });
       })
       .then(function(res) {
         var data = res.data;
         cargando.classList.add('hidden');
         setSubmittingState(false);
         if (!res.ok) {
-          errorDiv.textContent = (data && (data.detail || data.message)) || 'Error al escanear';
-          errorDiv.classList.remove('hidden');
+          var msg = (data && (data.detail || data.message)) || 'Error al escanear';
+          if (res.status === 429) msg = (data && data.detail) || 'Demasiadas solicitudes. Espera un momento e inténtalo de nuevo.';
+          showError(msg);
           return;
         }
         if (data.reconocido === false) {
@@ -339,14 +346,23 @@
         clearTimeout(timeoutId);
         cargando.classList.add('hidden');
         setSubmittingState(false);
-        errorDiv.textContent = err.name === 'AbortError' ? 'Operación tardó demasiado.' : ('Error: ' + (err.message || ''));
-        errorDiv.classList.remove('hidden');
+        showError(err.name === 'AbortError' ? 'Operación tardó demasiado.' : ('Error: ' + (err.message || '')));
       });
+  }
+
+  var btnReintentar = document.getElementById('btnReintentarEscaneo');
+  if (btnReintentar) {
+    btnReintentar.addEventListener('click', function() {
+      hideError();
+      resultadoDiv.classList.add('hidden');
+      resultadoDiv.innerHTML = '';
+      if (form) form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   }
 
   function iniciarCamara() {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      if (errorDiv) { errorDiv.textContent = 'Tu navegador no soporta la cámara. Usa el botón "Subir imagen" o escribe el nombre.'; errorDiv.classList.remove('hidden'); }
+      showError('Tu navegador no soporta la cámara. Usa el botón "Subir imagen" o escribe el nombre.');
       return;
     }
     navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
@@ -356,7 +372,7 @@
         if (cameraWrap) cameraWrap.classList.remove('hidden');
       })
       .catch(function() {
-        if (errorDiv) { errorDiv.textContent = 'No se pudo acceder a la cámara. Comprueba los permisos o usa "Subir imagen".'; errorDiv.classList.remove('hidden'); }
+        showError('No se pudo acceder a la cámara. Comprueba los permisos o usa "Subir imagen".');
       });
   }
 

@@ -1940,6 +1940,25 @@ textarea {
 }
 
 /* Aviso cuando no hay conexión con el servidor (móvil / red local) */
+.footer-minimal {
+  text-align: center;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  border-top: 1px solid rgba(107, 45, 60, 0.12);
+  background: rgba(250, 248, 245, 0.6);
+}
+.footer-minimal a {
+  color: var(--burdeos);
+  font-weight: 600;
+  text-decoration: none;
+}
+.footer-minimal a:hover { text-decoration: underline; }
+[data-theme="dark"] .footer-minimal {
+  background: rgba(26, 21, 18, 0.5);
+  border-top-color: rgba(212, 168, 75, 0.15);
+}
+[data-theme="dark"] .footer-minimal a { color: var(--dorado-claro); }
+
 .aviso-sin-conexion {
   position: fixed;
   bottom: 0;

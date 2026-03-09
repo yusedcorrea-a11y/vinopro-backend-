@@ -64,7 +64,7 @@
         <input type="text" id="reg-username" name="username" required minlength="3" maxlength="30" placeholder="ej: mi_nick_vinos" autocomplete="username" pattern="[a-zA-Z0-9_]+" title="Solo letras, números y _">
       </div>
       <div class="field">
-        <label for="reg-avatar">Foto de perfil (opcional)</label>
+        <label for="reg-avatar">Foto de perfil (opcional, máx. 5 MB)</label>
         <input type="file" id="reg-avatar" name="avatar" accept="image/jpeg,image/png,image/webp,image/gif">
       </div>
       <button type="submit" class="signup-submit" id="btn-register">Registrarme y entrar a VINEROs</button>
@@ -126,11 +126,17 @@
   formRegister.addEventListener('submit', function(e) {
     e.preventDefault();
     hideMsg();
+    var avatar = document.getElementById('reg-avatar');
+    if (avatar && avatar.files && avatar.files[0]) {
+      if (avatar.files[0].size > 5 * 1024 * 1024) {
+        showMsg('La foto no puede superar 5 MB. Elige una imagen más pequeña.', true);
+        return;
+      }
+    }
     var fd = new FormData();
     fd.append('email', document.getElementById('reg-email').value.trim());
     fd.append('password', document.getElementById('reg-password').value);
     fd.append('username', document.getElementById('reg-username').value.trim());
-    var avatar = document.getElementById('reg-avatar');
     if (avatar && avatar.files && avatar.files[0]) fd.append('avatar', avatar.files[0]);
     var btn = document.getElementById('btn-register');
     if (btn) btn.disabled = true;

@@ -159,7 +159,7 @@
         <li><a href="/comunidad/feed" class="menu-secreto-link">📰 VINEROs y Noticias</a></li>
         <li><a href="/comunidad/chat" class="menu-secreto-link">💬 {{ t('comunidad.chat_titulo') }}</a></li>
         <li><a href="/qr" class="menu-secreto-link menu-secreto-link-qr">📱 {{ t('nav.qr_networking') }}</a></li>
-        <li><a href="/legal" class="menu-secreto-link">🔒 {{ t('nav.privacidad') }}</a></li>
+        <li><a href="/privacidad" class="menu-secreto-link">🔒 {{ t('nav.privacidad') }}</a></li>
         <li><a href="mailto:{{ support_email }}?subject=Soporte%20VINO%20PRO%20IA" class="menu-secreto-link">✉️ Soporte</a></li>
       </ul>
       <div class="menu-secreto-perfil">
@@ -253,6 +253,9 @@
       if (intro) intro.innerHTML = '¡Hola! Soy tu guía experto de VINO PRO IA. 👔 Te ayudo con <strong>soporte técnico</strong>, <strong>integración B2B</strong> y <strong>estrategia comercial</strong> para vender más y hacer networking.';
     })();
   </script>
+  <footer class="footer-minimal" role="contentinfo">
+    <a href="/privacidad">{{ t('nav.privacidad') }}</a>
+  </footer>
   <!-- Aviso si no hay conexión con el servidor (móvil / cold start / red local) -->
   <div id="aviso-sin-conexion" class="aviso-sin-conexion" role="alert" hidden>
     <p>No se pudo conectar al servidor. Comprueba la WiFi o que la URL sea correcta. Si es la primera vez, espera hasta 1 min.</p>

@@ -89,30 +89,43 @@ def get_wine_news(limit: int = 20) -> list[dict]:
         _cached_at = cached_at
         return _cached[:limit]
 
-    api_key = (os.environ.get("GNEWS_API_KEY") or "").strip()
+    api_key = os.getenv("GNEWS_API_KEY", "").strip()
     if not api_key:
         return _fallback_noticias(limit)
 
-    # Búsqueda "wine" sin restricción de idioma para más noticias en vivo (luego se puede filtrar por lang=es si se quiere)
     query = "wine"
     url = f"https://gnews.io/api/v4/search?q={query}&max=20&apikey={api_key}"
+    raw = []
     try:
         with httpx.Client(timeout=15.0) as client:
             r = client.get(url)
-            r.raise_for_status()
-            data = r.json()
+            if r.status_code == 400:
+                print(f"DEBUG GNews Error: {r.text}")
+                return _fallback_noticias(limit)
+            if r.status_code != 200:
+                print(f"[WARN] GNews API HTTP {r.status_code}: {r.text[:200]}")
+                return _fallback_noticias(limit)
+            try:
+                data = r.json()
+            except Exception as e:
+                print(f"[WARN] GNews API JSON error: {e}")
+                return _fallback_noticias(limit)
+            raw = data.get("articles") if isinstance(data, dict) else []
+    except httpx.HTTPError as e:
+        print(f"[WARN] GNews API error: {e}")
+        return _fallback_noticias(limit)
     except Exception as e:
         print(f"[WARN] GNews API error: {e}")
         return _fallback_noticias(limit)
 
-    raw = data.get("articles") if isinstance(data, dict) else []
     if not isinstance(raw, list) or len(raw) == 0:
-        # Si no hay resultados, probar en español
         try:
             url_es = f"https://gnews.io/api/v4/search?q=vino&lang=es&max=20&apikey={api_key}"
             with httpx.Client(timeout=12.0) as client:
                 r2 = client.get(url_es)
-                if r2.is_success:
+                if r2.status_code == 400:
+                    print(f"DEBUG GNews Error (vino es): {r2.text}")
+                elif r2.is_success:
                     data = r2.json()
                     raw = data.get("articles") if isinstance(data, dict) else []
         except Exception:

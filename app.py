@@ -216,7 +216,18 @@ app.state.consultas_escaneo = {}
 app.state.historial_escaneos = {}  # session_id -> [ { consulta_id, vino_nombre, encontrado_en_bd }, ... ]
 
 # Frontend: estáticos y plantillas (y rutas HTML ANTES de la API para evitar conflicto)
-app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static")), name="static")
+app.mount("/static", StaticFiles(directory=str(BASE_DIR / "static"), html=True), name="static")
+
+
+@app.middleware("http")
+async def add_static_cache(request: Request, call_next):
+    """Añade Cache-Control a archivos estáticos para reducir 304 y ruido en logs."""
+    response = await call_next(request)
+    if request.url.path.startswith("/static"):
+        response.headers.setdefault("Cache-Control", "public, max-age=3600")
+    return response
+
+
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 app.state.templates = templates
 

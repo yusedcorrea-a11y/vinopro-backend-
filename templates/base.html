@@ -61,9 +61,41 @@
       </div>
       <div class="modal-bienvenida-idioma-footer">
         <button type="button" id="modal-bienvenida-continuar" class="modal-bienvenida-idioma-continuar" disabled>Continuar</button>
+        <p class="modal-bienvenida-idioma-legal amazon-affiliate-legal" role="contentinfo" aria-label="Aviso de afiliado Amazon"></p>
       </div>
     </div>
   </div>
+  <script>
+    (function() {
+      var AMAZON_LEGAL = {
+        es: "VINO PRO IA participa en el Programa de Afiliados de Amazon, un programa de publicidad para afiliados diseñado para ofrecer a los sitios web un medio para obtener comisiones por publicidad.",
+        ja: "VINO PRO IAは、Amazon.co.jpを宣伝しリンクすることによって紹介料を獲得できる手段を提供することを目的に設定されたアフィリエイト宣伝プログラムである、Amazonアソシエイト・プログラムの参加者です。",
+        en: "VINO PRO IA is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for sites to earn advertising fees by advertising and linking to amazon.com."
+      };
+      function getAmazonLegalLang() {
+        var cookieName = "vino_pro_lang";
+        var m = document.cookie.match(new RegExp("(^| )" + cookieName + "=([^;]+)"));
+        var lang = m ? decodeURIComponent(m[2]).trim().toLowerCase().substring(0, 2) : "";
+        if (lang === "ja" || lang === "es" || lang === "en") return lang;
+        var nav = (navigator.language || navigator.userLanguage || "").toLowerCase().substring(0, 2);
+        if (nav === "ja" || nav === "es" || nav === "en") return nav;
+        return "en";
+      }
+      function initAmazonAffiliateFooter() {
+        var lang = getAmazonLegalLang();
+        var text = AMAZON_LEGAL[lang] || AMAZON_LEGAL.en;
+        document.querySelectorAll(".amazon-affiliate-legal").forEach(function(el) {
+          el.textContent = text;
+          el.setAttribute("lang", lang);
+        });
+      }
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initAmazonAffiliateFooter);
+      } else {
+        initAmazonAffiliateFooter();
+      }
+    })();
+  </script>
   <script>
     (function() {
       var AGE_KEY = 'vino_pro_age_verified';

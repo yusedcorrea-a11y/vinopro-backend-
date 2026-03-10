@@ -191,6 +191,13 @@ body.page-inicio main::before {
   margin: 0.85rem 0 0;
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.85);
+}
+.inicio-legal-amazon {
+  margin: 0.75rem 0 0;
+  font-size: 0.65rem;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.7);
+  max-width: 100%;
   text-align: center;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
@@ -200,6 +207,9 @@ body.page-inicio main::before {
 }
 [data-theme="dark"] .inicio-microcopy {
   color: rgba(232, 228, 224, 0.85);
+}
+[data-theme="dark"] .inicio-legal-amazon {
+  color: rgba(232, 228, 224, 0.75);
 }
 body.page-inicio::before {
   content: '';
@@ -2347,6 +2357,13 @@ body.page-preguntar #respuesta.respuesta-sumiller .respuesta-toolbar .btn-speak 
   margin-top: 1.25rem;
   text-align: center;
 }
+.modal-bienvenida-idioma-legal {
+  margin: 1rem 0 0;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: var(--texto-suave, #5a5550);
+  max-width: 100%;
+}
 .modal-bienvenida-idioma-continuar {
   padding: 0.65rem 2rem;
   font-size: 1rem;
@@ -2408,6 +2425,9 @@ body.page-preguntar #respuesta.respuesta-sumiller .respuesta-toolbar .btn-speak 
 }
 [data-theme="dark"] .modal-bienvenida-idioma-continuar:not(:disabled):hover {
   background: #8b4040;
+}
+[data-theme="dark"] .modal-bienvenida-idioma-legal {
+  color: #b8b0a8;
 }
 
 /* Toggle modo oscuro: transparente como el resto del menú */

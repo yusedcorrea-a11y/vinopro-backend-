@@ -55,10 +55,51 @@
     return div;
   }
 
-  function renderVino(vino, enBd, consultaId, key, mensaje) {
+  function wineTypeToSpoonacular(tipo) {
+    var t = (tipo || '').toLowerCase();
+    if (t === 'tinto') return 'merlot';
+    if (t === 'blanco') return 'chardonnay';
+    if (t === 'rosado') return 'rosé';
+    if (t === 'espumoso') return 'champagne';
+    return t || 'merlot';
+  }
+
+  function loadMaridajeSpoonacular(container, vino) {
+    var wineParam = wineTypeToSpoonacular(vino.tipo);
+    var loadingEl = container ? container.querySelector('.maridaje-loading') : null;
+    if (!loadingEl) return;
+    fetch('/api/pairing/dishes?wine=' + encodeURIComponent(wineParam))
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok && (data.pairings && data.pairings.length)) {
+          var pairings = data.pairings.slice(0, 8).join(', ');
+          var text = data.text ? '<div class="maridaje-text">' + escapeHtml(data.text) + '</div>' : '';
+          loadingEl.outerHTML = '<div class="maridaje-pairings">' + escapeHtml(pairings) + '</div>' + text;
+        } else {
+          loadingEl.textContent = data.message || 'No hay sugerencias de maridaje para este tipo de vino.';
+          loadingEl.className = 'maridaje-error';
+        }
+      })
+      .catch(function() {
+        loadingEl.textContent = 'No se pudo cargar el maridaje.';
+        loadingEl.className = 'maridaje-error';
+      });
+  }
+
+  function renderVino(vino, enBd, consultaId, key, mensaje, informacionExtendida) {
     const div = document.createElement('div');
     div.className = 'resultado-vino ' + (enBd ? 'en-bd' : 'externo');
     let html = '<h3>' + escapeHtml(vino.nombre || 'Sin nombre') + '</h3>';
+    var certificaciones = (vino.certificaciones && Array.isArray(vino.certificaciones) ? vino.certificaciones : [])
+      .concat(informacionExtendida && informacionExtendida.certificaciones && Array.isArray(informacionExtendida.certificaciones) ? informacionExtendida.certificaciones : []);
+    certificaciones = certificaciones.filter(function(c, i, arr) { return c && arr.indexOf(c) === i; });
+    if (certificaciones.length) {
+      html += '<div class="badges-certificaciones">';
+      certificaciones.forEach(function(c) {
+        html += '<span class="badge-certificado">' + escapeHtml(c) + '</span>';
+      });
+      html += '</div>';
+    }
     if (!enBd && mensaje) {
       html += '<div class="aviso-externo">' + escapeHtml(mensaje) + '</div>';
     }
@@ -71,6 +112,7 @@
     html += '<div class="campo"><strong>Descripción:</strong> ' + escapeHtml(vino.descripcion || '—') + '</div>';
     html += '<div class="campo"><strong>Notas de cata:</strong> ' + escapeHtml(vino.notas_cata || '—') + '</div>';
     html += '<div class="campo"><strong>Maridaje:</strong> ' + escapeHtml(vino.maridaje || '—') + '</div>';
+    html += '<div class="campo maridaje-spoonacular"><strong>Maridaje sugerido (Spoonacular):</strong> <span class="maridaje-loading">Cargando…</span></div>';
     if (consultaId) {
       html += '<div class="consulta-id-box"><strong>Consulta ID</strong> (úsalo en Preguntar):<br><code>' + escapeHtml(consultaId) + '</code></div>';
       guardarConsultaId(consultaId);
@@ -274,7 +316,9 @@
       var vino = data.vino || {};
       var enBd = !!data.encontrado_en_bd;
       resultadoDiv.innerHTML = '';
-      resultadoDiv.appendChild(renderVino(vino, enBd, data.consulta_id, data.vino_key != null ? data.vino_key : data.key, data.mensaje));
+      var vinoDiv = renderVino(vino, enBd, data.consulta_id, data.vino_key != null ? data.vino_key : data.key, data.mensaje, data.informacion_extendida);
+      resultadoDiv.appendChild(vinoDiv);
+      loadMaridajeSpoonacular(vinoDiv, vino);
       resultadoDiv.classList.remove('hidden');
     } catch (err) {
       cargando.classList.add('hidden');
@@ -339,7 +383,9 @@
         }
         var vino = data.vino || {};
         resultadoDiv.innerHTML = '';
-        resultadoDiv.appendChild(renderVino(vino, !!data.encontrado_en_bd, data.consulta_id, data.vino_key != null ? data.vino_key : data.key, data.mensaje));
+        var vinoDiv = renderVino(vino, !!data.encontrado_en_bd, data.consulta_id, data.vino_key != null ? data.vino_key : data.key, data.mensaje, data.informacion_extendida);
+        resultadoDiv.appendChild(vinoDiv);
+        loadMaridajeSpoonacular(vinoDiv, vino);
         resultadoDiv.classList.remove('hidden');
       })
       .catch(function(err) {

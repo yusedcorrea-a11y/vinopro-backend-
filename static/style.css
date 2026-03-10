@@ -1634,12 +1634,67 @@ textarea {
 }
 
 .resultado-vino h3 {
-  margin: 0 0 1.25rem 0;
+  margin: 0 0 0.5rem 0;
   font-family: var(--font-display);
   color: var(--burdeos);
   font-size: 1.35rem;
   font-weight: 700;
   padding-left: 0.5rem;
+}
+
+/* Badges Bio / Vegano / certificaciones (Open Food Facts) */
+.resultado-vino .badges-certificaciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-left: 0.5rem;
+}
+.resultado-vino .badge-certificado {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  color: #2e7d32;
+  border: 1px solid rgba(46, 125, 50, 0.25);
+}
+.resultado-vino .badge-certificado::before {
+  content: '🍃';
+  font-size: 0.9em;
+}
+
+/* Maridaje sugerido (Spoonacular) */
+.resultado-vino .maridaje-spoonacular {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #fff8f0 0%, #fff3e6 100%);
+  border: 1px solid rgba(184, 134, 11, 0.2);
+  border-radius: var(--radius-sm);
+}
+.resultado-vino .maridaje-spoonacular strong {
+  color: var(--burdeos);
+}
+.resultado-vino .maridaje-spoonacular .maridaje-loading {
+  color: var(--texto-suave);
+  font-style: italic;
+}
+.resultado-vino .maridaje-spoonacular .maridaje-error {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+.resultado-vino .maridaje-spoonacular .maridaje-pairings {
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+}
+.resultado-vino .maridaje-spoonacular .maridaje-text {
+  margin-top: 0.35rem;
+  font-size: 0.9rem;
+  color: var(--texto-suave);
+  font-style: italic;
 }
 
 .resultado-vino .fila-campo {

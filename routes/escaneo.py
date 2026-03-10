@@ -50,7 +50,7 @@ from pydantic import BaseModel, Field
 
 from services.busqueda_service import buscar_vinos_avanzado, buscar_por_codigo_barras_bd
 from services.ocr_service import extraer_texto_de_imagen, extraer_datos_etiqueta_doble_capa, TesseractNoDisponibleError
-from services.api_externa_service import buscar_por_texto, buscar_por_codigo_barras
+from services.api_externa_service import buscar_por_texto, buscar_por_codigo_barras, get_informacion_extendida_por_barcode
 from services.ocr_normalizer import limpiar as normalizar_ocr
 from services.codigos_service import extraer_primer_ean_de_imagen
 from services.wine_label_api4ai_service import recognize_wine_from_image
@@ -565,6 +565,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
             except Exception:
                 pass
             _push_historial(request, sid, consulta_id, vino.get("nombre"), True)
+            info_ext = get_informacion_extendida_por_barcode(ean)
             return {
                 "encontrado_en_bd": True,
                 "consulta_id": consulta_id,
@@ -575,6 +576,8 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                 "mensaje": "Encontrado en nuestra base de datos por código de barras.",
                 "es_pro": es_pro,
                 "entidades_extraidas": _obtener_entidades_extraidas(None, vino),
+                "informacion_extendida": info_ext if info_ext else None,
+                "informacion_extendida_no_disponible": info_ext is None,
             }
         logger.info("[ESCANEAR] Input detectado como código de barras (%s), buscando en Open Food Facts...", ean[:16])
         vino_por_ean = buscar_por_codigo_barras(ean)
@@ -618,6 +621,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
             except Exception:
                 pass
             _push_historial(request, sid, consulta_id, vino.get("nombre"), True)
+            info_ext = get_informacion_extendida_por_barcode(ean_extraido)
             return {
                 "encontrado_en_bd": True,
                 "consulta_id": consulta_id,
@@ -628,6 +632,8 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                 "mensaje": "Encontrado en nuestra base por código del QR.",
                 "es_pro": es_pro,
                 "entidades_extraidas": _obtener_entidades_extraidas(texto_busqueda, vino),
+                "informacion_extendida": info_ext if info_ext else None,
+                "informacion_extendida_no_disponible": info_ext is None,
             }
         logger.info("[ESCANEAR] Código extraído de URL/texto: %s, buscando en Open Food Facts...", ean_extraido[:16])
         vino_por_ean = buscar_por_codigo_barras(ean_extraido)

@@ -109,6 +109,43 @@ def _nombre_producto(product: dict) -> str:
     return "Vino (información externa)"
 
 
+def _certificaciones_desde_producto(product: dict) -> list[str]:
+    """Extrae etiquetas legibles (Bio, Vegano, etc.) desde labels_tags o labels."""
+    out: list[str] = []
+    # labels puede ser string tipo "Organic, Vegan" o vacío
+    labels_str = (product.get("labels") or "").strip()
+    if labels_str:
+        for part in labels_str.split(","):
+            part = part.strip()
+            if part and part not in out:
+                out.append(part[:80])
+    tags = product.get("labels_tags") or []
+    if isinstance(tags, str):
+        tags = [t.strip() for t in tags.split(",")] if tags else []
+    # Mapeo de tags típicos a nombre legible (evitar duplicados)
+    _tag_a_nombre = {
+        "en:organic": "Bio",
+        "en:eu-organic": "Bio",
+        "en:vegan": "Vegano",
+        "en:vegetarian": "Vegetariano",
+        "en:no-gluten": "Sin gluten",
+        "en:gluten-free": "Sin gluten",
+        "en:fair-trade": "Comercio justo",
+        "en:roundtable-on-sustainable-palm-oil": "Aceite de palma sostenible",
+    }
+    for t in tags:
+        t = (t or "").strip().lower()
+        nombre = _tag_a_nombre.get(t)
+        if nombre and nombre not in out:
+            out.append(nombre)
+        else:
+            # Fallback: quitar prefijo en: y formatear
+            legible = (t.replace("en:", "").replace("-", " ").title()).strip()
+            if legible and legible not in out:
+                out.append(legible[:80])
+    return out[:15]
+
+
 def _bodega_producto(product: dict) -> str:
     """Marca o bodega."""
     brands = product.get("brands") or ""
@@ -158,6 +195,7 @@ def _mapear_producto_a_vino(product: dict) -> dict:
 
     descripcion = _descripcion_generica(product, nombre, bodega, pais)
 
+    certificaciones = _certificaciones_desde_producto(product)
     return {
         "nombre": nombre,
         "bodega": bodega[:200] if bodega else "Marca no especificada",
@@ -169,6 +207,7 @@ def _mapear_producto_a_vino(product: dict) -> dict:
         "descripcion": descripcion,
         "notas_cata": "No disponibles para este vino en fuentes externas.",
         "maridaje": "Recomendamos maridar según el tipo: tintos con carnes rojas, blancos con pescado y aves, espumosos con aperitivos.",
+        "certificaciones": certificaciones,
         "_origen": "open_food_facts",
     }
 
@@ -214,6 +253,41 @@ def buscar_por_codigo_barras(barcode: str) -> dict | None:
         return None
     except Exception as e:
         logger.exception("Error Open Food Facts barcode %s: %s", barcode, e)
+        return None
+
+
+def get_informacion_extendida_por_barcode(barcode: str) -> dict | None:
+    """
+    Devuelve solo datos extendidos (certificaciones, bodega, país) desde OFF para un EAN.
+    Útil cuando el vino se encontró en la BD local por código: enriquecer la ficha sin cambiar el flujo.
+    :return: {"certificaciones": [...], "bodega": str, "paises": str} o None si no está en OFF
+    """
+    barcode = re.sub(r"\D", "", str(barcode))
+    if not barcode:
+        return None
+    ext_cache_key = f"extended:{barcode}"
+    cached = _cache_get(ext_cache_key)
+    if cached is not _OFF_CACHE_MISS:
+        return cached
+    try:
+        url = OFF_API_PRODUCT.format(barcode=barcode)
+        r = requests.get(url, timeout=OFF_TIMEOUT)
+        r.raise_for_status()
+        data = r.json()
+        if data.get("status") != 1 or not data.get("product"):
+            return _cache_set(ext_cache_key, None)
+        product = data["product"]
+        out = {
+            "certificaciones": _certificaciones_desde_producto(product),
+            "bodega": _bodega_producto(product),
+            "paises": _pais_desde_producto(product),
+        }
+        return _cache_set(ext_cache_key, out)
+    except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+        logger.warning("Open Food Facts extended barcode %s: %s", barcode, e)
+        return None
+    except Exception as e:
+        logger.exception("Error Open Food Facts extended barcode %s: %s", barcode, e)
         return None
 
 

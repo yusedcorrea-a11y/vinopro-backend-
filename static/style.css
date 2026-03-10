@@ -41,6 +41,15 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* RTL (árabe, hebreo): dir="rtl" en <html> + clase .lang-rtl en body */
+html[dir="rtl"] body.lang-rtl {
+  text-align: right;
+  direction: rtl;
+}
+html[dir="rtl"] body.lang-rtl main {
+  text-align: right;
+}
+
 /* Fondos por sección - Modo claro: viñedo espectacular; modo oscuro = bodega (más abajo) */
 body.page-inicio {
   background: var(--negro) url('/static/images/vino-pro-ia-fondo-claro-espectacular.jpg') no-repeat fixed;

@@ -16,6 +16,8 @@ COOKIE_MAX_AGE = 31536000  # 1 año
 
 IDIOMAS_SOPORTADOS = ("es", "en", "pt", "fr", "de", "it", "ar", "ru", "tr", "zh", "ja", "ko", "hi", "he")
 IDIOMA_POR_DEFECTO = "es"
+# Fallback global cuando no hay cookie ni coincidencia en Accept-Language
+IDIOMA_FALLBACK_GLOBAL = "en"
 
 # Banderas por idioma para títulos (ej: 🇪🇸 Inicio)
 BANDERAS = {
@@ -24,9 +26,32 @@ BANDERAS = {
 }
 
 
+def parse_accept_language(header: str) -> str:
+    """Devuelve el primer código de idioma de Accept-Language que esté en IDIOMAS_SOPORTADOS, o ''."""
+    if not header or not header.strip():
+        return ""
+    for part in header.split(","):
+        part = part.strip().split(";")[0].strip().lower()
+        if not part:
+            continue
+        if "-" in part:
+            part = part.split("-")[0]
+        if part in IDIOMAS_SOPORTADOS:
+            return part
+    return ""
+
+
 def get_locale(request: Request) -> str:
-    lang = (request.cookies.get(COOKIE_NAME) or IDIOMA_POR_DEFECTO).strip().lower()
-    return lang if lang in IDIOMAS_SOPORTADOS else IDIOMA_POR_DEFECTO
+    # Prioridad 1: cookie
+    cookie_val = (request.cookies.get(COOKIE_NAME) or "").strip().lower()
+    if cookie_val and cookie_val in IDIOMAS_SOPORTADOS:
+        return cookie_val
+    # Prioridad 2: Accept-Language del navegador
+    lang = parse_accept_language(request.headers.get("Accept-Language", "") or "")
+    if lang:
+        return lang
+    # Prioridad 3: inglés para mercado global
+    return IDIOMA_FALLBACK_GLOBAL
 
 
 def load_translations(lang: str) -> dict:

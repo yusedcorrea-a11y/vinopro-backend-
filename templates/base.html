@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ lang }}">
+<html lang="{{ lang }}" dir="{% if dir_rtl %}rtl{% else %}ltr{% endif %}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +23,7 @@
   <script src="/static/app.js?v=1.0.5"></script>
   {% block head %}{% endblock %}
 </head>
-<body class="{{ page_class }}">
+<body class="{{ page_class }}{% if dir_rtl %} lang-rtl{% endif %}">
   <div id="age-gate-modal" class="age-gate-modal" hidden role="dialog" aria-modal="true" aria-labelledby="age-gate-title">
     <div class="age-gate-backdrop"></div>
     <div class="age-gate-content">

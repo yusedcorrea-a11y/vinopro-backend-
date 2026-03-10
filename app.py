@@ -242,14 +242,15 @@ from services import i18n as i18n_svc
 def render_page(request: Request, template_name: str, **context):
     lang = i18n_svc.get_locale(request)
     trans = i18n_svc.load_translations(lang)
-    trans_fallback = i18n_svc.load_translations(i18n_svc.IDIOMA_POR_DEFECTO)
+    trans_fallback = i18n_svc.load_translations(i18n_svc.IDIOMA_FALLBACK_GLOBAL)
     t = i18n_svc.make_t(trans, trans_fallback)
     recognition_lang = i18n_svc.recognition_lang_for(lang)
     # En producción definir BASE_URL (ej. https://vinoproia.com) para canonical y compartir
     base_url_str = os.environ.get("BASE_URL", "").strip() or str(request.base_url).rstrip("/")
     bandera = i18n_svc.BANDERAS.get(lang, "🇪🇸")
     support_email = os.environ.get("SUPPORT_EMAIL", "").strip() or "soporte@vinoproia.com"
-    return templates.TemplateResponse(
+    dir_rtl = lang in ("ar", "he")
+    response = templates.TemplateResponse(
         template_name,
         {
             "request": request,
@@ -259,9 +260,19 @@ def render_page(request: Request, template_name: str, **context):
             "base_url_str": base_url_str,
             "bandera": bandera,
             "support_email": support_email,
+            "dir_rtl": dir_rtl,
             **context,
         },
     )
+    # Primera visita sin cookie: fijar cookie con el idioma detectado para no mostrar modal y mantener idioma
+    if not request.cookies.get(i18n_svc.COOKIE_NAME):
+        response.set_cookie(
+            i18n_svc.COOKIE_NAME,
+            lang,
+            max_age=i18n_svc.COOKIE_MAX_AGE,
+            path="/",
+        )
+    return response
 
 
 @app.exception_handler(HTTPException)

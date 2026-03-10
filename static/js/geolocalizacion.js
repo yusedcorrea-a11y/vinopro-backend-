@@ -382,6 +382,44 @@
     return base + '?q=' + encodeURIComponent(term);
   }
 
+  /**
+   * Geocodificación inversa (Nominatim): coords → ciudad/localidad para pasar a Repsol ?q=
+   * Así el usuario no tiene que escribir en la lupa si ya buscamos por ciudad o tenemos su zona.
+   */
+  function reverseGeocodeCity(lat, lon) {
+    return fetch(
+      'https://nominatim.openstreetmap.org/reverse?lat=' + encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lon) + '&format=json&accept-language=es',
+      { headers: { 'Accept': 'application/json' } }
+    )
+      .then(function(r) { return r.ok ? r.json() : null; })
+      .then(function(data) {
+        if (!data || !data.address) return null;
+        var a = data.address;
+        return (a.city || a.town || a.village || a.municipality || a.county || a.state || '').trim() || null;
+      })
+      .catch(function() { return null; });
+  }
+
+  function openRepsolWithUserLocation() {
+    var base = 'https://www.guiarepsol.com/es/comer/';
+    var term = parseInputTerm();
+    if (term) {
+      window.open(base + '?q=' + encodeURIComponent(term), '_blank', 'noopener');
+      return;
+    }
+    if (userCoords && userCoords.lat != null && userCoords.lon != null) {
+      reverseGeocodeCity(userCoords.lat, userCoords.lon).then(function(city) {
+        if (city) {
+          window.open(base + '?q=' + encodeURIComponent(city), '_blank', 'noopener');
+        } else {
+          window.open(base, '_blank', 'noopener');
+        }
+      });
+      return;
+    }
+    window.open(base, '_blank', 'noopener');
+  }
+
   function initGuideTabs() {
     var tabVino = document.getElementById('mapa-tab-vino');
     var tabRepsol = document.getElementById('mapa-tab-repsol');
@@ -417,7 +455,7 @@
     tabRepsol.addEventListener('click', showRepsol);
     if (btnRepsol) {
       btnRepsol.addEventListener('click', function() {
-        window.open(buildRepsolUrl(), '_blank', 'noopener');
+        openRepsolWithUserLocation();
       });
     }
   }
@@ -454,10 +492,14 @@
             var lat = pos.coords.latitude;
             var lon = pos.coords.longitude;
             setInputFromCoords(lat, lon);
-            buscarPorCoords(lat, lon, getRadioKm())
-              .finally(function() {
-                setButtonLoading(btnUbicacion, false);
-              });
+            // Solo Google Maps: dónde tomar vino cerca (el mini mapa no se actualiza aquí)
+            var mapsUrl = 'https://www.google.com/maps/search/vinoteca+bar+de+vino+wine+bar/@' + lat + ',' + lon + ',14z';
+            try {
+              window.open(mapsUrl, '_blank', 'noopener,noreferrer');
+            } catch (e) {}
+            hideEstado();
+            showEstado('Se abrió Google Maps con sitios para tomar vino cerca. Para ver la lista en la app, usa «Buscar por ciudad» en la pestaña Selección VINO PRO.', false);
+            setButtonLoading(btnUbicacion, false);
           },
           function(err) {
             showEstado(mapGeoError(err), true);

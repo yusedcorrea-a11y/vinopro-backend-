@@ -99,7 +99,7 @@
   <p class="page-subtitle">{{ t('geolocalizacion.subtitulo') }}</p>
 
   <div class="mapa-controls">
-    <button type="button" id="mapa-btn-ubicacion" class="btn btn-dorado">{{ t('geolocalizacion.usar_ubicacion') }}</button>
+    <button type="button" id="mapa-btn-ubicacion" class="btn btn-dorado" title="Abre Google Maps con sitios para tomar vino cerca de ti (vinotecas, bares de vino)">{{ t('geolocalizacion.usar_ubicacion') }}</button>
     <input type="text" id="mapa-input-ciudad" class="mapa-input-ciudad" placeholder="{{ t('geolocalizacion.placeholder_ciudad') }}" autocomplete="off">
     <button type="button" id="mapa-btn-buscar-ciudad" class="btn btn-outline">{{ t('geolocalizacion.buscar_manual') }}</button>
     <select id="mapa-radio" class="mapa-select-radio" title="{{ t('geolocalizacion.radio') }}">
@@ -111,7 +111,7 @@
   </div>
 
   <div class="mapa-guide-tabs" role="tablist" aria-label="Selecciona una guía">
-    <button type="button" id="mapa-tab-vino" class="mapa-guide-tab active" aria-selected="true">Selección VINO PRO</button>
+    <button type="button" id="mapa-tab-vino" class="mapa-guide-tab active" aria-selected="true" title="Mapa y lista de la app: busca por ciudad o coordenadas; no usa el GPS del botón Mi ubicación">Selección VINO PRO</button>
     <button type="button" id="mapa-tab-repsol" class="mapa-guide-tab" aria-selected="false">Guía Repsol</button>
   </div>
 
@@ -152,8 +152,8 @@
   <div id="mapa-panel-repsol" class="mapa-panel hidden" aria-hidden="true">
     <section class="repsol-panel">
       <div class="repsol-logo">GUIA REPSOL</div>
-      <p class="repsol-sub">Descubre restaurantes y experiencias gastronómicas en la guía oficial.</p>
-      <button type="button" id="mapa-btn-repsol-search" class="btn-repsol">Buscar Soles Repsol cerca de mí</button>
+      <p class="repsol-sub">Si ya buscaste por ciudad o usaste el mapa con tu zona, abrimos la guía con esa ubicación para que no tengas que escribirla otra vez. Si no, entras a la guía general.</p>
+      <button type="button" id="mapa-btn-repsol-search" class="btn-repsol">Abrir Guía Repsol con mi zona</button>
     </section>
   </div>
 </div>
@@ -161,5 +161,5 @@
 
 {% block scripts %}
 <script src="/static/js/lugares.js?v=1.0.6"></script>
-<script src="/static/js/geolocalizacion.js?v=1.0.6"></script>
+<script src="/static/js/geolocalizacion.js?v=1.0.7"></script>
 {% endblock %}

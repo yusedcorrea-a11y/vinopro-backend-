@@ -133,7 +133,7 @@
       var ageText = document.getElementById('age-gate-text');
       var ageActions = document.getElementById('age-gate-actions');
       var hasLang = !!getCookie(cookieName);
-      var isLegalPage = window.location.pathname === '/legal' || window.location.pathname === '/privacidad';
+      var isLegalPage = window.location.pathname === '/legal' || window.location.pathname === '/privacidad' || window.location.pathname === '/eliminar-cuenta';
       var ageVerified = '';
       try { ageVerified = localStorage.getItem(AGE_KEY) || ''; } catch (_) {}
       if (ageModal && hasLang && !isLegalPage && ageVerified !== 'yes') {

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block meta_description %}Solicitar eliminación de cuenta y datos en VINO PRO IA. Ejercicio del derecho de supresión (RGPD).{% endblock %}
+{% block content %}
+<section class="legal-shell">
+  <div class="legal-hero">
+    <span class="legal-kicker">VINO PRO IA</span>
+    <h1 class="legal-title">Eliminación de cuenta y datos</h1>
+    <p class="legal-intro">
+      Puedes solicitar en cualquier momento que eliminemos tu cuenta y los datos asociados. Es un derecho que reconocemos y atendemos sin demora.
+    </p>
+  </div>
+
+  <div class="legal-layout">
+    <article class="legal-card legal-card-reading">
+      <h2>Cómo solicitar la eliminación</h2>
+      <p><strong>Opción 1 – Desde la app:</strong></p>
+      <p>Si tienes la aplicación instalada, abre <strong>Configuración</strong> o <strong>Mi perfil</strong> y usa la opción <strong>Eliminar mi cuenta</strong>. La eliminación es inmediata y no reversible.</p>
+      <p><strong>Opción 2 – Por correo electrónico:</strong></p>
+      <p>Si no puedes acceder a la app o prefieres hacerlo por escrito, envía un correo a:</p>
+      <p class="legal-email"><a href="mailto:{{ support_email }}?subject=Solicitud%20de%20eliminación%20de%20cuenta%20y%20datos">{{ support_email }}</a></p>
+      <p>Indica que deseas eliminar tu cuenta y los datos asociados. Si nos facilitas el mismo correo o identificador con el que te registraste, podremos localizar y borrar tu información con mayor rapidez. Responderemos en un plazo razonable (normalmente en menos de 30 días) para confirmar la eliminación.</p>
+      <h2>Qué se elimina</h2>
+      <p>Se eliminan de forma definitiva: perfil de usuario, bodega virtual, valoraciones, lista «Quiero probar», preferencias del adaptador, contactos de QR y cualquier otro dato vinculado a tu sesión o cuenta. No conservamos copias una vez completada la solicitud.</p>
+      <p><a href="/legal#politica-privacidad">← Política de privacidad</a> · <a href="/">Inicio</a></p>
+    </article>
+  </div>
+
+  <div class="legal-footer">
+    <p>Para más información sobre el tratamiento de datos: <a href="/legal">Política de privacidad</a> · <a href="mailto:{{ support_email }}">{{ support_email }}</a></p>
+    <p class="legal-updated">Última actualización: marzo 2026</p>
+  </div>
+</section>
+{% endblock %}

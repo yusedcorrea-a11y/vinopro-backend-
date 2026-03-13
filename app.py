@@ -414,6 +414,12 @@ def pagina_privacidad(request: Request):
     return render_page(request, "legal.html", page_class="page-legal", active_page="")
 
 
+@app.get("/eliminar-cuenta", response_class=HTMLResponse)
+def pagina_eliminacion_cuenta(request: Request):
+    """Página para solicitar eliminación de cuenta y datos (requerida por Google Play)."""
+    return render_page(request, "eliminacion_cuenta.html", page_class="page-legal", active_page="")
+
+
 @app.get("/legal", response_class=HTMLResponse)
 def pagina_legal(request: Request):
     """Página legal consolidada: privacidad, términos y consumo responsable."""
@@ -793,7 +799,7 @@ def listar_paises():
 def sitemap_xml(request: Request):
     """Sitemap para buscadores. BASE_URL en .env para producción (ej. https://tudominio.com)."""
     base = os.environ.get("BASE_URL", "").strip() or str(request.base_url).rstrip("/")
-    pages = ["/", "/inicio", "/escanear", "/registrar", "/preguntar", "/bodega", "/dashboard", "/planes", "/adaptador", "/privacidad", "/legal"]
+    pages = ["/", "/inicio", "/escanear", "/registrar", "/preguntar", "/bodega", "/dashboard", "/planes", "/adaptador", "/privacidad", "/legal", "/eliminar-cuenta"]
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     for path in pages:
         xml += f"  <url><loc>{base}{path}</loc><changefreq>weekly</changefreq></url>\n"

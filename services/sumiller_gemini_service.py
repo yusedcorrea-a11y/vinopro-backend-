@@ -14,7 +14,8 @@ logger = logging.getLogger(__name__)
 # Plan gratuito: gemini-2.0-flash. Al monetizar: gemini-1.5-pro o gemini-2.5-pro
 MODELO_SUMILLER = os.environ.get("SUMILLER_AI_MODEL", "gemini-2.0-flash").strip() or "gemini-2.0-flash"
 MAX_OUTPUT_TOKENS = 380
-TEMPERATURE = 0.7
+# Temperatura baja para no inventar datos (0.5 = más fiel a la ficha)
+TEMPERATURE = 0.5
 
 
 def _get_client():
@@ -68,14 +69,16 @@ def responder_sobre_vino(pregunta: str, vino: dict, perfil: str = "aficionado") 
         "aficionado": "Tono cercano y útil, con algún detalle técnico si aporta.",
         "profesional": "Puedes usar lenguaje más técnico (crianza, taninos, perfil).",
     }.get(perfil, "Tono cercano y útil.")
-    prompt = f"""Eres un sumiller experto. El usuario tiene este vino y hace una pregunta.
+    prompt = f"""Eres un sumiller experto. El usuario tiene UN vino (la ficha de abajo) y hace una pregunta.
 
-Vino:
+Ficha del vino (solo puedes usar esta información):
 {contexto_vino}
 
-Pregunta del usuario: {pregunta}
+Pregunta: {pregunta}
 
-Instrucción: Responde en 2-4 frases, en español. {perfil_instruccion} No inventes datos que no estén en la ficha. Sé amable y conciso."""
+Reglas: Responde en español, en 2-4 frases. {perfil_instruccion}
+- Usa SOLO datos de la ficha de arriba. Si la ficha no incluye algo (ej. precio, puntuación), di "No tenemos ese dato en la ficha" en lugar de inventar.
+- No menciones otros vinos ni bodegas que no estén en la ficha. Sé amable y conciso."""
     try:
         response = client.models.generate_content(
             model=MODELO_SUMILLER,
@@ -107,14 +110,14 @@ def reescribir_respuesta_sumiller(pregunta_usuario: str, respuesta_actual: str, 
         return None
     if not (respuesta_actual or respuesta_actual.strip()):
         return None
-    prompt = f"""Eres un sumiller experto. Te dan la pregunta del usuario y la respuesta que ya generó nuestra base de datos (correcta pero algo fría). Reescríbela para que suene natural, cercana y con personalidad de sumiller, sin cambiar los datos ni los vinos recomendados.
+    prompt = f"""Eres un sumiller experto. Reescribe la respuesta de abajo para que suene más natural y cercana, pero SIN CAMBIAR NINGÚN DATO: mismos vinos, mismas bodegas, mismos precios, misma información.
 
 Pregunta del usuario: {pregunta_usuario}
 
-Respuesta actual (mantén la misma información):
+Respuesta actual (copia la información exacta, solo mejora el tono y la redacción):
 {respuesta_actual[:800]}
 
-Instrucción: Responde SOLO con la nueva versión de la respuesta, en español, 2-5 frases. Sin prefijos como "Como sumiller..." ni "Aquí tienes...". Directo al contenido."""
+Reglas: Responde SOLO con la versión mejorada, en español, 2-5 frases. No añadas vinos ni datos que no estén en la respuesta actual. No uses prefijos como "Como sumiller..." o "Aquí tienes...". Directo al contenido."""
     try:
         response = client.models.generate_content(
             model=MODELO_SUMILLER,

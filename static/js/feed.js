@@ -156,9 +156,9 @@
       var imgUrl = post.image_url || FALLBACK_IMAGE;
       mediaContent = '<img class="vineros-media-img" src="' + escapeHtml(imgUrl) + '" alt="" loading="lazy" />';
     } else if (post.post_type === 'sponsor') {
-      mediaContent = 'Patrocinador PRO';
+      mediaContent = '<span class="vineros-media-placeholder">Patrocinador PRO</span>';
     } else {
-      mediaContent = 'VINEROS';
+      mediaContent = '<span class="vineros-media-placeholder">VINEROS</span>';
     }
     var safeDescription = escapeHtml(post.description || '');
     var extraBtn = '';

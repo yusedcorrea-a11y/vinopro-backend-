@@ -1,0 +1,87 @@
+/* Feed VINEROs / Noticias – diseño tipo Instagram (v3) */
+.vineros-wrap { max-width: 680px; margin: 0 auto; padding: 1rem 0.9rem 2rem; }
+.vineros-tools { display: flex; justify-content: flex-end; margin: 0.25rem 0 0.75rem; }
+.vineros-lang-select { border: 1px solid rgba(107,45,60,0.2); border-radius: 10px; background: rgba(255,255,255,0.95); color: var(--burdeos); padding: 0.42rem 0.6rem; font-size: 0.82rem; font-weight: 600; }
+.vineros-stories-wrap { margin: 0.4rem 0 0.9rem; }
+.vineros-stories { display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 0.35rem; scrollbar-width: thin; }
+.vineros-story { min-width: 68px; border: 0; background: transparent; padding: 0; color: inherit; cursor: pointer; text-align: center; }
+.vineros-story-ring { width: 64px; height: 64px; border-radius: 50%; padding: 2px; background: linear-gradient(135deg, rgba(107,45,60,0.98), rgba(138,64,82,0.92)); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.35rem; }
+.vineros-story-avatar { width: 58px; height: 58px; border-radius: 50%; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--burdeos); }
+.vineros-story.sponsor .vineros-story-ring { background: linear-gradient(135deg, #ff7f2a, #ff5e00); }
+.vineros-story-label { font-size: 0.72rem; color: var(--texto-suave); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 68px; display: block; margin: 0 auto; }
+.vineros-list { display: grid; gap: 1rem; }
+
+/* Tarjeta tipo Instagram: sin bordes redondeados en card, imagen cuadrada grande */
+.vineros-card { background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 0; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 0.5rem; }
+.vineros-card.sponsor { border-color: rgba(212,175,55,0.4); background: linear-gradient(160deg, #fffefb, #faf6ed); }
+.vineros-head { display: flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1rem; border-bottom: 1px solid rgba(0,0,0,0.06); }
+.vineros-head-left { display: flex; align-items: center; gap: 0.6rem; flex: 1; min-width: 0; }
+.vineros-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, rgba(212,175,55,0.5), rgba(107,45,60,0.4)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; color: var(--burdeos); flex-shrink: 0; }
+.vineros-name { font-weight: 600; color: #1a1a1a; font-size: 0.95rem; line-height: 1.2; }
+.vineros-badge { display: inline-flex; align-items: center; gap: 0.2rem; margin-left: 0.35rem; font-size: 0.68rem; font-weight: 700; border-radius: 999px; padding: 0.1rem 0.4rem; background: rgba(212,175,55,0.25); color: #7a4e00; border: 1px solid rgba(212,175,55,0.4); }
+.vineros-head-menu { padding: 0.35rem; margin: -0.35rem 0 0 auto; border: 0; background: transparent; color: #666; font-size: 1.25rem; line-height: 1; cursor: pointer; border-radius: 4px; font-weight: 700; }
+.vineros-head-menu:hover { color: var(--burdeos); background: rgba(107,45,60,0.08); }
+
+/* Imagen 1:1 cuadrada (tipo feed Instagram) */
+.vineros-media { width: 100%; position: relative; overflow: hidden; background: linear-gradient(145deg, rgba(107,45,60,0.12), rgba(212,175,55,0.1)); }
+.vineros-media::after { content: ''; display: block; padding-bottom: 100%; }
+.vineros-media-placeholder { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; color: var(--burdeos); font-weight: 600; font-size: 1rem; }
+.vineros-media.sponsor-media { background: linear-gradient(145deg, #ff7f2a, #ff5e00); }
+.vineros-media.sponsor-media .vineros-media-placeholder { color: #fff; }
+.vineros-media-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.vineros-body { padding: 0.85rem 1rem 1rem; }
+.vineros-title { margin: 0 0 0.4rem 0; font-size: 0.95rem; font-weight: 600; color: #1a1a1a; }
+.vineros-desc { margin: 0; color: #444; font-size: 0.9rem; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.vineros-desc.translating { opacity: 0.35; }
+.vineros-desc.translated { animation: vinoFadeIn 0.25s ease; }
+.vineros-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; align-items: center; }
+.vineros-btn { border: 1px solid rgba(107,45,60,0.25); border-radius: 999px; background: #fff; color: var(--burdeos); padding: 0.45rem 0.8rem; font-weight: 600; font-size: 0.83rem; cursor: pointer; }
+.vineros-btn.primary { background: var(--burdeos); color: #fff; border-color: var(--burdeos); }
+.vineros-detail { margin-top: 0.7rem; padding: 0.7rem; border-radius: 10px; background: rgba(107,45,60,0.06); display: none; }
+.vineros-detail.visible { display: block; }
+.vineros-detail p { margin: 0.15rem 0; font-size: 0.88rem; }
+.vineros-footer { margin-top: 1rem; text-align: center; color: var(--texto-suave); font-size: 0.9rem; }
+#feed-observer { height: 20px; }
+.feed-tabs { display: flex; gap: 0.25rem; overflow-x: auto; padding: 0.5rem 0 0.75rem; margin-bottom: 0.5rem; scrollbar-width: thin; -webkit-overflow-scrolling: touch; }
+.feed-tab { flex: 0 0 auto; padding: 0.5rem 0.75rem; border-radius: 999px; border: 1px solid rgba(107,45,60,0.25); background: rgba(255,255,255,0.9); color: var(--burdeos); font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.feed-tab:hover { background: rgba(107,45,60,0.08); }
+.feed-tab.active { background: var(--burdeos); color: #fff; border-color: var(--burdeos); }
+.ad-slot { min-height: 70px; margin: 0.75rem 0; padding: 0.75rem; border: 1px dashed rgba(107,45,60,0.2); border-radius: 12px; background: rgba(107,45,60,0.04); display: flex; align-items: center; justify-content: center; color: var(--texto-suave); font-size: 0.8rem; }
+
+[data-theme="dark"] .vineros-card { background: rgba(28,24,22,0.95); border-color: rgba(212,168,75,0.2); box-shadow: 0 1px 6px rgba(0,0,0,0.25); }
+[data-theme="dark"] .vineros-head { border-bottom-color: rgba(255,255,255,0.08); }
+[data-theme="dark"] .vineros-name { color: #f0ebe0; }
+[data-theme="dark"] .vineros-head-menu { color: #b8a88a; }
+[data-theme="dark"] .vineros-head-menu:hover { color: var(--dorado-claro); background: rgba(212,168,75,0.12); }
+[data-theme="dark"] .vineros-title { color: var(--dorado-claro); }
+[data-theme="dark"] .vineros-desc { color: rgba(232,228,223,0.85); }
+[data-theme="dark"] .vineros-btn { background: rgba(40,34,30,0.9); color: var(--dorado-claro); border-color: rgba(212,168,75,0.4); }
+[data-theme="dark"] .vineros-btn.primary { background: rgba(212,175,55,0.3); color: var(--dorado-claro); border-color: rgba(212,175,55,0.5); }
+[data-theme="dark"] .feed-tab { background: rgba(26,21,18,0.8); color: var(--dorado-claro); border-color: rgba(212,168,75,0.3); }
+[data-theme="dark"] .feed-tab.active { background: rgba(212,175,55,0.35); color: var(--dorado-claro); border-color: rgba(212,175,55,0.5); }
+[data-theme="dark"] .ad-slot { border-color: rgba(212,168,75,0.2); background: rgba(26,21,18,0.4); color: #d4c3a6; }
+[data-theme="dark"] .vineros-lang-select { background: rgba(26,21,18,0.85); color: var(--dorado-claro); border-color: rgba(212,168,75,0.3); }
+[data-theme="dark"] .vineros-story-avatar { background: rgba(26,21,18,0.9); color: var(--dorado-claro); }
+[data-theme="dark"] .vineros-story-label { color: #d4c3a6; }
+
+@keyframes vinoFadeIn {
+  from { opacity: 0.2; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.feed-sin-perfil-box { padding: 1.5rem 0; text-align: center; }
+.feed-sin-perfil-text { margin-bottom: 0.5rem; color: var(--texto-principal); }
+.feed-sin-perfil-cta { margin-bottom: 1.25rem; color: var(--texto-suave); font-size: 0.95rem; }
+.feed-sin-perfil-actions { display: flex; flex-direction: column; gap: 0.6rem; align-items: center; margin-bottom: 1rem; }
+.feed-sin-perfil-actions .btn { min-width: 200px; }
+.feed-sin-perfil-bodega { font-size: 0.9rem; margin-top: 0.75rem; }
+.feed-sin-perfil-bodega a { color: var(--burdeos); font-weight: 600; }
+[data-theme="dark"] .feed-sin-perfil-cta { color: #d4c3a6; }
+.noticias-tools { display: flex; align-items: center; gap: 0.6rem; margin: 0.5rem 0 0.75rem; flex-wrap: wrap; }
+.btn-noticias-tool { border: 1px solid rgba(107,45,60,0.3); border-radius: 999px; background: rgba(255,255,255,0.95); color: var(--burdeos); padding: 0.4rem 0.8rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+.btn-noticias-tool:hover { background: rgba(107,45,60,0.08); }
+.btn-noticias-mute { display: inline-flex; align-items: center; gap: 0.35rem; }
+.btn-noticias-mute[aria-pressed="true"] .noticias-mute-icon { opacity: 0.6; }
+.vineros-card--noticia { cursor: pointer; }
+.vineros-card--noticia:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+[data-theme="dark"] .btn-noticias-tool { background: rgba(26,21,18,0.85); color: var(--dorado-claro); border-color: rgba(212,168,75,0.35); }
+[data-theme="dark"] .btn-noticias-tool:hover { background: rgba(212,175,55,0.15); }

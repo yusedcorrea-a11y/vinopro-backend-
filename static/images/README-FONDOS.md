@@ -18,6 +18,10 @@ El CSS está configurado para usar estas imágenes. Si no existen, se verá el c
 - **Modo claro:** `vino-pro-ia-fondo-adaptador-claro.jpg` — La Experto en Vinos: mujer experto en vinos en restaurante de alta gama, traje profesional, cerca de barra o bodega; al fondo camarero lleva vino a la mesa. Iluminación cálida, ambiente sofisticado.
 - **Modo oscuro:** `vino-pro-ia-fondo-adaptador-oscuro.jpg` — El Experto en Vinos: hombre experto en vinos en restaurante elegante con luz tenue, chaqueta profesional, junto a bodega o estantería de vinos; al fondo camarero sirve vino a mesa con velas. Ambiente nocturno, tonos cálidos, elegancia.
 
+## Página Mapa (Dónde me tomo mi vino)
+- **Modo claro:** `vino-pro-ia-fondo-mapa-claro.png` — Mujer de espalda o perfil en barra de bar con copa de vino, luz natural, tonos crema y madera, botellas al fondo. Horizontal 16:9.
+- **Modo oscuro:** `vino-pro-ia-fondo-mapa-oscuro.png` — Hombre de espalda o perfil en barra de bar con copa de vino, luz cálida/ámbar, tonos oscuros y madera. Horizontal 16:9.
+
 Puedes generarlas con la herramienta de imágenes del proyecto o añadir aquí tus propias fotos con estos nombres.
 
 ## Comportamiento en móvil y tablet

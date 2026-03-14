@@ -900,6 +900,62 @@ html:not([data-theme="dark"]) body.page-adaptador .adaptador-container .signatur
 html:not([data-theme="dark"]) body.page-adaptador .adaptador-container .history-item {
   background: rgba(0, 0, 0, 0.25);
 }
+
+/* Mapa: Dónde me tomo mi vino — fondo barra de bar (mujer claro, hombre oscuro) */
+body.page-mapa {
+  background: var(--crema) url('/static/images/vino-pro-ia-fondo-mapa-claro.png') no-repeat fixed;
+  background-size: cover;
+  background-position: center;
+}
+body.page-mapa::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  z-index: 0;
+}
+body.page-mapa main {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+body.page-mapa main::before {
+  display: none !important;
+}
+body.page-mapa .mapa-container {
+  background: transparent;
+  color: #1a1512;
+}
+body.page-mapa .mapa-container .page-title,
+body.page-mapa .mapa-container .section-title,
+body.page-mapa .mapa-container h2 {
+  color: #4a1f2a !important;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.9), 0 0 8px rgba(255,255,255,0.7);
+}
+body.page-mapa .mapa-container .page-subtitle,
+body.page-mapa .mapa-container .texto-pequeno,
+body.page-mapa .mapa-container label {
+  color: #2d2520;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8), 0 0 6px rgba(255,255,255,0.6);
+}
+body.page-mapa .mapa-controls input,
+body.page-mapa .mapa-controls select {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(107, 45, 60, 0.4);
+  color: #1a1512;
+}
+body.page-mapa .mapa-guide-tab {
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(107, 45, 60, 0.35);
+  color: #4a1f2a;
+}
+body.page-mapa .mapa-guide-tab.active {
+  background: linear-gradient(135deg, rgba(212,175,55,0.35), rgba(107,45,60,0.25));
+  border-color: rgba(107, 45, 60, 0.5);
+}
+
 body.page-adaptador .adaptador-container .code-block {
   display: block;
   background: rgba(0, 0, 0, 0.45);
@@ -2245,6 +2301,12 @@ textarea {
 [data-theme="dark"] body.page-adaptador::before {
   background: rgba(0, 0, 0, 0.3);
 }
+[data-theme="dark"] body.page-mapa {
+  background-image: url('/static/images/vino-pro-ia-fondo-mapa-oscuro.png');
+}
+[data-theme="dark"] body.page-mapa::before {
+  background: rgba(0, 0, 0, 0.3);
+}
 [data-theme="dark"] body.page-planes {
   background-image: url('/static/images/vino-pro-ia-fondo-planes-oscuro.jpg');
 }
@@ -3051,6 +3113,7 @@ body.page-inicio .chatbot-guia-mascot:hover {
   body.page-registrar,
   body.page-preguntar,
   body.page-bodega,
+  body.page-mapa,
   body.page-dashboard,
   body.page-adaptador,
   body.page-planes,
@@ -3067,6 +3130,7 @@ body.page-inicio .chatbot-guia-mascot:hover {
   [data-theme="dark"] body.page-registrar,
   [data-theme="dark"] body.page-preguntar,
   [data-theme="dark"] body.page-bodega,
+  [data-theme="dark"] body.page-mapa,
   [data-theme="dark"] body.page-dashboard,
   [data-theme="dark"] body.page-adaptador,
   [data-theme="dark"] body.page-planes,
@@ -3090,6 +3154,7 @@ body.page-inicio .chatbot-guia-mascot:hover {
   body.page-registrar,
   body.page-preguntar,
   body.page-bodega,
+  body.page-mapa,
   body.page-dashboard,
   body.page-adaptador,
   body.page-planes,
@@ -3101,6 +3166,7 @@ body.page-inicio .chatbot-guia-mascot:hover {
   [data-theme="dark"] body.page-registrar,
   [data-theme="dark"] body.page-preguntar,
   [data-theme="dark"] body.page-bodega,
+  [data-theme="dark"] body.page-mapa,
   [data-theme="dark"] body.page-dashboard,
   [data-theme="dark"] body.page-adaptador,
   [data-theme="dark"] body.page-planes,

@@ -9,6 +9,13 @@
     .mapa-header { position: relative; z-index: 2; background: rgba(255,255,255,0.97); padding: 1rem; margin: 0; border-radius: 0 0 var(--radius) var(--radius); box-shadow: 0 8px 24px rgba(107,45,60,0.08); }
     .mapa-header .page-title { margin-top: 0; }
     .mapa-panel { position: relative; z-index: 1; }
+    .mapa-ask-ubicacion { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; padding: 0.65rem 1rem; background: rgba(107,45,60,0.08); border: 1px solid rgba(107,45,60,0.2); border-radius: var(--radius-sm); margin-bottom: 0.75rem; }
+    .mapa-ask-ubicacion p { margin: 0; font-size: 0.9rem; color: var(--burdeos); font-weight: 500; }
+    .mapa-ask-ubicacion .mapa-ask-btns { display: flex; gap: 0.5rem; }
+    .mapa-ask-ubicacion .mapa-ask-btns .btn { padding: 0.5rem 0.85rem; font-size: 0.9rem; }
+    .mapa-ask-ubicacion.hidden { display: none !important; }
+    [data-theme="dark"] .mapa-ask-ubicacion { background: rgba(212,168,75,0.12); border-color: rgba(212,168,75,0.25); }
+    [data-theme="dark"] .mapa-ask-ubicacion p { color: var(--dorado-claro); }
     .mapa-mapa-wrap {
       height: 360px;
       border-radius: var(--radius);
@@ -113,6 +120,13 @@
 
 {% block content %}
 <div class="mapa-container">
+  <div id="mapa-ask-ubicacion" class="mapa-ask-ubicacion hidden" aria-live="polite" role="region" aria-label="Permiso de ubicación">
+    <p id="mapa-ask-text">¿Permitir ubicación? Sitios y Guía Repsol con tu zona.</p>
+    <div class="mapa-ask-btns">
+      <button type="button" id="mapa-ask-si" class="btn btn-dorado">Permitir</button>
+      <button type="button" id="mapa-ask-no" class="btn btn-outline">Ahora no</button>
+    </div>
+  </div>
   <header class="mapa-header" aria-label="Controles del mapa">
     <h1 class="page-title">{{ t('geolocalizacion.titulo') }}</h1>
     <p class="page-subtitle">{{ t('geolocalizacion.subtitulo') }}</p>
@@ -189,5 +203,5 @@
 
 {% block scripts %}
 <script src="/static/js/lugares.js?v=1.0.6"></script>
-<script src="/static/js/geolocalizacion.js?v=1.0.9"></script>
+<script src="/static/js/geolocalizacion.js?v=1.0.10"></script>
 {% endblock %}

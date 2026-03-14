@@ -384,13 +384,16 @@
 
   /**
    * Geocodificación inversa (Nominatim): coords → ciudad/localidad para pasar a Repsol ?q=
-   * Así el usuario no tiene que escribir en la lupa si ya buscamos por ciudad o tenemos su zona.
+   * Nominatim exige User-Agent identificando la app; sin él puede devolver 403 o vacío.
    */
   function reverseGeocodeCity(lat, lon) {
-    return fetch(
-      'https://nominatim.openstreetmap.org/reverse?lat=' + encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lon) + '&format=json&accept-language=es',
-      { headers: { 'Accept': 'application/json' } }
-    )
+    var url = 'https://nominatim.openstreetmap.org/reverse?lat=' + encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lon) + '&format=json&accept-language=es';
+    return fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'VINO PRO IA (vinopro-app; mapa/guia-repsol)'
+      }
+    })
       .then(function(r) { return r.ok ? r.json() : null; })
       .then(function(data) {
         if (!data || !data.address) return null;
@@ -400,6 +403,18 @@
       .catch(function() { return null; });
   }
 
+  function parseInputCoords() {
+    var inputCiudad = document.getElementById('mapa-input-ciudad');
+    var raw = inputCiudad ? (inputCiudad.value || '').trim() : '';
+    if (!raw) return null;
+    var coordsMatch = raw.match(/^\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*$/);
+    if (!coordsMatch) return null;
+    var lat = parseFloat(coordsMatch[1]);
+    var lon = parseFloat(coordsMatch[2]);
+    if (!isFinite(lat) || !isFinite(lon)) return null;
+    return { lat: lat, lon: lon };
+  }
+
   function openRepsolWithUserLocation() {
     var base = 'https://www.guiarepsol.com/es/comer/';
     var term = parseInputTerm();
@@ -407,8 +422,11 @@
       window.open(base + '?q=' + encodeURIComponent(term), '_blank', 'noopener');
       return;
     }
-    if (userCoords && userCoords.lat != null && userCoords.lon != null) {
-      reverseGeocodeCity(userCoords.lat, userCoords.lon).then(function(city) {
+    var coords = (userCoords && userCoords.lat != null && userCoords.lon != null)
+      ? userCoords
+      : parseInputCoords();
+    if (coords) {
+      reverseGeocodeCity(coords.lat, coords.lon).then(function(city) {
         if (city) {
           window.open(base + '?q=' + encodeURIComponent(city), '_blank', 'noopener');
         } else {
@@ -575,19 +593,44 @@
       showEstado(textos.error_init || 'No se pudo cargar el mapa. Recarga la página.', true);
     }
 
-    // Al cargar la página: intentar obtener ubicación una vez para tener ciudad lista para Guía Repsol (sin molestar al usuario)
-    function tryDetectLocationForRepsol() {
-      if (userCoords && userCoords.lat != null) return;
-      if (!navigator.geolocation || !isGeoSecureContext()) return;
-      navigator.geolocation.getCurrentPosition(
-        function(pos) {
-          userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-        },
-        function() {},
-        { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
-      );
-    }
-    tryDetectLocationForRepsol();
+    // Pregunta breve de ubicación al entrar: una vez por sesión. Si acepta, todas las funciones (mapa, Repsol) quedan listas.
+    (function initAskUbicacion() {
+      var STORAGE_KEY = 'mapa_ubicacion_asked';
+      var banner = document.getElementById('mapa-ask-ubicacion');
+      var btnSi = document.getElementById('mapa-ask-si');
+      var btnNo = document.getElementById('mapa-ask-no');
+      if (!banner || !btnSi || !btnNo) return;
+      function hideBanner() {
+        banner.classList.add('hidden');
+        try { sessionStorage.setItem(STORAGE_KEY, '1'); } catch (e) {}
+      }
+      function showBanner() {
+        banner.classList.remove('hidden');
+      }
+      if (navigator.geolocation && isGeoSecureContext()) {
+        try {
+          if (!sessionStorage.getItem(STORAGE_KEY) && !(userCoords && userCoords.lat != null)) showBanner();
+        } catch (e) { showBanner(); }
+      }
+      btnSi.addEventListener('click', function() {
+        if (!navigator.geolocation || !isGeoSecureContext()) { hideBanner(); return; }
+        btnSi.disabled = true;
+        navigator.geolocation.getCurrentPosition(
+          function(pos) {
+            userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+            setInputFromCoords(userCoords.lat, userCoords.lon);
+            hideBanner();
+            btnSi.disabled = false;
+          },
+          function() {
+            hideBanner();
+            btnSi.disabled = false;
+          },
+          { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
+        );
+      });
+      btnNo.addEventListener('click', hideBanner);
+    })();
   }
 
   if (document.readyState === 'loading') {

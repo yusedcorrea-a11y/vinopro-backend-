@@ -1479,12 +1479,18 @@ body.page-inicio main {
   margin-bottom: 0 !important;
   border-radius: 0 !important;
 }
-/* Bodega: main transparente para que se vea el fondo (sin panel blanco) */
+/* Bodega: main 100% transparente (cero blanco), sin sombra ni borde de tarjeta */
 body.page-bodega main {
   background: transparent !important;
   backdrop-filter: none !important;
   box-shadow: none !important;
   border: none !important;
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+body.page-bodega main::before {
+  display: none !important;
+  background: none !important;
 }
 
 /* Hero página de inicio */
@@ -3472,4 +3478,14 @@ body.page-inicio main::after {
   .legal-card:nth-child(3) {
     grid-column: span 3;
   }
+}
+
+/* Bodega: forzar main sin fondo blanco (prioridad final para cache/CDN) */
+body.page-bodega main {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+body.page-bodega main::before {
+  display: none !important;
 }

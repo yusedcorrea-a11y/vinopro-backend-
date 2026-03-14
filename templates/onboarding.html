@@ -91,74 +91,85 @@
     document.cookie = name + '=' + encodeURIComponent(value) + '; path=/; max-age=' + MAX_AGE + '; SameSite=Lax';
   }
 
-  var step1 = document.getElementById('onboarding-step-1');
-  var step2 = document.getElementById('onboarding-step-2');
-  var step3 = document.getElementById('onboarding-step-3');
-  var permitir = document.getElementById('onboarding-permitir');
-  var ahoraNo = document.getElementById('onboarding-ahora-no');
-  var langList = document.getElementById('onboarding-lang-list');
-  var continuar = document.getElementById('onboarding-continuar');
-  var registrarme = document.getElementById('onboarding-registrarme');
+  function initOnboarding() {
+    var step1 = document.getElementById('onboarding-step-1');
+    var step2 = document.getElementById('onboarding-step-2');
+    var step3 = document.getElementById('onboarding-step-3');
+    var permitir = document.getElementById('onboarding-permitir');
+    var ahoraNo = document.getElementById('onboarding-ahora-no');
+    var langList = document.getElementById('onboarding-lang-list');
+    var continuar = document.getElementById('onboarding-continuar');
+    var registrarme = document.getElementById('onboarding-registrarme');
 
-  function showStep(step) {
-    [step1, step2, step3].forEach(function(el) { el.classList.remove('activo'); });
-    if (step === 1) step1.classList.add('activo');
-    else if (step === 2) {
-      step2.classList.add('activo');
-      var wrap = document.querySelector('.onboarding-wrap');
-      var initial = wrap && wrap.getAttribute('data-initial-lang');
-      if (langList && initial) {
-        var btn = langList.querySelector('.onboarding-lang-btn[data-lang="' + initial + '"]');
-        if (btn) {
-          langList.querySelectorAll('.onboarding-lang-btn').forEach(function(b) { b.classList.remove('selected'); b.setAttribute('aria-pressed', 'false'); });
-          btn.classList.add('selected');
-          btn.setAttribute('aria-pressed', 'true');
-          selectedLang = initial;
-          if (continuar) continuar.disabled = false;
+    var selectedLang = null;
+
+    function showStep(step) {
+      if (step1) step1.classList.remove('activo');
+      if (step2) step2.classList.remove('activo');
+      if (step3) step3.classList.remove('activo');
+      if (step === 1 && step1) step1.classList.add('activo');
+      else if (step === 2 && step2) {
+        step2.classList.add('activo');
+        var wrap = document.querySelector('.onboarding-wrap');
+        var initial = wrap && wrap.getAttribute('data-initial-lang');
+        if (langList && initial) {
+          var btn = langList.querySelector('.onboarding-lang-btn[data-lang="' + initial + '"]');
+          if (btn) {
+            langList.querySelectorAll('.onboarding-lang-btn').forEach(function(b) { b.classList.remove('selected'); b.setAttribute('aria-pressed', 'false'); });
+            btn.classList.add('selected');
+            btn.setAttribute('aria-pressed', 'true');
+            selectedLang = initial;
+            if (continuar) continuar.disabled = false;
+          }
         }
-      }
-    } else step3.classList.add('activo');
-  }
+      } else if (step === 3 && step3) step3.classList.add('activo');
+    }
 
-  if (permitir) {
-    permitir.addEventListener('click', function() {
-      if (!navigator.geolocation) { showStep(2); return; }
-      navigator.geolocation.getCurrentPosition(
-        function() { showStep(2); },
-        function() { showStep(2); },
-        { timeout: 8000, maximumAge: 60000 }
-      );
-    });
-  }
-  if (ahoraNo) ahoraNo.addEventListener('click', function() { showStep(2); });
-
-  var selectedLang = null;
-  if (langList) {
-    langList.addEventListener('click', function(e) {
-      var btn = e.target.closest('.onboarding-lang-btn');
-      if (!btn) return;
-      langList.querySelectorAll('.onboarding-lang-btn').forEach(function(b) {
-        b.classList.remove('selected'); b.setAttribute('aria-pressed', 'false');
+    if (permitir) {
+      permitir.addEventListener('click', function() {
+        showStep(2);
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function() {}, function() {}, { timeout: 8000, maximumAge: 60000 });
+        }
       });
-      btn.classList.add('selected');
-      btn.setAttribute('aria-pressed', 'true');
-      selectedLang = btn.getAttribute('data-lang');
-      if (continuar) continuar.disabled = !selectedLang;
-    });
+    }
+    if (ahoraNo) {
+      ahoraNo.addEventListener('click', function() { showStep(2); });
+    }
+
+    if (langList) {
+      langList.addEventListener('click', function(e) {
+        var btn = e.target.closest('.onboarding-lang-btn');
+        if (!btn) return;
+        langList.querySelectorAll('.onboarding-lang-btn').forEach(function(b) {
+          b.classList.remove('selected'); b.setAttribute('aria-pressed', 'false');
+        });
+        btn.classList.add('selected');
+        btn.setAttribute('aria-pressed', 'true');
+        selectedLang = btn.getAttribute('data-lang');
+        if (continuar) continuar.disabled = !selectedLang;
+      });
+    }
+    if (continuar) {
+      continuar.addEventListener('click', function() {
+        if (!selectedLang) return;
+        setCookie(COOKIE_LANG, selectedLang);
+        showStep(3);
+      });
+    }
+    if (registrarme) {
+      registrarme.addEventListener('click', function(e) {
+        e.preventDefault();
+        setCookie(COOKIE_DONE, '1');
+        window.location.href = '/signup';
+      });
+    }
   }
-  if (continuar) {
-    continuar.addEventListener('click', function() {
-      if (!selectedLang) return;
-      setCookie(COOKIE_LANG, selectedLang);
-      showStep(3);
-    });
-  }
-  if (registrarme) {
-    registrarme.addEventListener('click', function(e) {
-      setCookie(COOKIE_DONE, '1');
-      window.location.href = '/signup';
-      e.preventDefault();
-    });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initOnboarding);
+  } else {
+    initOnboarding();
   }
 })();
 </script>

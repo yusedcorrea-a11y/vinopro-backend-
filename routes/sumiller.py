@@ -1,7 +1,7 @@
 """
-Endpoint del experto en vinos virtual: responde preguntas sobre el vino escaneado
-o preguntas generales (maridajes, recomendaciones) usando la base de 539 vinos.
-Mantiene contexto de las últimas 3 preguntas por sesión.
+Chatbot = guía de la app. Ayuda a usar la app: funciones, menú, y (si es PRO) cómo conectar
+el Adaptador al programa del restaurante para ver Mi Bodega en tiempo real.
+También responde preguntas sobre un vino escaneado o maridajes/recomendaciones (base 539 vinos).
 """
 import re
 
@@ -9,6 +9,7 @@ from fastapi import APIRouter, Header, HTTPException, Request, Body
 
 from services import sumiller_service as svc_sumiller
 from services import translation_service as translation_svc
+from services import freemium_service as freemium_svc
 from services.imagen_service import get_imagen_vino
 from services.busqueda_service import buscar_vinos_avanzado, buscar_vinos_con_sugerencia
 from services.api_externa_service import buscar_por_texto as off_buscar_por_texto
@@ -31,6 +32,44 @@ async def _traducir_respuesta_si_lang(texto: str, lang: str | None) -> str:
         return await translation_svc.traducir(texto, lang, "es")
     except Exception:
         return texto
+
+
+def _get_info_app() -> str:
+    """Resumen de funciones de la app (el chatbot es guía de la app)."""
+    return (
+        "Soy tu guía de la app. Esto es lo que puedes hacer con VINO PRO:\n\n"
+        "• Escanear etiquetas de botellas para identificar el vino al instante.\n"
+        "• Registrar vinos en Mi Bodega y llevar tu colección.\n"
+        "• Preguntarme maridajes o recomendaciones (o escanea un vino y pregúntame sobre ese vino).\n"
+        "• VINEROS — red social del vino: feed (Noticias, Para ti, Eventos, Enoturismo, Equipamiento) y chat entre usuarios.\n"
+        "• Mapa: restaurantes, vinotecas y bares cerca (ubicación o ciudad).\n"
+        "• Planes gratis y PRO. Si eres PRO, el Adaptador conecta tu programa de restaurante con Mi Bodega para ver en tiempo real cuántas botellas tienes.\n\n"
+        "La primera vez eliges idioma (14 idiomas) y puedes crear cuenta. Todo se abre desde Inicio o el menú ☰."
+    )
+
+
+def _get_guia_adaptador_pro() -> str:
+    """Guía paso a paso del Adaptador, explicada de forma muy sencilla (como para 14 años)."""
+    return (
+        "Te lo explico en pocos pasos, como si fuera la primera vez:\n\n"
+        "1) Tienes que tener los vinos ya registrados en la app (en Mi Bodega). Así la app sabe qué vinos tienes y cuántas botellas.\n\n"
+        "2) Entra en Adaptador desde el menú de la app (☰ → Adaptador). Ahí verás tu token (una clave secreta que solo es tuya). Cópialo.\n\n"
+        "3) En el programa de tu restaurante (la caja, el TPV, CoverManager u otro) tienes que configurar que cuando vendas un vino, ese programa avise a nuestra app. "
+        "Normalmente se hace poniendo una URL nuestra y tu token. La URL es la de tu app más «/api/adaptador/venta», y el token va en una cabecera que se llama X-API-Token.\n\n"
+        "4) Cada vez que un camerero vende una botella, tu programa envía a la app: «se ha vendido este vino, 1 unidad». La app resta esa botella de Mi Bodega.\n\n"
+        "5) Así ves en tiempo real en la app cuántas botellas te quedan de cada vino, porque ya estaban registradas y la app va descontando con cada venta. "
+        "Si no sabes cómo poner la URL o el token en tu programa, suele estar en «integraciones» o «API»; si me dices qué programa usas, te digo dónde suele estar."
+    )
+
+
+def _get_guia_adaptador_no_pro() -> str:
+    """Mensaje cuando preguntan por el Adaptador pero no son PRO."""
+    return (
+        "El Adaptador es para usuarios PRO. Sirve para conectar la app con el programa de tu restaurante: "
+        "cuando vendes un vino, la app descuenta la botella de Mi Bodega y ves en tiempo real cuántas te quedan. "
+        "Si pasas a plan PRO, podrás usar el Adaptador; entra en Planes en el menú. Cuando seas PRO, pregúntame otra vez «cómo uso el adaptador» y te explico paso a paso."
+    )
+
 
 MAX_CONTEXTO = 3
 
@@ -370,8 +409,63 @@ async def preguntar_sumiller(
             detail="Vino no encontrado para el consulta_id o vino_key indicado. Escanee de nuevo o use una key válida.",
         )
 
-    # --- Comandos de navegación (sin vino concreto) ---
+    # --- Preguntas sobre la app (sin vino concreto) ---
     texto_low = texto_clean.lower()
+    frases_sobre_app = [
+        "qué hace la app", "que hace la app", "qué es vino pro", "que es vino pro",
+        "para qué sirve", "para que sirve", "qué puedo hacer", "que puedo hacer",
+        "qué ofrece", "que ofrece", "información de la app", "informacion de la app",
+        "hablame de la app", "háblame de la app", "qué novedades", "que novedades",
+        "qué hay en la app", "que hay en la app", "qué secciones", "que secciones",
+        "qué funciones", "que funciones", "qué tiene la app", "que tiene la app",
+        "presentación", "presentacion", "qué es esta app", "que es esta app",
+        "ayuda con la app", "cómo usar la app", "como usar la app", "qué es vinopro",
+        "que es vinopro", "resumen de la app", "qué puedo hacer aquí", "que puedo hacer aqui",
+    ]
+    if any(x in texto_low for x in frases_sobre_app):
+        respuesta_app = _get_info_app()
+        respuesta_app = await _traducir_respuesta_si_lang(respuesta_app, lang)
+        return {
+            "consulta_id": None,
+            "vino_key": None,
+            "pregunta": texto_clean,
+            "respuesta": respuesta_app,
+            "vino_nombre": None,
+            "imagen_url": None,
+            "mostrar_boton_comprar": False,
+            "perfil": perfil,
+        }
+
+    # --- Guía del Adaptador: cómo conectar la app al programa del restaurante (PRO = paso a paso; no PRO = explicación y enlace a Planes) ---
+    frases_adaptador = [
+        "cómo usar el adaptador", "como usar el adaptador", "cómo se usa el adaptador", "como se usa el adaptador",
+        "conectar la app al programa", "conectar app al restaurante", "conectar bodega al restaurante",
+        "programa del restaurante", "programa de restaurante", "tpv", "caja del restaurante",
+        "saber en tiempo real", "tiempo real cuántas botellas", "tiempo real cuantas botellas",
+        "cantidad de vinos", "cuántos vinos tengo", "cuantos vinos tengo", "inventario en tiempo real",
+        "adaptador para restaurantes", "cómo conecto", "como conecto", "explicame el adaptador",
+        "explicame como conecto", "pasos para el adaptador", "configurar adaptador",
+    ]
+    if any(x in texto_low for x in frases_adaptador):
+        session_id = (x_session_id or "").strip()
+        es_pro = bool(session_id and freemium_svc.is_pro(session_id))
+        if es_pro:
+            respuesta_adaptador = _get_guia_adaptador_pro()
+        else:
+            respuesta_adaptador = _get_guia_adaptador_no_pro()
+        respuesta_adaptador = await _traducir_respuesta_si_lang(respuesta_adaptador, lang)
+        return {
+            "consulta_id": None,
+            "vino_key": None,
+            "pregunta": texto_clean,
+            "respuesta": respuesta_adaptador,
+            "vino_nombre": None,
+            "imagen_url": None,
+            "mostrar_boton_comprar": False,
+            "perfil": perfil,
+        }
+
+    # --- Comandos de navegación (sin vino concreto) ---
     navegacion = None
     respuesta_nav = None
     if any(x in texto_low for x in [
@@ -391,6 +485,13 @@ async def preguntar_sumiller(
     if not navegacion and any(x in texto_low for x in ["ir a adaptador", "abrir adaptador", "adaptador para restaurantes", "ver adaptador"]):
         navegacion = "/adaptador"
         respuesta_nav = "Aquí tienes el Adaptador para restaurantes."
+    if not navegacion and any(x in texto_low for x in [
+        "ir a vineros", "abrir vineros", "ver vineros", "comunidad", "ver comunidad",
+        "ver noticias del vino", "feed de vino", "ir a noticias", "ver equipamiento",
+        "cristalería", "cristaleria", "copas y decantadores"
+    ]):
+        navegacion = "/comunidad"
+        respuesta_nav = "Te llevo a VINEROS: noticias, eventos, enoturismo, equipamiento (cristalería, copas) y chat entre usuarios."
     if not navegacion and any(x in texto_low for x in ["abrir menú", "abrir menu", "menú secreto", "menu secreto", "abrir el menú", "mostrar menú"]):
         navegacion = "menu"
         respuesta_nav = "Abre el menú con el botón ☰ o haciendo doble clic en el ayudante."

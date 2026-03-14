@@ -204,8 +204,10 @@ def skill_sumiller(req: SumillerRequest):
                             {
                                 "role": "system",
                                 "content": (
-                                    "Eres un experto en vinos virtual. Respondes en 1-3 frases breves, en español, "
+                                    "Eres la guía de la app VINO PRO. Respondes en 1-3 frases breves, en español, "
                                     "solo con la información del vino que te proporciono. No inventes datos. "
+                                    "Si preguntan qué es la app: guía para usar la app (escanear, bodega, recomendaciones, VINEROs, mapa). "
+                                    "Si preguntan por el Adaptador: es para PRO; conecta el programa del restaurante con Mi Bodega para ver en tiempo real las botellas. "
                                     "Perfil del usuario: " + perfil + "."
                                 ),
                             },

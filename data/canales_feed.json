@@ -89,6 +89,116 @@
       "fuente": "Wines of Chile",
       "badge": "Noticias",
       "imagen": "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&fit=crop"
+    },
+    {
+      "id": "vinetur-1",
+      "created_at": 1740200000,
+      "titulo": "Noticias del sector: vino, bodegas y denominaciones",
+      "descripcion": "Actualidad vinícola en España y el mundo. Artículos, notas de cata y reportajes. Contenido gratuito para estar al día.",
+      "link": "https://www.vinetur.com/noticias",
+      "fuente": "Vinetur",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&fit=crop"
+    },
+    {
+      "id": "vinetur-2",
+      "created_at": 1740150000,
+      "titulo": "Guías y rutas del vino en España",
+      "descripcion": "Dónde ir, qué bodegas visitar y cómo organizar tu ruta. Vinetur recopila experiencias y destinos enoturísticos.",
+      "link": "https://www.vinetur.com/",
+      "fuente": "Vinetur",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1474722883778-792e2290308b?w=600&fit=crop"
+    },
+    {
+      "id": "vinetur-3",
+      "created_at": 1740100000,
+      "titulo": "Publica tu nota de cata o artículo en Vinetur",
+      "descripcion": "Registro gratuito para compartir tus catas, opiniones y artículos con la comunidad. Ideal para aficionados y profesionales.",
+      "link": "https://www.vinetur.com/",
+      "fuente": "Vinetur",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&fit=crop"
+    },
+    {
+      "id": "yt-wn-1",
+      "created_at": 1740080000,
+      "titulo": "Wine News TV: noticias en vídeo del mundo del vino",
+      "descripcion": "Directos y reportajes en vídeo sobre actualidad vinícola. Canal en español con novedades, catas y tendencias. Acceso gratis.",
+      "link": "https://www.youtube.com/results?search_query=Wine+News+TV+vino",
+      "fuente": "Wine News TV",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&fit=crop"
+    },
+    {
+      "id": "yt-wn-2",
+      "created_at": 1740050000,
+      "titulo": "Lives y catas en directo desde Wine News TV",
+      "descripcion": "Síguelos en YouTube para ver transmisiones en vivo sobre vino, maridajes y actualidad del sector. Sin coste.",
+      "link": "https://www.youtube.com/results?search_query=Wine+News+TV",
+      "fuente": "Wine News TV",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&fit=crop"
+    },
+    {
+      "id": "yt-cd-1",
+      "created_at": 1740020000,
+      "titulo": "Colectivo Decantado: cultura del vino en YouTube",
+      "descripcion": "Contenido en vídeo sobre vino, sumillería y estilo de vida. Canal en español para aprender y disfrutar.",
+      "link": "https://www.youtube.com/results?search_query=Colectivo+Decantado+vino",
+      "fuente": "Colectivo Decantado",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&fit=crop"
+    },
+    {
+      "id": "yt-cd-2",
+      "created_at": 1739990000,
+      "titulo": "Vídeos y recomendaciones del Colectivo Decantado",
+      "descripcion": "Descubre sus últimos vídeos: catas, maridajes y temas del mundo del vino. Todo gratuito en YouTube.",
+      "link": "https://www.youtube.com/results?search_query=Colectivo+Decantado",
+      "fuente": "Colectivo Decantado",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1474722883778-792e2290308b?w=600&fit=crop"
+    },
+    {
+      "id": "jerez-1",
+      "created_at": 1739960000,
+      "titulo": "Jerez y el marco: noticias y reportajes",
+      "descripcion": "Actualidad del vino de Jerez, sherry y marco de Jerez. Reportajes en vídeo y prensa. Registro básico para contenido exclusivo.",
+      "link": "https://www.diariodejerez.es/temas/vino",
+      "fuente": "Diario de Jerez",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&fit=crop"
+    },
+    {
+      "id": "jerez-2",
+      "created_at": 1739930000,
+      "titulo": "Jerez Televisión: vídeos del sector del vino",
+      "descripcion": "Contenido en vídeo sobre bodegas, catas y actualidad de Jerez. Acceso online gratuito a reportajes y noticias.",
+      "link": "https://www.diariodejerez.es/",
+      "fuente": "Jerez Televisión / Diario de Jerez",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1596363505729-2b22f4a95a8b?w=600&fit=crop"
+    },
+    {
+      "id": "vinetur-4",
+      "created_at": 1739900000,
+      "titulo": "Denominaciones de origen y normativa",
+      "descripcion": "Cambios en DO, regulación y calidad. Vinetur mantiene actualizada la información del sector.",
+      "link": "https://www.vinetur.com/noticias",
+      "fuente": "Vinetur",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1596363505729-2b22f4a95a8b?w=600&fit=crop"
+    },
+    {
+      "id": "vinetur-5",
+      "created_at": 1739870000,
+      "titulo": "Bodegas y cosechas: novedades del viñedo",
+      "descripcion": "Vendimias, elaboración y lanzamientos. Lee las últimas noticias de bodegas españolas e internacionales.",
+      "link": "https://www.vinetur.com/",
+      "fuente": "Vinetur",
+      "badge": "Noticias",
+      "imagen": "https://images.unsplash.com/photo-1474722883778-792e2290308b?w=600&fit=crop"
     }
   ],
   "eventos": [
@@ -213,6 +323,88 @@
       "fuente": "Chile Travel",
       "badge": "Ruta",
       "imagen": "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&fit=crop"
+    }
+  ],
+  "equipamiento": [
+    {
+      "id": "eq-1",
+      "created_at": 1740300000,
+      "titulo": "Copas de vino: cristalería para tinto, blanco y burbujas",
+      "descripcion": "Copas ISO, borgoña, burdeos, flauta y tulipa. Cristal fino para apreciar aromas y temperatura. Varias marcas y precios.",
+      "link": "https://www.vinum.es/copas-vino/",
+      "fuente": "Vinum",
+      "badge": "Equipamiento",
+      "imagen": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=600&fit=crop"
+    },
+    {
+      "id": "eq-2",
+      "created_at": 1740250000,
+      "titulo": "Decantadores y carafas para oxigenar el vino",
+      "descripcion": "Decantadores clásicos y de diseño para servir tinto. Ayudan a suavizar taninos y realzar aromas. Varios tamaños y materiales.",
+      "link": "https://www.vinum.es/decantadores/",
+      "fuente": "Vinum",
+      "badge": "Equipamiento",
+      "imagen": "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600&fit=crop"
+    },
+    {
+      "id": "eq-3",
+      "created_at": 1740200000,
+      "titulo": "Sacacorchos y abridores para el wine lover",
+      "descripcion": "Sacacorchos de sommelier, de palanca, eléctricos y de alas. Herramientas duraderas para abrir botellas con estilo.",
+      "link": "https://www.vinum.es/sacacorchos/",
+      "fuente": "Vinum",
+      "badge": "Equipamiento",
+      "imagen": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&fit=crop"
+    },
+    {
+      "id": "eq-4",
+      "created_at": 1740150000,
+      "titulo": "Termómetros y enfriadores para servir a la temperatura ideal",
+      "descripcion": "Termómetros de vino, mangas enfriadoras y cubiteras. Blanco, rosado y espumoso a su punto. Accesorios prácticos.",
+      "link": "https://www.vinum.es/termometros-enfriadores/",
+      "fuente": "Vinum",
+      "badge": "Equipamiento",
+      "imagen": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&fit=crop"
+    },
+    {
+      "id": "eq-5",
+      "created_at": 1740100000,
+      "titulo": "Cristalería y accesorios en Amazon",
+      "descripcion": "Amplio catálogo de copas, decantadores, sacacorchos y sets de regalo. Envío rápido y reseñas de compradores.",
+      "link": "https://www.amazon.es/s?k=copas+vino+cristal",
+      "fuente": "Amazon",
+      "badge": "Equipamiento",
+      "imagen": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=600&fit=crop"
+    },
+    {
+      "id": "eq-6",
+      "created_at": 1740050000,
+      "titulo": "Libros y guías de cata para profundizar",
+      "descripcion": "Guías de variedades, regiones y maridaje. Manuales de sumillería y catas. Para aprender y disfrutar más del vino.",
+      "link": "https://www.vinum.es/libros-vino/",
+      "fuente": "Vinum",
+      "badge": "Equipamiento",
+      "imagen": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=600&fit=crop"
+    },
+    {
+      "id": "eq-7",
+      "created_at": 1740000000,
+      "titulo": "Preservadores y dispensadores: vino por copas",
+      "descripcion": "Sistemas para conservar la botella abierta varios días (vacío o gas). Dispensadores y by-the-glass para casa o bar.",
+      "link": "https://www.vinum.es/preservadores-dispensadores/",
+      "fuente": "Vinum",
+      "badge": "Equipamiento",
+      "imagen": "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=600&fit=crop"
+    },
+    {
+      "id": "eq-8",
+      "created_at": 1739950000,
+      "titulo": "Aeradores y accesorios de servicio",
+      "descripcion": "Aeradores de mesa, tapones, etiquetadores y bandejas. Todo para servir el vino como un profesional.",
+      "link": "https://www.vinum.es/accesorios-vino/",
+      "fuente": "Vinum",
+      "badge": "Equipamiento",
+      "imagen": "https://images.unsplash.com/photo-1474722883778-792e2290308b?w=600&fit=crop"
     }
   ]
 }

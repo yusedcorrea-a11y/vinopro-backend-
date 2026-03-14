@@ -43,6 +43,7 @@
     "feed_noticias": "News",
     "feed_eventos": "Events & tastings",
     "feed_enoturismo": "Wine tourism",
+    "feed_equipamiento": "Equipment",
     "feed_vineros": "VINEROs",
     "ad_slot_placeholder": "Ad space",
     "chat_titulo": "VINEROS Chat",
@@ -197,7 +198,8 @@
     "oferta_crear_btn": "Create offer"
   },
   "preguntar": {
-    "title": "Ask the wine expert",
+    "title": "App guide",
+    "subtitle_guia": "I'm your guide: I explain how to use the app, the Adapter (if you're PRO), and the rest of the features. You can also ask for pairings or about a wine you've scanned.",
     "subtitle_nube": "In Cloud mode you can ask without scanning: pairings, recommendations or follow-up questions. With Consult ID (after scanning) the wine expert answers about that wine. Choose your profile.",
     "modo": "Mode:",
     "modo_local": "Local AI 🖥️",

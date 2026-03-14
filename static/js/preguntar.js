@@ -152,6 +152,17 @@
     } catch (_) { return ''; }
   }
 
+  /** Idioma de la app (cookie / html lang) para que el chatbot responda en el idioma del usuario. */
+  function getAppLang() {
+    try {
+      var htmlLang = (document.documentElement.getAttribute('lang') || '').trim().toLowerCase().slice(0, 2);
+      if (htmlLang) return htmlLang;
+      var m = (document.cookie || '').match(/vino_pro_lang=([^;]+)/);
+      if (m && m[1]) return m[1].trim().toLowerCase().slice(0, 2);
+    } catch (_) {}
+    return 'es';
+  }
+
   function cargarVinoContexto() {
     var sid = getSessionId();
     if (!vinoContextoSelect || !sid) return;
@@ -233,6 +244,8 @@
       } else {
         var url = '/preguntar-sumiller?texto=' + encodeURIComponent(texto) + '&perfil=' + encodeURIComponent(perfil);
         if (consulta_id) url += '&consulta_id=' + encodeURIComponent(consulta_id);
+        var lang = getAppLang();
+        if (lang) url += '&lang=' + encodeURIComponent(lang);
         var sid = getSessionId();
         var headers = { 'Accept': 'application/json' };
         if (sid) headers['X-Session-ID'] = sid;

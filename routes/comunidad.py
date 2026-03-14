@@ -419,6 +419,10 @@ async def get_feed(
         for item in feed_svc.get_contenido_canal("enoturismo", limit=limit):
             posts.append(_post_desde_canal(item))
 
+    elif canal == "equipamiento":
+        for item in feed_svc.get_contenido_canal("equipamiento", limit=limit):
+            posts.append(_post_desde_canal(item))
+
     posts.sort(key=lambda p: -(p.get("created_at") or 0))
     dedup = []
     seen = set()

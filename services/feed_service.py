@@ -13,7 +13,7 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 ACTIVIDAD_PATH = DATA_DIR / "actividad.json"
 CANALES_FEED_PATH = DATA_DIR / "canales_feed.json"
 
-LISTA_CANALES = ["para_ti", "noticias", "eventos", "enoturismo", "vineros"]
+LISTA_CANALES = ["para_ti", "noticias", "eventos", "enoturismo", "equipamiento", "vineros"]
 
 _lista: list[dict] = []
 _canales_data: dict = {}
@@ -138,11 +138,11 @@ def _load_canales() -> dict:
 
 def get_contenido_canal(canal: str, limit: int = 20) -> list[dict]:
     """
-    Contenido estático de un canal (noticias, eventos, enoturismo).
+    Contenido estático de un canal (noticias, eventos, enoturismo, equipamiento).
     Cada item: id, created_at, titulo, descripcion, link, fuente, badge.
     Para "eventos" solo devuelve los del JSON; la API mezclará con get_eventos_destacados.
     """
-    if canal not in ("noticias", "eventos", "enoturismo"):
+    if canal not in ("noticias", "eventos", "enoturismo", "equipamiento"):
         return []
     data = _load_canales()
     raw = data.get(canal)

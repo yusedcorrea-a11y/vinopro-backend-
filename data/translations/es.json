@@ -43,6 +43,7 @@
     "feed_noticias": "Noticias",
     "feed_eventos": "Eventos y catas",
     "feed_enoturismo": "Enoturismo",
+    "feed_equipamiento": "Equipamiento",
     "feed_vineros": "VINEROs",
     "ad_slot_placeholder": "Espacio publicitario",
     "chat_titulo": "Chat VINEROS",
@@ -200,7 +201,8 @@
     "oferta_crear_btn": "Crear oferta"
   },
   "preguntar": {
-    "title": "Preguntar al experto en vinos",
+    "title": "Guía de la app",
+    "subtitle_guia": "Soy tu guía: te explico cómo usar la app, el Adaptador (si eres PRO) y el resto de funciones. También puedes preguntar maridajes o sobre un vino que hayas escaneado.",
     "subtitle_nube": "En modo Nube puedes preguntar sin escanear: maridajes, recomendaciones o seguir con preguntas. Con Consulta ID (tras escanear) el experto en vinos responde sobre ese vino. Elige tu perfil.",
     "modo": "Modo:",
     "modo_local": "IA Local 🖥️",

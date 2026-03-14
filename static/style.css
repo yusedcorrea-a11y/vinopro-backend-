@@ -2302,7 +2302,9 @@ textarea {
   background: rgba(0, 0, 0, 0.3);
 }
 [data-theme="dark"] body.page-mapa {
-  background-image: url('/static/images/vino-pro-ia-fondo-mapa-oscuro.png');
+  background: #0d0b0a url('/static/images/vino-pro-ia-fondo-mapa-oscuro.png') no-repeat fixed;
+  background-size: 70% auto;
+  background-position: center center;
 }
 [data-theme="dark"] body.page-mapa::before {
   background: rgba(0, 0, 0, 0.3);

@@ -572,57 +572,102 @@ body.page-bodega .bodega-container label {
 body.page-bodega .bodega-container h3 {
   color: rgba(255, 255, 255, 0.95) !important;
 }
-/* Modo claro: panel casi sólido para máxima legibilidad */
+/* Modo claro: todo transparente (cero fondos blancos), texto legible con sombra */
 html:not([data-theme="dark"]) body.page-bodega .bodega-container {
-  background: rgba(255, 255, 255, 0.98);
+  background: transparent;
   color: #1a1512;
-  text-shadow: none;
-  border-color: rgba(107, 45, 60, 0.22);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.14);
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8), 0 0 6px rgba(255,255,255,0.6);
+  border-color: rgba(107, 45, 60, 0.25);
+  box-shadow: none;
 }
 html:not([data-theme="dark"]) body.page-bodega .bodega-container .bodega-resumen,
 html:not([data-theme="dark"]) body.page-bodega .bodega-container .maridaje-tip,
 html:not([data-theme="dark"]) body.page-bodega .bodega-container #valoracion,
 html:not([data-theme="dark"]) body.page-bodega .bodega-container #lista-botellas,
 html:not([data-theme="dark"]) body.page-bodega .bodega-container .valoracion-box {
-  color: var(--texto) !important;
+  color: #1a1512 !important;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8), 0 0 6px rgba(255,255,255,0.6);
+  background: transparent !important;
 }
 html:not([data-theme="dark"]) body.page-bodega .bodega-container .potencial-badge {
-  text-shadow: none;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8);
 }
 html:not([data-theme="dark"]) body.page-bodega .bodega-container h1,
 html:not([data-theme="dark"]) body.page-bodega .bodega-container h2,
 html:not([data-theme="dark"]) body.page-bodega .bodega-container h3,
 html:not([data-theme="dark"]) body.page-bodega .bodega-container .section-title {
-  color: var(--burdeos) !important;
+  color: #4a1f2a !important;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.9), 0 0 8px rgba(255,255,255,0.7);
 }
 html:not([data-theme="dark"]) body.page-bodega .bodega-container .texto-pequeno,
 html:not([data-theme="dark"]) body.page-bodega .bodega-container .page-subtitle,
 html:not([data-theme="dark"]) body.page-bodega .bodega-container label {
-  color: #3d3530;
+  color: #2d2520;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8), 0 0 6px rgba(255,255,255,0.6);
 }
-/* Listado de botellas y filas: texto bien oscuro */
+/* Listado de botellas: texto oscuro y legible */
 html:not([data-theme="dark"]) body.page-bodega .bodega-container #lista-botellas,
 html:not([data-theme="dark"]) body.page-bodega .bodega-container #lista-botellas * {
   color: #1a1512 !important;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8), 0 0 6px rgba(255,255,255,0.6);
+  background: transparent !important;
 }
 html:not([data-theme="dark"]) body.page-bodega .bodega-container #lista-botellas a {
-  color: var(--burdeos) !important;
+  color: #5a2d3c !important;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8);
 }
+/* Inputs/selects transparentes (sin blanco) y texto legible */
 html:not([data-theme="dark"]) body.page-bodega .bodega-container input,
 html:not([data-theme="dark"]) body.page-bodega .bodega-container select {
-  background: var(--blanco);
-  border-color: var(--crema-oscuro);
-  color: var(--texto);
+  background: transparent;
+  border-color: rgba(107, 45, 60, 0.4);
+  color: #1a1512;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+}
+html:not([data-theme="dark"]) body.page-bodega .bodega-container input::placeholder {
+  color: rgba(26, 21, 18, 0.6);
 }
 html:not([data-theme="dark"]) body.page-bodega .bodega-container #valoracion,
 html:not([data-theme="dark"]) body.page-bodega .bodega-container #lista-botellas,
 html:not([data-theme="dark"]) body.page-bodega .bodega-container .bodega-sort-bar {
-  color: var(--texto);
+  color: #1a1512;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8), 0 0 6px rgba(255,255,255,0.6);
 }
 html:not([data-theme="dark"]) body.page-bodega .bodega-container a {
-  color: var(--burdeos);
+  color: #5a2d3c;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8);
 }
+/* Tarjetas de botellas y donut sin fondo blanco */
+html:not([data-theme="dark"]) body.page-bodega .bodega-container .resultado-vino {
+  background: transparent !important;
+  border-color: rgba(107, 45, 60, 0.25);
+  color: #1a1512;
+}
+html:not([data-theme="dark"]) body.page-bodega .bodega-container .resultado-vino * {
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8), 0 0 6px rgba(255,255,255,0.6);
+}
+html:not([data-theme="dark"]) body.page-bodega .donut-chart::after {
+  background: transparent !important;
+}
+html:not([data-theme="dark"]) body.page-bodega .chart-center-label {
+  color: #1a1512;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.9);
+}
+html:not([data-theme="dark"]) body.page-bodega .chart-legend {
+  color: #2d2520;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+}
+html:not([data-theme="dark"]) body.page-bodega .bodega-container .maridaje-tip {
+  background: transparent !important;
+  border-left-color: var(--burdeos);
+}
+html:not([data-theme="dark"]) body.page-bodega .bodega-container .potencial-badge.verde,
+html:not([data-theme="dark"]) body.page-bodega .bodega-container .potencial-badge.amarillo,
+html:not([data-theme="dark"]) body.page-bodega .bodega-container .potencial-badge.rojo {
+  background: transparent !important;
+  border: 1px solid currentColor;
+}
+
 body.page-bodega .bodega-container input,
 body.page-bodega .bodega-container select {
   background: rgba(255, 255, 255, 0.1);
@@ -1433,6 +1478,13 @@ body.page-inicio main {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
   border-radius: 0 !important;
+}
+/* Bodega: main transparente para que se vea el fondo (sin panel blanco) */
+body.page-bodega main {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 
 /* Hero página de inicio */

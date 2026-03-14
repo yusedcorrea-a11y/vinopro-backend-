@@ -148,10 +148,11 @@
     card.setAttribute('data-post-username', post.username || '');
     if (isNoticias && post.link) card.setAttribute('data-noticia-link', post.link);
     var badge = post.badge ? '<span class="vineros-badge">' + escapeHtml(post.badge) + '</span>' : '';
-    var hasSponsorImg = post.post_type === 'sponsor' && post.image_url;
-    var mediaClass = post.post_type === 'sponsor' ? ('vineros-media sponsor-media' + (hasSponsorImg ? ' vineros-media--img' : '')) : (post.post_type === 'canal' ? 'vineros-media vineros-media--img' : 'vineros-media');
+    var hasImage = !!(post.image_url);
+    var hasSponsorImg = post.post_type === 'sponsor' && hasImage;
+    var mediaClass = post.post_type === 'sponsor' ? ('vineros-media sponsor-media' + (hasSponsorImg ? ' vineros-media--img' : '')) : (hasImage ? 'vineros-media vineros-media--img' : 'vineros-media');
     var mediaContent = '';
-    if (post.post_type === 'canal' || hasSponsorImg) {
+    if (hasImage || post.post_type === 'canal') {
       var imgUrl = post.image_url || FALLBACK_IMAGE;
       mediaContent = '<img class="vineros-media-img" src="' + escapeHtml(imgUrl) + '" alt="" loading="lazy" />';
     } else if (post.post_type === 'sponsor') {
@@ -178,8 +179,11 @@
         '</div>';
     card.innerHTML =
       '<div class="vineros-head">' +
-        '<div class="vineros-avatar">' + escapeHtml(post.avatar_text || 'V') + '</div>' +
-        '<div><div class="vineros-name">' + escapeHtml(post.username || 'vinero') + badge + '</div></div>' +
+        '<div class="vineros-head-left">' +
+          '<div class="vineros-avatar">' + escapeHtml(post.avatar_text || 'V') + '</div>' +
+          '<div><div class="vineros-name">' + escapeHtml(post.username || 'vinero') + badge + '</div></div>' +
+        '</div>' +
+        '<button type="button" class="vineros-head-menu" aria-label="Más opciones" title="Más opciones">⋮</button>' +
       '</div>' +
       '<div class="' + mediaClass + '">' + mediaContent + '</div>' +
       '<div class="vineros-body">' +

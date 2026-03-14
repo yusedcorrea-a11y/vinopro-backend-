@@ -19,11 +19,20 @@ En la app ya hay **enlaces de compra** por país (Amazon donde existe + **tienda
    - [associates.amazon.es](https://affiliate-program.amazon.es) (España)
    - [affiliate-program.amazon.com](https://affiliate-program.amazon.com) (EE.UU.)
    - Y lo mismo para .co.uk, .de, .fr, .it, .com.mx, .com.br, .co.jp, .com.au, .in, .nl, .com.tr, etc.
-2. Os darán un **tag** (ej. `vinoproia-21`). En el servidor, en el `.env`:
+2. Cada país os dará un **tag distinto**. En el `.env` usad una variable por país:
+   ```env
+   AMAZON_TAG_JP=vinoproia-22
+   AMAZON_TAG_US=vinoproia-20
+   AMAZON_TAG_GB=vinoproia-21
+   AMAZON_TAG_FR=vinoproia-21
+   AMAZON_TAG_DE=vinoproia-21
+   AMAZON_TAG_NL=vinoproia-21
+   AMAZON_TAG_ES=vinoproia-21
+   ```
+   El sistema busca primero `AMAZON_TAG_XX` (donde XX es el código de país). Si no existe, usa `AMAZON_ASSOCIATE_TAG` como fallback global:
    ```env
    AMAZON_ASSOCIATE_TAG=vinoproia-21
    ```
-   (Si tenéis un tag por país, se puede ampliar el código para usar uno u otro según el país; por ahora la app usa un solo tag global para todos los Amazon.)
 
 ### Tiendas locales (países sin Amazon)
 
@@ -54,7 +63,14 @@ Si una tienda **no tiene afiliados**, podéis:
 
 | Variable | Uso |
 |----------|-----|
-| `AMAZON_ASSOCIATE_TAG` | Tag de Amazon Associates (se aplica a todos los Amazon) |
+| `AMAZON_TAG_JP` | Tag de Amazon Associates Japón |
+| `AMAZON_TAG_US` | Tag de Amazon Associates EE.UU. |
+| `AMAZON_TAG_GB` | Tag de Amazon Associates Reino Unido |
+| `AMAZON_TAG_FR` | Tag de Amazon Associates Francia |
+| `AMAZON_TAG_DE` | Tag de Amazon Associates Alemania |
+| `AMAZON_TAG_NL` | Tag de Amazon Associates Holanda |
+| `AMAZON_TAG_ES` | Tag de Amazon Associates España |
+| `AMAZON_ASSOCIATE_TAG` | Tag global (fallback si no hay tag específico por país) |
 | `AFILIADO_AR` | ID afiliado tienda Argentina |
 | `AFILIADO_CL` | ID afiliado tienda Chile |
 | `AFILIADO_IL` | ID afiliado tienda Israel |

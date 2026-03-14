@@ -373,11 +373,33 @@ def _generar_tienda_local(plantilla: dict, vino_nombre: str, pais: str) -> Tiend
     )
 
 
+_COUNTRY_ALIASES = {"GB": "UK", "UK": "GB"}
+
+
+def _get_amazon_tag(pais: str) -> str:
+    """
+    Devuelve el tag de Amazon Associates para el país.
+    Busca AMAZON_TAG_XX (ej. AMAZON_TAG_JP); si no existe prueba el alias
+    (GB<->UK) y finalmente usa AMAZON_ASSOCIATE_TAG como fallback global.
+    """
+    pais_upper = (pais or "").strip().upper()
+    if pais_upper:
+        tag = os.environ.get(f"AMAZON_TAG_{pais_upper}", "").strip()
+        if tag:
+            return tag
+        alias = _COUNTRY_ALIASES.get(pais_upper)
+        if alias:
+            tag = os.environ.get(f"AMAZON_TAG_{alias}", "").strip()
+            if tag:
+                return tag
+    return os.environ.get("AMAZON_ASSOCIATE_TAG", "").strip()
+
+
 def generar_enlace_amazon(vino_nombre: str, pais: str) -> TiendaAfiliado:
     """
     Genera un enlace de búsqueda en Amazon para el vino, adaptado al país del usuario.
     Permite que todos los vinos tengan al menos un enlace de compra real.
-    Opcional: AMAZON_ASSOCIATE_TAG en .env (ej. tu-id-21) para monetización con Amazon Associates.
+    Tag por país: AMAZON_TAG_JP, AMAZON_TAG_ES, etc. Fallback: AMAZON_ASSOCIATE_TAG global.
     """
     pais_upper = (pais or "ES").strip().upper()
     dominio = DOMINIOS_AMAZON.get(pais_upper, "amazon.es")
@@ -385,7 +407,7 @@ def generar_enlace_amazon(vino_nombre: str, pais: str) -> TiendaAfiliado:
     if not nombre_busqueda:
         nombre_busqueda = "vino"
     url = f"https://www.{dominio}/s?k={urllib.parse.quote(nombre_busqueda)}"
-    tag = os.environ.get("AMAZON_ASSOCIATE_TAG", "").strip()
+    tag = _get_amazon_tag(pais_upper)
     if tag:
         url += f"&tag={urllib.parse.quote(tag)}"
     return TiendaAfiliado(
@@ -393,7 +415,7 @@ def generar_enlace_amazon(vino_nombre: str, pais: str) -> TiendaAfiliado:
         url=url,
         tipo="marketplace",
         moneda="local",
-        afiliado=True,
+        afiliado=bool(tag),
         envio_internacional=False,
         pais_origen=pais_upper,
         es_amazon=True,

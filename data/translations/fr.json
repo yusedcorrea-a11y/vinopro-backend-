@@ -34,7 +34,18 @@
     "perfil_publico": "Profil public",
     "sin_perfil": "Cet utilisateur n'a pas de profil public.",
     "usuario_no_encontrado": "Utilisateur introuvable",
-    "chat_privada": "Conversation privée"
+    "chat_privada": "Conversation privée",
+    "chat_error_perfil": "Créez un profil pour utiliser le chat.",
+    "chat_error_perfil_chatear": "Un profil est nécessaire pour discuter.",
+    "chat_registrarme": "S'inscrire",
+    "chat_iniciar_sesion": "Se connecter",
+    "chat_error_cargar_conv": "Erreur lors du chargement des conversations.",
+    "chat_usuario_no_encontrado": "Utilisateur introuvable.",
+    "chat_error_cargar_chat": "Erreur lors du chargement du chat.",
+    "chat_envia_primero": "Envoyez un message pour commencer la conversation.",
+    "chat_hace_min": "Il y a {n} min",
+    "chat_ayer": "Hier",
+    "chat_hoy": "Aujourd'hui"
   },
   "geolocalizacion": {
     "titulo": "Lieux près de vous",
@@ -57,6 +68,18 @@
     "geo_timeout": "La géolocalisation a pris trop de temps. Réessayez ou recherchez par ville.",
     "error_init": "Impossible d'initialiser la carte. Rechargez la page.",
     "sin_destacados": "Aucun lieu recommandé pour le moment."
+  },
+  "onboarding": {
+    "titulo_ubicacion": "Autorisation de localisation",
+    "descripcion_ubicacion": "Pour afficher les lieux à proximité, la carte et la Guía Repsol dans votre zone, nous avons besoin de votre position. Vous pouvez l'autoriser maintenant ou plus tard.",
+    "permitir": "Autoriser",
+    "ahora_no": "Plus tard",
+    "titulo_idioma": "Choisissez votre langue",
+    "elige_idioma": "L'application et le sommelier IA utiliseront cette langue. Vous pourrez la modifier dans le menu.",
+    "continuar": "Continuer",
+    "titulo_registro": "Créez votre compte",
+    "descripcion_registro": "Pour enregistrer votre cave, discuter avec d'autres vineros et utiliser toutes les fonctionnalités, inscrivez-vous en un instant.",
+    "btn_registrarme": "S'inscrire"
   },
   "error": {
     "nombre_corto": "Le nom doit contenir au moins 3 caractères.",

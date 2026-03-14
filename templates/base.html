@@ -105,7 +105,7 @@
         return m ? decodeURIComponent(m[2]) : '';
       }
       var modal = document.getElementById('modal-bienvenida-idioma');
-      if (modal && !getCookie(cookieName)) {
+      if (modal && !getCookie(cookieName) && window.location.pathname !== '/onboarding') {
         modal.removeAttribute('hidden');
         modal.classList.remove('modal-bienvenida-idioma--cerrado');
       }
@@ -134,9 +134,10 @@
       var ageActions = document.getElementById('age-gate-actions');
       var hasLang = !!getCookie(cookieName);
       var isLegalPage = window.location.pathname === '/legal' || window.location.pathname === '/privacidad' || window.location.pathname === '/eliminar-cuenta';
+      var isOnboarding = window.location.pathname === '/onboarding';
       var ageVerified = '';
       try { ageVerified = localStorage.getItem(AGE_KEY) || ''; } catch (_) {}
-      if (ageModal && hasLang && !isLegalPage && ageVerified !== 'yes') {
+      if (ageModal && hasLang && !isLegalPage && !isOnboarding && ageVerified !== 'yes') {
         ageModal.removeAttribute('hidden');
       }
       if (ageConfirm) {

@@ -58,7 +58,10 @@
     box-shadow: 0 8px 28px rgba(0,0,0,0.1);
   }
   .chat-conv-avatar { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, rgba(212,175,55,0.4), rgba(107,45,60,0.4)); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--burdeos); flex-shrink: 0; }
+  .chat-conv-body { flex: 1; min-width: 0; }
+  .chat-conv-row { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
   .chat-conv-name { font-weight: 700; color: var(--burdeos); }
+  .chat-conv-time { font-size: 0.75rem; color: var(--texto-suave); flex-shrink: 0; }
   .chat-conv-preview { font-size: 0.88rem; color: var(--texto-suave); margin-top: 0.2rem; }
 
   .chat-thread-header {
@@ -102,11 +105,16 @@
     border: 1px solid rgba(0,0,0,0.06);
     box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   }
+  .chat-msg-text { word-break: break-word; }
   .chat-msg-meta { font-size: 0.68rem; margin-top: 0.3rem; opacity: 0.75; }
+  .chat-empty-state { text-align: center; color: var(--texto-suave); font-size: 0.9rem; padding: 1.5rem 1rem; margin: 0; }
+  .chat-messages:has(.chat-empty-state) { justify-content: center; }
+  [data-theme="dark"] .chat-empty-state { color: rgba(212,168,75,0.7); }
   /* Barra de escritura tipo WhatsApp con toque VINO PRO */
   .chat-input-bar {
     margin-top: auto;
     padding: 0.6rem 0 0.75rem;
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
     background: linear-gradient(180deg, rgba(255,255,255,0.97) 0%, rgba(248,246,243,0.98) 100%);
     border-top: 1px solid rgba(107,45,60,0.12);
     box-shadow: 0 -2px 12px rgba(107,45,60,0.06);
@@ -277,7 +285,18 @@
     sin_conversaciones: "{{ t('comunidad.chat_sin_conversaciones') | e }}",
     placeholder: "{{ t('comunidad.chat_placeholder') | e }}",
     enviar: "{{ t('comunidad.chat_enviar') | e }}",
-    volver: "{{ t('comunidad.chat_volver') | e }}"
+    volver: "{{ t('comunidad.chat_volver') | e }}",
+    error_perfil: "{{ t('comunidad.chat_error_perfil') | e }}",
+    error_perfil_chatear: "{{ t('comunidad.chat_error_perfil_chatear') | e }}",
+    registrarme: "{{ t('comunidad.chat_registrarme') | e }}",
+    iniciar_sesion: "{{ t('comunidad.chat_iniciar_sesion') | e }}",
+    error_cargar_conv: "{{ t('comunidad.chat_error_cargar_conv') | e }}",
+    usuario_no_encontrado: "{{ t('comunidad.chat_usuario_no_encontrado') | e }}",
+    error_cargar_chat: "{{ t('comunidad.chat_error_cargar_chat') | e }}",
+    envia_primero: "{{ t('comunidad.chat_envia_primero') | e }}",
+    hace_min: "{{ t('comunidad.chat_hace_min') | e }}",
+    ayer: "{{ t('comunidad.chat_ayer') | e }}",
+    hoy: "{{ t('comunidad.chat_hoy') | e }}"
   };
 </script>
 {% endblock %}

@@ -50,19 +50,44 @@
 
   var CHAT_SIGNUP_URL = '/signup?next=' + encodeURIComponent('/comunidad/chat');
 
+  function t(key) {
+    return TEXTS[key] || key;
+  }
+
   function showErr(msg, showAuthCta) {
     if (chatLoading) chatLoading.style.display = 'none';
     if (!chatError) return;
     chatError.style.display = 'block';
     if (showAuthCta) {
-      chatError.innerHTML = (msg || 'Necesitas perfil para usar el chat.') +
+      chatError.innerHTML = escapeHtml(msg || t('error_perfil')) +
         '<div class="chat-error-ctas">' +
-        '<a href="' + CHAT_SIGNUP_URL + '" class="btn btn-dorado">Registrarme</a> ' +
-        '<a href="' + CHAT_SIGNUP_URL + '" class="btn btn-outline">Iniciar sesión</a>' +
+        '<a href="' + CHAT_SIGNUP_URL + '" class="btn btn-dorado">' + escapeHtml(t('registrarme')) + '</a> ' +
+        '<a href="' + CHAT_SIGNUP_URL + '" class="btn btn-outline">' + escapeHtml(t('iniciar_sesion')) + '</a>' +
         '</div>';
     } else {
       chatError.textContent = msg || 'Error';
     }
+  }
+
+  function formatTimeAgo(ts) {
+    if (!ts) return '';
+    var now = Date.now() / 1000;
+    var diff = now - ts;
+    var mins = Math.floor(diff / 60);
+    var hours = Math.floor(diff / 3600);
+    var days = Math.floor(diff / 86400);
+    if (mins < 1) return '';
+    if (mins < 60) return (t('hace_min') || 'Hace {n} min').replace('{n}', mins);
+    var d = new Date(ts * 1000);
+    var today = new Date();
+    var isToday = d.getDate() === today.getDate() && d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
+    var yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    var isYesterday = d.getDate() === yesterday.getDate() && d.getMonth() === yesterday.getMonth() && d.getFullYear() === yesterday.getFullYear();
+    if (isToday) return (t('hoy') || 'Hoy') + ', ' + d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+    if (isYesterday) return t('ayer') || 'Ayer';
+    if (days < 7) return d.toLocaleDateString(undefined, { weekday: 'short' });
+    return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short' });
   }
 
   function initLangSelect() {
@@ -98,17 +123,24 @@
         list.forEach(function(c) {
           var other = c.other_username || '';
           var preview = (c.last_message || '').substring(0, 60);
+          var timeAgo = formatTimeAgo(c.last_at);
           var avatarLetter = (other.charAt(0) || 'V').toUpperCase();
           var a = document.createElement('a');
           a.className = 'chat-conv-item';
           a.href = '/comunidad/chat/' + encodeURIComponent(other);
           a.innerHTML = '<div class="chat-conv-avatar">' + escapeHtml(avatarLetter) + '</div>' +
-            '<div><div class="chat-conv-name">' + escapeHtml(other) + '</div>' +
+            '<div class="chat-conv-body">' +
+            '<div class="chat-conv-row"><span class="chat-conv-name">' + escapeHtml(other) + '</span>' +
+            (timeAgo ? '<span class="chat-conv-time">' + escapeHtml(timeAgo) + '</span>' : '') + '</div>' +
             '<div class="chat-conv-preview">' + escapeHtml(preview) + '</div></div>';
           chatList.appendChild(a);
         });
       })
-      .catch(function() { showErr('Error al cargar conversaciones.'); });
+      .catch(function() { showErr(t('error_cargar_conv')); });
+  }
+
+  function textToSafeHtml(text) {
+    return escapeHtml(text).replace(/\n/g, '<br>');
   }
 
   function renderMessage(msg, miUsername) {
@@ -117,7 +149,7 @@
     var time = msg.created_at ? new Date(msg.created_at * 1000).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }) : '';
     var div = document.createElement('div');
     div.className = 'chat-msg ' + (isMine ? 'mine' : 'theirs');
-    div.innerHTML = '<span>' + escapeHtml(text) + '</span><div class="chat-msg-meta">' + escapeHtml(time) + '</div>';
+    div.innerHTML = '<span class="chat-msg-text">' + textToSafeHtml(text) + '</span><div class="chat-msg-meta">' + escapeHtml(time) + '</div>';
     return div;
   }
 
@@ -129,22 +161,27 @@
     if (lang) url += '&lang=' + encodeURIComponent(lang);
     fetch(url, { headers: headers() })
       .then(function(r) {
-        if (r.status === 401) { showErr('Necesitas perfil para chatear.', true); return null; }
-        if (r.status === 404) { showErr('Usuario no encontrado.'); return null; }
+        if (r.status === 401) { showErr(t('error_perfil_chatear'), true); return null; }
+        if (r.status === 404) { showErr(t('usuario_no_encontrado')); return null; }
         return r.json();
       })
       .then(function(data) {
         if (!data) return;
         showThread();
         if (!chatMessages) return;
-        chatMessages.innerHTML = '';
         var miUsername = (data.mi_username || '').toLowerCase();
-        (data.mensajes || []).forEach(function(m) {
-          chatMessages.appendChild(renderMessage(m, miUsername));
-        });
+        var mensajes = data.mensajes || [];
+        if (mensajes.length === 0) {
+          chatMessages.innerHTML = '<p class="chat-empty-state" aria-live="polite">' + escapeHtml(t('envia_primero')) + '</p>';
+        } else {
+          chatMessages.innerHTML = '';
+          mensajes.forEach(function(m) {
+            chatMessages.appendChild(renderMessage(m, miUsername));
+          });
+        }
         chatMessages.scrollTop = chatMessages.scrollHeight;
       })
-      .catch(function() { showErr('Error al cargar el chat.'); });
+      .catch(function() { showErr(t('error_cargar_chat')); });
   }
 
   if (chatForm && chatInput) {
@@ -170,6 +207,8 @@
           var msg = data.mensaje || {};
           var div = renderMessage(msg, (msg.from_username || '').toLowerCase());
           if (chatMessages) {
+            var emptyP = chatMessages.querySelector('.chat-empty-state');
+            if (emptyP) emptyP.remove();
             chatMessages.appendChild(div);
             chatMessages.scrollTop = chatMessages.scrollHeight;
           }

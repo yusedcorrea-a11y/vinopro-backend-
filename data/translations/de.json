@@ -34,7 +34,18 @@
     "perfil_publico": "Öffentliches Profil",
     "sin_perfil": "Dieser Nutzer hat kein öffentliches Profil.",
     "usuario_no_encontrado": "Nutzer nicht gefunden",
-    "chat_privada": "Private Unterhaltung"
+    "chat_privada": "Private Unterhaltung",
+    "chat_error_perfil": "Erstelle ein Profil, um den Chat zu nutzen.",
+    "chat_error_perfil_chatear": "Du brauchst ein Profil zum Chatten.",
+    "chat_registrarme": "Registrieren",
+    "chat_iniciar_sesion": "Anmelden",
+    "chat_error_cargar_conv": "Fehler beim Laden der Unterhaltungen.",
+    "chat_usuario_no_encontrado": "Nutzer nicht gefunden.",
+    "chat_error_cargar_chat": "Fehler beim Laden des Chats.",
+    "chat_envia_primero": "Sende eine Nachricht, um die Unterhaltung zu starten.",
+    "chat_hace_min": "Vor {n} Min.",
+    "chat_ayer": "Gestern",
+    "chat_hoy": "Heute"
   },
   "geolocalizacion": {
     "titulo": "Orte in deiner Nähe",
@@ -57,6 +68,18 @@
     "geo_timeout": "Die Standortabfrage hat zu lange gedauert. Versuche es erneut oder suche nach Stadt.",
     "error_init": "Die Karte konnte nicht initialisiert werden. Seite neu laden.",
     "sin_destacados": "Derzeit keine empfohlenen Orte."
+  },
+  "onboarding": {
+    "titulo_ubicacion": "Standortberechtigung",
+    "descripcion_ubicacion": "Um dir Orte in der Nähe, die Karte und Guía Repsol in deiner Gegend zu zeigen, brauchen wir deinen Standort. Du kannst ihn jetzt oder später erlauben.",
+    "permitir": "Erlauben",
+    "ahora_no": "Jetzt nicht",
+    "titulo_idioma": "Wähle deine Sprache",
+    "elige_idioma": "App und Sommelier-KI nutzen diese Sprache. Du kannst sie später im Menü ändern.",
+    "continuar": "Weiter",
+    "titulo_registro": "Konto erstellen",
+    "descripcion_registro": "Um deinen Keller zu speichern, mit anderen Vineros zu chatten und alle Funktionen zu nutzen, registriere dich in einem Moment.",
+    "btn_registrarme": "Registrieren"
   },
   "error": {
     "nombre_corto": "Der Name muss mindestens 3 Zeichen haben.",

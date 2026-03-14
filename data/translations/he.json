@@ -58,6 +58,18 @@
     "error_init": "לא ניתן לאתחל את המפה. טען מחדש את הדף.",
     "sin_destacados": "אין מקומות מומלצים כרגע."
   },
+  "onboarding": {
+    "titulo_ubicacion": "הרשאת מיקום",
+    "descripcion_ubicacion": "כדי להציג מקומות קרובים, המפה ו-Guía Repsol באזור שלך נזדקק למיקום שלך. אפשר לאפשר עכשיו או מאוחר יותר.",
+    "permitir": "אפשר",
+    "ahora_no": "לא עכשיו",
+    "titulo_idioma": "בחר את השפה שלך",
+    "elige_idioma": "האפליקציה והסומלייה ב-IA ישתמשו בשפה זו. תוכל לשנות אחר כך בתפריט.",
+    "continuar": "המשך",
+    "titulo_registro": "צור חשבון",
+    "descripcion_registro": "כדי לשמור את היקב, לצ'וטט עם וינרוס אחרים ולהשתמש בכל התכונות, הירשם ברגע.",
+    "btn_registrarme": "הרשמה"
+  },
   "error": {
     "nombre_corto": "השם חייב להכיל לפחות 3 תווים.",
     "nombre_solo_numeros": "השם לא יכול להיות רק מספרים.",

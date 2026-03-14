@@ -34,7 +34,18 @@
     "perfil_publico": "Perfil público",
     "sin_perfil": "Este usuário não tem perfil público.",
     "usuario_no_encontrado": "Usuário não encontrado",
-    "chat_privada": "Conversa privada"
+    "chat_privada": "Conversa privada",
+    "chat_error_perfil": "Precisa de criar perfil para usar o chat.",
+    "chat_error_perfil_chatear": "Precisa de perfil para conversar.",
+    "chat_registrarme": "Registar",
+    "chat_iniciar_sesion": "Entrar",
+    "chat_error_cargar_conv": "Erro ao carregar conversas.",
+    "chat_usuario_no_encontrado": "Utilizador não encontrado.",
+    "chat_error_cargar_chat": "Erro ao carregar o chat.",
+    "chat_envia_primero": "Envie uma mensagem para começar a conversa.",
+    "chat_hace_min": "Há {n} min",
+    "chat_ayer": "Ontem",
+    "chat_hoy": "Hoje"
   },
   "geolocalizacion": {
     "titulo": "Lugares perto de si",
@@ -57,6 +68,18 @@
     "geo_timeout": "A localização demorou demais. Tente novamente ou pesquise por cidade.",
     "error_init": "Não foi possível inicializar o mapa. Recarregue a página.",
     "sin_destacados": "Não há lugares recomendados no momento."
+  },
+  "onboarding": {
+    "titulo_ubicacion": "Permissão de localização",
+    "descripcion_ubicacion": "Para mostrar locais perto de si, o mapa e a Guía Repsol na sua zona precisamos da sua localização. Pode ativar agora ou mais tarde.",
+    "permitir": "Permitir",
+    "ahora_no": "Agora não",
+    "titulo_idioma": "Escolha o seu idioma",
+    "elige_idioma": "A app e o sommelier em IA usarão este idioma. Pode alterar depois no menu.",
+    "continuar": "Continuar",
+    "titulo_registro": "Crie a sua conta",
+    "descripcion_registro": "Para guardar a sua adega, conversar com outros vineros e usar todas as funções, registe-se num momento.",
+    "btn_registrarme": "Registar"
   },
   "error": {
     "nombre_corto": "O nome deve ter pelo menos 3 caracteres.",

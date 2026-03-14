@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block head %}
+<style>
+  .page-onboarding .header-minimal-actions { display: none; }
+  .onboarding-wrap {
+    max-width: 420px; margin: 0 auto;
+    padding: 2rem 1rem;
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+    min-height: 70vh; display: flex; flex-direction: column; justify-content: center;
+  }
+  .onboarding-step { display: none; text-align: center; }
+  .onboarding-step.activo { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .onboarding-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .onboarding-title { font-size: 1.4rem; font-weight: 800; color: var(--burdeos); margin-bottom: 0.75rem; }
+  .onboarding-desc { color: var(--texto-suave); font-size: 1rem; line-height: 1.5; margin-bottom: 1.5rem; }
+  .onboarding-actions { display: flex; flex-direction: column; gap: 0.75rem; }
+  .onboarding-btn {
+    padding: 0.85rem 1.5rem; border-radius: 14px; font-size: 1rem; font-weight: 700;
+    cursor: pointer; border: none; text-decoration: none; text-align: center;
+    transition: transform 0.15s, box-shadow 0.2s;
+  }
+  .onboarding-btn:focus-visible { outline: 2px solid var(--burdeos); outline-offset: 3px; }
+  .onboarding-btn-primario { background: linear-gradient(135deg, var(--burdeos), #5a2635); color: #fff; box-shadow: 0 4px 14px rgba(107,45,60,0.35); }
+  .onboarding-btn-primario:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(107,45,60,0.4); }
+  .onboarding-btn-secundario { background: rgba(107,45,60,0.08); color: var(--burdeos); border: 1px solid rgba(107,45,60,0.25); }
+  .onboarding-btn-secundario:hover { background: rgba(107,45,60,0.12); }
+  .onboarding-lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-bottom: 1.25rem; max-height: 280px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .onboarding-lang-btn {
+    padding: 0.7rem; border-radius: 12px; border: 1px solid rgba(107,45,60,0.2);
+    background: #fff; color: var(--texto-principal); font-size: 0.95rem; cursor: pointer;
+    text-align: left; display: flex; align-items: center; gap: 0.5rem;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .onboarding-lang-btn:focus-visible { outline: 2px solid var(--burdeos); outline-offset: 2px; }
+  .onboarding-lang-btn:hover { background: rgba(107,45,60,0.06); border-color: rgba(107,45,60,0.35); }
+  .onboarding-lang-btn.selected { background: rgba(107,45,60,0.12); border-color: var(--burdeos); font-weight: 700; }
+  [data-theme="dark"] .onboarding-lang-btn { background: rgba(255,255,255,0.06); border-color: rgba(212,168,75,0.25); color: var(--dorado-claro); }
+  [data-theme="dark"] .onboarding-lang-btn.selected { background: rgba(107,45,60,0.3); border-color: var(--dorado-claro); }
+  [data-theme="dark"] .onboarding-btn:focus-visible { outline-color: var(--dorado-claro); }
+  [data-theme="dark"] .onboarding-lang-btn:focus-visible { outline-color: var(--dorado-claro); }
+  [data-theme="dark"] .onboarding-title { color: var(--dorado-claro); }
+  [data-theme="dark"] .onboarding-desc { color: rgba(212,168,75,0.85); }
+  [data-theme="dark"] .onboarding-btn-primario { box-shadow: 0 4px 14px rgba(0,0,0,0.3); }
+  [data-theme="dark"] .onboarding-btn-secundario { background: rgba(212,168,75,0.1); color: var(--dorado-claro); border-color: rgba(212,168,75,0.3); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="onboarding-wrap" data-initial-lang="{{ lang }}">
+  <!-- Paso 1: Permiso de ubicación -->
+  <div id="onboarding-step-1" class="onboarding-step activo" role="region" aria-labelledby="step1-title">
+    <div class="onboarding-icon" aria-hidden="true">📍</div>
+    <h2 id="step1-title" class="onboarding-title">{{ t('onboarding.titulo_ubicacion') }}</h2>
+    <p class="onboarding-desc">{{ t('onboarding.descripcion_ubicacion') }}</p>
+    <div class="onboarding-actions">
+      <button type="button" id="onboarding-permitir" class="onboarding-btn onboarding-btn-primario">{{ t('onboarding.permitir') }}</button>
+      <button type="button" id="onboarding-ahora-no" class="onboarding-btn onboarding-btn-secundario">{{ t('onboarding.ahora_no') }}</button>
+    </div>
+  </div>
+
+  <!-- Paso 2: Elegir idioma -->
+  <div id="onboarding-step-2" class="onboarding-step" role="region" aria-labelledby="step2-title">
+    <div class="onboarding-icon" aria-hidden="true">🌐</div>
+    <h2 id="step2-title" class="onboarding-title">{{ t('onboarding.titulo_idioma') }}</h2>
+    <p class="onboarding-desc">{{ t('onboarding.elige_idioma') }}</p>
+    <div class="onboarding-lang-grid" id="onboarding-lang-list">
+      {% for code, name in idiomas_list %}
+      <button type="button" class="onboarding-lang-btn" data-lang="{{ code }}" aria-pressed="false">{{ BANDERAS.get(code, '') }} {{ name }}</button>
+      {% endfor %}
+    </div>
+    <button type="button" id="onboarding-continuar" class="onboarding-btn onboarding-btn-primario" disabled>{{ t('onboarding.continuar') }}</button>
+  </div>
+
+  <!-- Paso 3: Registro obligatorio -->
+  <div id="onboarding-step-3" class="onboarding-step" role="region" aria-labelledby="step3-title">
+    <div class="onboarding-icon" aria-hidden="true">🍷</div>
+    <h2 id="step3-title" class="onboarding-title">{{ t('onboarding.titulo_registro') }}</h2>
+    <p class="onboarding-desc">{{ t('onboarding.descripcion_registro') }}</p>
+    <a href="/signup" id="onboarding-registrarme" class="onboarding-btn onboarding-btn-primario">{{ t('onboarding.btn_registrarme') }}</a>
+  </div>
+</div>
+
+<script>
+(function() {
+  var COOKIE_LANG = 'vino_pro_lang';
+  var COOKIE_DONE = 'vino_pro_onboarding_done';
+  var MAX_AGE = 31536000;
+
+  function setCookie(name, value) {
+    document.cookie = name + '=' + encodeURIComponent(value) + '; path=/; max-age=' + MAX_AGE + '; SameSite=Lax';
+  }
+
+  var step1 = document.getElementById('onboarding-step-1');
+  var step2 = document.getElementById('onboarding-step-2');
+  var step3 = document.getElementById('onboarding-step-3');
+  var permitir = document.getElementById('onboarding-permitir');
+  var ahoraNo = document.getElementById('onboarding-ahora-no');
+  var langList = document.getElementById('onboarding-lang-list');
+  var continuar = document.getElementById('onboarding-continuar');
+  var registrarme = document.getElementById('onboarding-registrarme');
+
+  function showStep(step) {
+    [step1, step2, step3].forEach(function(el) { el.classList.remove('activo'); });
+    if (step === 1) step1.classList.add('activo');
+    else if (step === 2) {
+      step2.classList.add('activo');
+      var wrap = document.querySelector('.onboarding-wrap');
+      var initial = wrap && wrap.getAttribute('data-initial-lang');
+      if (langList && initial) {
+        var btn = langList.querySelector('.onboarding-lang-btn[data-lang="' + initial + '"]');
+        if (btn) {
+          langList.querySelectorAll('.onboarding-lang-btn').forEach(function(b) { b.classList.remove('selected'); b.setAttribute('aria-pressed', 'false'); });
+          btn.classList.add('selected');
+          btn.setAttribute('aria-pressed', 'true');
+          selectedLang = initial;
+          if (continuar) continuar.disabled = false;
+        }
+      }
+    } else step3.classList.add('activo');
+  }
+
+  if (permitir) {
+    permitir.addEventListener('click', function() {
+      if (!navigator.geolocation) { showStep(2); return; }
+      navigator.geolocation.getCurrentPosition(
+        function() { showStep(2); },
+        function() { showStep(2); },
+        { timeout: 8000, maximumAge: 60000 }
+      );
+    });
+  }
+  if (ahoraNo) ahoraNo.addEventListener('click', function() { showStep(2); });
+
+  var selectedLang = null;
+  if (langList) {
+    langList.addEventListener('click', function(e) {
+      var btn = e.target.closest('.onboarding-lang-btn');
+      if (!btn) return;
+      langList.querySelectorAll('.onboarding-lang-btn').forEach(function(b) {
+        b.classList.remove('selected'); b.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('selected');
+      btn.setAttribute('aria-pressed', 'true');
+      selectedLang = btn.getAttribute('data-lang');
+      if (continuar) continuar.disabled = !selectedLang;
+    });
+  }
+  if (continuar) {
+    continuar.addEventListener('click', function() {
+      if (!selectedLang) return;
+      setCookie(COOKIE_LANG, selectedLang);
+      showStep(3);
+    });
+  }
+  if (registrarme) {
+    registrarme.addEventListener('click', function(e) {
+      setCookie(COOKIE_DONE, '1');
+      window.location.href = '/signup';
+      e.preventDefault();
+    });
+  }
+})();
+</script>
+{% endblock %}

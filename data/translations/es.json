@@ -53,7 +53,18 @@
     "chat_enviar": "Enviar",
     "chat_volver": "Volver",
     "chat_privada": "Conversación privada",
-    "chatear": "Chatear"
+    "chatear": "Chatear",
+    "chat_error_perfil": "Necesitas crear perfil para usar el chat.",
+    "chat_error_perfil_chatear": "Necesitas perfil para chatear.",
+    "chat_registrarme": "Registrarme",
+    "chat_iniciar_sesion": "Iniciar sesión",
+    "chat_error_cargar_conv": "Error al cargar conversaciones.",
+    "chat_usuario_no_encontrado": "Usuario no encontrado.",
+    "chat_error_cargar_chat": "Error al cargar el chat.",
+    "chat_envia_primero": "Envía un mensaje para empezar la conversación.",
+    "chat_hace_min": "Hace {n} min",
+    "chat_ayer": "Ayer",
+    "chat_hoy": "Hoy"
   },
   "qr": {
     "mensaje_hola": "Hola {nombre}, un placer conocerte. Gracias por tu tiempo e interés.",
@@ -102,6 +113,18 @@
     "geo_timeout": "La ubicación tardó demasiado. Intenta de nuevo o busca por ciudad.",
     "error_init": "No se pudo inicializar el mapa. Recarga la página.",
     "sin_destacados": "No hay lugares recomendados por ahora."
+  },
+  "onboarding": {
+    "titulo_ubicacion": "Permiso de ubicación",
+    "descripcion_ubicacion": "Para mostrarte sitios cercanos, mapa y Guía Repsol en tu zona necesitamos tu ubicación. Puedes activarla ahora o más tarde.",
+    "permitir": "Permitir",
+    "ahora_no": "Ahora no",
+    "titulo_idioma": "Elige tu idioma",
+    "elige_idioma": "La app y el sumiller en IA usarán este idioma. Podrás cambiarlo después en el menú.",
+    "continuar": "Continuar",
+    "titulo_registro": "Crea tu cuenta",
+    "descripcion_registro": "Para guardar tu bodega, chatear con otros vineros y usar todas las funciones, regístrate en un momento.",
+    "btn_registrarme": "Registrarme"
   },
   "error": {
     "nombre_corto": "El nombre debe tener al menos 3 caracteres.",

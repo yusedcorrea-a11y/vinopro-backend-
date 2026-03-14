@@ -335,9 +335,28 @@ def ready():
     return {"ready": True, "vinos_cargados": len(VINOS_MUNDIALES)}
 
 
+_ONBOARDING_DONE_COOKIE = "vino_pro_onboarding_done"
+
+
+@app.get("/onboarding", response_class=HTMLResponse)
+def pagina_onboarding(request: Request):
+    """Flujo inicial: 1) Permiso ubicación (idioma del navegador), 2) Elegir idioma, 3) Registro obligatorio."""
+    idiomas_list = [(c, i18n_svc.IDIOMAS_NOMBRES[c]) for c in i18n_svc.IDIOMAS_SOPORTADOS]
+    return render_page(
+        request,
+        "onboarding.html",
+        page_class="page-onboarding",
+        active_page="",
+        idiomas_list=idiomas_list,
+        BANDERAS=i18n_svc.BANDERAS,
+    )
+
+
 @app.get("/", response_class=HTMLResponse)
 def pagina_landing(request: Request):
-    """Landing (primera visita sin cookie) o redirige a Home si ya tiene idioma."""
+    """Landing o redirige: sin onboarding -> /onboarding; sin idioma -> landing; con idioma -> /inicio."""
+    if not request.cookies.get(_ONBOARDING_DONE_COOKIE):
+        return RedirectResponse(url="/onboarding", status_code=302)
     if request.cookies.get("vino_pro_lang"):
         return RedirectResponse(url="/inicio", status_code=302)
     return render_page(request, "landing.html", page_class="page-landing", active_page="")
@@ -346,6 +365,8 @@ def pagina_landing(request: Request):
 @app.get("/inicio", response_class=HTMLResponse)
 def pagina_inicio(request: Request):
     """Entrada a la app: Preguntar al experto en vinos y Escanear."""
+    if not request.cookies.get(_ONBOARDING_DONE_COOKIE):
+        return RedirectResponse(url="/onboarding", status_code=302)
     return render_page(request, "index.html", page_class="page-inicio", active_page="inicio")
 
 

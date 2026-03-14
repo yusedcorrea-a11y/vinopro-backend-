@@ -36,7 +36,18 @@
     "usuario_no_encontrado": "Utente non trovato",
     "evento_partner": "Evento",
     "lugares_recomendados": "Luoghi consigliati",
-    "chat_privada": "Conversazione privata"
+    "chat_privada": "Conversazione privata",
+    "chat_error_perfil": "Crea un profilo per usare la chat.",
+    "chat_error_perfil_chatear": "Ti serve un profilo per chattare.",
+    "chat_registrarme": "Registrati",
+    "chat_iniciar_sesion": "Accedi",
+    "chat_error_cargar_conv": "Errore nel caricamento delle conversazioni.",
+    "chat_usuario_no_encontrado": "Utente non trovato.",
+    "chat_error_cargar_chat": "Errore nel caricamento della chat.",
+    "chat_envia_primero": "Invia un messaggio per iniziare la conversazione.",
+    "chat_hace_min": "{n} min fa",
+    "chat_ayer": "Ieri",
+    "chat_hoy": "Oggi"
   },
   "qr": {
     "mensaje_hola": "Ciao {nombre}, piacere di conoscerti. Grazie per il tuo tempo e interesse.",
@@ -82,6 +93,18 @@
     "geo_timeout": "La geolocalizzazione ha impiegato troppo tempo. Riprova o cerca per città.",
     "error_init": "Impossibile inizializzare la mappa. Ricarica la pagina.",
     "sin_destacados": "Al momento non ci sono luoghi consigliati."
+  },
+  "onboarding": {
+    "titulo_ubicacion": "Permesso di localizzazione",
+    "descripcion_ubicacion": "Per mostrarti luoghi vicini, la mappa e la Guía Repsol nella tua zona ci serve la tua posizione. Puoi attivarla ora o più tardi.",
+    "permitir": "Consenti",
+    "ahora_no": "Ora no",
+    "titulo_idioma": "Scegli la tua lingua",
+    "elige_idioma": "L'app e il sommelier IA useranno questa lingua. Potrai cambiarla dal menu.",
+    "continuar": "Continua",
+    "titulo_registro": "Crea il tuo account",
+    "descripcion_registro": "Per salvare la tua cantina, chattare con altri vineros e usare tutte le funzioni, registrati in un attimo.",
+    "btn_registrarme": "Registrati"
   },
   "error": {
     "nombre_corto": "Il nome deve avere almeno 3 caratteri.",

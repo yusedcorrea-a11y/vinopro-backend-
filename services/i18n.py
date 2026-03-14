@@ -25,6 +25,12 @@ BANDERAS = {
     "ar": "🇦🇪", "ru": "🇷🇺", "tr": "🇹🇷", "zh": "🇨🇳", "ja": "🇯🇵", "ko": "🇰🇷", "hi": "🇮🇳", "he": "🇮🇱",
 }
 
+# Nombre del idioma en su propia lengua (para selector de onboarding)
+IDIOMAS_NOMBRES = {
+    "es": "Español", "en": "English", "pt": "Português", "fr": "Français", "de": "Deutsch", "it": "Italiano",
+    "ar": "العربية", "ru": "Русский", "tr": "Türkçe", "zh": "中文", "ja": "日本語", "ko": "한국어", "hi": "हिन्दी", "he": "עברית",
+}
+
 
 def parse_accept_language(header: str) -> str:
     """Devuelve el primer código de idioma de Accept-Language que esté en IDIOMAS_SOPORTADOS, o ''."""

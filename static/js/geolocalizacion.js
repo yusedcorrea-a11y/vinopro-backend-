@@ -11,6 +11,7 @@
   var userMarker = null;
   var textos = {};
   var userCoords = null;
+  var lastKnownCity = null;
   var lugaresCache = [];
   var destacadosCache = [];
   var REQUIRED_IDS = [
@@ -303,6 +304,7 @@
   }
 
   function buscarPorCiudad(ciudad, radioKm) {
+    if (ciudad && ciudad.trim()) lastKnownCity = ciudad.trim();
     getTextos();
     showEstado(textos.buscando, false);
     var url = '/api/lugares?ciudad=' + encodeURIComponent(ciudad) + '&radio=' + (radioKm || 5);
@@ -419,7 +421,12 @@
     var base = 'https://www.guiarepsol.com/es/comer/';
     var term = parseInputTerm();
     if (term) {
+      lastKnownCity = term;
       window.open(base + '?q=' + encodeURIComponent(term), '_blank', 'noopener');
+      return;
+    }
+    if (lastKnownCity) {
+      window.open(base + '?q=' + encodeURIComponent(lastKnownCity), '_blank', 'noopener');
       return;
     }
     var coords = (userCoords && userCoords.lat != null && userCoords.lon != null)
@@ -428,6 +435,7 @@
     if (coords) {
       reverseGeocodeCity(coords.lat, coords.lon).then(function(city) {
         if (city) {
+          lastKnownCity = city;
           window.open(base + '?q=' + encodeURIComponent(city), '_blank', 'noopener');
         } else {
           window.open(base, '_blank', 'noopener');
@@ -527,6 +535,9 @@
             var lon = pos.coords.longitude;
             userCoords = { lat: lat, lon: lon };
             setInputFromCoords(lat, lon);
+            reverseGeocodeCity(lat, lon).then(function(city) {
+              if (city) lastKnownCity = city;
+            });
             // Solo Google Maps: dónde tomar vino cerca (el mini mapa no se actualiza aquí)
             var mapsUrl = 'https://www.google.com/maps/search/vinoteca+bar+de+vino+wine+bar/@' + lat + ',' + lon + ',14z';
             try {
@@ -619,6 +630,9 @@
           function(pos) {
             userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
             setInputFromCoords(userCoords.lat, userCoords.lon);
+            reverseGeocodeCity(userCoords.lat, userCoords.lon).then(function(city) {
+              if (city) lastKnownCity = city;
+            });
             hideBanner();
             btnSi.disabled = false;
           },

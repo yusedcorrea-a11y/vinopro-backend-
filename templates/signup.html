@@ -157,8 +157,8 @@
         if (btn) btn.disabled = false;
         if (result.ok && result.data && result.data.session_id) {
           setSession(result.data.session_id);
-          showMsg('Cuenta creada. Redirigiendo a VINEROs…', false);
-          setTimeout(function() { window.location.href = '/comunidad/feed'; }, 800);
+          showMsg('Cuenta creada. Redirigiendo al inicio…', false);
+          setTimeout(function() { window.location.href = '/inicio'; }, 800);
         } else {
           var detail = result.data && result.data.detail;
           if (typeof detail === 'string') showMsg(detail, true);
@@ -196,7 +196,7 @@
           setSession(result.data.session_id);
           showMsg('Sesión iniciada. Redirigiendo…', false);
           var next = (typeof URLSearchParams !== 'undefined' && window.location.search) ? new URLSearchParams(window.location.search).get('next') : null;
-          var dest = (next && next.startsWith('/')) ? next : '/comunidad/feed';
+          var dest = (next && next.startsWith('/')) ? next : '/inicio';
           setTimeout(function() { window.location.href = dest; }, 600);
         } else {
           showMsg((result.data && result.data.detail) || 'Correo o contraseña incorrectos', true);

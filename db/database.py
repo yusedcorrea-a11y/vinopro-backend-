@@ -47,7 +47,7 @@ def init_db():
         conn.close()
 
 
-def create_user(email: str | None, password_hash: str | None, google_id: str | None, facebook_id: str | None, avatar_path: str = "", display_name: str = "") -> int | None:
+def create_user(email: str | None, password_hash: str | None, google_id: str | None = None, facebook_id: str | None = None, avatar_path: str = "", display_name: str = "") -> int | None:
     """Crea usuario. Devuelve user_id o None si falla (ej. email duplicado)."""
     import time
     conn = get_connection()

@@ -1629,10 +1629,29 @@ body[class^="page-"] main::before {
   padding: 1px;
   background: linear-gradient(135deg, rgba(184,134,11,0.2), transparent 40%, transparent 60%, rgba(107,45,60,0.15));
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  pointer-events: none;
 }
 body.page-inicio main::before {
   display: none !important;
   content: none !important;
+}
+/* Onboarding: sin overlay, sin mascota, sin modales — botones libres */
+body.page-onboarding main::before {
+  display: none !important;
+  content: none !important;
+}
+body.page-onboarding main {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+body.page-onboarding .chatbot-guia-mascot,
+body.page-onboarding .chatbot-guia-backdrop,
+body.page-onboarding .chatbot-guia-panel,
+body.page-onboarding #age-gate-modal,
+body.page-onboarding #modal-bienvenida-idioma {
+  display: none !important;
 }
 
 /* Títulos de página unificados (referencia: index/planes) */

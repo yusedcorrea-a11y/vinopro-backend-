@@ -2,13 +2,22 @@
 {% block head %}
 <style>
   .page-onboarding .header-minimal-actions { display: none; }
+  /* Evitar que overlays/mascota tapen los botones: contenido encima de todo y clicable */
+  .page-onboarding main { position: relative; z-index: 2000; pointer-events: auto; }
+  .page-onboarding .chatbot-guia-mascot,
+  .page-onboarding .chatbot-guia-backdrop,
+  .page-onboarding .chatbot-guia-panel { display: none !important; }
+  .page-onboarding #age-gate-modal,
+  .page-onboarding #modal-bienvenida-idioma { display: none !important; }
   .onboarding-wrap {
     max-width: 420px; margin: 0 auto;
     padding: 2rem 1rem;
     padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
     min-height: 70vh; display: flex; flex-direction: column; justify-content: center;
+    position: relative; z-index: 1;
   }
   .onboarding-step { display: none; text-align: center; }
+  .onboarding-btn { pointer-events: auto; cursor: pointer; }
   .onboarding-step.activo { display: block; animation: fadeIn 0.3s ease; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
   .onboarding-icon { font-size: 3rem; margin-bottom: 1rem; }
@@ -54,8 +63,8 @@
     <h2 id="step1-title" class="onboarding-title">{{ t('onboarding.titulo_ubicacion') }}</h2>
     <p class="onboarding-desc">{{ t('onboarding.descripcion_ubicacion') }}</p>
     <div class="onboarding-actions">
-      <button type="button" id="onboarding-permitir" class="onboarding-btn onboarding-btn-primario">{{ t('onboarding.permitir') }}</button>
-      <button type="button" id="onboarding-ahora-no" class="onboarding-btn onboarding-btn-secundario">{{ t('onboarding.ahora_no') }}</button>
+      <button type="button" id="onboarding-permitir" class="onboarding-btn onboarding-btn-primario" onclick="typeof window._onboardingPermitir === 'function' && window._onboardingPermitir();">{{ t('onboarding.permitir') }}</button>
+      <button type="button" id="onboarding-ahora-no" class="onboarding-btn onboarding-btn-secundario" onclick="typeof window._onboardingAhoraNo === 'function' && window._onboardingAhoraNo();">{{ t('onboarding.ahora_no') }}</button>
     </div>
   </div>
 
@@ -125,16 +134,19 @@
       } else if (step === 3 && step3) step3.classList.add('activo');
     }
 
+    window._onboardingPermitir = function() {
+      showStep(2);
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function() {}, function() {}, { timeout: 8000, maximumAge: 60000 });
+      }
+    };
+    window._onboardingAhoraNo = function() { showStep(2); };
+
     if (permitir) {
-      permitir.addEventListener('click', function() {
-        showStep(2);
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function() {}, function() {}, { timeout: 8000, maximumAge: 60000 });
-        }
-      });
+      permitir.addEventListener('click', window._onboardingPermitir);
     }
     if (ahoraNo) {
-      ahoraNo.addEventListener('click', function() { showStep(2); });
+      ahoraNo.addEventListener('click', window._onboardingAhoraNo);
     }
 
     if (langList) {

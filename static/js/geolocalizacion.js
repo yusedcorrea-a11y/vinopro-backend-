@@ -107,6 +107,13 @@
       showEstado(textos.error_init || 'No se pudo inicializar el mapa. Recarga la página.', true);
       return null;
     }
+    if (L.Icon && L.Icon.Default && L.Icon.Default.mergeOptions) {
+      L.Icon.Default.mergeOptions({
+        iconUrl: '/static/images/leaflet/marker-icon.png',
+        iconRetinaUrl: '/static/images/leaflet/marker-icon-2x.png',
+        shadowUrl: '/static/images/leaflet/marker-shadow.png'
+      });
+    }
     map = L.map('mapa-mapa').setView([centerLat, centerLon], zoom || 14);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -378,7 +385,7 @@
   }
 
   function buildRepsolUrl() {
-    var base = 'https://www.guiarepsol.com/es/comer/';
+    var base = 'https://www.guiarepsol.com/es/buscador/';
     var term = parseInputTerm();
     if (!term) return base;
     return base + '?q=' + encodeURIComponent(term);
@@ -418,7 +425,7 @@
   }
 
   function openRepsolWithUserLocation() {
-    var base = 'https://www.guiarepsol.com/es/comer/';
+    var base = 'https://www.guiarepsol.com/es/buscador/';
     var term = parseInputTerm();
     if (term) {
       lastKnownCity = term;

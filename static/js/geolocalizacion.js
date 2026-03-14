@@ -426,7 +426,15 @@
     var panelVino = document.getElementById('mapa-panel-vino');
     var panelRepsol = document.getElementById('mapa-panel-repsol');
     var btnRepsol = document.getElementById('mapa-btn-repsol-search');
+    var descVino = document.getElementById('mapa-guide-desc-vino');
+    var descRepsol = document.getElementById('mapa-guide-desc-repsol');
+    var seccionDestacados = document.getElementById('mapa-seccion-destacados');
     if (!tabVino || !tabRepsol || !panelVino || !panelRepsol) return;
+
+    function setDescVisibility(showVinoDesc) {
+      if (descVino) { descVino.classList.toggle('hidden', !showVinoDesc); descVino.setAttribute('aria-hidden', showVinoDesc ? 'false' : 'true'); }
+      if (descRepsol) { descRepsol.classList.toggle('hidden', showVinoDesc); descRepsol.setAttribute('aria-hidden', showVinoDesc ? 'true' : 'false'); }
+    }
 
     function showVino() {
       tabVino.classList.add('active');
@@ -436,8 +444,15 @@
       panelVino.classList.remove('hidden');
       panelRepsol.classList.add('hidden');
       panelRepsol.setAttribute('aria-hidden', 'true');
+      setDescVisibility(true);
       if (map && typeof map.invalidateSize === 'function') {
         setTimeout(function() { map.invalidateSize(); }, 100);
+      }
+      // Al hacer clic en Selección VINO PRO IA, llevar al usuario a la sección de patrocinadores/recomendados
+      if (seccionDestacados) {
+        setTimeout(function() {
+          seccionDestacados.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 150);
       }
     }
 
@@ -449,6 +464,7 @@
       panelRepsol.classList.remove('hidden');
       panelRepsol.setAttribute('aria-hidden', 'false');
       panelVino.classList.add('hidden');
+      setDescVisibility(false);
     }
 
     tabVino.addEventListener('click', showVino);
@@ -491,6 +507,7 @@
           function(pos) {
             var lat = pos.coords.latitude;
             var lon = pos.coords.longitude;
+            userCoords = { lat: lat, lon: lon };
             setInputFromCoords(lat, lon);
             // Solo Google Maps: dónde tomar vino cerca (el mini mapa no se actualiza aquí)
             var mapsUrl = 'https://www.google.com/maps/search/vinoteca+bar+de+vino+wine+bar/@' + lat + ',' + lon + ',14z';
@@ -557,6 +574,20 @@
       if (typeof console !== 'undefined' && console.error) console.error('[Mapa] initMapa/L:', err);
       showEstado(textos.error_init || 'No se pudo cargar el mapa. Recarga la página.', true);
     }
+
+    // Al cargar la página: intentar obtener ubicación una vez para tener ciudad lista para Guía Repsol (sin molestar al usuario)
+    function tryDetectLocationForRepsol() {
+      if (userCoords && userCoords.lat != null) return;
+      if (!navigator.geolocation || !isGeoSecureContext()) return;
+      navigator.geolocation.getCurrentPosition(
+        function(pos) {
+          userCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+        },
+        function() {},
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
+      );
+    }
+    tryDetectLocationForRepsol();
   }
 
   if (document.readyState === 'loading') {

@@ -21,6 +21,8 @@
       gap: 0.75rem;
     }
     .mapa-controls > * { width: 100%; }
+    .mapa-radio-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 0.75rem; }
+    .mapa-radio-wrap .mapa-label-radio { margin: 0; }
     .mapa-controls input { padding: 0.65rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(107,45,60,0.2); min-width: 200px; }
     .mapa-controls .btn { padding: 0.65rem 1rem; }
     .btn-loading { display: inline-flex; align-items: center; gap: 0.45rem; }
@@ -40,10 +42,17 @@
     @keyframes mapa-spin {
       to { transform: rotate(360deg); }
     }
-    .mapa-controls .mapa-select-radio { padding: 0.65rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid rgba(107,45,60,0.2); background: rgba(255,255,255,0.9); }
-    .mapa-guide-tabs { display: flex; gap: 0.6rem; margin-top: 0.25rem; }
-    .mapa-guide-tab { flex: 1; border-radius: 999px; border: 1px solid rgba(107,45,60,0.2); background: rgba(255,255,255,0.9); color: var(--burdeos); padding: 0.65rem 0.8rem; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s ease; }
-    .mapa-guide-tab.active { background: linear-gradient(135deg, rgba(212,175,55,0.25), rgba(107,45,60,0.2)); border-color: rgba(107,45,60,0.35); box-shadow: 0 6px 16px rgba(107,45,60,0.15); transform: translateY(-1px); }
+    .mapa-label-radio { font-weight: 600; color: var(--burdeos); font-size: 0.95rem; white-space: nowrap; }
+    .mapa-controls .mapa-select-radio { padding: 0.7rem 0.9rem; border-radius: var(--radius-sm); border: 2px solid rgba(107,45,60,0.45); background: rgba(255,255,255,0.95); color: var(--burdeos); font-weight: 600; font-size: 1rem; min-width: 5.5rem; }
+    .mapa-radio-desc { font-size: 0.8rem; color: var(--texto-suave); display: block; margin-top: 0.2rem; }
+    @media (min-width: 760px) { .mapa-radio-desc { display: inline; margin-top: 0; margin-left: 0.35rem; } }
+    .mapa-guide-tabs-wrap { margin-top: 0.5rem; }
+    .mapa-guide-tabs { display: flex; gap: 0.6rem; margin-bottom: 0.35rem; }
+    .mapa-guide-tab { flex: 1; border-radius: 999px; border: 2px solid rgba(107,45,60,0.35); background: rgba(255,255,255,0.95); color: var(--burdeos); padding: 0.75rem 0.9rem; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s ease; }
+    .mapa-guide-tab:hover { border-color: rgba(107,45,60,0.5); background: rgba(255,250,240,0.98); }
+    .mapa-guide-tab.active { background: linear-gradient(135deg, rgba(212,175,55,0.35), rgba(107,45,60,0.25)); border-color: var(--burdeos); box-shadow: 0 6px 20px rgba(107,45,60,0.2); transform: translateY(-1px); }
+    .mapa-guide-tabs-desc { margin: 0 0 0.5rem 0; font-size: 0.9rem; color: var(--texto-suave); }
+    .mapa-guide-tabs-desc.hidden { display: none; }
     .mapa-panel { display: block; opacity: 1; transform: translateY(0); transition: opacity 0.2s ease, transform 0.2s ease, max-height 0.25s ease; max-height: 5000px; }
     .mapa-panel.hidden { opacity: 0; transform: translateY(8px); max-height: 0; overflow: hidden; pointer-events: none; margin: 0; }
     .repsol-panel { border-radius: var(--radius); border: 1px solid rgba(238,110,37,0.35); background: linear-gradient(155deg, rgba(255,255,255,0.98), rgba(255,245,236,0.96)); padding: 1rem; box-shadow: var(--sombra-tarjeta); }
@@ -86,8 +95,13 @@
     [data-theme="dark"] .mapa-lugar-card-destacado { background: linear-gradient(165deg, rgba(40,31,26,0.8), rgba(26,21,18,0.8)); border-color: rgba(212,168,75,0.35); }
     [data-theme="dark"] .mapa-badge-patrocinador { color: #f5d68e; background: rgba(212,175,55,0.2); border-color: rgba(212,175,55,0.4); }
     [data-theme="dark"] .mapa-sponsor-logo-placeholder { color: var(--dorado-claro); }
-    [data-theme="dark"] .mapa-guide-tab { background: rgba(26,21,18,0.75); color: var(--dorado-claro); border-color: rgba(212,168,75,0.3); }
-    [data-theme="dark"] .mapa-guide-tab.active { background: linear-gradient(135deg, rgba(212,175,55,0.28), rgba(107,45,60,0.3)); }
+    [data-theme="dark"] .mapa-label-radio { color: var(--dorado-claro); }
+    [data-theme="dark"] .mapa-controls .mapa-select-radio { background: rgba(26,21,18,0.85); border-color: rgba(212,168,75,0.45); color: var(--dorado-claro); }
+    [data-theme="dark"] .mapa-radio-desc { color: rgba(232,228,223,0.75); }
+    [data-theme="dark"] .mapa-guide-tab { background: rgba(26,21,18,0.85); color: var(--dorado-claro); border-color: rgba(212,168,75,0.4); }
+    [data-theme="dark"] .mapa-guide-tab:hover { border-color: rgba(212,168,75,0.6); background: rgba(40,32,28,0.9); }
+    [data-theme="dark"] .mapa-guide-tab.active { background: linear-gradient(135deg, rgba(212,175,55,0.35), rgba(107,45,60,0.35)); border-color: var(--dorado-claro); }
+    [data-theme="dark"] .mapa-guide-tabs-desc { color: rgba(232,228,223,0.8); }
     [data-theme="dark"] .repsol-panel { background: linear-gradient(155deg, rgba(44,26,16,0.9), rgba(28,19,14,0.9)); border-color: rgba(255,126,0,0.45); }
     [data-theme="dark"] .repsol-sub { color: #ffd2ad; }
   </style>
@@ -102,17 +116,25 @@
     <button type="button" id="mapa-btn-ubicacion" class="btn btn-dorado" title="Abre Google Maps con sitios para tomar vino cerca de ti (vinotecas, bares de vino)">{{ t('geolocalizacion.usar_ubicacion') }}</button>
     <input type="text" id="mapa-input-ciudad" class="mapa-input-ciudad" placeholder="{{ t('geolocalizacion.placeholder_ciudad') }}" autocomplete="off">
     <button type="button" id="mapa-btn-buscar-ciudad" class="btn btn-outline">{{ t('geolocalizacion.buscar_manual') }}</button>
-    <select id="mapa-radio" class="mapa-select-radio" title="{{ t('geolocalizacion.radio') }}">
-      <option value="1">1 km</option>
-      <option value="3">3 km</option>
-      <option value="5" selected>5 km</option>
-      <option value="10">10 km</option>
-    </select>
+    <div class="mapa-radio-wrap">
+      <label for="mapa-radio" class="mapa-label-radio">Alcance</label>
+      <select id="mapa-radio" class="mapa-select-radio" title="{{ t('geolocalizacion.radio') }}" aria-describedby="mapa-radio-desc">
+        <option value="1">1 km</option>
+        <option value="3">3 km</option>
+        <option value="5" selected>5 km</option>
+        <option value="10">10 km</option>
+      </select>
+      <span id="mapa-radio-desc" class="mapa-radio-desc">radio de búsqueda desde tu ubicación o ciudad</span>
+    </div>
   </div>
 
-  <div class="mapa-guide-tabs" role="tablist" aria-label="Selecciona una guía">
-    <button type="button" id="mapa-tab-vino" class="mapa-guide-tab active" aria-selected="true" title="Mapa y lista de la app: busca por ciudad o coordenadas; no usa el GPS del botón Mi ubicación">Selección VINO PRO</button>
-    <button type="button" id="mapa-tab-repsol" class="mapa-guide-tab" aria-selected="false">Guía Repsol</button>
+  <div class="mapa-guide-tabs-wrap" role="region" aria-label="Guías de lugares">
+    <div class="mapa-guide-tabs" role="tablist" aria-label="Selecciona una guía">
+      <button type="button" id="mapa-tab-vino" class="mapa-guide-tab active" aria-selected="true" data-panel="vino" title="Nuestra selección de patrocinadores y recomendados: mapa y lista por ciudad">Selección VINO PRO IA</button>
+      <button type="button" id="mapa-tab-repsol" class="mapa-guide-tab" aria-selected="false" data-panel="repsol">Guía Repsol</button>
+    </div>
+    <p class="mapa-guide-tabs-desc" id="mapa-guide-desc-vino">Nuestra selección de patrocinadores y recomendados. Busca por ciudad para ver el mapa y la lista.</p>
+    <p class="mapa-guide-tabs-desc hidden" id="mapa-guide-desc-repsol" aria-hidden="true">Abre la Guía Repsol con tu zona o la ciudad que hayas buscado.</p>
   </div>
 
   <div id="mapa-panel-vino" class="mapa-panel">
@@ -161,5 +183,5 @@
 
 {% block scripts %}
 <script src="/static/js/lugares.js?v=1.0.6"></script>
-<script src="/static/js/geolocalizacion.js?v=1.0.7"></script>
+<script src="/static/js/geolocalizacion.js?v=1.0.9"></script>
 {% endblock %}

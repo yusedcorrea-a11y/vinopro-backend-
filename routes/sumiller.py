@@ -8,6 +8,7 @@ import re
 from fastapi import APIRouter, Header, HTTPException, Request, Body
 
 from services import sumiller_service as svc_sumiller
+from services import translation_service as translation_svc
 from services.imagen_service import get_imagen_vino
 from services.busqueda_service import buscar_vinos_avanzado, buscar_vinos_con_sugerencia
 from services.api_externa_service import buscar_por_texto as off_buscar_por_texto
@@ -17,6 +18,19 @@ from services import enlaces_service as enlaces_svc
 from routes.escaneo import _guardar_vino_consulta
 
 router = APIRouter(prefix="", tags=["Experto en Vinos"])
+
+
+async def _traducir_respuesta_si_lang(texto: str, lang: str | None) -> str:
+    """Si lang está definido y no es 'es', traduce la respuesta al idioma del usuario."""
+    if not (texto or "").strip():
+        return texto or ""
+    lang = (lang or "").strip().lower()
+    if not lang or lang == "es":
+        return texto
+    try:
+        return await translation_svc.traducir(texto, lang, "es")
+    except Exception:
+        return texto
 
 MAX_CONTEXTO = 3
 
@@ -289,10 +303,12 @@ async def preguntar_sumiller(
     consulta_id: str | None = None,
     vino_key: str | None = None,
     perfil: str = "aficionado",
+    lang: str | None = None,
     x_session_id: str | None = Header(None, alias="X-Session-ID"),
 ):
     """
     Pregunta al experto en vinos virtual.
+    - lang: idioma de la respuesta (es, en, fr, de, it, pt, ru, etc.). Si no es 'es', la respuesta se traduce automáticamente.
     - Con consulta_id o vino_key: responde sobre ese vino (rule-based).
     - Sin ellos: responde con maridajes o recomendaciones de la base de 539 vinos,
       y usa el contexto de las últimas 3 preguntas (X-Session-ID) para "Y de esos, ¿cuál...?"
@@ -324,7 +340,13 @@ async def preguntar_sumiller(
         if tipo not in ("tinto", "blanco", "rosado", "espumoso"):
             tipo = "tinto"
         imagen_url = get_imagen_vino(key_para_comprar or "", tipo)
-        respuesta = _responder_pregunta(vino, texto_clean, perfil=perfil)
+        try:
+            from services import sumiller_gemini_service as gemini_svc
+            respuesta_gemini = gemini_svc.responder_sobre_vino(texto_clean, vino, perfil=perfil)
+            respuesta = respuesta_gemini if respuesta_gemini else _responder_pregunta(vino, texto_clean, perfil=perfil)
+        except Exception:
+            respuesta = _responder_pregunta(vino, texto_clean, perfil=perfil)
+        respuesta = await _traducir_respuesta_si_lang(respuesta, lang)
         try:
             from services import analytics_service
             analytics_service.registrar_pregunta(texto_clean, vino.get("nombre"))
@@ -382,6 +404,7 @@ async def preguntar_sumiller(
                 respuesta_nav = f"Idioma cambiado a {nombre.capitalize()}. Redirigiendo..."
                 break
     if navegacion and respuesta_nav:
+        respuesta_nav = await _traducir_respuesta_si_lang(respuesta_nav, lang)
         return {
             "consulta_id": None,
             "vino_key": None,
@@ -398,7 +421,10 @@ async def preguntar_sumiller(
     if not isinstance(vinos_dict, dict):
         vinos_dict = {}
     try:
-        return _preguntar_sumiller_general(request, vinos_dict, texto_clean, perfil, x_session_id)
+        out = _preguntar_sumiller_general(request, vinos_dict, texto_clean, perfil, x_session_id)
+        if out.get("respuesta"):
+            out["respuesta"] = await _traducir_respuesta_si_lang(out["respuesta"], lang)
+        return out
     except HTTPException:
         raise
     except Exception as e:
@@ -596,6 +622,14 @@ def _preguntar_sumiller_general(
             session_id, len(contexto), len(nuevo.get("vinos_ref") or [])))
 
     vinos_ref_para_guardar = [k for k in (vinos_ref_para_guardar or []) if isinstance(k, str) and (k or "").strip()]
+    # Dar vida a la respuesta con Gemini (mismo plan gratuito que el escáner). Si falla, se mantiene la respuesta rule-based.
+    try:
+        from services import sumiller_gemini_service as gemini_svc
+        respuesta_rewrite = gemini_svc.reescribir_respuesta_sumiller(texto_clean, respuesta, perfil=perfil)
+        if respuesta_rewrite:
+            respuesta = respuesta_rewrite
+    except Exception:
+        pass
     vino_nombre = vinos_recomendados[0].get("nombre") if vinos_recomendados and isinstance(vinos_recomendados[0], dict) else None
     primer_key = (vinos_ref_para_guardar[0] if vinos_ref_para_guardar else None)
     if primer_key is not None and not isinstance(primer_key, str):

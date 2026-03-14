@@ -6,6 +6,9 @@
   <style>
     body.page-mapa main { max-width: 960px; }
     .mapa-container { display: flex; flex-direction: column; gap: 1rem; position: relative; z-index: 1002; }
+    .mapa-header { position: relative; z-index: 2; background: rgba(255,255,255,0.97); padding: 1rem; margin: 0; border-radius: 0 0 var(--radius) var(--radius); box-shadow: 0 8px 24px rgba(107,45,60,0.08); }
+    .mapa-header .page-title { margin-top: 0; }
+    .mapa-panel { position: relative; z-index: 1; }
     .mapa-mapa-wrap {
       height: 360px;
       border-radius: var(--radius);
@@ -102,6 +105,7 @@
     [data-theme="dark"] .mapa-guide-tab:hover { border-color: rgba(212,168,75,0.6); background: rgba(40,32,28,0.9); }
     [data-theme="dark"] .mapa-guide-tab.active { background: linear-gradient(135deg, rgba(212,175,55,0.35), rgba(107,45,60,0.35)); border-color: var(--dorado-claro); }
     [data-theme="dark"] .mapa-guide-tabs-desc { color: rgba(232,228,223,0.8); }
+    [data-theme="dark"] .mapa-header { background: rgba(26,21,18,0.96); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
     [data-theme="dark"] .repsol-panel { background: linear-gradient(155deg, rgba(44,26,16,0.9), rgba(28,19,14,0.9)); border-color: rgba(255,126,0,0.45); }
     [data-theme="dark"] .repsol-sub { color: #ffd2ad; }
   </style>
@@ -109,10 +113,11 @@
 
 {% block content %}
 <div class="mapa-container">
-  <h1 class="page-title">{{ t('geolocalizacion.titulo') }}</h1>
-  <p class="page-subtitle">{{ t('geolocalizacion.subtitulo') }}</p>
+  <header class="mapa-header" aria-label="Controles del mapa">
+    <h1 class="page-title">{{ t('geolocalizacion.titulo') }}</h1>
+    <p class="page-subtitle">{{ t('geolocalizacion.subtitulo') }}</p>
 
-  <div class="mapa-controls">
+    <div class="mapa-controls">
     <button type="button" id="mapa-btn-ubicacion" class="btn btn-dorado" title="Abre Google Maps con sitios para tomar vino cerca de ti (vinotecas, bares de vino)">{{ t('geolocalizacion.usar_ubicacion') }}</button>
     <input type="text" id="mapa-input-ciudad" class="mapa-input-ciudad" placeholder="{{ t('geolocalizacion.placeholder_ciudad') }}" autocomplete="off">
     <button type="button" id="mapa-btn-buscar-ciudad" class="btn btn-outline">{{ t('geolocalizacion.buscar_manual') }}</button>
@@ -136,6 +141,7 @@
     <p class="mapa-guide-tabs-desc" id="mapa-guide-desc-vino">Nuestra selección de patrocinadores y recomendados. Busca por ciudad para ver el mapa y la lista.</p>
     <p class="mapa-guide-tabs-desc hidden" id="mapa-guide-desc-repsol" aria-hidden="true">Abre la Guía Repsol con tu zona o la ciudad que hayas buscado.</p>
   </div>
+  </header>
 
   <div id="mapa-panel-vino" class="mapa-panel">
     <div id="mapa-estado" class="mapa-estado" style="display:none;" aria-live="polite"

@@ -17,9 +17,6 @@ async def register(
     Registro con correo y contraseña. Opcional: foto de perfil.
     Crea cuenta, sesión y perfil VINEROs. Devuelve session_id para guardar en frontend.
     """
-    # Bcrypt solo acepta 72 bytes; truncar aquí por si el servicio no lo hace
-    if password and len(password.encode("utf-8")) > 72:
-        password = password.encode("utf-8")[:72].decode("utf-8", errors="ignore")
     try:
         ok, msg, session_id = auth_svc.register_with_email(email, password, username, avatar_path="")
         if not ok:
@@ -50,8 +47,6 @@ async def login(
     password: str = Form(...),
 ):
     """Inicio de sesión con correo y contraseña. Devuelve session_id."""
-    if password and len(password.encode("utf-8")) > 72:
-        password = password.encode("utf-8")[:72].decode("utf-8", errors="ignore")
     ok, msg, session_id = auth_svc.login_with_email(email, password)
     if not ok:
         raise HTTPException(status_code=401, detail=msg)

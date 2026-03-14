@@ -2387,6 +2387,10 @@ textarea {
   pointer-events: none;
   z-index: 0;
 }
+/* Mapa: quitar capa negra para que se vea la imagen de la barra en modo oscuro */
+[data-theme="dark"] body.page-mapa::before {
+  background: rgba(0, 0, 0, 0.06) !important;
+}
 [data-theme="dark"] body[class^="page-"] main {
   background: var(--blanco);
   border-color: var(--crema-oscuro);

@@ -33,7 +33,8 @@
     "nuevo_seguidor": "עוקב אחריך",
     "perfil_publico": "פרופיל ציבורי",
     "sin_perfil": "למשתמש זה אין פרופיל ציבורי.",
-    "usuario_no_encontrado": "משתמש לא נמצא"
+    "usuario_no_encontrado": "משתמש לא נמצא",
+    "chat_privada": "שיחה פרטית"
   },
   "geolocalizacion": {
     "titulo": "מקומות לידך",

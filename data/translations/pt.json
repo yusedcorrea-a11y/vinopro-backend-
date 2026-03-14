@@ -33,7 +33,8 @@
     "nuevo_seguidor": "segue você",
     "perfil_publico": "Perfil público",
     "sin_perfil": "Este usuário não tem perfil público.",
-    "usuario_no_encontrado": "Usuário não encontrado"
+    "usuario_no_encontrado": "Usuário não encontrado",
+    "chat_privada": "Conversa privada"
   },
   "geolocalizacion": {
     "titulo": "Lugares perto de si",

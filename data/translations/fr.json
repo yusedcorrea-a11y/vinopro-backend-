@@ -33,7 +33,8 @@
     "nuevo_seguidor": "vous suit",
     "perfil_publico": "Profil public",
     "sin_perfil": "Cet utilisateur n'a pas de profil public.",
-    "usuario_no_encontrado": "Utilisateur introuvable"
+    "usuario_no_encontrado": "Utilisateur introuvable",
+    "chat_privada": "Conversation privée"
   },
   "geolocalizacion": {
     "titulo": "Lieux près de vous",

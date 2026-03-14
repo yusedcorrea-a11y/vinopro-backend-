@@ -33,7 +33,8 @@
     "nuevo_seguidor": "folgt dir",
     "perfil_publico": "Öffentliches Profil",
     "sin_perfil": "Dieser Nutzer hat kein öffentliches Profil.",
-    "usuario_no_encontrado": "Nutzer nicht gefunden"
+    "usuario_no_encontrado": "Nutzer nicht gefunden",
+    "chat_privada": "Private Unterhaltung"
   },
   "geolocalizacion": {
     "titulo": "Orte in deiner Nähe",

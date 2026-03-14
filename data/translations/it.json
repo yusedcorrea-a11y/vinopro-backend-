@@ -35,7 +35,8 @@
     "sin_perfil": "Questo utente non ha un profilo pubblico.",
     "usuario_no_encontrado": "Utente non trovato",
     "evento_partner": "Evento",
-    "lugares_recomendados": "Luoghi consigliati"
+    "lugares_recomendados": "Luoghi consigliati",
+    "chat_privada": "Conversazione privata"
   },
   "qr": {
     "mensaje_hola": "Ciao {nombre}, piacere di conoscerti. Grazie per il tuo tempo e interesse.",

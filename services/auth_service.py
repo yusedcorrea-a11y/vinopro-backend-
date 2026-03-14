@@ -13,6 +13,19 @@ from services import usuario_service as usuario_svc
 pwd_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
 EMAIL_RE = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
 
+# Bcrypt solo acepta hasta 72 bytes; truncamos para no romper con contraseñas largas
+BCRYPT_MAX_BYTES = 72
+
+
+def _password_for_bcrypt(password: str) -> str:
+    """Trunca a 72 bytes en UTF-8 para que bcrypt no lance error."""
+    if not password:
+        return ""
+    raw = password.encode("utf-8")
+    if len(raw) <= BCRYPT_MAX_BYTES:
+        return password
+    return raw[:BCRYPT_MAX_BYTES].decode("utf-8", errors="ignore")
+
 # Carpeta para avatares (se sirve como estático)
 BASE_DIR = Path(__file__).resolve().parent.parent
 UPLOADS_DIR = BASE_DIR / "static" / "uploads" / "avatars"
@@ -20,11 +33,11 @@ UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def hash_password(password: str) -> str:
-    return pwd_ctx.hash(password)
+    return pwd_ctx.hash(_password_for_bcrypt(password))
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_ctx.verify(plain, hashed)
+    return pwd_ctx.verify(_password_for_bcrypt(plain), hashed)
 
 
 def email_valido(email: str) -> bool:

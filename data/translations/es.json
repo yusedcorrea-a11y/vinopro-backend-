@@ -50,6 +50,7 @@
     "chat_subtitulo": "Habla en tu idioma; el otro te leerá en el suyo. Sin barreras.",
     "chat_conversaciones": "Conversaciones",
     "chat_sin_conversaciones": "Aún no tienes conversaciones. Entra en un perfil y pulsa Chatear.",
+    "chat_bienvenida_vacio": "Selecciona una conversación a la izquierda o entra en un perfil en VINEROs y pulsa Chatear para empezar.",
     "chat_placeholder": "Escribe tu mensaje…",
     "chat_enviar": "Enviar",
     "chat_volver": "Volver",

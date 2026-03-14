@@ -50,6 +50,7 @@
     "chat_subtitulo": "Speak in your language; the other person reads in theirs. No barriers.",
     "chat_conversaciones": "Conversations",
     "chat_sin_conversaciones": "You have no conversations yet. Go to a profile and tap Chat.",
+    "chat_bienvenida_vacio": "Select a conversation on the left or go to a profile in VINEROs and tap Chat to start.",
     "chat_placeholder": "Type your message…",
     "chat_enviar": "Send",
     "chat_volver": "Back",

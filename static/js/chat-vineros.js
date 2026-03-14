@@ -10,6 +10,8 @@
   var langSelect = document.getElementById('chat-lang-select');
   var listView = document.getElementById('chat-list-view');
   var threadView = document.getElementById('chat-thread-view');
+  var chatPanels = document.getElementById('chat-panels');
+  var chatPanelThread = document.getElementById('chat-panel-thread');
   var chatList = document.getElementById('chat-list');
   var chatSinConv = document.getElementById('chat-sin-conversaciones');
   var chatLoading = document.getElementById('chat-loading');
@@ -37,15 +39,19 @@
   function showList() {
     if (chatLoading) chatLoading.style.display = 'none';
     if (chatError) chatError.style.display = 'none';
+    if (chatPanels) { chatPanels.style.display = 'flex'; chatPanels.classList.add('visible'); }
     if (listView) { listView.classList.add('visible'); listView.style.display = 'block'; }
     if (threadView) { threadView.classList.remove('visible'); threadView.style.display = 'none'; }
+    if (chatPanelThread) chatPanelThread.classList.remove('chat-thread-active');
   }
 
   function showThread() {
     if (chatLoading) chatLoading.style.display = 'none';
     if (chatError) chatError.style.display = 'none';
-    if (listView) { listView.classList.remove('visible'); listView.style.display = 'none'; }
-    if (threadView) { threadView.classList.add('visible'); threadView.style.display = 'block'; }
+    if (chatPanels) { chatPanels.style.display = 'flex'; chatPanels.classList.add('visible'); }
+    if (listView) { listView.classList.add('visible'); listView.style.display = 'block'; }
+    if (threadView) { threadView.classList.add('visible'); threadView.style.display = 'flex'; }
+    if (chatPanelThread) chatPanelThread.classList.add('chat-thread-active');
   }
 
   var CHAT_SIGNUP_URL = '/signup?next=' + encodeURIComponent('/comunidad/chat');

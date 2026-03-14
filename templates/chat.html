@@ -178,8 +178,52 @@
   }
   .chat-send-icon { font-size: 1.05em; line-height: 1; }
 
+  /* Layout tipo WhatsApp: dos paneles (lista | hilo o vacío) */
+  .chat-panels {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex: 1;
+    min-height: 0;
+    margin-top: 0.5rem;
+  }
+  @media (min-width: 768px) {
+    .chat-panels { flex-direction: row; min-height: 60vh; }
+    .chat-panel-list { width: 320px; min-width: 280px; flex-shrink: 0; border-right: 1px solid rgba(107,45,60,0.12); padding-right: 0.75rem; }
+    .chat-panel-thread { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  }
+  @media (max-width: 767px) {
+    .chat-panels:has(.chat-panel-thread.chat-thread-active) .chat-panel-list { display: none; }
+    .chat-panels .chat-panel-thread.chat-thread-active { flex: 1 1 100%; min-width: 0; }
+  }
+  .chat-panel-list { padding: 0.5rem 0; }
+  .chat-panel-thread { padding: 0; display: flex; flex-direction: column; min-height: 320px; }
+  .chat-welcome-empty {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    color: var(--texto-suave);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    background: rgba(255,255,255,0.4);
+    border-radius: 16px;
+    margin: 0.5rem 0 0 0;
+    border: 1px dashed rgba(107,45,60,0.15);
+  }
+  .chat-welcome-empty p { margin: 0; max-width: 280px; }
+  .chat-welcome-empty .chat-welcome-icon { font-size: 3rem; margin-bottom: 0.75rem; opacity: 0.7; }
+  [data-theme="dark"] .chat-panel-list { border-right-color: rgba(212,168,75,0.2); }
+  [data-theme="dark"] .chat-welcome-empty { background: rgba(255,255,255,0.03); color: rgba(212,168,75,0.8); border-color: rgba(212,168,75,0.2); }
+
   #chat-list-view, #chat-thread-view { display: none; }
-  #chat-list-view.visible, #chat-thread-view.visible { display: block; }
+  #chat-list-view.visible { display: block; }
+  #chat-thread-view.visible { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+  .chat-panel-thread.chat-thread-active #chat-thread-empty { display: none !important; }
+  .chat-panel-thread.chat-thread-active #chat-thread-view { display: flex !important; flex-direction: column; flex: 1; min-height: 0; }
+  .chat-panels #chat-thread-empty { display: flex; align-items: center; justify-content: center; flex: 1; }
   #chat-loading, #chat-error { text-align: center; padding: 1.5rem; color: var(--texto-suave); position: relative; z-index: 2; }
   #chat-error .chat-error-ctas { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; }
   #chat-error .chat-error-ctas .btn { text-decoration: none; font-size: 0.9rem; padding: 0.5rem 1rem; }
@@ -250,28 +294,39 @@
   <div id="chat-loading">{{ t('comunidad.chat_conversaciones') }}…</div>
   <div id="chat-error" style="display:none;"></div>
 
-  <div id="chat-list-view">
-    <h2 class="section-title">{{ t('comunidad.chat_conversaciones') }}</h2>
-    <div id="chat-list" class="chat-list"></div>
-    <p id="chat-sin-conversaciones" class="texto-pequeno" style="display:none;">{{ t('comunidad.chat_sin_conversaciones') }}</p>
-  </div>
-
-  <div id="chat-thread-view">
-    <div class="chat-thread-header">
-      <a href="/comunidad/chat" id="chat-back-link" class="chat-thread-back">{{ t('comunidad.chat_volver') }}</a>
-      <div class="chat-thread-title-wrap">
-        <span id="chat-thread-with" class="chat-thread-with"></span>
-        <span class="chat-thread-private" aria-label="{{ t('comunidad.chat_privada') }}"><span class="chat-lock" aria-hidden="true">🔒</span> {{ t('comunidad.chat_privada') }}</span>
+  <div class="chat-panels" id="chat-panels" style="display:none;">
+    <div class="chat-panel-list">
+      <div id="chat-list-view">
+        <h2 class="section-title">{{ t('comunidad.chat_conversaciones') }}</h2>
+        <div id="chat-list" class="chat-list"></div>
+        <p id="chat-sin-conversaciones" class="texto-pequeno" style="display:none;">{{ t('comunidad.chat_sin_conversaciones') }}</p>
       </div>
     </div>
-    <div id="chat-messages" class="chat-messages"></div>
-    <div class="chat-input-bar">
-      <form id="chat-form" class="chat-form">
-        <div class="chat-input-wrap">
-          <input type="text" id="chat-input" class="chat-input" placeholder="{{ t('comunidad.chat_placeholder') }}" maxlength="2000" autocomplete="off">
+    <div class="chat-panel-thread" id="chat-panel-thread">
+      <div id="chat-thread-empty" class="chat-welcome-empty" aria-live="polite">
+        <div>
+          <div class="chat-welcome-icon" aria-hidden="true">💬</div>
+          <p>{{ t('comunidad.chat_bienvenida_vacio') }}</p>
         </div>
-        <button type="submit" class="chat-send" id="chat-send-btn" title="{{ t('comunidad.chat_enviar') }}" aria-label="{{ t('comunidad.chat_enviar') }}"><span class="chat-send-icon" aria-hidden="true">➤</span></button>
-      </form>
+      </div>
+      <div id="chat-thread-view">
+        <div class="chat-thread-header">
+          <a href="/comunidad/chat" id="chat-back-link" class="chat-thread-back">{{ t('comunidad.chat_volver') }}</a>
+          <div class="chat-thread-title-wrap">
+            <span id="chat-thread-with" class="chat-thread-with"></span>
+            <span class="chat-thread-private" aria-label="{{ t('comunidad.chat_privada') }}"><span class="chat-lock" aria-hidden="true">🔒</span> {{ t('comunidad.chat_privada') }}</span>
+          </div>
+        </div>
+        <div id="chat-messages" class="chat-messages"></div>
+        <div class="chat-input-bar">
+          <form id="chat-form" class="chat-form">
+            <div class="chat-input-wrap">
+              <input type="text" id="chat-input" class="chat-input" placeholder="{{ t('comunidad.chat_placeholder') }}" maxlength="2000" autocomplete="off">
+            </div>
+            <button type="submit" class="chat-send" id="chat-send-btn" title="{{ t('comunidad.chat_enviar') }}" aria-label="{{ t('comunidad.chat_enviar') }}"><span class="chat-send-icon" aria-hidden="true">➤</span></button>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 </div>

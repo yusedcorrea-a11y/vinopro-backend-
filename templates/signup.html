@@ -140,21 +140,37 @@
     if (avatar && avatar.files && avatar.files[0]) fd.append('avatar', avatar.files[0]);
     var btn = document.getElementById('btn-register');
     if (btn) btn.disabled = true;
-    fetch('/api/auth/register', { method: 'POST', body: fd })
-      .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+    showMsg('Conectando con el servidor… En plan gratuito la primera vez puede tardar hasta 1 minuto.', false);
+    var timeoutMs = 90000;
+    var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var tid = controller ? setTimeout(function() { controller.abort(); }, timeoutMs) : null;
+    fetch('/api/auth/register', { method: 'POST', body: fd, signal: controller ? controller.signal : undefined })
+      .then(function(r) {
+        if (tid) clearTimeout(tid);
+        var ct = (r.headers.get('content-type') || '').toLowerCase();
+        if (ct.indexOf('application/json') >= 0) {
+          return r.json().then(function(d) { return { ok: r.ok, status: r.status, data: d }; });
+        }
+        return r.text().then(function(t) { return { ok: false, status: r.status, data: { detail: t || 'Respuesta no válida del servidor' } }; });
+      })
       .then(function(result) {
         if (btn) btn.disabled = false;
-        if (result.ok && result.data.session_id) {
+        if (result.ok && result.data && result.data.session_id) {
           setSession(result.data.session_id);
           showMsg('Cuenta creada. Redirigiendo a VINEROs…', false);
           setTimeout(function() { window.location.href = '/comunidad/feed'; }, 800);
         } else {
-          showMsg(result.data.detail || 'Error al registrarse', true);
+          var detail = result.data && result.data.detail;
+          if (typeof detail === 'string') showMsg(detail, true);
+          else if (result.status === 422) showMsg('Revisa los datos (correo, contraseña mín. 6, usuario 3-30 caracteres, solo letras/números/_).', true);
+          else showMsg(detail || 'Error al registrarse. Intenta de nuevo.', true);
         }
       })
-      .catch(function() {
+      .catch(function(err) {
+        if (tid) clearTimeout(tid);
         if (btn) btn.disabled = false;
-        showMsg('Error de conexión. Intenta de nuevo.', true);
+        if (err && err.name === 'AbortError') showMsg('El servidor tarda en responder (está despertando). Espera unos segundos y vuelve a pulsar Registrarme.', true);
+        else showMsg('No se pudo conectar al servidor. Comprueba tu conexión y vuelve a intentar.', true);
       });
   });
 
@@ -164,20 +180,33 @@
     var fd = new FormData();
     fd.append('email', document.getElementById('login-email').value.trim());
     fd.append('password', document.getElementById('login-password').value);
-    fetch('/api/auth/login', { method: 'POST', body: fd })
-      .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+    showMsg('Conectando… (en plan gratuito puede tardar hasta 1 min la primera vez)', false);
+    var timeoutMs = 90000;
+    var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    var tid = controller ? setTimeout(function() { controller.abort(); }, timeoutMs) : null;
+    fetch('/api/auth/login', { method: 'POST', body: fd, signal: controller ? controller.signal : undefined })
+      .then(function(r) {
+        if (tid) clearTimeout(tid);
+        var ct = (r.headers.get('content-type') || '').toLowerCase();
+        if (ct.indexOf('application/json') >= 0) return r.json().then(function(d) { return { ok: r.ok, data: d }; });
+        return r.text().then(function() { return { ok: false, data: { detail: 'Error del servidor' } }; });
+      })
       .then(function(result) {
-        if (result.ok && result.data.session_id) {
+        if (result.ok && result.data && result.data.session_id) {
           setSession(result.data.session_id);
           showMsg('Sesión iniciada. Redirigiendo…', false);
           var next = (typeof URLSearchParams !== 'undefined' && window.location.search) ? new URLSearchParams(window.location.search).get('next') : null;
           var dest = (next && next.startsWith('/')) ? next : '/comunidad/feed';
           setTimeout(function() { window.location.href = dest; }, 600);
         } else {
-          showMsg(result.data.detail || 'Correo o contraseña incorrectos', true);
+          showMsg((result.data && result.data.detail) || 'Correo o contraseña incorrectos', true);
         }
       })
-      .catch(function() { showMsg('Error de conexión.', true); });
+      .catch(function(err) {
+        if (tid) clearTimeout(tid);
+        if (err && err.name === 'AbortError') showMsg('El servidor está despertando. Espera unos segundos y vuelve a intentar.', true);
+        else showMsg('No se pudo conectar al servidor. Comprueba tu conexión.', true);
+      });
   });
 
   toggleLogin.addEventListener('click', function(e) { e.preventDefault(); registerForm.classList.add('oculto'); loginForm.classList.add('visible'); toggleLogin.style.display = 'none'; toggleRegister.style.display = 'inline'; });

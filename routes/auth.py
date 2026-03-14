@@ -17,23 +17,28 @@ async def register(
     Registro con correo y contraseña. Opcional: foto de perfil.
     Crea cuenta, sesión y perfil VINEROs. Devuelve session_id para guardar en frontend.
     """
-    ok, msg, session_id = auth_svc.register_with_email(email, password, username, avatar_path="")
-    if not ok:
-        raise HTTPException(status_code=400, detail=msg)
-    avatar_path = ""
-    if avatar and avatar.filename and avatar.content_type and avatar.content_type.startswith("image/"):
-        content = await avatar.read()
-        if len(content) <= 5 * 1024 * 1024:
-            from db import database as db
-            from services import usuario_service as usuario_svc
-            user_id = db.get_user_id_by_session(session_id)
-            if user_id:
-                path = auth_svc.save_avatar_file(content, user_id, avatar.filename)
-                if path:
-                    avatar_path = path
-                    db.update_user_avatar(user_id, avatar_path)
-                    usuario_svc.actualizar_perfil(session_id, avatar_path=avatar_path)
-    return {"ok": True, "session_id": session_id, "message": "Cuenta creada. Ya puedes entrar a VINEROs."}
+    try:
+        ok, msg, session_id = auth_svc.register_with_email(email, password, username, avatar_path="")
+        if not ok:
+            raise HTTPException(status_code=400, detail=msg)
+        avatar_path = ""
+        if avatar and avatar.filename and avatar.content_type and avatar.content_type.startswith("image/"):
+            content = await avatar.read()
+            if len(content) <= 5 * 1024 * 1024:
+                from db import database as db
+                from services import usuario_service as usuario_svc
+                user_id = db.get_user_id_by_session(session_id)
+                if user_id:
+                    path = auth_svc.save_avatar_file(content, user_id, avatar.filename)
+                    if path:
+                        avatar_path = path
+                        db.update_user_avatar(user_id, avatar_path)
+                        usuario_svc.actualizar_perfil(session_id, avatar_path=avatar_path)
+        return {"ok": True, "session_id": session_id, "message": "Cuenta creada. Ya puedes entrar a VINEROs."}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al crear la cuenta: {str(e)}")
 
 
 @router.post("/api/auth/login")

@@ -904,8 +904,8 @@ html:not([data-theme="dark"]) body.page-adaptador .adaptador-container .history-
 /* Mapa: Dónde me tomo mi vino — fondo barra de bar (mujer claro, hombre oscuro) */
 body.page-mapa {
   background: var(--crema) url('/static/images/vino-pro-ia-fondo-mapa-claro.png') no-repeat fixed;
-  background-size: cover;
-  background-position: center;
+  background-size: 70% auto;
+  background-position: center center;
 }
 body.page-mapa::before {
   content: '';
@@ -3140,6 +3140,12 @@ body.page-inicio .chatbot-guia-mascot:hover {
     background-position: center center !important;
     background-color: #0d0b0a;
     min-height: 100dvh;
+  }
+  /* Mapa: foto más pequeña para ver la escena completa (barra/persona), no solo primer plano */
+  body.page-mapa,
+  [data-theme="dark"] body.page-mapa {
+    background-size: 70% auto !important;
+    background-position: center center !important;
   }
   /* Inicio: bajar el encuadre para que se vean mesa y copas en primer plano */
   body.page-inicio,

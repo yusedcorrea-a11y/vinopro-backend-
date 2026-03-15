@@ -377,7 +377,13 @@
         if (offset === 0) renderStories(data.stories || []);
         var posts = data.posts || [];
         if (!posts.length && offset === 0) {
-          showSinPerfil();
+          if (currentCanal === 'para_ti' || currentCanal === 'vineros') {
+            showSinPerfil();
+            return;
+          }
+          showList();
+          if (listEl) listEl.innerHTML = '<p class="page-subtitle">No hay publicaciones en este canal por ahora.</p>';
+          if (feedLoading) { feedLoading.textContent = 'Canal sin publicaciones.'; feedLoading.style.display = 'block'; }
           return;
         }
         showList();

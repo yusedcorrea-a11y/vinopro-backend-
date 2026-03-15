@@ -13,7 +13,7 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 ACTIVIDAD_PATH = DATA_DIR / "actividad.json"
 CANALES_FEED_PATH = DATA_DIR / "canales_feed.json"
 
-LISTA_CANALES = ["para_ti", "noticias", "eventos", "enoturismo", "equipamiento", "vineros"]
+LISTA_CANALES = ["para_ti", "noticias", "en_vivo", "eventos", "enoturismo", "equipamiento", "vineros"]
 
 _lista: list[dict] = []
 _canales_data: dict = {}
@@ -47,22 +47,26 @@ def _save() -> None:
 def add_actividad(
     username: str,
     tipo: str,
-    vino_key: str,
+    vino_key: str = "",
     vino_nombre: str = "",
     score: int | None = None,
     titulo: str = "",
     texto: str = "",
     link: str = "",
+    image_path: str = "",
 ) -> str:
     """
     Añade una actividad al feed.
-    tipo: "valoracion" | "probado" | "deseado" | "evento".
-    Para tipo "evento", se usan titulo, texto y link (vino_key puede ser vacío o "_evento").
+    tipo: "valoracion" | "probado" | "deseado" | "evento" | "foto_vino".
+    Para tipo "evento", se usan titulo, texto y link (vino_key puede ser vacío).
+    Para tipo "foto_vino", se usan image_path y texto (caption); vino_key opcional.
     Devuelve el id de la actividad.
     """
     if not username or not tipo:
         return ""
-    if tipo != "evento" and not vino_key:
+    if tipo not in ("evento", "foto_vino") and not (vino_key or "").strip():
+        return ""
+    if tipo == "foto_vino" and not (image_path or "").strip():
         return ""
     username = username.strip().lower()
     now = int(time.time())
@@ -81,6 +85,9 @@ def add_actividad(
         entry["titulo"] = (titulo or "").strip()[:200]
         entry["texto"] = (texto or "").strip()[:1000]
         entry["link"] = (link or "").strip()[:500]
+    if tipo == "foto_vino":
+        entry["image_path"] = (image_path or "").strip()[:500]
+        entry["texto"] = (texto or "").strip()[:500]
     _lista.append(entry)
     _save()
     return id_act
@@ -138,11 +145,12 @@ def _load_canales() -> dict:
 
 def get_contenido_canal(canal: str, limit: int = 20) -> list[dict]:
     """
-    Contenido estático de un canal (noticias, eventos, enoturismo, equipamiento).
+    Contenido estático de un canal (noticias, en_vivo, eventos, enoturismo, equipamiento).
     Cada item: id, created_at, titulo, descripcion, link, fuente, badge.
+    en_vivo: Wine News TV y Colectivo Decantado (YouTube, gratuitos).
     Para "eventos" solo devuelve los del JSON; la API mezclará con get_eventos_destacados.
     """
-    if canal not in ("noticias", "eventos", "enoturismo", "equipamiento"):
+    if canal not in ("noticias", "en_vivo", "eventos", "enoturismo", "equipamiento"):
         return []
     data = _load_canales()
     raw = data.get(canal)

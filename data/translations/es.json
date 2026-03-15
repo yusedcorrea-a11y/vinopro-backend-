@@ -41,6 +41,7 @@
     "lugares_recomendados": "Lugares recomendados",
     "feed_para_ti": "Para ti",
     "feed_noticias": "Noticias",
+    "feed_en_vivo": "En vivo",
     "feed_eventos": "Eventos y catas",
     "feed_enoturismo": "Enoturismo",
     "feed_equipamiento": "Equipamiento",
@@ -114,6 +115,7 @@
     "geo_no_disponible": "No pudimos obtener tu ubicación actual. Verifica señal GPS o busca por ciudad.",
     "geo_timeout": "La ubicación tardó demasiado. Intenta de nuevo o busca por ciudad.",
     "error_init": "No se pudo inicializar el mapa. Recarga la página.",
+    "zona_aprox": "Zona aproximada",
     "sin_destacados": "No hay lugares recomendados por ahora."
   },
   "onboarding": {

@@ -1,6 +1,23 @@
 /* Feed VINEROs / Noticias – diseño tipo Instagram (v3) */
 .vineros-wrap { max-width: 680px; margin: 0 auto; padding: 1rem 0.9rem 2rem; }
-.vineros-tools { display: flex; justify-content: flex-end; margin: 0.25rem 0 0.75rem; }
+.vineros-tools { display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem; margin: 0.25rem 0 0.75rem; flex-wrap: wrap; }
+.vineros-btn-foto { font-size: 0.85rem; white-space: nowrap; }
+.feed-foto-modal { position: fixed; inset: 0; z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.feed-foto-modal[hidden] { display: none; }
+.feed-foto-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.5); }
+.feed-foto-content { position: relative; background: #fff; border-radius: 16px; padding: 1.5rem; max-width: 360px; width: 100%; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+.feed-foto-title { margin: 0 0 0.25rem 0; font-size: 1.2rem; color: var(--burdeos); }
+.feed-foto-sub { margin: 0 0 1rem 0; font-size: 0.9rem; color: #555; }
+.feed-foto-form { display: flex; flex-direction: column; gap: 0.75rem; }
+.feed-foto-form input[type="file"] { font-size: 0.88rem; }
+.feed-foto-label { font-size: 0.85rem; font-weight: 600; color: #333; }
+.feed-foto-caption { width: 100%; padding: 0.5rem 0.6rem; border: 1px solid rgba(107,45,60,0.25); border-radius: 10px; font-size: 0.9rem; resize: vertical; min-height: 60px; box-sizing: border-box; }
+.feed-foto-error { margin: 0; font-size: 0.85rem; color: #c00; }
+.feed-foto-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.5rem; }
+[data-theme="dark"] .feed-foto-content { background: rgba(28,24,22,0.98); border: 1px solid rgba(212,168,75,0.2); }
+[data-theme="dark"] .feed-foto-title { color: var(--dorado-claro); }
+[data-theme="dark"] .feed-foto-sub { color: #d4c3a6; }
+[data-theme="dark"] .feed-foto-caption { background: rgba(40,34,30,0.9); border-color: rgba(212,168,75,0.3); color: #f0ebe0; }
 .vineros-lang-select { border: 1px solid rgba(107,45,60,0.2); border-radius: 10px; background: rgba(255,255,255,0.95); color: var(--burdeos); padding: 0.42rem 0.6rem; font-size: 0.82rem; font-weight: 600; }
 .vineros-stories-wrap { margin: 0.4rem 0 0.9rem; }
 .vineros-stories { display: flex; gap: 0.75rem; overflow-x: auto; padding-bottom: 0.35rem; scrollbar-width: thin; }

@@ -325,6 +325,48 @@
       "imagen": "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&fit=crop"
     }
   ],
+  "en_vivo": [
+    {
+      "id": "yt-wn-1",
+      "created_at": 1740080000,
+      "titulo": "Wine News TV: noticias en vídeo del mundo del vino",
+      "descripcion": "Directos y reportajes en vídeo sobre actualidad vinícola. Canal en español con novedades, catas y tendencias. Acceso gratis.",
+      "link": "https://www.youtube.com/results?search_query=Wine+News+TV+vino",
+      "fuente": "Wine News TV",
+      "badge": "En vivo",
+      "imagen": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&fit=crop"
+    },
+    {
+      "id": "yt-wn-2",
+      "created_at": 1740050000,
+      "titulo": "Lives y catas en directo desde Wine News TV",
+      "descripcion": "Síguelos en YouTube para ver transmisiones en vivo sobre vino, maridajes y actualidad del sector. Sin coste.",
+      "link": "https://www.youtube.com/results?search_query=Wine+News+TV",
+      "fuente": "Wine News TV",
+      "badge": "En vivo",
+      "imagen": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&fit=crop"
+    },
+    {
+      "id": "yt-cd-1",
+      "created_at": 1740020000,
+      "titulo": "Colectivo Decantado: cultura del vino en YouTube",
+      "descripcion": "Contenido en vídeo sobre vino, sumillería y estilo de vida. Canal en español para aprender y disfrutar.",
+      "link": "https://www.youtube.com/results?search_query=Colectivo+Decantado+vino",
+      "fuente": "Colectivo Decantado",
+      "badge": "En vivo",
+      "imagen": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&fit=crop"
+    },
+    {
+      "id": "yt-cd-2",
+      "created_at": 1739990000,
+      "titulo": "Vídeos y recomendaciones del Colectivo Decantado",
+      "descripcion": "Descubre sus últimos vídeos: catas, maridajes y temas del mundo del vino. Todo gratuito en YouTube.",
+      "link": "https://www.youtube.com/results?search_query=Colectivo+Decantado",
+      "fuente": "Colectivo Decantado",
+      "badge": "En vivo",
+      "imagen": "https://images.unsplash.com/photo-1474722883778-792e2290308b?w=600&fit=crop"
+    }
+  ],
   "equipamiento": [
     {
       "id": "eq-1",

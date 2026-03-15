@@ -41,6 +41,7 @@
     "lugares_recomendados": "Recommended places",
     "feed_para_ti": "For you",
     "feed_noticias": "News",
+    "feed_en_vivo": "Live",
     "feed_eventos": "Events & tastings",
     "feed_enoturismo": "Wine tourism",
     "feed_equipamiento": "Equipment",
@@ -111,6 +112,7 @@
     "geo_no_disponible": "We could not get your current location. Check GPS signal or search by city.",
     "geo_timeout": "Location request timed out. Try again or search by city.",
     "error_init": "Map could not be initialized. Reload the page.",
+    "zona_aprox": "Approximate area",
     "sin_destacados": "No recommended places right now."
   },
   "onboarding": {

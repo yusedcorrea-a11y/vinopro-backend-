@@ -298,6 +298,8 @@
     }
     var noticiasTools = document.getElementById('noticias-tools');
     if (noticiasTools) noticiasTools.style.display = currentCanal === 'noticias' ? 'flex' : 'none';
+    var btnFoto = document.getElementById('feed-btn-foto-vino');
+    if (btnFoto) btnFoto.style.display = (currentCanal === 'para_ti' || currentCanal === 'vineros') ? '' : 'none';
     if (storiesWrap) storiesWrap.style.display = (currentCanal === 'para_ti' || currentCanal === 'vineros') ? 'block' : 'none';
     if (storiesEl) storiesEl.innerHTML = '';
     if (currentCanal === 'noticias') fetchNoticias(); else fetchNextPage();
@@ -379,6 +381,8 @@
           return;
         }
         showList();
+        var btnFoto = document.getElementById('feed-btn-foto-vino');
+        if (btnFoto) btnFoto.style.display = (currentCanal === 'para_ti' || currentCanal === 'vineros') ? '' : 'none';
         posts.forEach(function(p) { renderPost(p, false); });
         offset = data.next_offset || (offset + posts.length);
         hasMore = !!data.has_more;
@@ -437,5 +441,68 @@
   }
 
   initLangSelector();
+
+  var fotoModal = document.getElementById('feed-foto-modal');
+  var fotoForm = document.getElementById('feed-foto-form');
+  var fotoInput = document.getElementById('feed-foto-input');
+  var fotoCaption = document.getElementById('feed-foto-caption');
+  var fotoError = document.getElementById('feed-foto-error');
+  var fotoSubmit = document.getElementById('feed-foto-submit');
+  var fotoCancel = document.getElementById('feed-foto-cancel');
+  var btnFotoVino = document.getElementById('feed-btn-foto-vino');
+  function openFotoModal() {
+    if (fotoModal) {
+      fotoModal.removeAttribute('hidden');
+      if (fotoError) { fotoError.style.display = 'none'; fotoError.textContent = ''; }
+      if (fotoForm) fotoForm.reset();
+    }
+  }
+  function closeFotoModal() {
+    if (fotoModal) fotoModal.setAttribute('hidden', '');
+  }
+  if (btnFotoVino) btnFotoVino.addEventListener('click', openFotoModal);
+  if (fotoCancel) fotoCancel.addEventListener('click', closeFotoModal);
+  if (fotoModal) {
+    var backdrop = fotoModal.querySelector('.feed-foto-backdrop');
+    if (backdrop) backdrop.addEventListener('click', closeFotoModal);
+  }
+  if (fotoForm) {
+    fotoForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!fotoInput || !fotoInput.files || !fotoInput.files[0]) {
+        if (fotoError) { fotoError.textContent = 'Elige una imagen.'; fotoError.style.display = 'block'; }
+        return;
+      }
+      var file = fotoInput.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        if (fotoError) { fotoError.textContent = 'La imagen no puede superar 5 MB.'; fotoError.style.display = 'block'; }
+        return;
+      }
+      if (fotoError) fotoError.style.display = 'none';
+      if (fotoSubmit) { fotoSubmit.disabled = true; fotoSubmit.textContent = 'Publicando…'; }
+      var formData = new FormData();
+      formData.append('foto', file);
+      formData.append('caption', (fotoCaption && fotoCaption.value) ? fotoCaption.value.trim() : '');
+      var headers = {};
+      if (sid) headers['X-Session-ID'] = sid;
+      fetch('/api/feed/foto', { method: 'POST', body: formData, headers: headers })
+        .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, data: d }; }); })
+        .then(function(res) {
+          if (fotoSubmit) { fotoSubmit.disabled = false; fotoSubmit.textContent = 'Publicar'; }
+          if (res.ok && res.data.ok && res.data.post && listEl) {
+            renderPost(res.data.post, false);
+            if (listEl.lastChild) listEl.insertBefore(listEl.lastChild, listEl.firstChild);
+            closeFotoModal();
+          } else if (res.data.detail) {
+            if (fotoError) { fotoError.textContent = typeof res.data.detail === 'string' ? res.data.detail : 'Error al publicar.'; fotoError.style.display = 'block'; }
+          }
+        })
+        .catch(function() {
+          if (fotoSubmit) { fotoSubmit.disabled = false; fotoSubmit.textContent = 'Publicar'; }
+          if (fotoError) { fotoError.textContent = 'Error de conexión. Inténtalo de nuevo.'; fotoError.style.display = 'block'; }
+        });
+    });
+  }
+
   setCanal('noticias');
 })();

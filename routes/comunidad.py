@@ -1,8 +1,12 @@
 """
 API de comunidad (Fase 6B): perfiles, seguir, feed, notificaciones, traducción en tiempo real.
+Comunidad de fotos de vinos: subir foto + caption al feed.
 """
+import uuid
 from datetime import date, datetime
-from fastapi import APIRouter, File, Header, HTTPException, Request, Body, UploadFile
+from pathlib import Path
+
+from fastapi import APIRouter, File, Form, Header, HTTPException, Request, Body, UploadFile
 
 from services import usuario_service as usuario_svc
 from services import seguidores_service as seg_svc
@@ -73,6 +77,8 @@ def _post_desde_actividad(act: dict, vinos: dict) -> dict:
         badge = "Wishlist"
     elif tipo == "probado":
         badge = "Descorche"
+    elif tipo == "foto_vino":
+        badge = "Foto"
 
     descripcion = (act.get("texto") or "").strip()
     if not descripcion:
@@ -85,8 +91,19 @@ def _post_desde_actividad(act: dict, vinos: dict) -> dict:
             descripcion = f"Acaba de probar {vino_nombre or 'este vino'}."
         elif tipo == "evento":
             descripcion = (act.get("titulo") or "Evento en VINEROS").strip()
+        elif tipo == "foto_vino":
+            descripcion = "Compartió una foto de su vino."
         else:
             descripcion = "Nueva actividad en VINEROS."
+
+    title = vino_nombre or (act.get("titulo") or "Publicación")
+    if tipo == "foto_vino":
+        title = (act.get("texto") or "Foto de vino").strip()[:80] or "Foto de vino"
+    image_url = None
+    if tipo == "foto_vino":
+        path = (act.get("image_path") or "").strip()
+        if path:
+            image_url = path if path.startswith("/") else f"/{path}"
 
     return {
         "id": f"act-{act.get('id') or ''}",
@@ -94,12 +111,12 @@ def _post_desde_actividad(act: dict, vinos: dict) -> dict:
         "post_type": "sponsor" if tipo == "evento" else "user",
         "username": (act.get("username") or "vinero").strip().lower(),
         "avatar_text": ((act.get("username") or "V").strip()[:1] or "V").upper(),
-        "title": vino_nombre or (act.get("titulo") or "Publicación"),
+        "title": title,
         "description": descripcion,
         "badge": badge,
         "vino_key": vino_key or None,
         "vino_detalle": _vino_detalle_desde_db(vinos, vino_key) if vino_key else None,
-        "image_url": None,
+        "image_url": image_url,
         "brindis_count": 0,
         "comentarios_count": 0,
     }
@@ -284,6 +301,60 @@ async def actualizar_mi_perfil(
     return {"ok": True}
 
 
+def _save_foto_vino(content: bytes, username: str, filename: str) -> str | None:
+    """Guarda imagen en static/uploads/fotos_vinos/. Devuelve ruta relativa /static/uploads/fotos_vinos/xxx o None."""
+    ext = Path(filename).suffix.lower() or ".jpg"
+    if ext not in (".jpg", ".jpeg", ".png", ".webp", ".gif"):
+        return None
+    base = Path(__file__).resolve().parent.parent
+    uploads_dir = base / "static" / "uploads" / "fotos_vinos"
+    uploads_dir.mkdir(parents=True, exist_ok=True)
+    safe = (username.strip().lower()[:20] or "user") + "_" + uuid.uuid4().hex[:12] + ext
+    path = uploads_dir / safe
+    try:
+        path.write_bytes(content)
+        return f"/static/uploads/fotos_vinos/{safe}"
+    except Exception:
+        return None
+
+
+@router.post("/api/feed/foto")
+async def subir_foto_vino(
+    request: Request,
+    foto: UploadFile = File(...),
+    caption: str = Form(""),
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """Comunidad de fotos de vinos: sube una foto (botella/copa) con caption opcional. Máx. 5 MB. Aparece en el feed."""
+    _, mi_username = _session_and_username(x_session_id)
+    if not foto.filename or not (foto.content_type or "").startswith("image/"):
+        raise HTTPException(status_code=400, detail="Envía una imagen (JPEG, PNG, WebP o GIF)")
+    content = await foto.read()
+    if len(content) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="La imagen no puede superar 5 MB")
+    image_path = _save_foto_vino(content, mi_username, foto.filename)
+    if not image_path:
+        raise HTTPException(status_code=400, detail="Formato de imagen no válido")
+    id_act = feed_svc.add_actividad(
+        username=mi_username,
+        tipo="foto_vino",
+        vino_key="",
+        texto=(caption or "").strip()[:500],
+        image_path=image_path,
+    )
+    if not id_act:
+        raise HTTPException(status_code=500, detail="No se pudo publicar la foto")
+    vinos = getattr(request.app.state, "vinos_mundiales", None) or {}
+    lista = feed_svc._load()
+    act = next((a for a in lista if a.get("id") == id_act), None)
+    if not act:
+        return {"ok": True, "id": id_act}
+    post = _post_desde_actividad(act, vinos or {})
+    post["brindis_count"] = brindis_svc.get_count(post.get("id") or "")
+    post["yo_brindi"] = False
+    return {"ok": True, "id": id_act, "post": post}
+
+
 @router.post("/api/mi-perfil/avatar")
 async def subir_foto_perfil(
     avatar: UploadFile = File(...),
@@ -407,7 +478,8 @@ async def get_feed(
         eventos = feed_svc.get_eventos_destacados(limit=10)
         if mi_username:
             seguidos = seg_svc.get_seguidos(mi_username)
-            actividad = feed_svc.get_feed_para_usuario(seguidos, limit=limit)
+            seguidos_con_yo = list(seguidos) + [mi_username]
+            actividad = feed_svc.get_feed_para_usuario(seguidos_con_yo, limit=limit)
             for a in actividad:
                 if not a.get("vino_nombre") and a.get("vino_key"):
                     v = vinos.get(a.get("vino_key", ""), {})
@@ -422,7 +494,8 @@ async def get_feed(
     elif canal == "vineros":
         if mi_username:
             seguidos = seg_svc.get_seguidos(mi_username)
-            actividad = feed_svc.get_feed_para_usuario(seguidos, limit=limit)
+            seguidos_con_yo = list(seguidos) + [mi_username]
+            actividad = feed_svc.get_feed_para_usuario(seguidos_con_yo, limit=limit)
             for a in actividad:
                 if not a.get("vino_nombre") and a.get("vino_key"):
                     v = vinos.get(a.get("vino_key", ""), {})
@@ -434,6 +507,10 @@ async def get_feed(
 
     elif canal == "noticias":
         for item in feed_svc.get_contenido_canal("noticias", limit=limit):
+            posts.append(_post_desde_canal(item))
+
+    elif canal == "en_vivo":
+        for item in feed_svc.get_contenido_canal("en_vivo", limit=limit):
             posts.append(_post_desde_canal(item))
 
     elif canal == "eventos":

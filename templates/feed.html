@@ -9,9 +9,10 @@
   <h1 class="page-title">{{ t('comunidad.feed_title') }}</h1>
   <p class="page-subtitle">{{ t('comunidad.feed_subtitle') }}</p>
 
-  <nav class="feed-tabs" id="feed-tabs" role="tablist" aria-label="Canales: Noticias, Para ti, Eventos, Enoturismo, Equipamiento, VINEROs">
+  <nav class="feed-tabs" id="feed-tabs" role="tablist" aria-label="Canales: Noticias, Para ti, En vivo, Eventos, Enoturismo, Equipamiento, VINEROs">
     <button type="button" class="feed-tab active" data-canal="noticias" role="tab">{{ t('comunidad.feed_noticias') }}</button>
     <button type="button" class="feed-tab" data-canal="para_ti" role="tab">{{ t('comunidad.feed_para_ti') }}</button>
+    <button type="button" class="feed-tab" data-canal="en_vivo" role="tab">{{ t('comunidad.feed_en_vivo') }}</button>
     <button type="button" class="feed-tab" data-canal="eventos" role="tab">{{ t('comunidad.feed_eventos') }}</button>
     <button type="button" class="feed-tab" data-canal="enoturismo" role="tab">{{ t('comunidad.feed_enoturismo') }}</button>
     <button type="button" class="feed-tab" data-canal="equipamiento" role="tab">{{ t('comunidad.feed_equipamiento') }}</button>
@@ -30,6 +31,7 @@
   </div>
 
   <div class="vineros-tools">
+    <button type="button" id="feed-btn-foto-vino" class="btn btn-outline vineros-btn-foto" title="Subir foto de tu vino" style="display:none;">🍷 Foto de mi vino</button>
     <select id="vineros-lang-select" class="vineros-lang-select" title="Idioma de traducción">
       <option value="auto">Auto</option>
       <option value="es">ES</option>
@@ -37,6 +39,24 @@
       <option value="ru">RU</option>
       <option value="hi">HI</option>
     </select>
+  </div>
+
+  <div id="feed-foto-modal" class="feed-foto-modal" hidden role="dialog" aria-labelledby="feed-foto-modal-title" aria-modal="true">
+    <div class="feed-foto-backdrop"></div>
+    <div class="feed-foto-content">
+      <h3 id="feed-foto-modal-title" class="feed-foto-title">Comparte tu vino</h3>
+      <p class="feed-foto-sub">Sube una foto de tu botella o copa y escribe un pie (opcional).</p>
+      <form id="feed-foto-form" class="feed-foto-form">
+        <input type="file" id="feed-foto-input" accept="image/jpeg,image/png,image/webp,image/gif" required aria-label="Seleccionar imagen">
+        <label for="feed-foto-caption" class="feed-foto-label">Pie de foto (opcional)</label>
+        <textarea id="feed-foto-caption" class="feed-foto-caption" rows="2" placeholder="Ej: Rioja reserva en casa" maxlength="500"></textarea>
+        <p id="feed-foto-error" class="feed-foto-error" style="display:none;"></p>
+        <div class="feed-foto-actions">
+          <button type="button" id="feed-foto-cancel" class="btn btn-outline">Cancelar</button>
+          <button type="submit" id="feed-foto-submit" class="btn btn-dorado">Publicar</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <div id="feed-sin-perfil" class="feed-sin-perfil-box" style="display:none;">

@@ -606,6 +606,28 @@
     try {
       initMapa(40.4168, -3.7038, 6);
       cargarLugaresDestacados();
+      // Geolocalización inteligente: centrar mapa por IP y buscar lugares cercanos
+      fetch('/api/ubicacion-ip', { headers: { 'Accept': 'application/json' } })
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .then(function(data) {
+          if (!data || data.lat == null || data.lon == null) return;
+          var lat = Number(data.lat);
+          var lon = Number(data.lon);
+          if (!isFinite(lat) || !isFinite(lon)) return;
+          if (data.city) lastKnownCity = data.city;
+          userCoords = { lat: lat, lon: lon };
+          if (map) map.setView([lat, lon], 12);
+          setInputFromCoords(lat, lon);
+          var estadoEl = document.getElementById('mapa-estado');
+          var zonaAprox = (estadoEl && estadoEl.getAttribute('data-text-zona-aprox')) || 'Zona aproximada';
+          var msg = (data.approx && data.city && data.country)
+            ? (zonaAprox + ': ' + data.city + ', ' + data.country + '. Buscando lugares cercanos…')
+            : (textos.buscando || 'Buscando lugares...');
+          showEstado(msg, false);
+          return buscarPorCoords(lat, lon, 5);
+        })
+        .then(function() { hideEstado(); })
+        .catch(function() {});
     } catch (err) {
       if (typeof console !== 'undefined' && console.error) console.error('[Mapa] initMapa/L:', err);
       showEstado(textos.error_init || 'No se pudo cargar el mapa. Recarga la página.', true);

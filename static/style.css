@@ -2743,8 +2743,37 @@ body.page-inicio .chatbot-guia-mascot:hover {
   object-fit: cover;
   border-radius: 50%;
 }
-.chatbot-guia-mascot-video {
-  display: block;
+.chatbot-guia-mascot-video { display: block; }
+/* Mascota definitiva: 3 frames en bucle */
+.chatbot-guia-mascot-frames {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.chatbot-guia-mascot-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.chatbot-guia-mascot-frame-1 { animation: mascota-fade-1 3s ease-in-out infinite; }
+.chatbot-guia-mascot-frame-2 { animation: mascota-fade-2 3s ease-in-out infinite; }
+.chatbot-guia-mascot-frame-3 { animation: mascota-fade-3 3s ease-in-out infinite; }
+@keyframes mascota-fade-1 {
+  0%, 100% { opacity: 1; }
+  30%, 70% { opacity: 0; }
+}
+@keyframes mascota-fade-2 {
+  0%, 28% { opacity: 0; }
+  33%, 63% { opacity: 1; }
+  68%, 100% { opacity: 0; }
+}
+@keyframes mascota-fade-3 {
+  0%, 61% { opacity: 0; }
+  66%, 97% { opacity: 1; }
+  100% { opacity: 0; }
 }
 .chatbot-guia-mascot-eyes {
   display: flex;
@@ -2893,9 +2922,22 @@ body.page-inicio .chatbot-guia-mascot:hover {
   object-fit: cover;
   border-radius: 50%;
 }
-.chatbot-guia-avatar-video {
-  display: block;
+.chatbot-guia-avatar-video { display: block; }
+/* Avatar del panel: mismos 3 frames en bucle */
+.chatbot-guia-avatar-frames {
+  position: relative;
 }
+.chatbot-guia-avatar-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.chatbot-guia-avatar-frame-1 { animation: mascota-fade-1 3s ease-in-out infinite; }
+.chatbot-guia-avatar-frame-2 { animation: mascota-fade-2 3s ease-in-out infinite; }
+.chatbot-guia-avatar-frame-3 { animation: mascota-fade-3 3s ease-in-out infinite; }
 .chatbot-guia-header-text {
   flex: 1;
   min-width: 0;

@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 
+{% block head %}
+<style>
+.perfil-avatar-wrap { display: flex; flex-direction: column; align-items: flex-start; }
+.perfil-avatar { width: 96px; height: 96px; border-radius: 50%; background: linear-gradient(135deg, rgba(212,175,55,0.5), rgba(107,45,60,0.4)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 2.2rem; color: var(--burdeos); overflow: hidden; flex-shrink: 0; }
+.perfil-avatar-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.perfil-avatar-letter { display: block; }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="perfil-container" style="max-width: 720px; margin: 0 auto; padding: 1rem;">
   <h1 class="page-title">{{ t('comunidad.perfil_publico') }}: <span id="perfil-username">{{ perfil_username }}</span></h1>
@@ -11,6 +20,13 @@
   </div>
   <div id="perfil-content" style="display:none;">
     <div id="perfil-header">
+      <div id="perfil-avatar-wrap" class="perfil-avatar-wrap" style="margin-bottom:1rem;">
+        <div id="perfil-avatar" class="perfil-avatar"></div>
+        <div id="perfil-avatar-upload" style="display:none; margin-top:0.75rem;">
+          <label for="perfil-avatar-input" class="btn btn-outline" style="cursor:pointer; display:inline-block;">Cambiar foto</label>
+          <input type="file" id="perfil-avatar-input" accept="image/jpeg,image/png,image/webp,image/gif" style="position:absolute; width:0.1px; height:0.1px; opacity:0;">
+        </div>
+      </div>
       <p id="perfil-bio"></p>
       <p id="perfil-ubicacion" class="texto-pequeno"></p>
       <p id="perfil-stats"><span id="perfil-seguidores">0</span> {{ t('comunidad.seguidores') }} · <span id="perfil-seguidos">0</span> {{ t('comunidad.seguidos') }}</p>
@@ -49,6 +65,22 @@ window.COMUNIDAD_DEJAR = "{{ t('comunidad.dejar_seguir') | e }}";
   function showError() { loading.style.display = 'none'; err.style.display = 'block'; content.style.display = 'none'; }
   function showContent() { loading.style.display = 'none'; err.style.display = 'none'; content.style.display = 'block'; }
 
+  function renderAvatar(perfil) {
+    var wrap = document.getElementById('perfil-avatar');
+    var uploadDiv = document.getElementById('perfil-avatar-upload');
+    if (!wrap) return;
+    var path = (perfil.avatar_path || '').trim();
+    var letter = (username.charAt(0) || 'V').toUpperCase();
+    if (path) {
+      wrap.innerHTML = '<img id="perfil-avatar-img" class="perfil-avatar-img" src="' + path.replace(/"/g, '&quot;') + '" alt="">';
+    } else {
+      wrap.innerHTML = '<span class="perfil-avatar-letter">' + letter + '</span>';
+    }
+    if (perfil.es_mi_perfil && uploadDiv) {
+      uploadDiv.style.display = 'block';
+    }
+  }
+
   fetch('/api/perfil/' + encodeURIComponent(username), { headers: headers })
     .then(function(r) {
       if (r.status === 404) { showError(); return null; }
@@ -57,6 +89,7 @@ window.COMUNIDAD_DEJAR = "{{ t('comunidad.dejar_seguir') | e }}";
     .then(function(perfil) {
       if (!perfil) return;
       showContent();
+      renderAvatar(perfil);
       document.getElementById('perfil-bio').textContent = perfil.bio || '';
       document.getElementById('perfil-ubicacion').textContent = perfil.ubicacion || '';
       document.getElementById('perfil-seguidores').textContent = perfil.seguidores_count || 0;
@@ -78,6 +111,26 @@ window.COMUNIDAD_DEJAR = "{{ t('comunidad.dejar_seguir') | e }}";
       }
     })
     .catch(function() { showError(); });
+
+  var avatarInput = document.getElementById('perfil-avatar-input');
+  if (avatarInput) {
+    avatarInput.addEventListener('change', function() {
+      var file = this.files && this.files[0];
+      if (!file || !file.type.match(/^image\//)) return;
+      if (file.size > 5 * 1024 * 1024) { alert('La foto no puede superar 5 MB.'); return; }
+      var fd = new FormData();
+      fd.append('avatar', file);
+      var h = { 'X-Session-ID': sid };
+      fetch('/api/mi-perfil/avatar', { method: 'POST', headers: h, body: fd })
+        .then(function(r) {
+          if (!r.ok) return r.json().then(function(d) { throw new Error(d.detail || 'Error'); });
+          return r.json();
+        })
+        .then(function() { window.location.reload(); })
+        .catch(function(e) { alert(e.message || 'No se pudo subir la foto.'); });
+      this.value = '';
+    });
+  }
 
   fetch('/api/perfil/' + encodeURIComponent(username) + '/valoraciones', { headers: { 'Accept': 'application/json' } })
     .then(function(r) { return r.json(); })

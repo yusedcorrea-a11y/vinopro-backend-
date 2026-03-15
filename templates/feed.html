@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/feed.css?v=3">
+<link rel="stylesheet" href="/static/css/feed.css?v=4">
 {% endblock %}
 
 {% block content %}
@@ -42,8 +42,8 @@
     <p class="feed-sin-perfil-text">{{ t('comunidad.feed_vacio') }}</p>
     <p class="feed-sin-perfil-cta">Crea tu perfil para ver el feed y formar parte de VINEROs.</p>
     <div class="feed-sin-perfil-actions">
-      <a href="/signup" class="btn btn-dorado">Registrarme</a>
-      <a href="/signup" class="btn btn-outline">¿Ya tienes cuenta? Iniciar sesión</a>
+      <a href="/signup?next=/comunidad/feed" class="btn btn-dorado">Registrarme</a>
+      <a href="/signup?next=/comunidad/feed" class="btn btn-outline">¿Ya tienes cuenta? Iniciar sesión</a>
     </div>
     <p class="feed-sin-perfil-bodega"><a href="/bodega">{{ t('nav.mi_bodega') }}</a></p>
   </div>
@@ -62,5 +62,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/feed.js?v=3"></script>
+<script src="/static/js/feed.js?v=4"></script>
 {% endblock %}

@@ -1,7 +1,7 @@
 """
 API de comunidad (Fase 6B): perfiles, seguir, feed, notificaciones, traducción en tiempo real.
 """
-from fastapi import APIRouter, Header, HTTPException, Request, Body
+from fastapi import APIRouter, File, Header, HTTPException, Request, Body, UploadFile
 
 from services import usuario_service as usuario_svc
 from services import seguidores_service as seg_svc
@@ -282,6 +282,31 @@ async def actualizar_mi_perfil(
     return {"ok": True}
 
 
+@router.post("/api/mi-perfil/avatar")
+async def subir_foto_perfil(
+    avatar: UploadFile = File(...),
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """Sube o cambia la foto de perfil. Máx. 5 MB. Formatos: jpeg, png, webp, gif."""
+    session_id, _ = _session_and_username(x_session_id)
+    if not avatar.filename or not (avatar.content_type or "").startswith("image/"):
+        raise HTTPException(status_code=400, detail="Envía una imagen (JPEG, PNG, WebP o GIF)")
+    content = await avatar.read()
+    if len(content) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="La foto no puede superar 5 MB")
+    from db import database as db
+    from services import auth_service as auth_svc
+    user_id = db.get_user_id_by_session(session_id)
+    if not user_id:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    path = auth_svc.save_avatar_file(content, user_id, avatar.filename)
+    if not path:
+        raise HTTPException(status_code=400, detail="Formato de imagen no válido")
+    db.update_user_avatar(user_id, path)
+    usuario_svc.actualizar_perfil(session_id, avatar_path=path)
+    return {"ok": True, "avatar_url": path}
+
+
 @router.get("/api/perfil/{username}")
 async def get_perfil_publico(
     username: str,
@@ -296,6 +321,7 @@ async def get_perfil_publico(
     out["yo_sigo"] = seg_svc.sigue_a(mi_username or "", username) if mi_username else False
     out["seguidores_count"] = len(seg_svc.get_seguidores(username))
     out["seguidos_count"] = len(seg_svc.get_seguidos(username))
+    out["es_mi_perfil"] = (mi_username or "").strip().lower() == username.strip().lower()
     return out
 
 
@@ -461,6 +487,15 @@ async def get_feed(
                         page[i]["description"] = trans_descs[k]
             except Exception:
                 pass
+
+    # Enriquecer posts con avatar_url (foto de perfil) cuando el usuario tenga avatar_path
+    for p in page:
+        username = (p.get("username") or "").strip().lower()
+        if username and p.get("post_type") != "canal":
+            perfil = usuario_svc.get_perfil_por_username(username)
+            p["avatar_url"] = (perfil.avatar_path or "").strip() if perfil and perfil.avatar_path else None
+        else:
+            p["avatar_url"] = None
 
     return {
         "canal": canal,

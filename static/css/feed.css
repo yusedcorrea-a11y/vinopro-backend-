@@ -16,8 +16,12 @@
 .vineros-card.sponsor { border-color: rgba(212,175,55,0.4); background: linear-gradient(160deg, #fffefb, #faf6ed); }
 .vineros-head { display: flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1rem; border-bottom: 1px solid rgba(0,0,0,0.06); }
 .vineros-head-left { display: flex; align-items: center; gap: 0.6rem; flex: 1; min-width: 0; }
-.vineros-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, rgba(212,175,55,0.5), rgba(107,45,60,0.4)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; color: var(--burdeos); flex-shrink: 0; }
+.vineros-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, rgba(212,175,55,0.5), rgba(107,45,60,0.4)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; color: var(--burdeos); flex-shrink: 0; overflow: hidden; }
+.vineros-avatar-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.vineros-avatar-letter { display: block; }
 .vineros-name { font-weight: 600; color: #1a1a1a; font-size: 0.95rem; line-height: 1.2; }
+.vineros-name-link { font-weight: 600; color: var(--burdeos); font-size: 0.95rem; line-height: 1.2; text-decoration: none; }
+.vineros-name-link:hover { text-decoration: underline; }
 .vineros-badge { display: inline-flex; align-items: center; gap: 0.2rem; margin-left: 0.35rem; font-size: 0.68rem; font-weight: 700; border-radius: 999px; padding: 0.1rem 0.4rem; background: rgba(212,175,55,0.25); color: #7a4e00; border: 1px solid rgba(212,175,55,0.4); }
 .vineros-head-menu { padding: 0.35rem; margin: -0.35rem 0 0 auto; border: 0; background: transparent; color: #666; font-size: 1.25rem; line-height: 1; cursor: pointer; border-radius: 4px; font-weight: 700; }
 .vineros-head-menu:hover { color: var(--burdeos); background: rgba(107,45,60,0.08); }
@@ -51,6 +55,8 @@
 [data-theme="dark"] .vineros-card { background: rgba(28,24,22,0.95); border-color: rgba(212,168,75,0.2); box-shadow: 0 1px 6px rgba(0,0,0,0.25); }
 [data-theme="dark"] .vineros-head { border-bottom-color: rgba(255,255,255,0.08); }
 [data-theme="dark"] .vineros-name { color: #f0ebe0; }
+[data-theme="dark"] .vineros-name-link { color: var(--dorado-claro); }
+[data-theme="dark"] .vineros-name-link:hover { color: var(--dorado-suave); }
 [data-theme="dark"] .vineros-head-menu { color: #b8a88a; }
 [data-theme="dark"] .vineros-head-menu:hover { color: var(--dorado-claro); background: rgba(212,168,75,0.12); }
 [data-theme="dark"] .vineros-title { color: var(--dorado-claro); }

@@ -177,11 +177,17 @@
           '<button class="vineros-btn" data-action="translate">🌐 Traducir</button>' +
           extraBtn +
         '</div>';
+    var avatarHtml = (post.avatar_url && post.post_type !== 'canal')
+      ? '<img class="vineros-avatar-img" src="' + escapeHtml(post.avatar_url) + '" alt="" loading="lazy">'
+      : '<span class="vineros-avatar-letter">' + escapeHtml(post.avatar_text || 'V') + '</span>';
+    var nameContent = (post.username && post.post_type !== 'canal')
+      ? '<a href="/comunidad/perfil/' + escapeHtml(encodeURIComponent(post.username)) + '" class="vineros-name-link">' + escapeHtml(post.username) + '</a>' + badge
+      : '<span class="vineros-name">' + escapeHtml(post.username || 'vinero') + badge + '</span>';
     card.innerHTML =
       '<div class="vineros-head">' +
         '<div class="vineros-head-left">' +
-          '<div class="vineros-avatar">' + escapeHtml(post.avatar_text || 'V') + '</div>' +
-          '<div><div class="vineros-name">' + escapeHtml(post.username || 'vinero') + badge + '</div></div>' +
+          '<div class="vineros-avatar">' + avatarHtml + '</div>' +
+          '<div>' + nameContent + '</div>' +
         '</div>' +
         '<button type="button" class="vineros-head-menu" aria-label="Más opciones" title="Más opciones">⋮</button>' +
       '</div>' +

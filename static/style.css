@@ -2704,7 +2704,8 @@ body.page-preguntar #respuesta.respuesta-sumiller .respuesta-toolbar .btn-speak 
 }
 /* Reacción al toque: rebote (en vez de flotar todo el rato) */
 .chatbot-guia-mascot--reacting {
-  animation: chatbot-guia-mascot-react 0.45s ease-out;
+  transition: none;
+  animation: chatbot-guia-mascot-react 0.5s ease-out;
 }
 @keyframes chatbot-guia-mascot-react {
   0% { transform: scale(1); }

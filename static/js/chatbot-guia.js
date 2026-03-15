@@ -98,6 +98,7 @@
     var lastTap = 0;
     var dragging = false;
     var didDrag = false;
+    var touchTapHandled = false;
     var startX = 0, startY = 0, startLeft = 0, startTop = 0;
 
     function playReaction() {
@@ -106,7 +107,7 @@
       mascot.classList.add('chatbot-guia-mascot--reacting');
       window.setTimeout(function() {
         mascot.classList.remove('chatbot-guia-mascot--reacting');
-      }, 460);
+      }, 520);
     }
 
     function getPos() {
@@ -157,6 +158,7 @@
     }
 
     mascot.addEventListener('click', function(e) {
+      if (touchTapHandled) { touchTapHandled = false; return; }
       if (didDrag) return;
       e.preventDefault();
       playReaction();
@@ -209,7 +211,14 @@
     window.addEventListener('touchmove', function(e) {
       if (e.touches.length === 1) moveDrag(e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: true });
-    window.addEventListener('touchend', endDrag);
+    window.addEventListener('touchend', function(e) {
+      if (e.changedTouches && e.changedTouches.length && !didDrag && dragging) {
+        touchTapHandled = true;
+        playReaction();
+        openOnDoubleTap();
+      }
+      endDrag();
+    });
 
     mascot.style.cursor = 'grab';
     mascot.addEventListener('mousedown', function() {

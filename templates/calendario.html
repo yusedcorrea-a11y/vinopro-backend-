@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+.page-calendario .calendario-wrap { max-width: 720px; margin: 0 auto; padding: 1rem 0.9rem 2rem; }
+.calendario-title { margin: 0 0 0.25rem 0; font-size: 1.5rem; color: var(--burdeos); }
+.calendario-sub { margin: 0 0 1rem 0; color: var(--texto-suave); font-size: 0.95rem; }
+.calendario-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.calendario-nav h2 { margin: 0; font-size: 1.25rem; color: var(--texto-principal); min-width: 140px; text-align: center; }
+.calendario-nav .btn { padding: 0.5rem 0.9rem; border-radius: 999px; font-weight: 600; font-size: 0.9rem; }
+.calendario-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 1.5rem; background: rgba(0,0,0,0.08); border-radius: 12px; overflow: hidden; border: 1px solid rgba(0,0,0,0.06); }
+.calendario-weekday { padding: 0.5rem; text-align: center; font-size: 0.75rem; font-weight: 700; color: var(--burdeos); background: rgba(255,255,255,0.9); }
+.calendario-day { min-height: 52px; padding: 0.35rem; background: #fff; font-size: 0.9rem; }
+.calendario-day.other-month { color: var(--texto-suave); opacity: 0.7; }
+.calendario-day.has-events { background: rgba(107,45,60,0.08); font-weight: 700; color: var(--burdeos); }
+.calendario-day.today { outline: 2px solid var(--burdeos); outline-offset: -2px; z-index: 1; }
+.calendario-day-num { display: block; }
+.calendario-eventos-title { margin: 1rem 0 0.5rem 0; font-size: 1.1rem; color: var(--texto-principal); }
+.calendario-eventos-list { list-style: none; padding: 0; margin: 0; }
+.calendario-eventos-list li { padding: 0.75rem 1rem; margin-bottom: 0.5rem; border-radius: 12px; background: rgba(255,255,255,0.95); border: 1px solid rgba(0,0,0,0.06); }
+.calendario-eventos-list li a { color: var(--burdeos); font-weight: 600; text-decoration: none; }
+.calendario-eventos-list li a:hover { text-decoration: underline; }
+.calendario-eventos-list .event-date { font-size: 0.8rem; color: var(--texto-suave); margin-bottom: 0.25rem; }
+.calendario-eventos-list .event-titulo { margin: 0 0 0.2rem 0; }
+.calendario-eventos-list .event-texto { font-size: 0.88rem; color: #444; margin: 0; }
+.calendario-empty { color: var(--texto-suave); font-size: 0.95rem; padding: 1rem 0; }
+[data-theme="dark"] .calendario-day { background: rgba(28,24,22,0.95); }
+[data-theme="dark"] .calendario-day.has-events { background: rgba(107,45,60,0.2); color: var(--dorado-claro); }
+[data-theme="dark"] .calendario-weekday { background: rgba(28,24,22,0.98); color: var(--dorado-claro); }
+[data-theme="dark"] .calendario-eventos-list li { background: rgba(28,24,22,0.9); border-color: rgba(255,255,255,0.08); }
+[data-theme="dark"] .calendario-eventos-list li a { color: var(--dorado-claro); }
+[data-theme="dark"] .calendario-eventos-list .event-texto { color: rgba(232,228,223,0.85); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="calendario-wrap">
+  <h1 class="calendario-title">{{ t('comunidad.calendario_title') or 'Calendario de eventos' }}</h1>
+  <p class="calendario-sub">{{ t('comunidad.calendario_sub') or 'Catas, ferias y experiencias del vino' }}</p>
+
+  <nav class="calendario-nav" aria-label="Navegación por mes">
+    <button type="button" id="cal-prev" class="btn btn-outline" aria-label="Mes anterior">←</button>
+    <h2 id="cal-month-label">—</h2>
+    <button type="button" id="cal-next" class="btn btn-outline" aria-label="Mes siguiente">→</button>
+  </nav>
+
+  <div id="calendario-grid" class="calendario-grid" role="grid" aria-label="Calendario del mes">
+    <div class="calendario-weekday">Lun</div>
+    <div class="calendario-weekday">Mar</div>
+    <div class="calendario-weekday">Mié</div>
+    <div class="calendario-weekday">Jue</div>
+    <div class="calendario-weekday">Vie</div>
+    <div class="calendario-weekday">Sáb</div>
+    <div class="calendario-weekday">Dom</div>
+    <div id="cal-days" style="grid-column: 1 / -1; display: contents;"></div>
+  </div>
+
+  <h3 class="calendario-eventos-title" id="cal-eventos-title">Eventos del mes</h3>
+  <ul id="cal-eventos-list" class="calendario-eventos-list" aria-live="polite"></ul>
+  <p id="cal-eventos-empty" class="calendario-empty" style="display:none;">No hay eventos este mes.</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  var MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  var today = new Date();
+  var currentYear = today.getFullYear();
+  var currentMonth = today.getMonth();
+  var grid = document.getElementById('cal-days');
+  var label = document.getElementById('cal-month-label');
+  var list = document.getElementById('cal-eventos-list');
+  var empty = document.getElementById('cal-eventos-empty');
+  var titleEl = document.getElementById('cal-eventos-title');
+
+  function escapeHtml(t) {
+    return String(t || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function loadMonth(year, month) {
+    var url = '/api/eventos?year=' + year + '&month=' + (month + 1);
+    fetch(url, { headers: { 'Accept': 'application/json' } })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var eventos = data.eventos || [];
+        var eventsByDate = {};
+        eventos.forEach(function(e) {
+          var d = e.date || '';
+          if (!eventsByDate[d]) eventsByDate[d] = [];
+          eventsByDate[d].push(e);
+        });
+        renderGrid(year, month, eventsByDate);
+        renderEventosList(eventos, year, month);
+        label.textContent = MONTHS[month] + ' ' + year;
+      })
+      .catch(function() {
+        grid.innerHTML = '';
+        list.innerHTML = '<li>Error al cargar eventos.</li>';
+        empty.style.display = 'none';
+      });
+  }
+
+  function renderGrid(year, month, eventsByDate) {
+    var first = new Date(year, month, 1);
+    var last = new Date(year, month + 1, 0);
+    var numDays = last.getDate();
+    var startWeekday = (first.getDay() + 6) % 7;
+    var todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+    var html = '';
+    var cell = 0;
+    for (var i = 0; i < startWeekday; i++) {
+      var prevMonth = month === 0 ? 11 : month - 1;
+      var prevYear = month === 0 ? year - 1 : year;
+      var prevLast = new Date(prevYear, prevMonth + 1, 0).getDate();
+      var d = prevLast - startWeekday + i + 1;
+      html += '<div class="calendario-day other-month"><span class="calendario-day-num">' + d + '</span></div>';
+      cell++;
+    }
+    for (var day = 1; day <= numDays; day++) {
+      var dateStr = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+      var hasEvents = eventsByDate[dateStr] && eventsByDate[dateStr].length > 0;
+      var isToday = dateStr === todayStr;
+      var cls = 'calendario-day';
+      if (hasEvents) cls += ' has-events';
+      if (isToday) cls += ' today';
+      html += '<div class="' + cls + '" data-date="' + escapeHtml(dateStr) + '"><span class="calendario-day-num">' + day + '</span></div>';
+      cell++;
+    }
+    var remaining = cell % 7;
+    if (remaining) {
+      for (var j = 0; j < 7 - remaining; j++) {
+        html += '<div class="calendario-day other-month"><span class="calendario-day-num">' + (j + 1) + '</span></div>';
+      }
+    }
+    grid.innerHTML = html;
+  }
+
+  function renderEventosList(eventos, year, month) {
+    if (!eventos.length) {
+      list.innerHTML = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+    var html = '';
+    eventos.forEach(function(e) {
+      var titulo = escapeHtml(e.titulo || 'Evento');
+      var texto = escapeHtml((e.texto || '').substring(0, 120));
+      var link = (e.link || '').trim();
+      var linkHtml = link ? '<a href="' + escapeHtml(link) + '" target="_blank" rel="noopener">' + titulo + '</a>' : '<span>' + titulo + '</span>';
+      html += '<li><div class="event-date">' + (e.date || '') + (e.username ? ' · ' + escapeHtml(e.username) : '') + '</div><div class="event-titulo">' + linkHtml + '</div>' + (texto ? '<p class="event-texto">' + texto + '</p>' : '') + '</li>';
+    });
+    list.innerHTML = html;
+    titleEl.textContent = 'Eventos del mes';
+  }
+
+  document.getElementById('cal-prev').addEventListener('click', function() {
+    currentMonth--;
+    if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+    loadMonth(currentYear, currentMonth);
+  });
+  document.getElementById('cal-next').addEventListener('click', function() {
+    currentMonth++;
+    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    loadMonth(currentYear, currentMonth);
+  });
+
+  loadMonth(currentYear, currentMonth);
+})();
+</script>
+{% endblock %}

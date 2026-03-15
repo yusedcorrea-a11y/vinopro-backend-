@@ -169,10 +169,13 @@
     } else if (post.vino_detalle) {
       extraBtn = '<button class="vineros-btn primary" data-action="bodega">Ver en Bodega</button>';
     }
+    var brindisLabel = (post.yo_brindi ? 'Brindaste' : '🍷 Brindar') + (post.brindis_count ? ' (' + post.brindis_count + ')' : '');
+    var brindisCls = 'vineros-btn' + (post.yo_brindi ? ' brindaste' : '');
+    var brindisExtra = post.yo_brindi ? ' data-yo-brindi="1" disabled' : '';
     var actionsHtml = isNoticias
       ? '<div class="vineros-actions">' + (post.link ? ('<a class="vineros-btn primary" href="' + escapeHtml(post.link) + '" target="_blank" rel="noopener">Leer más</a>') : '') + '</div>'
       : '<div class="vineros-actions">' +
-          '<button class="vineros-btn" data-action="brindar">🍷 Brindar ' + (post.brindis_count ? '(' + post.brindis_count + ')' : '') + '</button>' +
+          '<button class="' + brindisCls + '" data-action="brindar" data-post-id="' + escapeHtml(post.id || '') + '" data-count="' + (post.brindis_count || 0) + '"' + brindisExtra + '>' + brindisLabel + '</button>' +
           '<button class="vineros-btn" data-action="comentar">Comentar ' + (post.comentarios_count ? '(' + post.comentarios_count + ')' : '') + '</button>' +
           '<button class="vineros-btn" data-action="translate">🌐 Traducir</button>' +
           extraBtn +
@@ -211,9 +214,27 @@
         if (!btn) return;
         var action = btn.getAttribute('data-action');
         if (action === 'brindar') {
-          var n = parseInt((btn.getAttribute('data-count') || '0'), 10) + 1;
-          btn.setAttribute('data-count', String(n));
-          btn.textContent = '🍷 Brindar (' + n + ')';
+          if (btn.getAttribute('data-yo-brindi') === '1') return;
+          var postId = btn.getAttribute('data-post-id');
+          if (!postId) return;
+          var headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' };
+          if (sid) headers['X-Session-ID'] = sid;
+          fetch('/api/feed/post/' + encodeURIComponent(postId) + '/brindis', { method: 'POST', headers: headers })
+            .then(function(r) { return r.json().then(function(data) { return { ok: r.ok, data: data }; }); })
+            .then(function(res) {
+              var data = res.data;
+              if (res.ok && data.ok === true) {
+                var n = data.brindis_count || 0;
+                btn.setAttribute('data-count', String(n));
+                btn.setAttribute('data-yo-brindi', '1');
+                btn.textContent = 'Brindaste' + (n ? ' (' + n + ')' : '');
+                btn.classList.add('brindaste');
+                btn.disabled = true;
+              } else if (data.detail) {
+                window.alert(data.detail);
+              }
+            })
+            .catch(function() {});
           return;
         }
         if (action === 'comentar') {

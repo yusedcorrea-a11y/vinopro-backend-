@@ -50,6 +50,10 @@
 .feed-tab { flex: 0 0 auto; padding: 0.5rem 0.75rem; border-radius: 999px; border: 1px solid rgba(107,45,60,0.25); background: rgba(255,255,255,0.9); color: var(--burdeos); font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .feed-tab:hover { background: rgba(107,45,60,0.08); }
 .feed-tab.active { background: var(--burdeos); color: #fff; border-color: var(--burdeos); }
+.feed-tab-link { text-decoration: none; }
+.vineros-btn.brindaste { cursor: default; opacity: 0.9; }
+.vineros-btn.brindaste:hover { background: inherit; }
+.vineros-btn[disabled] { cursor: default; opacity: 0.85; }
 .ad-slot { min-height: 70px; margin: 0.75rem 0; padding: 0.75rem; border: 1px dashed rgba(107,45,60,0.2); border-radius: 12px; background: rgba(107,45,60,0.04); display: flex; align-items: center; justify-content: center; color: var(--texto-suave); font-size: 0.8rem; }
 
 [data-theme="dark"] .vineros-card { background: rgba(28,24,22,0.95); border-color: rgba(212,168,75,0.2); box-shadow: 0 1px 6px rgba(0,0,0,0.25); }
@@ -65,6 +69,7 @@
 [data-theme="dark"] .vineros-btn.primary { background: rgba(212,175,55,0.3); color: var(--dorado-claro); border-color: rgba(212,175,55,0.5); }
 [data-theme="dark"] .feed-tab { background: rgba(26,21,18,0.8); color: var(--dorado-claro); border-color: rgba(212,168,75,0.3); }
 [data-theme="dark"] .feed-tab.active { background: rgba(212,175,55,0.35); color: var(--dorado-claro); border-color: rgba(212,175,55,0.5); }
+[data-theme="dark"] .vineros-btn.brindaste { opacity: 0.9; }
 [data-theme="dark"] .ad-slot { border-color: rgba(212,168,75,0.2); background: rgba(26,21,18,0.4); color: #d4c3a6; }
 [data-theme="dark"] .vineros-lang-select { background: rgba(26,21,18,0.85); color: var(--dorado-claro); border-color: rgba(212,168,75,0.3); }
 [data-theme="dark"] .vineros-story-avatar { background: rgba(26,21,18,0.9); color: var(--dorado-claro); }

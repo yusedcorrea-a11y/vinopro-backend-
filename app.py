@@ -469,6 +469,12 @@ def pagina_perfil(request: Request, username: str):
     return render_page(request, "perfil.html", page_class="page-perfil", active_page="comunidad", perfil_username=username)
 
 
+@app.get("/comunidad/calendario", response_class=HTMLResponse)
+def pagina_calendario(request: Request):
+    """Calendario de eventos del vino (catas, ferias, experiencias)."""
+    return render_page(request, "calendario.html", page_class="page-calendario", active_page="comunidad")
+
+
 @app.post("/api/landing-notify")
 async def landing_notify(request: Request):
     """Registra email para avisar cuando la app esté en Google Play. Guarda en data/notificaciones_landing.json."""

@@ -1,6 +1,7 @@
 """
 API de comunidad (Fase 6B): perfiles, seguir, feed, notificaciones, traducción en tiempo real.
 """
+from datetime import date, datetime
 from fastapi import APIRouter, File, Header, HTTPException, Request, Body, UploadFile
 
 from services import usuario_service as usuario_svc
@@ -12,6 +13,7 @@ from services import wishlist_service as wish_svc
 from services import translation_service as translation_svc
 from services import chat_service as chat_svc
 from services import news_service as news_svc
+from services import brindis_service as brindis_svc
 
 router = APIRouter(prefix="", tags=["Comunidad"])
 
@@ -497,6 +499,15 @@ async def get_feed(
         else:
             p["avatar_url"] = None
 
+    # Brindis persistidos: count y si el usuario actual ya brindó
+    for p in page:
+        pid = (p.get("id") or "").strip()
+        if pid:
+            p["brindis_count"] = brindis_svc.get_count(pid)
+            p["yo_brindi"] = brindis_svc.yo_brindi(pid, mi_username or "") if mi_username else False
+        else:
+            p["yo_brindi"] = False
+
     return {
         "canal": canal,
         "actividad": actividad,
@@ -508,6 +519,66 @@ async def get_feed(
         "has_more": has_more,
         "total": len(dedup),
     }
+
+
+@router.post("/api/feed/post/{post_id}/brindis")
+async def post_brindis(
+    post_id: str,
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """
+    Registra un brindis del usuario actual en el post. Un usuario solo cuenta una vez por post.
+    Requiere sesión (perfil de comunidad). Devuelve el nuevo brindis_count y si acabas de brindar.
+    """
+    _, mi_username = _session_and_username(x_session_id)
+    if not mi_username:
+        raise HTTPException(status_code=400, detail="Necesitas un perfil para brindar")
+    post_id = (post_id or "").strip()
+    if not post_id:
+        raise HTTPException(status_code=400, detail="post_id requerido")
+    count = brindis_svc.add_brindis(post_id, mi_username)
+    return {"ok": True, "brindis_count": count, "yo_brindi": True}
+
+
+@router.get("/api/eventos")
+def get_eventos_calendario(year: int | None = None, month: int | None = None):
+    """
+    Eventos del vino para vista calendario. Opcional: year y month (1-12).
+    Si no se pasan, se usa el mes actual. Devuelve eventos con date (YYYY-MM-DD) para agrupar por día.
+    """
+    today = date.today()
+    y = year if year is not None else today.year
+    m = month if month is not None else today.month
+    m = max(1, min(12, m))
+    out = []
+    for e in feed_svc.get_eventos_destacados(limit=100):
+        ts = e.get("created_at") or 0
+        d = datetime.utcfromtimestamp(ts).date() if ts else today
+        if d.year == y and d.month == m:
+            out.append({
+                "id": e.get("id"),
+                "titulo": (e.get("titulo") or "Evento").strip(),
+                "texto": (e.get("texto") or "").strip(),
+                "link": (e.get("link") or "").strip(),
+                "created_at": ts,
+                "date": d.strftime("%Y-%m-%d"),
+                "username": (e.get("username") or "").strip(),
+            })
+    for e in feed_svc.get_contenido_canal("eventos", limit=50):
+        ts = e.get("created_at") or 0
+        d = datetime.utcfromtimestamp(ts).date() if ts else today
+        if d.year == y and d.month == m:
+            out.append({
+                "id": e.get("id") or f"canal-{ts}",
+                "titulo": (e.get("titulo") or "Evento").strip(),
+                "texto": (e.get("descripcion") or "").strip(),
+                "link": (e.get("link") or "").strip(),
+                "created_at": ts,
+                "date": d.strftime("%Y-%m-%d"),
+                "username": (e.get("fuente") or "VINO PRO").strip(),
+            })
+    out.sort(key=lambda x: (x["date"], -x["created_at"]))
+    return {"year": y, "month": m, "eventos": out}
 
 
 @router.get("/api/noticias")

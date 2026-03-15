@@ -19,6 +19,7 @@
   <meta name="twitter:title" content="VINO PRO IA - {{ t('common.tagline') }}">
   <meta name="twitter:description" content="{% block twitter_description %}Escanea, registra y pregunta sobre vinos. Tu experto en vinos con IA.{% endblock %}">
   <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="preload" href="{{ base_url_str }}/static/images/mascota/mascota-1.png?v=3" as="image">
   <link rel="stylesheet" href="/static/style.css?v=1.0.11">
   <script src="/static/app.js?v=1.0.5"></script>
   {% block head %}{% endblock %}
@@ -248,9 +249,9 @@
 
   <div id="chatbot-guia-mascot" class="chatbot-guia-mascot" role="button" tabindex="0" aria-label="Ayudante experto en vinos: arrastra para mover, doble toque para abrir la guía o doble clic para abrir el menú">
     <div class="chatbot-guia-mascot-face chatbot-guia-mascot-frames" aria-hidden="true">
-      <img src="/static/images/mascota/mascota-1.png" alt="" class="chatbot-guia-mascot-frame chatbot-guia-mascot-frame-1">
-      <img src="/static/images/mascota/mascota-2.png" alt="" class="chatbot-guia-mascot-frame chatbot-guia-mascot-frame-2">
-      <img src="/static/images/mascota/mascota-3.png" alt="" class="chatbot-guia-mascot-frame chatbot-guia-mascot-frame-3">
+      <img src="{{ base_url_str }}/static/images/mascota/mascota-1.png?v=3" alt="" class="chatbot-guia-mascot-frame chatbot-guia-mascot-frame-1">
+      <img src="{{ base_url_str }}/static/images/mascota/mascota-2.png?v=3" alt="" class="chatbot-guia-mascot-frame chatbot-guia-mascot-frame-2">
+      <img src="{{ base_url_str }}/static/images/mascota/mascota-3.png?v=3" alt="" class="chatbot-guia-mascot-frame chatbot-guia-mascot-frame-3">
     </div>
   </div>
   <div id="chatbot-guia-backdrop" class="chatbot-guia-backdrop chatbot-guia-backdrop--closed" aria-hidden="true"></div>
@@ -258,9 +259,9 @@
     <div class="chatbot-guia-panel-inner">
       <div class="chatbot-guia-header">
         <div class="chatbot-guia-avatar chatbot-guia-avatar-frames" aria-hidden="true">
-          <img src="/static/images/mascota/mascota-1.png" alt="" class="chatbot-guia-avatar-frame chatbot-guia-avatar-frame-1">
-          <img src="/static/images/mascota/mascota-2.png" alt="" class="chatbot-guia-avatar-frame chatbot-guia-avatar-frame-2">
-          <img src="/static/images/mascota/mascota-3.png" alt="" class="chatbot-guia-avatar-frame chatbot-guia-avatar-frame-3">
+          <img src="{{ base_url_str }}/static/images/mascota/mascota-1.png?v=3" alt="" class="chatbot-guia-avatar-frame chatbot-guia-avatar-frame-1">
+          <img src="{{ base_url_str }}/static/images/mascota/mascota-2.png?v=3" alt="" class="chatbot-guia-avatar-frame chatbot-guia-avatar-frame-2">
+          <img src="{{ base_url_str }}/static/images/mascota/mascota-3.png?v=3" alt="" class="chatbot-guia-avatar-frame chatbot-guia-avatar-frame-3">
         </div>
         <div class="chatbot-guia-header-text">
           <h2 id="chatbot-guia-title" class="chatbot-guia-title">Guía de la app</h2>

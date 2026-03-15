@@ -2728,13 +2728,23 @@ body.page-inicio .chatbot-guia-mascot:hover {
 }
 .chatbot-guia-mascot-face {
   position: relative;
-  width: 82%;
-  height: 82%;
+  width: 100%;
+  height: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-top: 2%;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.chatbot-guia-mascot-img,
+.chatbot-guia-mascot-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.chatbot-guia-mascot-video {
+  display: block;
 }
 .chatbot-guia-mascot-eyes {
   display: flex;
@@ -2874,6 +2884,17 @@ body.page-inicio .chatbot-guia-mascot:hover {
   justify-content: center;
   font-size: 1.6rem;
   flex-shrink: 0;
+  overflow: hidden;
+}
+.chatbot-guia-avatar-img,
+.chatbot-guia-avatar-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.chatbot-guia-avatar-video {
+  display: block;
 }
 .chatbot-guia-header-text {
   flex: 1;

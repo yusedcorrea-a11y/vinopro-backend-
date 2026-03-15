@@ -97,7 +97,17 @@
   function initMascot(mascot) {
     var lastTap = 0;
     var dragging = false;
+    var didDrag = false;
     var startX = 0, startY = 0, startLeft = 0, startTop = 0;
+
+    function playReaction() {
+      mascot.classList.remove('chatbot-guia-mascot--reacting');
+      mascot.offsetHeight;
+      mascot.classList.add('chatbot-guia-mascot--reacting');
+      window.setTimeout(function() {
+        mascot.classList.remove('chatbot-guia-mascot--reacting');
+      }, 460);
+    }
 
     function getPos() {
       var l = parseInt(mascot.style.left, 10), t = parseInt(mascot.style.top, 10);
@@ -147,23 +157,27 @@
     }
 
     mascot.addEventListener('click', function(e) {
-      if (dragging) return;
+      if (didDrag) return;
       e.preventDefault();
+      playReaction();
       openOnDoubleTap();
     });
     mascot.addEventListener('dblclick', function(e) {
       e.preventDefault();
+      if (!didDrag) playReaction();
       openPanel();
     });
     mascot.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
+        playReaction();
         openOnDoubleTap();
       }
     });
 
     function startDrag(clientX, clientY) {
       dragging = true;
+      didDrag = false;
       lastTap = 0;
       var p = getPos();
       startLeft = p.left;
@@ -173,6 +187,7 @@
     }
     function moveDrag(clientX, clientY) {
       if (!dragging) return;
+      didDrag = true;
       applyPos(startLeft + (clientX - startX), startTop + (clientY - startY));
     }
     function endDrag() {

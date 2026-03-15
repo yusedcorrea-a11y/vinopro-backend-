@@ -2683,7 +2683,7 @@ body.page-preguntar #respuesta.respuesta-sumiller .respuesta-toolbar .btn-speak 
   visibility: hidden;
   pointer-events: none;
 }
-/* Mascota flotante: carita con pajarita — arrastrable, doble toque abre */
+/* Mascota flotante: quieta por defecto, reacciona al toque (doble toque abre panel) */
 .chatbot-guia-mascot {
   position: fixed;
   bottom: 1.5rem;
@@ -2699,9 +2699,19 @@ body.page-preguntar #respuesta.respuesta-sumiller .respuesta-toolbar .btn-speak 
   border: 3px solid var(--dorado);
   box-shadow: 0 4px 20px rgba(107, 45, 60, 0.2), 0 0 0 0 rgba(184, 134, 11, 0.3), inset 0 1px 0 rgba(255,255,255,0.8);
   transition: transform 0.2s ease, box-shadow 0.3s ease;
-  animation: chatbot-guia-mascot-float 3s ease-in-out infinite;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+}
+/* Reacción al toque: rebote (en vez de flotar todo el rato) */
+.chatbot-guia-mascot--reacting {
+  animation: chatbot-guia-mascot-react 0.45s ease-out;
+}
+@keyframes chatbot-guia-mascot-react {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.18); }
+  50% { transform: scale(0.96); }
+  70% { transform: scale(1.06); }
+  100% { transform: scale(1); }
 }
 /* En página inicio: mascota flotando sin círculo duro (fondo semitransparente) */
 body.page-inicio .chatbot-guia-mascot {
@@ -2714,9 +2724,11 @@ body.page-inicio .chatbot-guia-mascot:hover {
   box-shadow: 0 8px 28px rgba(184, 134, 11, 0.25);
 }
 .chatbot-guia-mascot:hover {
-  transform: scale(1.1);
+  transform: scale(1.08);
   box-shadow: 0 8px 28px rgba(184, 134, 11, 0.3), 0 0 0 4px rgba(184, 134, 11, 0.12);
-  animation: none;
+}
+.chatbot-guia-mascot--reacting:hover {
+  transform: scale(1);
 }
 .chatbot-guia-mascot:hover .chatbot-guia-mascot-smile {
   transform: scaleX(1.15);

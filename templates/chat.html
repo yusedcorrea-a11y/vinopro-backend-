@@ -2,46 +2,39 @@
 
 {% block head %}
 <style>
-  /* Fondo: vídeo animado + overlay para legibilidad. Fallback gradiente si el vídeo no carga. */
-  body.page-chat { position: relative; min-height: 100vh; }
+  /* Solo nuestro fondo (vídeo) a pantalla completa. Sin overlay global; solo el panel del chat con cristal para legibilidad. */
+  body.page-chat { position: relative; min-height: 100vh; background: transparent !important; }
   .chat-video-bg {
     position: fixed;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    z-index: 0.4;
-    pointer-events: none;
-  }
-  body.page-chat::before {
-    content: '';
-    position: fixed;
-    inset: 0;
     z-index: 0;
-    background: linear-gradient(180deg, #2d4a2d 0%, #1e3520 100%);
     pointer-events: none;
   }
-  body.page-chat::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    background: linear-gradient(180deg,
-      rgba(255,252,248,0.72) 0%,
-      rgba(250,252,246,0.76) 30%,
-      rgba(244,250,240,0.8) 60%,
-      rgba(240,248,235,0.84) 100%);
-    pointer-events: none;
-  }
-  [data-theme="dark"] body.page-chat::before {
-    background: linear-gradient(180deg, #162318 0%, #0a120c 100%);
-  }
-  [data-theme="dark"] body.page-chat::after {
-    background: linear-gradient(180deg, rgba(22,28,24,0.88) 0%, rgba(18,24,20,0.92) 50%, rgba(14,20,16,0.95) 100%);
-    pointer-events: none;
-  }
+  body.page-chat::before,
+  body.page-chat::after { display: none !important; content: none !important; }
 
-  .chat-wrap { position: relative; z-index: 2; max-width: 680px; margin: 0 auto; padding: 1rem 0.9rem 2rem; min-height: 100vh; display: flex; flex-direction: column; }
+  .chat-wrap {
+    position: relative;
+    z-index: 2;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 1rem 0.9rem 2rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: rgba(255,252,248,0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 0 20px 20px 0;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.06);
+  }
+  [data-theme="dark"] .chat-wrap {
+    background: rgba(22,26,24,0.78);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.2);
+  }
   .chat-lang-row { display: flex; justify-content: flex-end; margin-bottom: 0.75rem; }
   .chat-lang-select {
     border: 1px solid rgba(107,45,60,0.3); border-radius: 999px;

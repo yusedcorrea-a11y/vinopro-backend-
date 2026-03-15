@@ -551,6 +551,26 @@ body.page-bodega main {
 body.page-bodega main::before {
   display: none;
 }
+/* Chat: solo fondo de vídeo a pantalla completa; main sin fondo */
+body.page-chat main {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  max-width: none !important;
+  padding: 0 !important;
+}
+body.page-chat main::before {
+  display: none !important;
+  content: none !important;
+}
+body.page-chat .header-minimal {
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
 body.page-bodega .bodega-container {
   background: transparent;
   backdrop-filter: blur(8px);

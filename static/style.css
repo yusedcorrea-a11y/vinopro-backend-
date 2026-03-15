@@ -2775,6 +2775,21 @@ body.page-inicio .chatbot-guia-mascot:hover {
   66%, 97% { opacity: 1; }
   100% { opacity: 0; }
 }
+/* Fallback a video cuando las imágenes no cargan (404 en producción, etc.) */
+.chatbot-guia-mascot-video-fallback,
+.chatbot-guia-avatar-video-fallback {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.chatbot-guia-mascot-face--video-fallback .chatbot-guia-mascot-frames { display: none; }
+.chatbot-guia-mascot-face--video-fallback .chatbot-guia-mascot-video-fallback { display: block; }
+.chatbot-guia-mascot-face--video-fallback .chatbot-guia-avatar-frames { display: none; }
+.chatbot-guia-mascot-face--video-fallback .chatbot-guia-avatar-video-fallback { display: block; }
 .chatbot-guia-mascot-eyes {
   display: flex;
   align-items: center;

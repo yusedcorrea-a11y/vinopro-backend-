@@ -2689,12 +2689,12 @@ body.page-preguntar #respuesta.respuesta-sumiller .respuesta-toolbar .btn-speak 
   bottom: 1.5rem;
   right: 1.5rem;
   z-index: 998;
-  width: 88px;
-  height: 88px;
+  width: 72px;
+  height: 72px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 16px;
+  border-radius: 50%;
   background: linear-gradient(160deg, #fff 0%, #f8f2e8 45%, #f0e6d8 100%);
   border: 3px solid var(--dorado);
   box-shadow: 0 4px 20px rgba(107, 45, 60, 0.2), 0 0 0 0 rgba(184, 134, 11, 0.3), inset 0 1px 0 rgba(255,255,255,0.8);
@@ -2733,18 +2733,18 @@ body.page-inicio .chatbot-guia-mascot:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 14px;
+  border-radius: 50%;
   overflow: hidden;
 }
 .chatbot-guia-mascot-img,
 .chatbot-guia-mascot-video {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  border-radius: 14px;
+  object-fit: cover;
+  border-radius: 50%;
 }
 .chatbot-guia-mascot-video { display: block; }
-/* Mascota definitiva: 3 frames en bucle — imagen completa (sin recorte circular) */
+/* Mascota definitiva: 3 frames en bucle */
 .chatbot-guia-mascot-frames {
   position: relative;
   width: 100%;
@@ -2755,8 +2755,8 @@ body.page-inicio .chatbot-guia-mascot:hover {
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  border-radius: 14px;
+  object-fit: cover;
+  border-radius: 50%;
 }
 .chatbot-guia-mascot-frame-1 { animation: mascota-fade-1 3s ease-in-out infinite; }
 .chatbot-guia-mascot-frame-2 { animation: mascota-fade-2 3s ease-in-out infinite; }
@@ -2906,10 +2906,9 @@ body.page-inicio .chatbot-guia-mascot:hover {
 .chatbot-guia-avatar {
   width: 48px;
   height: 48px;
-  border-radius: 12px;
+  border-radius: 50%;
   background: rgba(255,255,255,0.2);
   display: flex;
-  overflow: hidden;
   align-items: center;
   justify-content: center;
   font-size: 1.6rem;
@@ -2920,11 +2919,11 @@ body.page-inicio .chatbot-guia-mascot:hover {
 .chatbot-guia-avatar-video {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  border-radius: 12px;
+  object-fit: cover;
+  border-radius: 50%;
 }
 .chatbot-guia-avatar-video { display: block; }
-/* Avatar del panel: mismos 3 frames en bucle — imagen completa */
+/* Avatar del panel: mismos 3 frames en bucle */
 .chatbot-guia-avatar-frames {
   position: relative;
 }
@@ -2933,8 +2932,8 @@ body.page-inicio .chatbot-guia-mascot:hover {
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  border-radius: 12px;
+  object-fit: cover;
+  border-radius: 50%;
 }
 .chatbot-guia-avatar-frame-1 { animation: mascota-fade-1 3s ease-in-out infinite; }
 .chatbot-guia-avatar-frame-2 { animation: mascota-fade-2 3s ease-in-out infinite; }
@@ -3178,7 +3177,7 @@ body.page-inicio .chatbot-guia-mascot:hover {
 
 @media (max-width: 600px) {
   .chatbot-guia-panel { max-width: 100%; }
-  .chatbot-guia-mascot { bottom: 0.75rem; right: 0.75rem; width: 72px; height: 72px; border-radius: 12px; }
+  .chatbot-guia-mascot { bottom: 0.75rem; right: 0.75rem; width: 60px; height: 60px; }
   .chatbot-guia-mascot-eye { width: 14px; height: 16px; }
   .chatbot-guia-mascot-pupil { width: 8px; height: 8px; }
   .chatbot-guia-mascot-shine { width: 4px; height: 4px; right: 2px; top: 3px; }

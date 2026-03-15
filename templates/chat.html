@@ -2,23 +2,23 @@
 
 {% block head %}
 <style>
-  /* Fondo viñedo al amanecer: mucho verde, luz suave, tranquilidad. Overlay para que el texto no se opaque. */
+  /* Fondo: vídeo animado + overlay para legibilidad. Fallback gradiente si el vídeo no carga. */
   body.page-chat { position: relative; min-height: 100vh; }
+  .chat-video-bg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0.4;
+    pointer-events: none;
+  }
   body.page-chat::before {
     content: '';
     position: fixed;
     inset: 0;
     z-index: 0;
-    background:
-      linear-gradient(180deg,
-        #d4c8a8 0%,
-        #b8c9a8 8%,
-        #9ab892 20%,
-        #6b8f65 40%,
-        #4a6b4a 60%,
-        #2d4a2d 80%,
-        #1e3520 100%);
-    background-color: #4a6b4a;
+    background: linear-gradient(180deg, #2d4a2d 0%, #1e3520 100%);
     pointer-events: none;
   }
   body.page-chat::after {
@@ -34,14 +34,7 @@
     pointer-events: none;
   }
   [data-theme="dark"] body.page-chat::before {
-    background:
-      linear-gradient(180deg,
-        #2a3d28 0%,
-        #1e3020 25%,
-        #162318 50%,
-        #0f1a12 75%,
-        #0a120c 100%);
-    background-color: #162318;
+    background: linear-gradient(180deg, #162318 0%, #0a120c 100%);
   }
   [data-theme="dark"] body.page-chat::after {
     background: linear-gradient(180deg, rgba(22,28,24,0.88) 0%, rgba(18,24,20,0.92) 50%, rgba(14,20,16,0.95) 100%);
@@ -288,6 +281,7 @@
 {% endblock %}
 
 {% block content %}
+<video class="chat-video-bg" src="/static/videos/fondo-chat.mp4" autoplay muted loop playsinline aria-hidden="true"></video>
 <div class="chat-wrap">
   <h1 class="page-title">{{ t('comunidad.chat_titulo') }}</h1>
   <p class="page-subtitle">{{ t('comunidad.chat_subtitulo') }}</p>

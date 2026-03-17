@@ -6,6 +6,7 @@ Usa la misma GOOGLE_API_KEY que el escáner y la traducción.
 - Al monetizar: en Render → Variables → SUMILLER_AI_MODEL = gemini-1.5-pro (o gemini-2.5-pro)
   para respuestas más ricas y mejor contexto.
 """
+import json
 import logging
 import os
 
@@ -40,6 +41,9 @@ def _vino_a_texto(vino: dict) -> str:
         partes.append(f"Nombre: {vino.get('nombre')}")
     if vino.get("bodega"):
         partes.append(f"Bodega: {vino.get('bodega')}")
+    anada = vino.get("anada") or vino.get("añada") or vino.get("cosecha")
+    if anada is not None and str(anada).strip():
+        partes.append(f"Añada (edad/cosecha): {anada}")
     if vino.get("tipo"):
         partes.append(f"Tipo: {vino.get('tipo')}")
     if vino.get("region") or vino.get("pais"):
@@ -97,6 +101,73 @@ Reglas: Responde en español, en 2-4 frases. {perfil_instruccion}
     except Exception as e:
         logger.warning("[SumillerGemini] Error en responder_sobre_vino: %s", e)
         return None
+
+
+def buscar_vino_en_nube(pregunta_o_nombre: str, perfil: str = "aficionado") -> tuple[str | None, dict | None]:
+    """
+    Busca un vino en la nube (conocimiento de Gemini) cuando no está en la base local.
+    Devuelve (respuesta_texto, vino_dict).
+    - respuesta_texto: respuesta del sumiller en español (2-4 frases).
+    - vino_dict: ficha del vino para guardar en BD local (nombre, bodega, tipo, etc.) o None si Gemini no pudo identificar el vino.
+    Si no hay API key o falla, devuelve (None, None).
+    """
+    client, types = _get_client()
+    if not client or not types:
+        return None, None
+    texto = (pregunta_o_nombre or "").strip()
+    if not texto:
+        return None, None
+    perfil_instruccion = {
+        "principiante": "Explica de forma sencilla.",
+        "aficionado": "Tono cercano y útil.",
+        "profesional": "Puedes usar lenguaje técnico.",
+    }.get(perfil, "Tono cercano y útil.")
+    prompt = f"""El usuario pregunta sobre un vino que podría no estar en nuestra base de datos local. Usa tu conocimiento para:
+1) Dar una respuesta breve de sumiller (2-4 frases) en español. {perfil_instruccion}
+2) Si identificas el vino con claridad, añade al final una línea que empiece exactamente con VINO_JSON= y después un JSON válido (sin saltos de línea dentro) con estas claves: nombre, bodega, anada (año de cosecha, 4 dígitos, ej. 2019; muy importante para no confundir distintas añadas del mismo vino), tipo, region, pais, maridaje, descripcion, notas_cata, precio_estimado. Usa strings salvo anada que puede ser número; si no conoces un campo, usa "".
+Si no puedes identificar el vino, responde solo con la respuesta de sumiller y no pongas VINO_JSON.
+
+Pregunta o nombre del vino: {texto}"""
+    try:
+        response = client.models.generate_content(
+            model=MODELO_SUMILLER,
+            contents=[types.Part.from_text(text=prompt)],
+            config=types.GenerateContentConfig(
+                max_output_tokens=500,
+                temperature=TEMPERATURE,
+            ),
+        )
+        text = (getattr(response, "text", None) or "").strip()
+        if not text and getattr(response, "candidates", None):
+            c0 = response.candidates[0]
+            if c0.content and c0.content.parts:
+                text = (getattr(c0.content.parts[0], "text", None) or "").strip()
+        if not text:
+            return None, None
+        respuesta = text
+        vino = None
+        if "VINO_JSON=" in text:
+            try:
+                idx = text.index("VINO_JSON=") + len("VINO_JSON=")
+                raw_line = text[idx:].strip().split("\n")[0].strip()
+                # Extraer JSON aunque Gemini añada texto o markdown: primer { hasta último }
+                start = raw_line.find("{")
+                end = raw_line.rfind("}")
+                if start != -1 and end != -1 and end > start:
+                    json_str = raw_line[start : end + 1]
+                else:
+                    json_str = raw_line
+                vino = json.loads(json_str)
+                if isinstance(vino, dict) and (vino.get("nombre") or vino.get("bodega")):
+                    respuesta = text[:text.index("VINO_JSON=")].strip()
+                else:
+                    vino = None
+            except (json.JSONDecodeError, ValueError):
+                pass
+        return respuesta, vino
+    except Exception as e:
+        logger.warning("[SumillerGemini] Error en buscar_vino_en_nube: %s", e)
+        return None, None
 
 
 def reescribir_respuesta_sumiller(pregunta_usuario: str, respuesta_actual: str, perfil: str = "aficionado") -> str | None:

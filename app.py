@@ -2,6 +2,7 @@ import asyncio
 import json
 import os
 import time
+import uuid
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from pathlib import Path
@@ -194,7 +195,10 @@ def cargar_todos_los_vinos():
         'canales_feed.json',    # contenido de canales noticias/eventos/enoturismo
     }
     archivos = [f for f in os.listdir(DATA_FOLDER) if f.endswith('.json') and f not in excluir]
-    
+    # Cargar vinos_aprendidos al final para que los aprendidos por Gemini (nube) estén disponibles offline
+    if 'vinos_aprendidos.json' in archivos:
+        archivos = [f for f in archivos if f != 'vinos_aprendidos.json'] + ['vinos_aprendidos.json']
+
     for archivo in archivos:
         ruta = os.path.join(DATA_FOLDER, archivo)
         try:
@@ -204,7 +208,7 @@ def cargar_todos_los_vinos():
                 print(f"[OK] Cargado {archivo}: {len(data)} vinos")
         except Exception as e:
             print(f"[ERROR] Cargando {archivo}: {e}")
-    
+
     return vinos
 
 # Cargar vinos al iniciar (encoding UTF-8 ya usado en open() para ñ y acentos)
@@ -568,13 +572,19 @@ def api_vino_por_consulta(request: Request, consulta_id: str):
 async def api_preguntar_local(request: Request):
     """
     Pregunta al experto en vinos vía agente local (puerto 8080). Solo usuarios Premium.
-    Header X-Session-ID obligatorio. Body: { "consulta_id", "pregunta", "perfil" opcional }.
+    Header X-Session-ID obligatorio.
+    Body: { "consulta_id" (opcional), "nombre_o_key" o "texto_busqueda" (opcional), "pregunta", "perfil" }.
+    - Si envías consulta_id (tras escanear), se usa ese vino.
+    - Si no hay consulta_id pero sí nombre_o_key o texto_busqueda, se busca en la base local (catálogo + tu bodega)
+      y se responde con ese vino. Ideal para bodega subterránea sin cobertura: preguntas por nombre y la IA local
+      encuentra el vino en la BD y responde.
     Si el agente no responde, fallback a lógica rule-based.
     """
     import httpx
     from fastapi import HTTPException
     from routes.sumiller import _responder_pregunta
     from services import freemium_service as freemium_svc
+    from services import bodega_service as bodega_svc
 
     session_id = (request.headers.get("X-Session-ID") or "").strip()
     if not session_id:
@@ -587,22 +597,141 @@ async def api_preguntar_local(request: Request):
 
     body = await request.json() if request.headers.get("content-type", "").startswith("application/json") else {}
     consulta_id = (body.get("consulta_id") or "").strip()
+    nombre_o_key = (body.get("nombre_o_key") or body.get("texto_busqueda") or "").strip()
     pregunta = (body.get("pregunta") or "").strip()
     perfil = (body.get("perfil") or "aficionado").strip() or "aficionado"
 
-    if not consulta_id or not pregunta:
-        from fastapi import HTTPException
-        raise HTTPException(status_code=400, detail="consulta_id y pregunta son obligatorios.")
+    if not pregunta:
+        raise HTTPException(status_code=400, detail="pregunta es obligatoria.")
+    if not consulta_id and not nombre_o_key:
+        raise HTTPException(
+            status_code=400,
+            detail="Indica consulta_id (tras escanear) o nombre_o_key / texto_busqueda para buscar el vino en la base local."
+        )
 
     consultas = getattr(request.app.state, "consultas_escaneo", {})
-    raw = consultas.get(consulta_id)
-    if raw is None:
-        from fastapi import HTTPException
-        raise HTTPException(status_code=404, detail="Vino no encontrado para ese consulta_id. Escanee de nuevo.")
-    if isinstance(raw, dict) and "vino" in raw:
-        vino, key_para_comprar = raw["vino"], raw.get("key")
-    else:
-        vino, key_para_comprar = raw, raw.get("key") if isinstance(raw, dict) else None
+    vino, key_para_comprar = None, None
+
+    if consulta_id:
+        raw = consultas.get(consulta_id)
+        if raw is None:
+            raise HTTPException(status_code=404, detail="Vino no encontrado para ese consulta_id. Escanee de nuevo.")
+        if isinstance(raw, dict) and "vino" in raw:
+            vino, key_para_comprar = raw["vino"], raw.get("key")
+        else:
+            vino = raw
+            key_para_comprar = raw.get("key") if isinstance(raw, dict) else None
+
+    if not vino and nombre_o_key:
+        # Buscar en base local: primero por key exacta, luego por nombre en catálogo, luego en Mi Bodega
+        vinos_dict = getattr(request.app.state, "vinos_mundiales", VINOS_MUNDIALES)
+        if nombre_o_key in vinos_dict and isinstance(vinos_dict[nombre_o_key], dict):
+            vino = vinos_dict[nombre_o_key]
+            key_para_comprar = nombre_o_key
+        if not vino:
+            resultados = buscar_vinos_avanzado(vinos_dict, nombre_o_key, limite=1)
+            if resultados:
+                vino = resultados[0]["vino"]
+                key_para_comprar = resultados[0].get("key")
+        if not vino:
+            botellas = bodega_svc.get_bodega(session_id)
+            for b in botellas:
+                vino_nombre_b = (b.get("vino_nombre") or "").strip()
+                vino_key_b = (b.get("vino_key") or "").strip()
+                if vino_key_b and vino_key_b in vinos_dict and nombre_o_key.lower() in (vino_nombre_b or "").lower():
+                    vino = vinos_dict[vino_key_b]
+                    key_para_comprar = vino_key_b
+                    break
+                if nombre_o_key.lower() in vino_nombre_b.lower():
+                    if vino_key_b and vino_key_b in vinos_dict:
+                        vino = vinos_dict[vino_key_b]
+                        key_para_comprar = vino_key_b
+                    else:
+                        vino = {"nombre": vino_nombre_b, "bodega": "", "maridaje": "", "descripcion": "", "tipo": b.get("tipo") or "tinto"}
+                    break
+        if not vino:
+            # Invertir prioridad: con datos/WiFi intentar Gemini en la nube; si encuentra el vino, guardarlo en BD local para futuras respuestas offline
+            try:
+                from services import sumiller_gemini_service as gemini_svc
+                from services import vinos_aprendidos_service as aprendidos_svc
+                respuesta_gemini, vino_nuevo = gemini_svc.buscar_vino_en_nube(
+                    nombre_o_key + " " + pregunta, perfil=perfil
+                )
+                if respuesta_gemini and vino_nuevo and isinstance(vino_nuevo, dict):
+                    key_nueva = aprendidos_svc.guardar_vino_aprendido(vino_nuevo)
+                    if key_nueva:
+                        vinos_dict = getattr(request.app.state, "vinos_mundiales", VINOS_MUNDIALES)
+                        vinos_dict[key_nueva] = vino_nuevo
+                        request.app.state.vinos_mundiales = vinos_dict
+                    vino = vino_nuevo
+                    key_para_comprar = key_nueva
+                    consulta_id = "local-" + str(uuid.uuid4())[:8]
+                    consultas[consulta_id] = {"vino": vino, "key": key_para_comprar}
+                    request.app.state.consultas_escaneo = consultas
+                    # Responder con la respuesta de Gemini (sin llamar al agente 8080)
+                    from services.imagen_service import get_imagen_vino
+                    tipo = (vino.get("tipo") or "tinto").strip().lower()
+                    if tipo not in ("tinto", "blanco", "rosado", "espumoso"):
+                        tipo = "tinto"
+                    imagen_url = get_imagen_vino(key_para_comprar or "", tipo)
+                    try:
+                        from services import analytics_service
+                        analytics_service.registrar_pregunta(pregunta, vino.get("nombre"))
+                    except Exception:
+                        pass
+                    return {
+                        "consulta_id": consulta_id,
+                        "pregunta": pregunta,
+                        "respuesta": respuesta_gemini,
+                        "vino_nombre": vino.get("nombre"),
+                        "vino": vino,
+                        "vino_key": key_para_comprar,
+                        "imagen_url": imagen_url,
+                        "mostrar_boton_comprar": bool(key_para_comprar),
+                        "perfil": perfil,
+                        "modo": "nube",
+                        "vino_anadido_a_base": True,
+                    }
+            except Exception:
+                pass
+            raise HTTPException(
+                status_code=404,
+                detail="No encontramos ese vino en la base local. Prueba con el nombre completo o escanea la etiqueta cuando tengas cobertura."
+            )
+        # Crear consulta temporal para que el agente pueda obtener el vino por GET /api/vino-por-consulta
+        consulta_id = "local-" + str(uuid.uuid4())[:8]
+        consultas[consulta_id] = {"vino": vino, "key": key_para_comprar}
+        request.app.state.consultas_escaneo = consultas
+
+    # Prioridad con WiFi/datos: Gemini (sumiller en nube) responde con información veraz en tiempo real
+    try:
+        from services import sumiller_gemini_service as gemini_svc
+        respuesta_gemini = gemini_svc.responder_sobre_vino(pregunta, vino, perfil=perfil)
+        if respuesta_gemini:
+            from services.imagen_service import get_imagen_vino
+            tipo = (vino.get("tipo") or "tinto").strip().lower()
+            if tipo not in ("tinto", "blanco", "rosado", "espumoso"):
+                tipo = "tinto"
+            imagen_url = get_imagen_vino(key_para_comprar or "", tipo)
+            try:
+                from services import analytics_service
+                analytics_service.registrar_pregunta(pregunta, vino.get("nombre"))
+            except Exception:
+                pass
+            return {
+                "consulta_id": consulta_id,
+                "pregunta": pregunta,
+                "respuesta": respuesta_gemini,
+                "vino_nombre": vino.get("nombre"),
+                "vino": vino,
+                "vino_key": key_para_comprar,
+                "imagen_url": imagen_url,
+                "mostrar_boton_comprar": bool(key_para_comprar),
+                "perfil": perfil,
+                "modo": "nube",
+            }
+    except Exception:
+        pass
 
     agent_url = "http://127.0.0.1:8080/skill/sumiller"
     payload = {"consulta_id": consulta_id, "pregunta": pregunta, "perfil": perfil}

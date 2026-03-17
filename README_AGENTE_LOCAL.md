@@ -1,6 +1,28 @@
 # Agente local Experto en Vinos - VinoPro
 
-El **agente local** permite usar el Experto en Vinos Virtual con IA generativa (OpenRouter, modelos gratuitos) o con respuestas rule-based **sin conexión a APIs de pago**, optimizado para hardware modesto (p. ej. Lenovo IdeaPad 3 Slim).
+El **agente local** permite usar el Experto en Vinos Virtual con IA generativa (OpenRouter, modelos gratuitos) o con respuestas rule-based **sin conexión a APIs de pago**, optimizado para hardware modesto (p. ej. Lenovo IdeaPad 3 Slim). Sin cobertura, el agente sigue respondiendo con reglas (maridaje, descripción, bodega, etc.).
+
+---
+
+## 🎻 Para tocar el violín (inicio rápido)
+
+1. **Arranca el backend** (en esta misma carpeta o donde tengas el proyecto):
+   ```bash
+   uvicorn app:app --host 0.0.0.0 --port 8001
+   ```
+
+2. **Arranca el agente** (otra ventana/terminal):
+   ```batch
+   install_local_agent.bat
+   ```
+   Cuando pregunte "¿Arrancar el agente ahora?", pulsa **S**. Deja la ventana abierta.
+
+3. **En la app:** ve a **Preguntar al experto en vinos** → elige **IA Local 🖥️** (solo PRO). Escanea un vino o elige uno del desplegable y haz la pregunta.
+
+- Si no tienes OpenRouter configurado, el agente usará **respuestas rule-based** (sirve igual y funciona sin internet una vez backend y agente están en marcha).
+- Si el agente no está en marcha, el backend hace **fallback** y responderá con Nube (rule-based). Más detalle: `docs/REVISION_IA_LOCAL_SIN_COBERTURA.md`.
+
+---
 
 ## Requisitos
 

@@ -82,6 +82,13 @@
 
   if (btnMic) btnMic.addEventListener('click', iniciarReconocimientoVoz);
 
+  if (modoSelect) {
+    modoSelect.addEventListener('change', function() {
+      var wrap = document.getElementById('wrap_nombre_vino_local');
+      if (wrap) wrap.style.display = modoSelect.value === 'local' ? 'block' : 'none';
+    });
+  }
+
   function hablarTexto(texto) {
     if (!window.speechSynthesis) {
       errorDiv.textContent = 'Tu navegador no soporta la lectura en voz alta.';
@@ -124,6 +131,8 @@
         if (!navigator.onLine && modoSelect) modoSelect.value = 'local';
         window.addEventListener('offline', function() { if (modoSelect) modoSelect.value = 'local'; });
         window.addEventListener('online', function() { if (modoSelect) modoSelect.value = 'nube'; });
+        var wrapNombreLocal = document.getElementById('wrap_nombre_vino_local');
+        if (wrapNombreLocal) wrapNombreLocal.style.display = modoSelect && modoSelect.value === 'local' ? 'block' : 'none';
       })
       .catch(function() { if (wrapRow) wrapRow.style.display = 'none'; });
   })();
@@ -220,6 +229,8 @@
     errorDiv.classList.add('hidden');
     respuestaDiv.classList.add('hidden');
     const consulta_id = (vinoContextoSelect && vinoContextoSelect.value) ? vinoContextoSelect.value.trim() : '';
+    var nombreVinoLocalEl = document.getElementById('nombre_vino_local');
+    const nombre_vino_local = nombreVinoLocalEl ? nombreVinoLocalEl.value.trim() : '';
     const texto = document.getElementById('texto').value.trim();
     var modoLocal = modoSelect && modoSelect.value === 'local';
     if (!texto) {
@@ -227,18 +238,26 @@
       errorDiv.classList.remove('hidden');
       return;
     }
+    if (modoLocal && !consulta_id && !nombre_vino_local) {
+      errorDiv.textContent = 'En IA Local indica un vino: elige uno del desplegable "Vino en contexto" (tras escanear) o escribe el nombre en "Nombre del vino (si no escaneaste)".';
+      errorDiv.classList.remove('hidden');
+      return;
+    }
     var perfil = document.getElementById('perfil').value || 'aficionado';
     var t0 = performance.now();
     try {
       var r, data;
-      if (modoLocal && consulta_id) {
+      if (modoLocal && (consulta_id || nombre_vino_local)) {
         var sid = getSessionId();
         var localHeaders = { 'Content-Type': 'application/json' };
         if (sid) localHeaders['X-Session-ID'] = sid;
+        var bodyLocal = { pregunta: texto, perfil: perfil };
+        if (consulta_id) bodyLocal.consulta_id = consulta_id;
+        if (!consulta_id && nombre_vino_local) bodyLocal.nombre_o_key = nombre_vino_local;
         r = await fetch('/api/preguntar-local', {
           method: 'POST',
           headers: localHeaders,
-          body: JSON.stringify({ consulta_id: consulta_id, pregunta: texto, perfil: perfil })
+          body: JSON.stringify(bodyLocal)
         });
         data = await r.json().catch(function() { return { detail: 'Respuesta inválida del servidor.' }; });
       } else {
@@ -268,6 +287,14 @@
       var modoReal = data.modo || (modoLocal ? 'local' : 'nube');
       meta.textContent = 'Respuesta en ' + tiempoMs + ' s · ' + (modoReal === 'local' ? 'IA Local 🖥️' : 'Nube ☁️');
       respuestaDiv.appendChild(meta);
+      if (data.vino_anadido_a_base) {
+        var avisoBase = document.createElement('p');
+        avisoBase.className = 'texto-pequeno';
+        avisoBase.style.marginTop = '0.35rem';
+        avisoBase.style.color = 'var(--dorado, #c9a227)';
+        avisoBase.textContent = 'Este vino se ha añadido a la base local para futuras consultas (también sin cobertura).';
+        respuestaDiv.appendChild(avisoBase);
+      }
 
       var respuestaContainer = document.createElement('div');
       respuestaContainer.className = 'respuesta-container';
@@ -398,7 +425,11 @@
         }
       }
     } catch (err) {
-      errorDiv.textContent = 'Error de conexión: ' + err.message;
+      if (!navigator.onLine) {
+        errorDiv.textContent = 'Sin conexión a internet. El servicio mínimo (IA Local) funciona cuando este dispositivo está en la misma red WiFi que tu PC con VINO PRO y el agente abierto. Conéctate a esa red o espera a tener cobertura.';
+      } else {
+        errorDiv.textContent = 'Error de conexión: ' + (err && err.message ? err.message : 'No se pudo contactar con el servidor.');
+      }
       errorDiv.classList.remove('hidden');
     }
   });

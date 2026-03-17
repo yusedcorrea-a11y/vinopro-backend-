@@ -14,9 +14,9 @@ logger = logging.getLogger(__name__)
 
 OFF_API_PRODUCT = "https://world.openfoodfacts.org/api/v0/product/{barcode}.json"
 OFF_API_SEARCH = "https://world.openfoodfacts.org/cgi/search.pl"
-# Timeout y reintentos: OFF a veces responde lento; evitar llenar consola con tracebacks
-OFF_TIMEOUT = 8
-OFF_RETRIES = 2
+# Timeout y reintentos: fallar rápido para dar paso al fallback con Gemini y no bloquear al usuario
+OFF_TIMEOUT = 5
+OFF_RETRIES = 1
 OFF_CACHE_TTL_SECONDS = 300
 
 _OFF_CACHE: dict[str, tuple[float, Any]] = {}

@@ -766,10 +766,49 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
         except Exception as e:
             logger.warning("[ESCANEAR] Error al guardar vino externo: %s", e)
 
-    logger.info("[ESCANEAR] Sin coincidencia externa fiable. Devolviendo mensaje genérico y enlace a búsqueda web.")
+    logger.info("[ESCANEAR] Sin coincidencia externa fiable. Intentando fallback con experto (Gemini)...")
     consulta_id = str(uuid.uuid4())
     # Usar texto normalizado o raw para el mensaje (si normalizó a vacío, queda el código de barras)
     nombre_busqueda = (texto_para_buscar or texto_busqueda or "vino")[:200].strip()
+
+    # Fallback: si tenemos texto que parece nombre (no solo EAN), intentar Gemini para dar resultado en vez de error
+    if not _es_solo_codigo_barras(nombre_busqueda) and len(nombre_busqueda.strip()) >= 3:
+        try:
+            from services import sumiller_gemini_service as gemini_svc
+            from services import vinos_aprendidos_service as aprendidos_svc
+            _, vino_nuevo = gemini_svc.buscar_vino_en_nube(nombre_busqueda, perfil="aficionado")
+            if vino_nuevo and isinstance(vino_nuevo, dict) and (vino_nuevo.get("nombre") or vino_nuevo.get("bodega")):
+                key_aprendida = aprendidos_svc.guardar_vino_aprendido(vino_nuevo)
+                if key_aprendida:
+                    vinos = _get_vinos(request)
+                    vinos[key_aprendida] = vino_nuevo
+                    request.app.state.vinos_mundiales = vinos
+                consulta_id = str(uuid.uuid4())
+                consultas[consulta_id] = {"vino": vino_nuevo, "key": key_aprendida}
+                try:
+                    from services import analytics_service
+                    analytics_service.registrar_escaneo(False, vino_nuevo.get("nombre"), vino_nuevo.get("pais"))
+                except Exception:
+                    pass
+                _push_historial(request, sid, consulta_id, vino_nuevo.get("nombre"), False)
+                nombre_slug = key_aprendida or _slug(vino_nuevo.get("nombre") or "")
+                logger.info("[ESCANEAR] Fallback Gemini OK: %s", (vino_nuevo.get("nombre") or "")[:60])
+                return {
+                    "encontrado_en_bd": False,
+                    "consulta_id": consulta_id,
+                    "vino": vino_nuevo,
+                    "vino_key": nombre_slug or None,
+                    "mostrar_boton_comprar": True,
+                    "recomendar_similar": True,
+                    "mensaje": "Lo hemos identificado con nuestro experto. Ya está guardado para la próxima. ¿Quieres una recomendación similar?",
+                    "es_pro": es_pro,
+                    "entidades_extraidas": _obtener_entidades_extraidas(texto_para_buscar, entidades_override=entidades_imagen),
+                    "vino_anadido_a_base": True,
+                }
+        except Exception as e:
+            logger.warning("[ESCANEAR] Fallback Gemini no disponible o falló: %s", e)
+
+    logger.info("[ESCANEAR] Sin resultado en experto. Devolviendo mensaje genérico.")
     vino_gen = {
         "nombre": nombre_busqueda,
         "bodega": "No especificada",
@@ -778,7 +817,7 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
         "tipo": "tinto",
         "puntuacion": None,
         "precio_estimado": None,
-        "descripcion": f"No tenemos información de «{nombre_busqueda}» en nuestra base de datos. Puedes buscar en Vivino (como un buscador de vinos) o preguntar al experto en vinos: «¿Qué vino me recomiendas similar a {nombre_busqueda}?».",
+        "descripcion": f"No tenemos información de «{nombre_busqueda}» en nuestra base de datos. Pregunta al experto en vinos: «¿Qué vino me recomiendas similar a {nombre_busqueda}?».",
         "notas_cata": "No disponibles.",
         "maridaje": "Información no disponible.",
         "_origen": "generico",
@@ -791,9 +830,9 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
         pass
     _push_historial(request, sid, consulta_id, vino_gen.get("nombre"), False)
     nombre_slug = _slug(vino_gen.get("nombre") or "")
-    # Enlace para buscar en Vivino (buscador de vinos, como Amazon pero de vinos) — información real
+    # Enlace genérico a búsqueda web (sin promocionar competencia)
     termino_web = (texto_busqueda or texto_para_buscar or nombre_busqueda or "vino").strip()[:200]
-    busqueda_web_url = "https://www.vivino.com/search/wine?q=" + quote(termino_web)
+    busqueda_web_url = "https://www.google.com/search?q=" + quote(termino_web + " vino")
     return {
         "encontrado_en_bd": False,
         "consulta_id": consulta_id,
@@ -801,10 +840,10 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
         "vino_key": nombre_slug or None,
         "mostrar_boton_comprar": False,
         "recomendar_similar": True,
-        "mensaje": "No tengo este vino en mi base (Open Food Facts no lo tiene o la conexión falló). Usa «Buscar en Vivino» para ver información real o pídeme una recomendación similar.",
+        "mensaje": "No tengo este vino en mi base (la fuente externa no lo tiene o la conexión falló). Pídeme una recomendación similar o prueba de nuevo más tarde.",
         "termino_buscado": termino_web,
         "busqueda_web_url": busqueda_web_url,
-        "busqueda_web_label": "Buscar en Vivino",
+        "busqueda_web_label": "Buscar en la web",
         "es_pro": es_pro,
         "entidades_extraidas": _obtener_entidades_extraidas(texto_para_buscar, entidades_override=entidades_imagen),
         "diagnostico_imagen": calidad_imagen or {},

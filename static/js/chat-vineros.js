@@ -14,6 +14,7 @@
   var chatPanelThread = document.getElementById('chat-panel-thread');
   var chatList = document.getElementById('chat-list');
   var chatSinConv = document.getElementById('chat-sin-conversaciones');
+  var chatSinConvHint = document.getElementById('chat-sin-conversaciones-hint');
   var chatLoading = document.getElementById('chat-loading');
   var chatError = document.getElementById('chat-error');
   var chatMessages = document.getElementById('chat-messages');
@@ -125,7 +126,9 @@
         showList();
         if (!chatList) return;
         chatList.innerHTML = '';
-        if (chatSinConv) chatSinConv.style.display = list.length ? 'none' : 'block';
+        var showEmpty = list.length === 0;
+        if (chatSinConv) chatSinConv.style.display = showEmpty ? 'block' : 'none';
+        if (chatSinConvHint) chatSinConvHint.style.display = showEmpty ? 'block' : 'none';
         list.forEach(function(c) {
           var other = c.other_username || '';
           var preview = (c.last_message || '').substring(0, 60);

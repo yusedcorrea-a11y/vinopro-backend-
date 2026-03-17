@@ -89,6 +89,39 @@
   .chat-thread-with { font-weight: 700; color: #fff !important; font-size: 1rem; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
   .chat-thread-private { font-size: 0.75rem; color: rgba(255,255,255,0.85); display: inline-flex; align-items: center; gap: 0.3rem; text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
   .chat-thread-private .chat-lock { font-size: 0.85em; opacity: 0.9; }
+  .chat-sin-conversaciones-hint {
+    font-size: 0.8rem; color: rgba(255,255,255,0.85); margin-top: 0.5rem; display: block;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  }
+  .chat-thread-call-actions { display: flex; gap: 0.5rem; flex-shrink: 0; align-items: center; }
+  .chat-btn-call {
+    width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.55);
+    background: rgba(0,0,0,0.4); color: #fff; font-size: 1.2rem; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+  }
+  .chat-btn-call:hover { background: rgba(107,45,60,0.75); transform: scale(1.06); box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+  .chat-btn-call:focus-visible { outline: 2px solid rgba(255,255,255,0.8); outline-offset: 2px; }
+  .chat-btn-call:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  #chat-call-overlay { display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,0.92); flex-direction: column; align-items: center; justify-content: center; padding: 1rem; }
+  #chat-call-overlay.visible { display: flex; }
+  #chat-call-overlay .call-remote-video { width: 100%; max-width: 640px; flex: 1; max-height: 50vh; object-fit: contain; background: #111; border-radius: 12px; }
+  #chat-call-overlay .call-local-video { position: absolute; top: 1rem; right: 1rem; width: 120px; height: 90px; object-fit: cover; border-radius: 8px; border: 2px solid rgba(255,255,255,0.4); }
+  #chat-call-overlay .call-subtitles { min-height: 2.5rem; max-width: 90%; color: #fff; text-align: center; font-size: 1.1rem; text-shadow: 0 1px 3px rgba(0,0,0,0.9); margin: 0.5rem 0; padding: 0.5rem; }
+  #chat-call-overlay .call-translate-opts { display: flex; flex-wrap: wrap; gap: 0.75rem 1rem; justify-content: center; margin: 0.5rem 0; }
+  #chat-call-overlay .call-opt-row { display: flex; align-items: center; gap: 0.5rem; color: #fff; font-size: 0.9rem; }
+  #chat-call-overlay .call-opt-select { padding: 0.35rem 0.6rem; border-radius: 8px; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+  #chat-call-overlay .call-opt-voice-row { display: none; }
+  #chat-call-overlay .call-opt-voice-row.visible { display: flex; }
+  #chat-call-overlay .call-status { color: #fff; margin: 0.5rem 0; font-size: 1rem; }
+  #chat-call-overlay .call-hangup { margin-top: 1rem; padding: 0.75rem 2rem; border-radius: 999px; background: #c0392b; color: #fff; border: none; font-weight: 700; cursor: pointer; }
+  #chat-call-incoming { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.85); flex-direction: column; align-items: center; justify-content: center; padding: 1rem; }
+  #chat-call-incoming.visible { display: flex; }
+  #chat-call-incoming .incoming-from { color: #fff; font-size: 1.25rem; margin-bottom: 1rem; }
+  #chat-call-incoming .incoming-btns { display: flex; gap: 1rem; }
+  #chat-call-incoming .incoming-btns button { padding: 0.6rem 1.5rem; border-radius: 999px; border: none; font-weight: 600; cursor: pointer; }
+  #chat-call-incoming .incoming-accept { background: #27ae60; color: #fff; }
+  #chat-call-incoming .incoming-reject { background: #c0392b; color: #fff; }
 
   /* Burbujas tipo WhatsApp: tuyas a la derecha (burdeos), suyas a la izquierda (gris claro) */
   .chat-messages {
@@ -318,6 +351,7 @@
         <h2 class="section-title">{{ t('comunidad.chat_conversaciones') }}</h2>
         <div id="chat-list" class="chat-list"></div>
         <p id="chat-sin-conversaciones" class="texto-pequeno" style="display:none;">{{ t('comunidad.chat_sin_conversaciones') }}</p>
+        <p id="chat-sin-conversaciones-hint" class="chat-sin-conversaciones-hint" style="display:none;">{{ t('comunidad.chat_llamadas_hint') }}</p>
       </div>
     </div>
     <div class="chat-panel-thread" id="chat-panel-thread">
@@ -334,6 +368,10 @@
             <span id="chat-thread-with" class="chat-thread-with"></span>
             <span class="chat-thread-private" aria-label="{{ t('comunidad.chat_privada') }}"><span class="chat-lock" aria-hidden="true">🔒</span> {{ t('comunidad.chat_privada') }}</span>
           </div>
+          <div class="chat-thread-call-actions" id="chat-call-actions">
+            <button type="button" class="chat-btn-call" id="chat-btn-voice" title="Llamada de voz" aria-label="Llamada de voz">📞</button>
+            <button type="button" class="chat-btn-call" id="chat-btn-video" title="Videollamada" aria-label="Videollamada">📹</button>
+          </div>
         </div>
         <div id="chat-messages" class="chat-messages"></div>
         <div class="chat-input-bar">
@@ -347,11 +385,50 @@
       </div>
     </div>
   </div>
+
+  <div id="chat-call-overlay" class="chat-call-overlay" aria-live="polite">
+    <video id="chat-remote-video" class="call-remote-video" autoplay playsinline></video>
+    <video id="chat-local-video" class="call-local-video" autoplay playsinline muted></video>
+    <div id="chat-call-subtitles" class="call-subtitles" aria-live="polite"></div>
+    <div id="chat-call-translate-opts" class="call-translate-opts">
+      <label class="call-opt-row">
+        <span class="call-opt-label">Traductor IA</span>
+        <select id="chat-call-translate-on" class="call-opt-select" aria-label="Activar traductor en la llamada">
+          <option value="0">Desactivado</option>
+          <option value="1">Activado</option>
+        </select>
+      </label>
+      <label class="call-opt-row">
+        <span class="call-opt-label">Recibir traducción</span>
+        <select id="chat-call-receive-mode" class="call-opt-select" aria-label="Leer u oír la traducción">
+          <option value="read">Solo leer (subtítulos)</option>
+          <option value="hear">Oír voz IA</option>
+        </select>
+      </label>
+      <label class="call-opt-row call-opt-voice-row" id="chat-call-voice-row">
+        <span class="call-opt-label">Voz IA</span>
+        <select id="chat-call-voice-gender" class="call-opt-select" aria-label="Voz femenina o masculina">
+          <option value="female">Femenina</option>
+          <option value="male">Masculina</option>
+        </select>
+      </label>
+    </div>
+    <p id="chat-call-status" class="call-status">Conectando…</p>
+    <button type="button" id="chat-call-hangup" class="call-hangup">Colgar</button>
+  </div>
+  <div id="chat-call-incoming" aria-live="polite">
+    <p id="chat-call-incoming-from" class="incoming-from">Te llama <span id="chat-call-incoming-name"></span></p>
+    <div class="incoming-btns">
+      <button type="button" id="chat-call-incoming-accept" class="incoming-accept">Aceptar</button>
+      <button type="button" id="chat-call-incoming-reject" class="incoming-reject">Rechazar</button>
+    </div>
+  </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script src="/static/js/chat-vineros.js"></script>
+<script src="/static/js/chat-vineros-calls.js"></script>
 <script>
   window.CHAT_INITIAL_USERNAME = "{{ chat_username | default('', true) }}";
   window.CHAT_TEXTS = {

@@ -64,4 +64,11 @@ En total, **una semana de desarrollo** (una persona) es una estimación razonabl
 - **Requisitos principales:** WebSockets en el backend para signaling, WebRTC en el frontend, y opcionalmente un servidor TURN para mejor conectividad.
 - El esfuerzo es **medio** (varios días) y encaja con la arquitectura actual del chat (mismo concepto de conversación 1-a-1 entre dos usuarios).
 
-Cuando quieras abordarlo, el siguiente paso sería definir el protocolo de mensajes del WebSocket (nombres de eventos y formato de oferta/answer/ICE) y luego implementar primero el signaling en el backend y después la UI de llamada/videollamada en el frontend.
+---
+
+## Implementación (primera versión)
+
+- **Backend:** `routes/call_ws.py` — WebSocket `GET /ws/call?session_id=...`. Eventos: register (implícito), invite, incoming, invite_ok, offer, answer, ice, hangup, offline. Solo usuarios con perfil (session → username) pueden conectar.
+- **Frontend:** Botones 📞 (voz) y 📹 (videollamada) en el hilo del chat; `static/js/chat-vineros-calls.js` conecta al WS, envía invite, maneja incoming (Aceptar/Rechazar), WebRTC con STUN (stun.l.google.com:19302), overlay de llamada y modal de llamada entrante.
+- **Traductor IA en llamada:** Durante la llamada el usuario puede activar "Traductor IA". Su idioma se toma del selector del chat (o del navegador). Lo que habla se envía como texto (STT con Web Speech API) al servidor, que traduce al idioma del otro usuario y le envía el texto traducido. El otro puede elegir "Solo leer" (subtítulos) o "Oír voz IA" (TTS en su idioma) y la voz "Femenina" o "Masculina". Backend: mensajes `set_lang`, `stt_text` y `translated` en `/ws/call`; se usa `translation_service.traducir`.
+- **Pruebas:** Abre una conversación con otro usuario (los dos con perfil). Uno pulsa Llamar o Videollamada; el otro recibe "Te llama X" y puede Aceptar o Rechazar. Con "Traductor IA" activado, habla en tu idioma; el otro ve/oye la traducción según haya elegido Leer u Oír y el tipo de voz.

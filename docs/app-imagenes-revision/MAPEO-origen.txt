@@ -1,0 +1,11 @@
+# Al volver de Canva: copiar de esta carpeta al frontend
+# Origen (esta carpeta)     ->  Destino (frontend/assets/images/)
+01-icon.png                 ->  icon.png
+02-splash-icon.png          ->  splash-icon.png
+03-android-icon-foreground.png  ->  android-icon-foreground.png
+04-android-icon-background.png  ->  android-icon-background.png
+05-android-icon-monochrome.png  ->  android-icon-monochrome.png
+06-favicon.png              ->  favicon.png
+07-react-logo.png           ->  (solo referencia; no obligatorio copiar)
+
+# 10-15 son capturas para Play Store / anuncios; no se copian al código.

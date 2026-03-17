@@ -80,7 +80,7 @@ Análisis antes de commit: qué podemos mejorar en el nuevo flujo (prioridad Gem
   - (2.3) Normalizar vino antes de guardar: tipo en (tinto, blanco, rosado, espumoso, dulce), recorte de descripcion/notas_cata/maridaje a 500 caracteres y de nombre/bodega/region/pais a 150.  
   - (2.5) Parseo más robusto del JSON de Gemini: se extrae el substring entre el primer `{` y el último `}` en la línea VINO_JSON para tolerar texto o markdown alrededor.  
 
-- **Próximo paso (después del commit):** (2.4) Que el flujo Nube (`/preguntar-sumiller`) también aprenda cuando se pregunte por nombre de vino no presente en la BD.
+- **(2.4) Implementado:** El flujo Nube (`GET /preguntar-sumiller`) también aprende: cuando la pregunta es tipo "háblame del X" / "qué es el X" y ese vino no está en la BD, se llama a `buscar_vino_en_nube`, se guarda en `vinos_aprendidos.json` y se responde con `vino_anadido_a_base: true`.
 
 ---
 

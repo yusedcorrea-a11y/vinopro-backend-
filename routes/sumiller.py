@@ -558,6 +558,7 @@ def _preguntar_sumiller_general(
         keys_ya_recomendados.extend(r for r in refs if isinstance(r, str) and r.strip())
     exclude_keys_sesion = list(dict.fromkeys(keys_ya_recomendados))[-25:]
     quizas_quisiste_decir = None
+    vino_anadido_a_base = False
 
     # Búsqueda previa en BD: si la pregunta menciona un vino (Protos, Viña Pedrosa, etc.), responder con datos de nuestra BD
     coincidencias_bd = buscar_vinos_avanzado(vinos_dict, texto_clean, limite=1)
@@ -679,9 +680,31 @@ def _preguntar_sumiller_general(
                     vinos_recomendados = [s["vino"] for s in (similares or []) if isinstance(s.get("vino"), dict)] if similares else None
                     vinos_ref_para_guardar = [str(s["key"]) for s in similares if s.get("key")] if similares else []
             else:
-                respuesta, similares = svc_sumiller.fallback_sin_resultados(texto_clean, vinos_dict, exclude_keys=exclude_keys_sesion)
-                vinos_recomendados = [s["vino"] for s in (similares or []) if isinstance(s.get("vino"), dict)] if similares else None
-                vinos_ref_para_guardar = [str(s["key"]) for s in similares if s.get("key")] if similares else []
+                # Vino no está en BD: intentar Gemini (nube), guardar en vinos_aprendidos y responder (igual que en preguntar-local)
+                try:
+                    from services import sumiller_gemini_service as gemini_svc
+                    from services import vinos_aprendidos_service as aprendidos_svc
+                    respuesta_gemini, vino_nuevo = gemini_svc.buscar_vino_en_nube(
+                        nombre_busqueda or texto_clean, perfil=perfil
+                    )
+                    if vino_nuevo and isinstance(vino_nuevo, dict) and (vino_nuevo.get("nombre") or vino_nuevo.get("bodega")):
+                        key_aprendida = aprendidos_svc.guardar_vino_aprendido(vino_nuevo)
+                        if key_aprendida:
+                            vinos_dict[key_aprendida] = vino_nuevo
+                            if hasattr(request, "app") and hasattr(request.app, "state"):
+                                request.app.state.vinos_mundiales = vinos_dict
+                        respuesta = respuesta_gemini or _responder_pregunta(vino_nuevo, "descripción y maridaje", perfil=perfil)
+                        vinos_recomendados = [vino_nuevo]
+                        vinos_ref_para_guardar = [key_aprendida] if key_aprendida else []
+                        vino_anadido_a_base = True
+                    else:
+                        respuesta, similares = svc_sumiller.fallback_sin_resultados(texto_clean, vinos_dict, exclude_keys=exclude_keys_sesion)
+                        vinos_recomendados = [s["vino"] for s in (similares or []) if isinstance(s.get("vino"), dict)] if similares else None
+                        vinos_ref_para_guardar = [str(s["key"]) for s in similares if s.get("key")] if similares else []
+                except Exception:
+                    respuesta, similares = svc_sumiller.fallback_sin_resultados(texto_clean, vinos_dict, exclude_keys=exclude_keys_sesion)
+                    vinos_recomendados = [s["vino"] for s in (similares or []) if isinstance(s.get("vino"), dict)] if similares else None
+                    vinos_ref_para_guardar = [str(s["key"]) for s in similares if s.get("key")] if similares else []
         else:
             respuesta, similares = svc_sumiller.fallback_sin_resultados(texto_clean, vinos_dict, exclude_keys=exclude_keys_sesion)
             vinos_recomendados = [s["vino"] for s in (similares or []) if isinstance(s.get("vino"), dict)] if similares else None
@@ -765,6 +788,8 @@ def _preguntar_sumiller_general(
         ]
     if quizas_quisiste_decir:
         out["quizas_quisiste_decir"] = quizas_quisiste_decir
+    if vino_anadido_a_base:
+        out["vino_anadido_a_base"] = True
     if session_id:
         try:
             rec_svc.registrar_busqueda(session_id, texto_clean, vinos_ref_para_guardar or [])

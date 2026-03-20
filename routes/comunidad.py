@@ -2,6 +2,7 @@
 API de comunidad (Fase 6B): perfiles, seguir, feed, notificaciones, traducción en tiempo real.
 Comunidad de fotos de vinos: subir foto + caption al feed.
 """
+import hashlib
 import uuid
 from datetime import date, datetime
 from pathlib import Path
@@ -45,8 +46,13 @@ def _post_desde_canal(item: dict) -> dict:
     fuente = (item.get("fuente") or "VINO PRO").strip()
     avatar = (fuente[:1] or "V").upper()
     imagen = (item.get("imagen") or item.get("image_url") or "").strip()
+    raw_id = (item.get("id") or "").strip()
+    if not raw_id:
+        # Evita colisiones canal- vacío en deduplicación del feed (hash estable)
+        link_key = ((item.get("link") or "") + "|" + (item.get("titulo") or "")).encode("utf-8", errors="ignore")
+        raw_id = "h-" + hashlib.sha256(link_key).hexdigest()[:12]
     return {
-        "id": f"canal-{item.get('id') or ''}",
+        "id": f"canal-{raw_id}",
         "created_at": int(item.get("created_at") or 0),
         "post_type": "canal",
         "username": fuente,

@@ -318,3 +318,47 @@
 .vineros-card--noticia:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 [data-theme="dark"] .btn-noticias-tool { background: rgba(26,21,18,0.85); color: var(--dorado-claro); border-color: rgba(212,168,75,0.35); }
 [data-theme="dark"] .btn-noticias-tool:hover { background: rgba(212,175,55,0.15); }
+
+/* Aclaración canal En vivo (YouTube externo, no player in-app) */
+.feed-en-vivo-hint {
+  font-family: var(--vineros-ui, system-ui, sans-serif);
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: #4a403c;
+  background: linear-gradient(135deg, rgba(107, 45, 60, 0.07), rgba(212, 175, 55, 0.1));
+  border: 1px solid rgba(107, 45, 60, 0.15);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin: 0 0 0.75rem;
+}
+[data-theme="dark"] .feed-en-vivo-hint {
+  color: #d4c3a6;
+  background: rgba(26, 21, 18, 0.6);
+  border-color: rgba(212, 168, 75, 0.25);
+}
+
+/* Tarjetas canal YouTube: overlay play */
+.vineros-media--youtube { position: relative; }
+.vineros-media-youtube-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.45) 100%);
+  color: #fff;
+  font-family: var(--vineros-ui, system-ui, sans-serif);
+  font-weight: 600;
+  font-size: 0.88rem;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+.vineros-youtube-play {
+  font-size: 2.25rem;
+  line-height: 1;
+  opacity: 0.95;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+}
+.vineros-card--youtube-canal .vineros-media-img { display: block; }

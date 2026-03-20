@@ -45,6 +45,8 @@
     "feed_para_ti": "Para ti",
     "feed_noticias": "Noticias",
     "feed_en_vivo": "En vivo",
+    "feed_en_vivo_hint": "Aquí no se retransmite vídeo: son dos accesos gratuitos a canales de YouTube (Wine News TV y Colectivo Decantado). Toca la tarjeta o el botón para abrir YouTube y ver directos o vídeos cuando los publiquen ellos.",
+    "feed_abrir_youtube": "Abrir en YouTube",
     "feed_eventos": "Eventos y catas",
     "feed_enoturismo": "Enoturismo",
     "feed_equipamiento": "Equipamiento",

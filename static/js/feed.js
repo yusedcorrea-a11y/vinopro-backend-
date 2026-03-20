@@ -23,6 +23,12 @@
   var hasMore = true;
   var currentCanal = 'noticias';
   var FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&fit=crop';
+  var feedI18nEl = document.getElementById('feed-i18n-strings');
+  var FEED_ABRIR_YT = (feedI18nEl && feedI18nEl.getAttribute('data-abrir-youtube')) || 'Abrir en YouTube';
+
+  function isYoutubeLink(url) {
+    return /youtube\.com|youtu\.be/i.test(String(url || ''));
+  }
 
   function resolveAutoLang() {
     var navLang = ((navigator.language || navigator.userLanguage || '') + '').toLowerCase();
@@ -142,8 +148,9 @@
   function renderPost(post, isNoticias) {
     if (!listEl) return;
     isNoticias = !!isNoticias;
+    var ytCanal = post.post_type === 'canal' && post.link && isYoutubeLink(post.link);
     var card = document.createElement('article');
-    card.className = 'vineros-card' + (post.post_type === 'sponsor' ? ' sponsor' : '') + (isNoticias ? ' vineros-card--noticia' : '');
+    card.className = 'vineros-card' + (post.post_type === 'sponsor' ? ' sponsor' : '') + (isNoticias ? ' vineros-card--noticia' : '') + (ytCanal ? ' vineros-card--youtube-canal' : '');
     card.setAttribute('data-post-id', post.id || '');
     card.setAttribute('data-post-username', post.username || '');
     if (isNoticias && post.link) card.setAttribute('data-noticia-link', post.link);
@@ -151,10 +158,14 @@
     var hasImage = !!(post.image_url);
     var hasSponsorImg = post.post_type === 'sponsor' && hasImage;
     var mediaClass = post.post_type === 'sponsor' ? ('vineros-media sponsor-media' + (hasSponsorImg ? ' vineros-media--img' : '')) : (hasImage ? 'vineros-media vineros-media--img' : 'vineros-media');
+    if (ytCanal) mediaClass += ' vineros-media--youtube';
     var mediaContent = '';
     if (hasImage || post.post_type === 'canal') {
       var imgUrl = post.image_url || FALLBACK_IMAGE;
       mediaContent = '<img class="vineros-media-img" src="' + escapeHtml(imgUrl) + '" alt="" loading="lazy" />';
+      if (ytCanal) {
+        mediaContent += '<div class="vineros-media-youtube-overlay" aria-hidden="true"><span class="vineros-youtube-play">▶</span><span class="vineros-youtube-label">' + escapeHtml(FEED_ABRIR_YT) + '</span></div>';
+      }
     } else if (post.post_type === 'sponsor') {
       mediaContent = '<span class="vineros-media-placeholder">Patrocinador PRO</span>';
     } else {
@@ -163,7 +174,8 @@
     var safeDescription = escapeHtml(post.description || '');
     var extraBtn = '';
     if (post.post_type === 'canal' && post.link) {
-      extraBtn = '<a class="vineros-btn primary" href="' + escapeHtml(post.link) + '" target="_blank" rel="noopener">Leer más</a>';
+      var canalBtnLabel = ytCanal ? FEED_ABRIR_YT : 'Leer más';
+      extraBtn = '<a class="vineros-btn primary" href="' + escapeHtml(post.link) + '" target="_blank" rel="noopener">' + escapeHtml(canalBtnLabel) + '</a>';
     } else if (post.post_type === 'sponsor' && post.link) {
       extraBtn = '<a class="vineros-btn primary" href="' + escapeHtml(post.link) + '">Descubre</a>';
     } else if (post.vino_detalle) {
@@ -210,6 +222,10 @@
       });
     } else {
       card.addEventListener('click', function(e) {
+        if (post.post_type === 'canal' && post.link && !e.target.closest('a[href], button, [data-action]')) {
+          window.open(post.link, '_blank', 'noopener');
+          return;
+        }
         var btn = e.target.closest('[data-action]');
         if (!btn) return;
         var action = btn.getAttribute('data-action');
@@ -254,6 +270,9 @@
       });
     }
 
+    if (post.post_type === 'canal' && post.link) {
+      card.style.cursor = 'pointer';
+    }
     listEl.appendChild(card);
   }
 
@@ -298,6 +317,8 @@
     }
     var noticiasTools = document.getElementById('noticias-tools');
     if (noticiasTools) noticiasTools.style.display = currentCanal === 'noticias' ? 'flex' : 'none';
+    var enVivoHint = document.getElementById('feed-en-vivo-hint');
+    if (enVivoHint) enVivoHint.style.display = currentCanal === 'en_vivo' ? 'block' : 'none';
     var btnFoto = document.getElementById('feed-btn-foto-vino');
     if (btnFoto) btnFoto.style.display = (currentCanal === 'para_ti' || currentCanal === 'vineros') ? '' : 'none';
     if (storiesWrap) storiesWrap.style.display = (currentCanal === 'para_ti' || currentCanal === 'vineros') ? 'block' : 'none';

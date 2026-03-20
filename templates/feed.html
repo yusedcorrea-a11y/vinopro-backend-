@@ -4,7 +4,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/static/css/feed.css?v=5">
+<link rel="stylesheet" href="/static/css/feed.css?v=6">
 {% endblock %}
 
 {% block content %}
@@ -36,6 +36,8 @@
       <span class="noticias-mute-label">Sonido</span>
     </button>
   </div>
+
+  <p id="feed-en-vivo-hint" class="feed-en-vivo-hint" style="display:none;" role="note">{{ t('comunidad.feed_en_vivo_hint') }}</p>
 
   <div class="vineros-tools">
     <button type="button" id="feed-btn-foto-vino" class="btn btn-outline vineros-btn-foto" title="Subir foto de tu vino" style="display:none;">🍷 Foto de mi vino</button>
@@ -116,5 +118,6 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/feed.js?v=5"></script>
+<div id="feed-i18n-strings" hidden data-abrir-youtube="{{ t('comunidad.feed_abrir_youtube')|e }}"></div>
+<script src="/static/js/feed.js?v=6"></script>
 {% endblock %}

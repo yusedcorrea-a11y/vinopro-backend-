@@ -20,6 +20,8 @@ CASOS = [
     ("AR", "Guía de Vinos Argentina", "guiadevinos.com.ar", "🇦🇷"),
     ("BR", "Guia de Vinhos Brasil", "guiadevinhosbrasil.com", "🇧🇷"),
     ("UY", "Guía de Vinos Uruguay", "guiadevinosuruguay.com", "🇺🇾"),
+    ("CO", "Guía de Vinos Colombia", "guiadevinoscolombia.com", "🇨🇴"),
+    ("PE", "Guía de Vinos Perú", "guiadevinosperu.com", "🇵🇪"),
     ("AT", "Falstaff", "falstaff.at", "🇦🇹"),
     ("CH", "Gault&Millau Suisse", "gaultmillau.ch", "🇨🇭"),
     ("ZA", "Platter's Wine Guide", "wineonaplatter.com", "🇿🇦"),

@@ -1,0 +1,13 @@
+{
+  "activo": true,
+  "desde": "2026-03-20",
+  "hasta": "2026-03-27",
+  "vino_key": "",
+  "titulo_es": "Vino de la semana (pilot)",
+  "texto_es": "Pronto destacaremos gratis una botella de una bodega pequeña o poco conocida cada semana. Si eres productor, escríbenos.",
+  "titulo_en": "Wine of the week (pilot)",
+  "texto_en": "We will soon feature a small or lesser-known winery each week for free. Producers: get in touch.",
+  "pais_destacado": "",
+  "bodega_pequena": true,
+  "contacto_productores": "yusedcorrea@gmail.com"
+}

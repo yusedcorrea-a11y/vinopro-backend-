@@ -167,6 +167,20 @@
       <span class="brand-line brand-ia">IA</span>
     </a>
     <div class="header-minimal-actions">
+      <div class="header-notif-wrap" id="header-notif-wrap">
+        <button type="button" id="btn-notificaciones" class="btn-menu-secreto btn-notif" aria-label="Notificaciones" title="Notificaciones">
+          <span aria-hidden="true">🔔</span>
+          <span id="notif-badge" class="notif-badge" aria-hidden="true" style="display:none;">0</span>
+        </button>
+        <div id="notif-dropdown" class="notif-dropdown notif-dropdown--cerrado" role="dialog" aria-label="Lista de notificaciones" data-msg-enviado="{{ t('comunidad.notif_te_ha_enviado') }}" data-msg-sigue="{{ t('comunidad.nuevo_seguidor') }}">
+          <div class="notif-dropdown-header">
+            <span class="notif-dropdown-titulo">{{ t('comunidad.notificaciones') }}</span>
+            <button type="button" id="notif-marcar-todas" class="notif-marcar-todas">{{ t('comunidad.notif_marcar_leidas') }}</button>
+          </div>
+          <div id="notif-list" class="notif-list"></div>
+          <p id="notif-empty" class="notif-empty" style="display:none;">{{ t('comunidad.notif_sin_notificaciones') }}</p>
+        </div>
+      </div>
       <a href="/comunidad/chat" class="btn-menu-secreto btn-menu-botella" aria-label="Chat VINEROS" title="Chat">
         <span class="btn-botella-wrap" aria-hidden="true">
           <svg class="btn-botella-svg" viewBox="0 0 24 44" fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
@@ -245,6 +259,7 @@
       });
     })();
   </script>
+  <script src="/static/js/notificaciones.js?v=1.0.0"></script>
   <script src="/static/js/menu-secreto.js?v=1.0.1"></script>
   {% block scripts %}{% endblock %}
 

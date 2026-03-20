@@ -814,6 +814,18 @@ async def get_actividad_perfil(
     return {"username": username, "actividad": actividades}
 
 
+@router.get("/api/notificaciones/count")
+async def get_notificaciones_count(
+    x_session_id: str | None = Header(None, alias="X-Session-ID"),
+):
+    """Número de notificaciones no leídas (para badge en header)."""
+    _, mi_username = _session_and_username(x_session_id)
+    if not mi_username:
+        return {"unread": 0}
+    no_leidas = notif_svc.get_no_leidas(mi_username)
+    return {"unread": len(no_leidas)}
+
+
 @router.get("/api/notificaciones")
 async def get_notificaciones(
     limit: int = 50,

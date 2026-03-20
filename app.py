@@ -193,6 +193,7 @@ def cargar_todos_los_vinos():
         'contactos_qr.json', 'lugares_destacados.json', 'chat_mensajes.json',
         'patrocinadores.json',  # no es catálogo de vinos
         'canales_feed.json',    # contenido de canales noticias/eventos/enoturismo
+        'vino_semana.json',     # config destacado editorial (no es ficha de vino)
     }
     archivos = [f for f in os.listdir(DATA_FOLDER) if f.endswith('.json') and f not in excluir]
     # Cargar vinos_aprendidos al final para que los aprendidos por Gemini (nube) estén disponibles offline
@@ -216,7 +217,7 @@ VINOS_MUNDIALES = cargar_todos_los_vinos()
 print(f"[INFO] Base de datos lista: {len(VINOS_MUNDIALES)} vinos cargados desde {DATA_FOLDER}")
 
 # Estado para rutas de escaneo, experto en vinos, bodega y analytics
-from routes import escaneo, sumiller, geolocalizacion, bodega, analytics, informes, adaptador, comprar, planes, pagos, ofertas, valoraciones_wishlist, comunidad, call_ws, qr, auth, pairing
+from routes import escaneo, sumiller, geolocalizacion, bodega, analytics, informes, adaptador, comprar, planes, pagos, ofertas, valoraciones_wishlist, comunidad, call_ws, qr, auth, pairing, vino_semana
 from services.busqueda_service import buscar_vinos_avanzado
 from services.enlaces_service import detectar_pais_por_ip
 
@@ -525,6 +526,7 @@ app.include_router(call_ws.router)
 app.include_router(qr.router)
 app.include_router(auth.router)
 app.include_router(pairing.router, prefix="/api")
+app.include_router(vino_semana.router)
 
 @app.get("/api/status")
 def api_status(request: Request):

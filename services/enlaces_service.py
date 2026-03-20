@@ -53,6 +53,7 @@ DOMINIOS_AMAZON: dict[str, str] = {
     "UK": "amazon.co.uk",
     "US": "amazon.com",
     "MX": "amazon.com.mx",
+    "PE": "amazon.com",
     "CA": "amazon.ca",
     "BR": "amazon.com.br",
     "JP": "amazon.co.jp",

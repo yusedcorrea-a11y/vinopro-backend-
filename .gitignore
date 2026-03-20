@@ -37,3 +37,6 @@ backups/
 *.log
 .DS_Store
 Thumbs.db
+
+# SQLite local (no subir bases de datos de desarrollo)
+data/*.db

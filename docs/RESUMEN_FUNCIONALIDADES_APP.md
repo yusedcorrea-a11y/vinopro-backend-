@@ -64,7 +64,7 @@ Resumen básico de todo lo que hace la app (vinoproia.com). Para cuando el domin
 
 - **Health check:** `/health` y `/ready` para monitoreo y despliegue.
 - **API REST** para escaneo, experto en vinos, bodega, comprar, planes, valoraciones, wishlist, ofertas.
-- **Base de datos:** catálogos de vinos en JSON (España, Francia, Italia, Argentina, Chile, Israel, Líbano, Marruecos, etc.) — más de 899 vinos.
+- **Base de datos:** catálogos de vinos en JSON (España, Francia, Italia, Argentina, Chile, Israel, Líbano, Marruecos, etc.). Italia: `italia.json` más, si está activo, **`italia_piemonte_salone_torino.json`** (Piamonte / Salone del Vino Torino, claves `sdt_*`; ver `docs/SALONE_VINO_TORINO_PIEMONTE.md`). Perú: **`peru.json`** + guía y tienda local (`docs/PERU_GUIA_BD_Y_VINO_SEMANA.md`).
 - **Email profesional:** guía para configurar hola@vinoproia.com (reenvío a Gmail vía Cloudflare).
 - **Monetización:** Amazon Associates por país; tiendas locales con afiliados en países sin Amazon (variables en .env).
 - **Dominio:** configuración con BASE_URL y CORS para vinoproia.com.

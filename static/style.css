@@ -1279,6 +1279,44 @@ nav a.activo {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
 .header-minimal-actions { display: flex; align-items: center; gap: 0.35rem; flex-shrink: 0; }
+/* Notificaciones: campana + dropdown */
+.header-notif-wrap { position: relative; }
+.btn-notif { position: relative; }
+.notif-badge {
+  position: absolute; top: 2px; right: 2px;
+  min-width: 18px; height: 18px; padding: 0 4px;
+  font-size: 0.7rem; font-weight: 700; line-height: 18px; text-align: center;
+  background: #c0392b; color: #fff; border-radius: 999px;
+}
+.notif-dropdown {
+  position: absolute; top: 100%; right: 0; margin-top: 0.35rem;
+  width: min(320px, 95vw); max-height: 360px;
+  background: var(--bg-card, #2d2520); border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12);
+  display: flex; flex-direction: column; z-index: 1000;
+  overflow: hidden;
+}
+.notif-dropdown--cerrado { display: none; }
+.notif-dropdown-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.6rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+.notif-dropdown-titulo { font-weight: 600; color: var(--text, #fff); }
+.notif-marcar-todas {
+  font-size: 0.8rem; background: none; border: none; color: var(--dorado, #d4af37);
+  cursor: pointer; text-decoration: underline;
+}
+.notif-list { overflow-y: auto; flex: 1; max-height: 280px; }
+.notif-item {
+  display: block; width: 100%; padding: 0.6rem 0.75rem; text-align: left;
+  background: none; border: none; border-bottom: 1px solid rgba(255,255,255,0.08);
+  color: var(--text, #fff); font-size: 0.9rem; text-decoration: none; cursor: pointer;
+  transition: background 0.15s;
+}
+.notif-item:hover { background: rgba(255,255,255,0.08); }
+.notif-item.no-leida { background: rgba(212,175,55,0.12); }
+.notif-item .notif-item-tipo { font-size: 0.75rem; opacity: 0.85; }
+.notif-empty { padding: 1rem 0.75rem; margin: 0; font-size: 0.9rem; color: rgba(255,255,255,0.7); }
 .header-minimal .header-minimal-logo {
   text-decoration: none;
   display: flex;

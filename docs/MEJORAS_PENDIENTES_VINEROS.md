@@ -2,10 +2,9 @@
 
 ## Prioridad alta
 
-### 1. **Notificaciones en la app**
-- **Estado:** El backend ya tiene `GET /api/notificaciones` y `POST /api/notificaciones/leer`; la app **no** los usa.
-- **Falta:** Pantalla o drawer de notificaciones (nuevo seguidor, nuevo mensaje) y, si hay un mensaje, enlace directo al chat con ese usuario.
-- **Opcional:** Badge con número de no leídas en el icono de Mensajes o en el header del Feed.
+### 1. **Notificaciones en la app** ✅ (implementado)
+- **Estado:** Campana en el header (base.html) con badge de no leídas, dropdown con lista y enlaces a chat o perfil. `GET /api/notificaciones/count` para el badge; al abrir el dropdown se cargan las notificaciones; "Marcar leídas" y al hacer clic en una notificación se marca y redirige. Traducciones es/en.
+- **Archivos:** `templates/base.html`, `static/js/notificaciones.js`, `static/style.css`, `routes/comunidad.py` (endpoint count).
 
 ### 2. **Actividad "probado" en el feed**
 - **Estado:** Al valorar o añadir a “deseado” ya se registra actividad. Al **añadir a Mi Bodega** no se registra “probado”.
@@ -46,4 +45,6 @@
 
 ---
 
-Resumen ejecutivo: lo que más impacto tiene ahora es **notificaciones en la app** (que el usuario vea “nuevo mensaje” y pueda ir al chat) y **actividad “probado”** al añadir a bodega; después, refresco de mensajes en el chat y, si quieres, push y moderación.
+**Valoraciones de usuarios:** Ya implementadas en backend y en Comprar: estrellas 1–5, nota, resumen en ficha, actividad en feed. APIs: `POST /api/valorar-vino`, `GET /api/vino/{id}/valoraciones`.
+
+Resumen ejecutivo: **Notificaciones en la app** (campana + dropdown) ✅ hecho. Siguiente impacto: **actividad "probado"** (que el usuario vea “nuevo mensaje” y pueda ir al chat) y **actividad “probado”** al añadir a bodega; después, refresco de mensajes en el chat y, si quieres, push y moderación.

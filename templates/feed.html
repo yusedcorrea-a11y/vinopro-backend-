@@ -1,13 +1,20 @@
 {% extends "base.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/feed.css?v=4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/feed.css?v=5">
 {% endblock %}
 
 {% block content %}
-<div class="vineros-wrap" data-feed-version="3">
-  <h1 class="page-title">{{ t('comunidad.feed_title') }}</h1>
-  <p class="page-subtitle">{{ t('comunidad.feed_subtitle') }}</p>
+<div class="vineros-wrap vineros-wrap--editorial" data-feed-version="4">
+  <header class="vineros-hero" aria-labelledby="vineros-hero-heading">
+    <p class="vineros-hero-kicker">{{ t('comunidad.feed_hero_kicker') }}</p>
+    <h1 id="vineros-hero-heading" class="vineros-hero-title">{{ t('comunidad.feed_hero_title') }}</h1>
+    <p class="vineros-hero-lead">{{ t('comunidad.feed_hero_lead') }}</p>
+    <p class="vineros-hero-news-note"><span class="vineros-hero-news-pill">{{ t('comunidad.feed_hero_gnews_pill') }}</span> {{ t('comunidad.feed_hero_gnews_note') }}</p>
+  </header>
 
   <nav class="feed-tabs" id="feed-tabs" role="tablist" aria-label="Canales: Noticias, Para ti, En vivo, Eventos, Enoturismo, Equipamiento, VINEROs">
     <button type="button" class="feed-tab active" data-canal="noticias" role="tab">{{ t('comunidad.feed_noticias') }}</button>
@@ -74,6 +81,32 @@
       <div id="vineros-stories" class="vineros-stories"></div>
     </div>
     <div id="vineros-list" class="vineros-list"></div>
+
+    <section class="vineros-live-section" id="vineros-live-section" aria-labelledby="vineros-live-heading">
+      <div class="vineros-live-inner">
+        <h2 id="vineros-live-heading" class="vineros-live-heading">{{ t('comunidad.feed_live_heading') }}</h2>
+        <p class="vineros-live-sub">{{ t('comunidad.feed_live_sub') }}</p>
+        <div class="vineros-live-rail" role="list">
+          <article class="vineros-live-card" role="listitem" style="--live-delay: 0ms">
+            <span class="vineros-live-dot" aria-hidden="true"></span>
+            <h3 class="vineros-live-card-title">{{ t('comunidad.feed_live_card1_title') }}</h3>
+            <p class="vineros-live-card-meta">{{ t('comunidad.feed_live_card1_meta') }}</p>
+          </article>
+          <article class="vineros-live-card" role="listitem" style="--live-delay: 80ms">
+            <span class="vineros-live-dot vineros-live-dot--soon" aria-hidden="true"></span>
+            <h3 class="vineros-live-card-title">{{ t('comunidad.feed_live_card2_title') }}</h3>
+            <p class="vineros-live-card-meta">{{ t('comunidad.feed_live_card2_meta') }}</p>
+          </article>
+          <article class="vineros-live-card" role="listitem" style="--live-delay: 160ms">
+            <span class="vineros-live-dot vineros-live-dot--soon" aria-hidden="true"></span>
+            <h3 class="vineros-live-card-title">{{ t('comunidad.feed_live_card3_title') }}</h3>
+            <p class="vineros-live-card-meta">{{ t('comunidad.feed_live_card3_meta') }}</p>
+          </article>
+        </div>
+        <a href="/planes" class="vineros-live-cta">{{ t('comunidad.feed_live_cta') }}</a>
+      </div>
+    </section>
+
     <div class="ad-slot" id="ad-slot-feed-mid" data-slot-id="feed-mid" aria-hidden="true">{{ t('comunidad.ad_slot_placeholder') }}</div>
     <div id="feed-observer"></div>
   </div>
@@ -83,5 +116,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="/static/js/feed.js?v=4"></script>
+<script src="/static/js/feed.js?v=5"></script>
 {% endblock %}

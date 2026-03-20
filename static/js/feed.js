@@ -448,6 +448,22 @@
 
   initLangSelector();
 
+  /* Revelar sección de canales en vivo al hacer scroll (estrategia PRO / 2026) */
+  var liveSection = document.getElementById('vineros-live-section');
+  if (liveSection && 'IntersectionObserver' in window) {
+    var liveIo = new IntersectionObserver(
+      function(entries) {
+        entries.forEach(function(entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add('vineros-live-section--visible');
+          liveIo.unobserve(entry.target);
+        });
+      },
+      { root: null, rootMargin: '0px 0px -8% 0px', threshold: 0.12 }
+    );
+    liveIo.observe(liveSection);
+  }
+
   var fotoModal = document.getElementById('feed-foto-modal');
   var fotoForm = document.getElementById('feed-foto-form');
   var fotoInput = document.getElementById('feed-foto-input');

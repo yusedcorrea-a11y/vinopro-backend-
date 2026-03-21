@@ -45,7 +45,7 @@
     "feed_para_ti": "Para ti",
     "feed_noticias": "Noticias",
     "feed_en_vivo": "En vivo",
-    "feed_en_vivo_hint": "Aquí no se retransmite vídeo: son dos accesos gratuitos a canales de YouTube (Wine News TV y Colectivo Decantado). Toca la tarjeta o el botón para abrir YouTube y ver directos o vídeos cuando los publiquen ellos.",
+    "feed_en_vivo_hint": "VINEROS cobra vida con vídeo embebido cuando configures lista o canal en datos (ver docs). Si hay reproductor, puede iniciar en silencio para dar movimiento; reduce movimiento en ajustes del sistema si lo prefieres. Siempre puedes abrir el vídeo completo en YouTube.",
     "feed_abrir_youtube": "Abrir en YouTube",
     "feed_eventos": "Eventos y catas",
     "feed_enoturismo": "Enoturismo",

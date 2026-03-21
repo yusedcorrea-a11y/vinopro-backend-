@@ -2,7 +2,9 @@
 API de comunidad (Fase 6B): perfiles, seguir, feed, notificaciones, traducción en tiempo real.
 Comunidad de fotos de vinos: subir foto + caption al feed.
 """
+import asyncio
 import hashlib
+import re
 import uuid
 from datetime import date, datetime
 from pathlib import Path
@@ -66,6 +68,9 @@ def _post_desde_canal(item: dict) -> dict:
         "brindis_count": 0,
         "comentarios_count": 0,
         "link": (item.get("link") or "").strip(),
+        "youtube_embed_video_id": (item.get("youtube_embed_video_id") or "").strip(),
+        "youtube_playlist_id": (item.get("youtube_playlist_id") or "").strip(),
+        "youtube_channel_uc": (item.get("youtube_channel_uc") or "").strip(),
     }
 
 
@@ -534,6 +539,32 @@ async def get_feed(
         for item in feed_svc.get_contenido_canal("equipamiento", limit=limit):
             posts.append(_post_desde_canal(item))
 
+    if canal == "en_vivo" and posts:
+        from services import youtube_channel_service as yt_svc
+
+        async def _enrich_yt(p: dict) -> None:
+            if (p.get("post_type") or "") != "canal":
+                return
+            cur = (p.get("youtube_embed_video_id") or "").strip()
+            if cur and re.match(r"^[a-zA-Z0-9_-]{11}$", cur):
+                return
+            pl = (p.get("youtube_playlist_id") or "").strip()
+            uc = (p.get("youtube_channel_uc") or "").strip()
+            if not pl and not uc:
+                return
+            try:
+                vid = await yt_svc.resolve_embed_video_id(
+                    static_video_id="",
+                    playlist_id=pl,
+                    channel_uc=uc,
+                )
+                if vid:
+                    p["youtube_embed_video_id"] = vid
+            except Exception:
+                pass
+
+        await asyncio.gather(*[_enrich_yt(p) for p in posts])
+
     posts.sort(key=lambda p: -(p.get("created_at") or 0))
     dedup = []
     seen = set()
@@ -590,6 +621,10 @@ async def get_feed(
             p["yo_brindi"] = brindis_svc.yo_brindi(pid, mi_username or "") if mi_username else False
         else:
             p["yo_brindi"] = False
+
+    for p in page:
+        p.pop("youtube_playlist_id", None)
+        p.pop("youtube_channel_uc", None)
 
     return {
         "canal": canal,

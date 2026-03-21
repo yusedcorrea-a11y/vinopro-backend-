@@ -362,3 +362,97 @@
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
 }
 .vineros-card--youtube-canal .vineros-media-img { display: block; }
+
+/* —— VINEROS “vivo”: embed 16:9 + aurora + Ken Burns (respeta prefers-reduced-motion) —— */
+.vineros-media--embed-16x9 {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 56vh;
+  background: #0a0a0a;
+  border-radius: 0;
+  overflow: hidden;
+}
+.vineros-media--embed-16x9::after { display: none; }
+.vineros-yt-iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.vineros-card--has-embed {
+  box-shadow: 0 4px 24px rgba(107, 45, 60, 0.12);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .vineros-wrap--vivo .vineros-hero {
+    position: relative;
+    overflow: hidden;
+  }
+  .vineros-wrap--vivo .vineros-hero::before {
+    content: "";
+    position: absolute;
+    inset: -40% -20%;
+    background: conic-gradient(
+      from 120deg,
+      rgba(212, 175, 55, 0.14),
+      rgba(107, 45, 60, 0.12),
+      rgba(138, 64, 82, 0.1),
+      rgba(212, 175, 55, 0.12)
+    );
+    animation: vinerosHeroAurora 18s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .vineros-wrap--vivo .vineros-hero > * {
+    position: relative;
+    z-index: 1;
+  }
+  @keyframes vinerosHeroAurora {
+    0% { transform: rotate(0deg) scale(1); opacity: 0.85; }
+    100% { transform: rotate(25deg) scale(1.08); opacity: 1; }
+  }
+
+  .vineros-media-img--living {
+    transform-origin: center center;
+    animation: vinerosKenBurns 28s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  @keyframes vinerosKenBurns {
+    0% { transform: scale(1.03) translate(0, 0); }
+    100% { transform: scale(1.1) translate(1.2%, -0.8%); }
+  }
+
+  .vineros-wrap--vivo .vineros-card {
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+  }
+  .vineros-wrap--vivo .vineros-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(45, 28, 24, 0.1);
+  }
+
+  .vineros-wrap--canal-en-vivo .feed-tabs {
+    animation: vinerosTabShimmer 6s ease-in-out infinite;
+  }
+  @keyframes vinerosTabShimmer {
+    0%, 100% { filter: saturate(1); }
+    50% { filter: saturate(1.08); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vineros-media-img--living {
+    animation: none !important;
+  }
+  .vineros-wrap--vivo .vineros-hero::before {
+    display: none !important;
+  }
+  .vineros-wrap--canal-en-vivo .feed-tabs {
+    animation: none !important;
+  }
+}
+
+[data-theme="dark"] .vineros-media--embed-16x9 {
+  box-shadow: 0 0 0 1px rgba(212, 168, 75, 0.15);
+}

@@ -1,8 +1,17 @@
 """Tests de las APIs de comunidad: eventos (calendario), brindis y canales."""
+import asyncio
+
 import pytest
 
 from routes.comunidad import get_eventos_calendario
 from services import feed_service as feed_svc
+from services.youtube_channel_service import resolve_embed_video_id
+
+
+def test_youtube_resolve_embed_video_id_estatico():
+    """ID de vídeo de 11 caracteres se acepta sin llamar a YouTube."""
+    vid = asyncio.run(resolve_embed_video_id(static_video_id="Z87vZFYC7hc"))
+    assert vid == "Z87vZFYC7hc"
 
 
 def test_canal_en_vivo_tiene_contenido():

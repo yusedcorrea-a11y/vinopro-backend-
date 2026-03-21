@@ -334,7 +334,10 @@
       "link": "https://www.youtube.com/results?search_query=Wine+News+TV+vino&sp=EgIQAQ%253D%253D",
       "fuente": "Wine News TV",
       "badge": "Canal YouTube",
-      "imagen": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&fit=crop"
+      "imagen": "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&fit=crop",
+      "youtube_embed_video_id": "",
+      "youtube_playlist_id": "",
+      "youtube_channel_uc": ""
     },
     {
       "id": "yt-canal-colectivo-decantado",
@@ -344,7 +347,10 @@
       "link": "https://www.youtube.com/results?search_query=Colectivo+Decantado+vino&sp=EgIQAQ%253D%253D",
       "fuente": "Colectivo Decantado",
       "badge": "Canal YouTube",
-      "imagen": "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&fit=crop"
+      "imagen": "https://images.unsplash.com/photo-1506377247377-2a5b3b417ebb?w=600&fit=crop",
+      "youtube_embed_video_id": "",
+      "youtube_playlist_id": "",
+      "youtube_channel_uc": ""
     }
   ],
   "equipamiento": [

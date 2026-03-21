@@ -45,7 +45,7 @@
     "feed_para_ti": "For you",
     "feed_noticias": "News",
     "feed_en_vivo": "Live",
-    "feed_en_vivo_hint": "Video is not played inside the app: these are two free shortcuts to YouTube channels (Wine News TV and Colectivo Decantado). Tap the card or the button to open YouTube for live streams and uploads.",
+    "feed_en_vivo_hint": "VINEROS comes alive with embedded video when you set a playlist or channel in data (see docs). The player may start muted for motion; use system settings to reduce motion if you prefer. You can always open the full video on YouTube.",
     "feed_abrir_youtube": "Open on YouTube",
     "feed_eventos": "Events & tastings",
     "feed_enoturismo": "Wine tourism",

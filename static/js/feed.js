@@ -30,6 +30,10 @@
     return /youtube\.com|youtu\.be/i.test(String(url || ''));
   }
 
+  function isValidYoutubeVideoId(id) {
+    return /^[a-zA-Z0-9_-]{11}$/.test(String(id || ''));
+  }
+
   function resolveAutoLang() {
     var navLang = ((navigator.language || navigator.userLanguage || '') + '').toLowerCase();
     if (navLang.indexOf('ru') === 0) return 'ru';
@@ -148,9 +152,12 @@
   function renderPost(post, isNoticias) {
     if (!listEl) return;
     isNoticias = !!isNoticias;
+    var embedVid = isValidYoutubeVideoId(post.youtube_embed_video_id) ? post.youtube_embed_video_id : '';
+    var hasEmbed = !!embedVid;
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var ytCanal = post.post_type === 'canal' && post.link && isYoutubeLink(post.link);
     var card = document.createElement('article');
-    card.className = 'vineros-card' + (post.post_type === 'sponsor' ? ' sponsor' : '') + (isNoticias ? ' vineros-card--noticia' : '') + (ytCanal ? ' vineros-card--youtube-canal' : '');
+    card.className = 'vineros-card' + (post.post_type === 'sponsor' ? ' sponsor' : '') + (isNoticias ? ' vineros-card--noticia' : '') + (hasEmbed ? ' vineros-card--has-embed' : '') + (ytCanal && !hasEmbed ? ' vineros-card--youtube-canal' : '');
     card.setAttribute('data-post-id', post.id || '');
     card.setAttribute('data-post-username', post.username || '');
     if (isNoticias && post.link) card.setAttribute('data-noticia-link', post.link);
@@ -158,12 +165,19 @@
     var hasImage = !!(post.image_url);
     var hasSponsorImg = post.post_type === 'sponsor' && hasImage;
     var mediaClass = post.post_type === 'sponsor' ? ('vineros-media sponsor-media' + (hasSponsorImg ? ' vineros-media--img' : '')) : (hasImage ? 'vineros-media vineros-media--img' : 'vineros-media');
-    if (ytCanal) mediaClass += ' vineros-media--youtube';
+    if (ytCanal && !hasEmbed) mediaClass += ' vineros-media--youtube';
+    if (hasEmbed) mediaClass = 'vineros-media vineros-media--embed-16x9';
     var mediaContent = '';
-    if (hasImage || post.post_type === 'canal') {
+    if (hasEmbed) {
+      var ap = reduceMotion ? '0' : '1';
+      var embedSrc = 'https://www.youtube-nocookie.com/embed/' + encodeURIComponent(embedVid) +
+        '?autoplay=' + ap + '&mute=1&playsinline=1&rel=0&modestbranding=1';
+      mediaContent = '<iframe class="vineros-yt-iframe" src="' + escapeHtml(embedSrc) + '" title="' + escapeHtml(post.title || 'YouTube') + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+    } else if (hasImage || post.post_type === 'canal') {
       var imgUrl = post.image_url || FALLBACK_IMAGE;
-      mediaContent = '<img class="vineros-media-img" src="' + escapeHtml(imgUrl) + '" alt="" loading="lazy" />';
-      if (ytCanal) {
+      var livingStill = post.post_type === 'canal';
+      mediaContent = '<img class="vineros-media-img' + (livingStill ? ' vineros-media-img--living' : '') + '" src="' + escapeHtml(imgUrl) + '" alt="" loading="lazy" />';
+      if (ytCanal && !hasEmbed) {
         mediaContent += '<div class="vineros-media-youtube-overlay" aria-hidden="true"><span class="vineros-youtube-play">▶</span><span class="vineros-youtube-label">' + escapeHtml(FEED_ABRIR_YT) + '</span></div>';
       }
     } else if (post.post_type === 'sponsor') {
@@ -173,9 +187,10 @@
     }
     var safeDescription = escapeHtml(post.description || '');
     var extraBtn = '';
-    if (post.post_type === 'canal' && post.link) {
-      var canalBtnLabel = ytCanal ? FEED_ABRIR_YT : 'Leer más';
-      extraBtn = '<a class="vineros-btn primary" href="' + escapeHtml(post.link) + '" target="_blank" rel="noopener">' + escapeHtml(canalBtnLabel) + '</a>';
+    if (post.post_type === 'canal' && (post.link || embedVid)) {
+      var canalHref = embedVid ? ('https://www.youtube.com/watch?v=' + encodeURIComponent(embedVid)) : post.link;
+      var canalBtnLabel = (ytCanal || embedVid) ? FEED_ABRIR_YT : 'Leer más';
+      extraBtn = '<a class="vineros-btn primary" href="' + escapeHtml(canalHref) + '" target="_blank" rel="noopener">' + escapeHtml(canalBtnLabel) + '</a>';
     } else if (post.post_type === 'sponsor' && post.link) {
       extraBtn = '<a class="vineros-btn primary" href="' + escapeHtml(post.link) + '">Descubre</a>';
     } else if (post.vino_detalle) {
@@ -222,7 +237,7 @@
       });
     } else {
       card.addEventListener('click', function(e) {
-        if (post.post_type === 'canal' && post.link && !e.target.closest('a[href], button, [data-action]')) {
+        if (post.post_type === 'canal' && !embedVid && post.link && !e.target.closest('a[href], button, [data-action]')) {
           window.open(post.link, '_blank', 'noopener');
           return;
         }
@@ -270,7 +285,7 @@
       });
     }
 
-    if (post.post_type === 'canal' && post.link) {
+    if (post.post_type === 'canal' && (post.link || embedVid) && !hasEmbed) {
       card.style.cursor = 'pointer';
     }
     listEl.appendChild(card);
@@ -319,6 +334,8 @@
     if (noticiasTools) noticiasTools.style.display = currentCanal === 'noticias' ? 'flex' : 'none';
     var enVivoHint = document.getElementById('feed-en-vivo-hint');
     if (enVivoHint) enVivoHint.style.display = currentCanal === 'en_vivo' ? 'block' : 'none';
+    var wrap = document.querySelector('.vineros-wrap');
+    if (wrap) wrap.classList.toggle('vineros-wrap--canal-en-vivo', currentCanal === 'en_vivo');
     var btnFoto = document.getElementById('feed-btn-foto-vino');
     if (btnFoto) btnFoto.style.display = (currentCanal === 'para_ti' || currentCanal === 'vineros') ? '' : 'none';
     if (storiesWrap) storiesWrap.style.display = (currentCanal === 'para_ti' || currentCanal === 'vineros') ? 'block' : 'none';

@@ -11,11 +11,12 @@ Por cada entrada puedes usar **una** de estas opciones (el backend las prueba en
 
 1. **`youtube_embed_video_id`** — ID fijo del vídeo (11 caracteres), copiado de la URL `watch?v=XXXXXXXXXXX`.
 2. **`youtube_playlist_id`** — ID de lista (`list=PL…` en la URL del playlist). El servidor lee el RSS público de YouTube y toma el **primer** vídeo de la lista (caché ~10 min).
-3. **`youtube_channel_uc`** — ID de canal (`UC…`, 24 caracteres). Mismo RSS `channel_id=…` y primer vídeo subido.
+3. **`youtube_rss_user`** — Nombre del canal en formato antiguo `/user/Nombre` (ej. `wntvpr` para Wine News TV). RSS: `feeds/videos.xml?user=…`.
+4. **`youtube_channel_uc`** — ID de canal (`UC…`, 24 caracteres). Mismo RSS `channel_id=…` y primer vídeo subido.
 
-Si las tres están vacías, la tarjeta sigue mostrando imagen + enlace, pero con **animación** en la foto (Ken Burns).
+Si todo está vacío, la tarjeta sigue mostrando imagen + enlace, pero con **animación** en la foto (Ken Burns).
 
-> **Nota:** El RSS de YouTube a veces devuelve 404 según canal, región o cambios de plataforma. Si falla, usa `youtube_embed_video_id` con un vídeo reciente del canal.
+> **Nota:** El RSS de YouTube a veces devuelve 404 según canal, región o cambios de plataforma. Si falla, prueba otro método (`youtube_rss_user` suele funcionar en canales con URL `/user/...`) o fija `youtube_embed_video_id` con un vídeo reciente.
 
 ## Cómo obtener IDs
 
@@ -27,7 +28,7 @@ Si las tres están vacías, la tarjeta sigue mostrando imagen + enlace, pero con
 
 - Dominio **youtube-nocookie.com** para el embed.
 - Autoplay solo **muteado**; con *reducir movimiento* del sistema, autoplay desactivado en el iframe.
-- Los campos internos `youtube_playlist_id` y `youtube_channel_uc` **no** se envían al cliente en la respuesta JSON del feed (solo el `youtube_embed_video_id` resuelto).
+- Los campos internos `youtube_playlist_id`, `youtube_rss_user` y `youtube_channel_uc` **no** se envían al cliente en la respuesta JSON del feed (solo el `youtube_embed_video_id` resuelto).
 
 ## Competencia / diferenciación
 

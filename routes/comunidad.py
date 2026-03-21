@@ -70,6 +70,7 @@ def _post_desde_canal(item: dict) -> dict:
         "link": (item.get("link") or "").strip(),
         "youtube_embed_video_id": (item.get("youtube_embed_video_id") or "").strip(),
         "youtube_playlist_id": (item.get("youtube_playlist_id") or "").strip(),
+        "youtube_rss_user": (item.get("youtube_rss_user") or "").strip(),
         "youtube_channel_uc": (item.get("youtube_channel_uc") or "").strip(),
     }
 
@@ -549,13 +550,15 @@ async def get_feed(
             if cur and re.match(r"^[a-zA-Z0-9_-]{11}$", cur):
                 return
             pl = (p.get("youtube_playlist_id") or "").strip()
+            ru = (p.get("youtube_rss_user") or "").strip()
             uc = (p.get("youtube_channel_uc") or "").strip()
-            if not pl and not uc:
+            if not pl and not ru and not uc:
                 return
             try:
                 vid = await yt_svc.resolve_embed_video_id(
                     static_video_id="",
                     playlist_id=pl,
+                    rss_user=ru,
                     channel_uc=uc,
                 )
                 if vid:
@@ -624,6 +627,7 @@ async def get_feed(
 
     for p in page:
         p.pop("youtube_playlist_id", None)
+        p.pop("youtube_rss_user", None)
         p.pop("youtube_channel_uc", None)
 
     return {

@@ -148,7 +148,7 @@ def get_contenido_canal(canal: str, limit: int = 20) -> list[dict]:
     Contenido estático de un canal (noticias, en_vivo, eventos, enoturismo, equipamiento).
     Cada item: id, created_at, titulo, descripcion, link, fuente, badge.
     en_vivo: canales YouTube gratuitos; vídeo embebido si en JSON hay
-    youtube_embed_video_id, youtube_playlist_id o youtube_channel_uc (ver docs/VINEROS_YOUTUBE_VIDA.md).
+    youtube_embed_video_id, youtube_playlist_id, youtube_rss_user o youtube_channel_uc (ver docs/VINEROS_YOUTUBE_VIDA.md).
     Para "eventos" solo devuelve los del JSON; la API mezclará con get_eventos_destacados.
     """
     if canal not in ("noticias", "en_vivo", "eventos", "enoturismo", "equipamiento"):

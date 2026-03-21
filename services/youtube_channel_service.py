@@ -2,7 +2,8 @@
 Último vídeo para embed en VINEROS (sin API key de YouTube):
 1) ID fijo en JSON (youtube_embed_video_id)
 2) Primera entrada del RSS de una lista (youtube_playlist_id)
-3) Primera entrada del RSS de un canal (youtube_channel_uc)
+3) RSS por nombre de usuario antiguo (youtube_rss_user → ?user=)
+4) Primera entrada del RSS de un canal (youtube_channel_uc)
 
 Caché en memoria para no saturar a YouTube.
 """
@@ -78,18 +79,33 @@ async def get_latest_upload_video_id(channel_uc: str) -> Optional[str]:
     return await _fetch_first_video_id_from_feed(url, "ch:" + uc)
 
 
+async def get_latest_video_id_from_legacy_user(username: str) -> Optional[str]:
+    """Canal por /user/Nombre (RSS ?user=) — sigue funcionando en muchos canales."""
+    u = (username or "").strip()
+    if not u or not re.match(r"^[a-zA-Z0-9._-]+$", u):
+        return None
+    url = f"https://www.youtube.com/feeds/videos.xml?user={u}"
+    return await _fetch_first_video_id_from_feed(url, "usr:" + u.lower())
+
+
 async def resolve_embed_video_id(
     static_video_id: str = "",
     playlist_id: str = "",
+    rss_user: str = "",
     channel_uc: str = "",
 ) -> Optional[str]:
-    """Orden: vídeo fijo → lista RSS → canal RSS."""
+    """Orden: vídeo fijo → lista RSS → user legacy RSS → canal RSS."""
     sid = (static_video_id or "").strip()
     if sid and _RE_STATIC_VIDEO.match(sid):
         return sid
     pl = (playlist_id or "").strip()
     if pl:
         v = await get_latest_video_id_from_playlist(pl)
+        if v:
+            return v
+    leg = (rss_user or "").strip()
+    if leg:
+        v = await get_latest_video_id_from_legacy_user(leg)
         if v:
             return v
     uc = (channel_uc or "").strip()

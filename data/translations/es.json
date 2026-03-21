@@ -45,7 +45,7 @@
     "feed_para_ti": "Para ti",
     "feed_noticias": "Noticias",
     "feed_en_vivo": "En vivo",
-    "feed_en_vivo_hint": "VINEROS cobra vida con vídeo embebido cuando configures lista o canal en datos (ver docs). Si hay reproductor, puede iniciar en silencio para dar movimiento; reduce movimiento en ajustes del sistema si lo prefieres. Siempre puedes abrir el vídeo completo en YouTube.",
+    "feed_en_vivo_hint": "Wine News TV y Vinopremier ya traen el último vídeo por RSS (gratis). El reproductor puede arrancar en silencio para dar movimiento; usa “reducir movimiento” en el sistema si lo prefieres. Más opciones en docs/VINEROS_YOUTUBE_VIDA.md.",
     "feed_abrir_youtube": "Abrir en YouTube",
     "feed_eventos": "Eventos y catas",
     "feed_enoturismo": "Enoturismo",

@@ -456,3 +456,19 @@
 [data-theme="dark"] .vineros-media--embed-16x9 {
   box-shadow: 0 0 0 1px rgba(212, 168, 75, 0.15);
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  .vineros-wrap--vivo .vineros-card--rise-in {
+    animation: vinerosCardRiseIn 0.58s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes vinerosCardRiseIn {
+    from {
+      opacity: 0;
+      transform: translateY(18px) scale(0.985);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+}

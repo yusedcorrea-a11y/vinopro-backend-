@@ -288,6 +288,13 @@
     if (post.post_type === 'canal' && (post.link || embedVid) && !hasEmbed) {
       card.style.cursor = 'pointer';
     }
+    var wrapVivo = listEl.closest('.vineros-wrap--vivo');
+    var allowStagger = wrapVivo && window.matchMedia && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (allowStagger) {
+      card.classList.add('vineros-card--rise-in');
+      var cardIdx = listEl.children.length;
+      card.style.animationDelay = (Math.min(cardIdx * 0.055, 0.55)) + 's';
+    }
     listEl.appendChild(card);
   }
 

@@ -2786,6 +2786,15 @@ body.page-inicio .chatbot-guia-mascot:hover {
   justify-content: center;
   border-radius: 50%;
   overflow: hidden;
+  /* Ligero “flotar” del zorro (la animación por frames va en cada img) */
+  animation: mascota-bob 2.8s ease-in-out infinite;
+}
+.chatbot-guia-mascot--reacting .chatbot-guia-mascot-face {
+  animation-play-state: paused;
+}
+@keyframes mascota-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
 }
 .chatbot-guia-mascot-img,
 .chatbot-guia-mascot-video {
@@ -2807,23 +2816,32 @@ body.page-inicio .chatbot-guia-mascot:hover {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 48% 40%;
   border-radius: 50%;
 }
-.chatbot-guia-mascot-frame-1 { animation: mascota-fade-1 3s ease-in-out infinite; }
-.chatbot-guia-mascot-frame-2 { animation: mascota-fade-2 3s ease-in-out infinite; }
-.chatbot-guia-mascot-frame-3 { animation: mascota-fade-3 3s ease-in-out infinite; }
+/* 4 poses del zorro 3D, ciclo 4 s, sin texto en PNG */
+.chatbot-guia-mascot-frame-1 { animation: mascota-fade-1 4s ease-in-out infinite; }
+.chatbot-guia-mascot-frame-2 { animation: mascota-fade-2 4s ease-in-out infinite; }
+.chatbot-guia-mascot-frame-3 { animation: mascota-fade-3 4s ease-in-out infinite; }
+.chatbot-guia-mascot-frame-4 { animation: mascota-fade-4 4s ease-in-out infinite; }
 @keyframes mascota-fade-1 {
-  0%, 100% { opacity: 1; }
-  30%, 70% { opacity: 0; }
+  0%, 22% { opacity: 1; }
+  25%, 97% { opacity: 0; }
+  100% { opacity: 1; }
 }
 @keyframes mascota-fade-2 {
-  0%, 28% { opacity: 0; }
-  33%, 63% { opacity: 1; }
-  68%, 100% { opacity: 0; }
+  0%, 22% { opacity: 0; }
+  25%, 47% { opacity: 1; }
+  50%, 100% { opacity: 0; }
 }
 @keyframes mascota-fade-3 {
-  0%, 61% { opacity: 0; }
-  66%, 97% { opacity: 1; }
+  0%, 47% { opacity: 0; }
+  50%, 72% { opacity: 1; }
+  75%, 100% { opacity: 0; }
+}
+@keyframes mascota-fade-4 {
+  0%, 72% { opacity: 0; }
+  75%, 97% { opacity: 1; }
   100% { opacity: 0; }
 }
 /* Fallback a video cuando las imágenes no cargan (404 en producción, etc.) */
@@ -2989,7 +3007,7 @@ body.page-inicio .chatbot-guia-mascot:hover {
   border-radius: 50%;
 }
 .chatbot-guia-avatar-video { display: block; }
-/* Avatar del panel: mismos 3 frames en bucle */
+/* Avatar del panel: mismos 4 frames en bucle */
 .chatbot-guia-avatar-frames {
   position: relative;
 }
@@ -2999,11 +3017,13 @@ body.page-inicio .chatbot-guia-mascot:hover {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: 48% 40%;
   border-radius: 50%;
 }
-.chatbot-guia-avatar-frame-1 { animation: mascota-fade-1 3s ease-in-out infinite; }
-.chatbot-guia-avatar-frame-2 { animation: mascota-fade-2 3s ease-in-out infinite; }
-.chatbot-guia-avatar-frame-3 { animation: mascota-fade-3 3s ease-in-out infinite; }
+.chatbot-guia-avatar-frame-1 { animation: mascota-fade-1 4s ease-in-out infinite; }
+.chatbot-guia-avatar-frame-2 { animation: mascota-fade-2 4s ease-in-out infinite; }
+.chatbot-guia-avatar-frame-3 { animation: mascota-fade-3 4s ease-in-out infinite; }
+.chatbot-guia-avatar-frame-4 { animation: mascota-fade-4 4s ease-in-out infinite; }
 .chatbot-guia-header-text {
   flex: 1;
   min-width: 0;

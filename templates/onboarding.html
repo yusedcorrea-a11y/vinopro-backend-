@@ -30,8 +30,17 @@
     transition: transform 0.15s, box-shadow 0.2s;
   }
   .onboarding-btn:focus-visible { outline: 2px solid var(--burdeos); outline-offset: 3px; }
-  .onboarding-btn-primario { background: linear-gradient(135deg, var(--burdeos), #5a2635); color: #fff; box-shadow: 0 4px 14px rgba(107,45,60,0.35); }
-  .onboarding-btn-primario:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(107,45,60,0.4); }
+  /* Fallback sólido + gradiente: WebViews viejos a veces pintan el primario gris si falla el gradiente */
+  .onboarding-btn-primario {
+    background: #6b2d3c;
+    background: -webkit-linear-gradient(135deg, #6b2d3c, #5a2635);
+    background: linear-gradient(135deg, var(--burdeos), #5a2635);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(107,45,60,0.35);
+  }
+  .onboarding-btn-primario:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(107,45,60,0.4); }
+  .onboarding-btn-primario:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+  .onboarding-btn-primario:not(:disabled) { pointer-events: auto; opacity: 1; }
   .onboarding-btn-secundario { background: rgba(107,45,60,0.08); color: var(--burdeos); border: 1px solid rgba(107,45,60,0.25); }
   .onboarding-btn-secundario:hover { background: rgba(107,45,60,0.12); }
   .onboarding-lang-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-bottom: 1.25rem; max-height: 280px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
@@ -40,6 +49,9 @@
     background: #fff; color: var(--texto-principal); font-size: 0.95rem; cursor: pointer;
     text-align: left; display: flex; align-items: center; gap: 0.5rem;
     transition: background 0.2s, border-color 0.2s;
+    min-height: 48px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(107, 45, 60, 0.15);
   }
   .onboarding-lang-btn:focus-visible { outline: 2px solid var(--burdeos); outline-offset: 2px; }
   .onboarding-lang-btn:hover { background: rgba(107,45,60,0.06); border-color: rgba(107,45,60,0.35); }
@@ -112,6 +124,38 @@
 
     var selectedLang = null;
 
+    /** WebViews antiguos (Android 4.x / Huawei viejos) sin Element.closest: el toque en el emoji no activaba el idioma. */
+    function closestLangButton(el) {
+      if (!el) return null;
+      if (typeof el.closest === 'function') {
+        return el.closest('.onboarding-lang-btn');
+      }
+      var n = el;
+      while (n && n !== langList) {
+        if (n.nodeType === 1 && n.classList && n.classList.contains('onboarding-lang-btn')) return n;
+        n = n.parentElement;
+      }
+      return null;
+    }
+
+    function forEachLangBtn(fn) {
+      var nodes = langList ? langList.querySelectorAll('.onboarding-lang-btn') : [];
+      for (var i = 0; i < nodes.length; i++) fn(nodes[i]);
+    }
+
+    /** WebViews viejos a veces ignoran solo .disabled=false; hay que quitar el atributo. */
+    function setContinuarEnabled(on) {
+      if (!continuar) return;
+      if (on) {
+        continuar.removeAttribute('disabled');
+        continuar.disabled = false;
+        void continuar.offsetWidth;
+      } else {
+        continuar.setAttribute('disabled', 'disabled');
+        continuar.disabled = true;
+      }
+    }
+
     function showStep(step) {
       if (step1) step1.classList.remove('activo');
       if (step2) step2.classList.remove('activo');
@@ -124,11 +168,11 @@
         if (langList && initial) {
           var btn = langList.querySelector('.onboarding-lang-btn[data-lang="' + initial + '"]');
           if (btn) {
-            langList.querySelectorAll('.onboarding-lang-btn').forEach(function(b) { b.classList.remove('selected'); b.setAttribute('aria-pressed', 'false'); });
+            forEachLangBtn(function(b) { b.classList.remove('selected'); b.setAttribute('aria-pressed', 'false'); });
             btn.classList.add('selected');
             btn.setAttribute('aria-pressed', 'true');
             selectedLang = initial;
-            if (continuar) continuar.disabled = false;
+            setContinuarEnabled(true);
           }
         }
       } else if (step === 3 && step3) step3.classList.add('activo');
@@ -150,23 +194,57 @@
     }
 
     if (langList) {
-      langList.addEventListener('click', function(e) {
-        var btn = e.target.closest('.onboarding-lang-btn');
+      function onPickLang(e) {
+        var btn = closestLangButton(e.target);
         if (!btn) return;
-        langList.querySelectorAll('.onboarding-lang-btn').forEach(function(b) {
+        forEachLangBtn(function(b) {
           b.classList.remove('selected'); b.setAttribute('aria-pressed', 'false');
         });
         btn.classList.add('selected');
         btn.setAttribute('aria-pressed', 'true');
         selectedLang = btn.getAttribute('data-lang');
-        if (continuar) continuar.disabled = !selectedLang;
-      });
+        setContinuarEnabled(!!selectedLang);
+      }
+      langList.addEventListener('click', onPickLang);
+      /* Tablets viejos: touchend a veces no dispara click en hijos del botón */
+      try {
+        langList.addEventListener('touchend', function(e) { onPickLang(e); }, { passive: true });
+      } catch (err) {
+        langList.addEventListener('touchend', function(e) { onPickLang(e); });
+      }
     }
+    var continuarFromTouch = false;
+    function goToRegistroStep() {
+      if (!selectedLang) return false;
+      setCookie(COOKIE_LANG, selectedLang);
+      showStep(3);
+      return true;
+    }
+    window._onboardingContinuar = function() {
+      if (continuar && continuar.disabled) return false;
+      return goToRegistroStep();
+    };
     if (continuar) {
+      /* Tablets: el click a veces no llega si el botón acaba de habilitarse; touchend + onclick en HTML cubren eso */
+      try {
+        continuar.addEventListener('touchend', function(ev) {
+          if (continuar.disabled || !selectedLang) return;
+          continuarFromTouch = true;
+          ev.preventDefault();
+          goToRegistroStep();
+          setTimeout(function() { continuarFromTouch = false; }, 600);
+        }, { passive: false });
+      } catch (e1) {
+        continuar.addEventListener('touchend', function(ev) {
+          if (continuar.disabled || !selectedLang) return;
+          continuarFromTouch = true;
+          goToRegistroStep();
+          setTimeout(function() { continuarFromTouch = false; }, 600);
+        });
+      }
       continuar.addEventListener('click', function() {
-        if (!selectedLang) return;
-        setCookie(COOKIE_LANG, selectedLang);
-        showStep(3);
+        if (continuarFromTouch) return;
+        goToRegistroStep();
       });
     }
     if (registrarme) {

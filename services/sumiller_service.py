@@ -56,19 +56,51 @@ def _cargar_mitos() -> list:
 def verificar_mito(pregunta: str) -> dict | None:
     """
     Evidence Engine — Capa 1: Mitos documentados.
-    Si la pregunta del usuario coincide con un mito conocido, devuelve el dict del mito
-    para que el sumiller corrija antes de cualquier otra lógica.
-    Retorna None si no se detecta ningún mito.
+    Detección por tokens: no requiere la frase exacta, sino que los términos
+    relevantes del keyword estén presentes en la pregunta.
+
+    Sistema de puntuación:
+      +3 si la frase clave completa aparece literalmente
+      +2 si TODOS los tokens relevantes del keyword están en la pregunta
+      +1 si la mayoría (>50%) de los tokens relevantes están en la pregunta
+    Umbral de activación: score >= 2
     """
     if not pregunta:
         return None
     pregunta_norm = _normalizar(pregunta)
+    # Palabras vacías que no aportan señal para la detección de mitos
+    _STOPWORDS = {
+        "con", "el", "la", "los", "las", "de", "del", "un", "una", "es", "son",
+        "al", "se", "que", "no", "si", "por", "para", "pero", "y", "o", "en",
+        "mas", "más", "siempre", "nunca", "todo", "todos", "solo", "solo",
+    }
     mitos = _cargar_mitos()
     mejor: dict | None = None
     mejor_score = 0
     for mito in mitos:
         palabras_clave = mito.get("palabras_clave") or []
-        score = sum(1 for kw in palabras_clave if _normalizar(kw) in pregunta_norm)
+        score = 0
+        for kw in palabras_clave:
+            kw_norm = _normalizar(kw)
+            if kw_norm in pregunta_norm:
+                # Frase exacta encontrada: máxima puntuación
+                score += 3
+            else:
+                # Extraer tokens relevantes (sin stopwords ni palabras muy cortas)
+                tokens_relevantes = [
+                    t for t in kw_norm.split()
+                    if t not in _STOPWORDS and len(t) > 2
+                ]
+                if not tokens_relevantes:
+                    continue
+                tokens_en_pregunta = sum(1 for t in tokens_relevantes if t in pregunta_norm)
+                total = len(tokens_relevantes)
+                if tokens_en_pregunta == total:
+                    # Todos los tokens relevantes están presentes
+                    score += 2
+                elif total >= 2 and tokens_en_pregunta >= (total // 2 + 1):
+                    # Mayoría de tokens presentes
+                    score += 1
         if score > mejor_score:
             mejor_score = score
             mejor = mito

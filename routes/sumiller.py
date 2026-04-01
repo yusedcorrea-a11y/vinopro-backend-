@@ -621,6 +621,23 @@ def _preguntar_sumiller_general(
         respuesta = _responder_pregunta(vino_bd, texto_clean, perfil=perfil)
         if any(p in texto_clean.lower() for p in ["código", "codigo", "key", "clave", "identificador", " id "]):
             respuesta += f" En nuestra base de datos la clave de este vino es: «{key_bd}»."
+        # Evidence Engine — Capa 2: si la pregunta es educativa sobre un TIPO de vino
+        # (ej. "cuéntame del Barolo"), enriquecer con datos técnicos verificados
+        if _es_info_vino_concreto(texto_clean) or _es_info_general(texto_clean):
+            conocimiento = svc_sumiller._cargar_conocimiento()
+            tipos = conocimiento.get("tipos") or {}
+            claves_busqueda = conocimiento.get("claves_busqueda") or {}
+            texto_norm_kb = svc_sumiller._normalizar(texto_clean)
+            tipo_key_kb = None
+            for clave, palabras in claves_busqueda.items():
+                if any(svc_sumiller._normalizar(p) in texto_norm_kb for p in palabras):
+                    tipo_key_kb = clave
+                    break
+            if tipo_key_kb and isinstance(tipos.get(tipo_key_kb), dict):
+                info_tipo = tipos[tipo_key_kb]
+                datos_verificados = svc_sumiller.enriquecer_con_datos_verificados(info_tipo)
+                if datos_verificados:
+                    respuesta = respuesta + "\n\n📖 Datos verificados del tipo:\n" + datos_verificados
         vinos_recomendados = [vino_bd]
         vinos_ref_para_guardar = [key_bd]
     elif _es_maridaje(texto_clean):

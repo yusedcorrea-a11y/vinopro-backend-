@@ -1,6 +1,11 @@
 """
 Servicio para el Experto en Vinos Virtual: maridajes y recomendaciones desde la base de vinos,
 soporte de contexto (últimas preguntas) y fallback cuando no hay resultados (conocimiento + similares).
+
+Evidence Engine (v2):
+  Capa 1 — Mitos: si la pregunta toca un mito documentado, corrige antes de responder.
+  Capa 2 — Base verificada: usa conocimiento_vinos.json (temperatura, guarda, DO…).
+  Capa 3 — IA Gemini: último recurso, marcado con [Estimación IA].
 """
 import json
 import random
@@ -11,7 +16,9 @@ from typing import Any
 # Ruta al conocimiento de tipos de vino (fallback cuando no hay coincidencias)
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 CONOCIMIENTO_PATH = DATA_DIR / "conocimiento_vinos.json"
+MITOS_PATH = DATA_DIR / "mitos_vino.json"
 _conocimiento_cache: dict | None = None
+_mitos_cache: list | None = None
 
 
 def _cargar_conocimiento() -> dict:
@@ -27,6 +34,78 @@ def _cargar_conocimiento() -> dict:
     except Exception:
         _conocimiento_cache = {"tipos": {}, "claves_busqueda": {}}
     return _conocimiento_cache
+
+
+def _cargar_mitos() -> list:
+    """Carga la lista de mitos documentados (mitos_vino.json). Caché en memoria."""
+    global _mitos_cache
+    if _mitos_cache is not None:
+        return _mitos_cache
+    if not MITOS_PATH.is_file():
+        _mitos_cache = []
+        return _mitos_cache
+    try:
+        with open(MITOS_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        _mitos_cache = data.get("mitos") or []
+    except Exception:
+        _mitos_cache = []
+    return _mitos_cache
+
+
+def verificar_mito(pregunta: str) -> dict | None:
+    """
+    Evidence Engine — Capa 1: Mitos documentados.
+    Si la pregunta del usuario coincide con un mito conocido, devuelve el dict del mito
+    para que el sumiller corrija antes de cualquier otra lógica.
+    Retorna None si no se detecta ningún mito.
+    """
+    if not pregunta:
+        return None
+    pregunta_norm = _normalizar(pregunta)
+    mitos = _cargar_mitos()
+    mejor: dict | None = None
+    mejor_score = 0
+    for mito in mitos:
+        palabras_clave = mito.get("palabras_clave") or []
+        score = sum(1 for kw in palabras_clave if _normalizar(kw) in pregunta_norm)
+        if score > mejor_score:
+            mejor_score = score
+            mejor = mito
+    return mejor if mejor_score >= 2 else None
+
+
+def formatear_correccion_mito(mito: dict) -> str:
+    """
+    Formatea la corrección de un mito en un mensaje educado y pedagógico para el usuario.
+    """
+    correccion = (mito.get("correccion_educada") or "").strip()
+    realidad = (mito.get("realidad") or "").strip()
+    if correccion and realidad:
+        return f"{correccion}\n\n📚 La realidad: {realidad}"
+    return correccion or realidad or "Ese es un mito frecuente sobre el vino. Te recomiendo consultar fuentes especializadas."
+
+
+def enriquecer_con_datos_verificados(info_tipo: dict) -> str:
+    """
+    Evidence Engine — Capa 2: Datos técnicos verificados.
+    Añade temperatura de servicio, potencial de guarda y clasificación oficial
+    al texto de respuesta del sumiller.
+    """
+    extras = []
+    temp = info_tipo.get("temperatura_servicio_c")
+    if temp:
+        extras.append(f"🌡️ Temperatura de servicio: {temp}°C")
+    guarda = info_tipo.get("potencial_guarda_anos")
+    if guarda:
+        extras.append(f"⏳ Potencial de guarda: {guarda} años")
+    clasificacion = info_tipo.get("clasificacion_oficial")
+    if clasificacion:
+        extras.append(f"🏅 Clasificación: {clasificacion}")
+    uvas = info_tipo.get("uvas_principales")
+    if uvas:
+        extras.append(f"🍇 Uvas: {uvas}")
+    return "\n".join(extras) if extras else ""
 
 # Palabras clave de comida para maridaje (usuario y texto maridaje del vino)
 MARIDAJE_PALABRAS = {
@@ -622,6 +701,11 @@ def fallback_sin_resultados(
         maridaje = info_tipo.get("maridaje") or ""
         lineas.append(f"El {nombre_tipo} es un vino {tipo_vino} originario de la región de {origen}. {desc}")
         lineas.append("")
+        # Evidence Engine — Capa 2: datos técnicos verificados
+        datos_verificados = enriquecer_con_datos_verificados(info_tipo)
+        if datos_verificados:
+            lineas.append(datos_verificados)
+            lineas.append("")
         lineas.append("Los más famosos son:")
         for ej in [e.strip() for e in ejemplos.split(",")]:
             if ej:

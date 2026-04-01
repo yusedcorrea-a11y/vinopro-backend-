@@ -106,6 +106,7 @@ Reglas: Responde en español, en 2-4 frases. {perfil_instruccion}
 def buscar_vino_en_nube(pregunta_o_nombre: str, perfil: str = "aficionado") -> tuple[str | None, dict | None]:
     """
     Busca un vino en la nube (conocimiento de Gemini) cuando no está en la base local.
+    Evidence Engine — Capa 3: respuesta marcada con [Estimación IA] para transparencia.
     Devuelve (respuesta_texto, vino_dict).
     - respuesta_texto: respuesta del sumiller en español (2-4 frases).
     - vino_dict: ficha del vino para guardar en BD local (nombre, bodega, tipo, etc.) o None si Gemini no pudo identificar el vino.
@@ -164,6 +165,9 @@ Pregunta o nombre del vino: {texto}"""
                     vino = None
             except (json.JSONDecodeError, ValueError):
                 pass
+        # Evidence Engine — Capa 3: marcar SOLO la respuesta visible, nunca el bloque VINO_JSON
+        if respuesta and not respuesta.startswith("[Estimación IA]"):
+            respuesta = "[Estimación IA] " + respuesta
         return respuesta, vino
     except Exception as e:
         logger.warning("[SumillerGemini] Error en buscar_vino_en_nube: %s", e)

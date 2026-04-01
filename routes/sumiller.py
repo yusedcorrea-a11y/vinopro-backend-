@@ -560,6 +560,27 @@ def _preguntar_sumiller_general(
     quizas_quisiste_decir = None
     vino_anadido_a_base = False
 
+    # --- Evidence Engine — Capa 1: Corrección de mitos documentados ---
+    mito_detectado = svc_sumiller.verificar_mito(texto_clean)
+    if mito_detectado:
+        respuesta_mito = svc_sumiller.formatear_correccion_mito(mito_detectado)
+        if session_id:
+            nuevo = {"pregunta": texto_clean, "respuesta": respuesta_mito, "vinos_ref": []}
+            contexto = (contexto + [nuevo])[-MAX_CONTEXTO:]
+            historial_store[session_id] = contexto
+        return {
+            "consulta_id": None,
+            "vino_key": None,
+            "pregunta": texto_clean,
+            "respuesta": respuesta_mito,
+            "vino_nombre": None,
+            "imagen_url": None,
+            "mostrar_boton_comprar": False,
+            "perfil": perfil,
+            "evidence_layer": "mito_corregido",
+            "mito_id": mito_detectado.get("id"),
+        }
+
     # Búsqueda previa en BD: si la pregunta menciona un vino (Protos, Viña Pedrosa, etc.), responder con datos de nuestra BD
     coincidencias_bd = buscar_vinos_avanzado(vinos_dict, texto_clean, limite=1)
     vino_bd = None
@@ -746,14 +767,25 @@ def _preguntar_sumiller_general(
             session_id, len(contexto), len(nuevo.get("vinos_ref") or [])))
 
     vinos_ref_para_guardar = [k for k in (vinos_ref_para_guardar or []) if isinstance(k, str) and (k or "").strip()]
-    # Dar vida a la respuesta con Gemini (mismo plan gratuito que el escáner). Si falla, se mantiene la respuesta rule-based.
-    try:
-        from services import sumiller_gemini_service as gemini_svc
-        respuesta_rewrite = gemini_svc.reescribir_respuesta_sumiller(texto_clean, respuesta, perfil=perfil)
-        if respuesta_rewrite:
-            respuesta = respuesta_rewrite
-    except Exception:
-        pass
+    # Evidence Engine: proteger respuestas marcadas como estimación IA o que contienen datos técnicos verificados.
+    # La reescritura de Gemini solo se aplica a respuestas rule-based puras (datos de bodega local).
+    # Si la respuesta ya viene de Gemini nube ([Estimación IA]) o de la base técnica verificada,
+    # NO reescribir para no borrar la trazabilidad ni los datos exactos (temperatura, guarda, DO).
+    _respuesta_protegida = (
+        (respuesta or "").startswith("[Estimación IA]")
+        or "🌡️" in (respuesta or "")
+        or "⏳" in (respuesta or "")
+        or "🏅" in (respuesta or "")
+        or vino_anadido_a_base
+    )
+    if not _respuesta_protegida:
+        try:
+            from services import sumiller_gemini_service as gemini_svc
+            respuesta_rewrite = gemini_svc.reescribir_respuesta_sumiller(texto_clean, respuesta, perfil=perfil)
+            if respuesta_rewrite:
+                respuesta = respuesta_rewrite
+        except Exception:
+            pass
     vino_nombre = vinos_recomendados[0].get("nombre") if vinos_recomendados and isinstance(vinos_recomendados[0], dict) else None
     primer_key = (vinos_ref_para_guardar[0] if vinos_ref_para_guardar else None)
     if primer_key is not None and not isinstance(primer_key, str):

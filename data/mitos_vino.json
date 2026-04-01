@@ -1,0 +1,360 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "total_mitos": 50,
+    "descripcion": "Base de mitos, creencias erróneas y malentendidos documentados sobre el vino. Cada entrada incluye el mito, la realidad verificada y la corrección educada para el sumiller.",
+    "fuente": "Conocimiento enológico consolidado, DO oficiales, bibliografía vitivinícola"
+  },
+  "mitos": [
+    {
+      "id": "M001",
+      "mito": "El vino tinto siempre va con carne y el blanco siempre con pescado",
+      "palabras_clave": ["tinto con carne", "blanco con pescado", "regla del color", "norma tinto blanco"],
+      "realidad": "Es una simplificación obsoleta. Lo que importa es el peso y la estructura del vino respecto al plato. Un blanco con cuerpo (Borgoña, Rioja blanco en barrica) puede acompañar carnes blancas, y un tinto ligero como el Pinot Noir va bien con salmón.",
+      "correccion_educada": "Esa es una de las reglas más repetidas y más superadas del mundo del vino. Lo que realmente importa es la intensidad del plato frente a la del vino, no el color. ¿Te cuento el maridaje que realmente encaja?"
+    },
+    {
+      "id": "M002",
+      "mito": "Un vino más caro siempre es mejor",
+      "palabras_clave": ["precio calidad", "caro es mejor", "precio garantía", "más caro mejor vino"],
+      "realidad": "El precio refleja factores como producción limitada, marketing, cosecha, bodega de prestigio y escasez. Hay vinos excelentes por debajo de 10€ y vinos caros que decepcionan. La relación precio-calidad varía enormemente por región y bodega.",
+      "correccion_educada": "El precio es un indicador de muchas cosas, pero no siempre de calidad. Hay vinos extraordinarios por menos de 10€ y vinos caros que no justifican su precio. Lo más importante es tu paladar."
+    },
+    {
+      "id": "M003",
+      "mito": "El cava es champagne español",
+      "palabras_clave": ["cava es champagne", "champagne español", "cava igual champagne", "cava como champagne"],
+      "realidad": "El Cava y el Champagne son denominaciones distintas protegidas. El Champagne solo puede producirse en la región de Champagne (Francia) con uvas Chardonnay, Pinot Noir y Pinot Meunier. El Cava se elabora principalmente en Cataluña con Macabeo, Xarel·lo y Parellada. Ambos usan el método tradicional (segunda fermentación en botella), pero son productos distintos.",
+      "correccion_educada": "No exactamente: comparten el método de elaboración (segunda fermentación en botella), pero son denominaciones distintas con uvas, terroir y regulación propia. El Cava tiene una identidad única y excelentes productores."
+    },
+    {
+      "id": "M004",
+      "mito": "Los vinos añejos siempre son mejores",
+      "palabras_clave": ["más viejo mejor", "vino antiguo mejor", "cuanto más años mejor", "viejo es mejor"],
+      "realidad": "Solo una minoría de vinos (menos del 5%) mejora con el tiempo. La mayoría de los vinos del mundo, incluidos la mayor parte de los blancos, rosados y tintos jóvenes, está diseñada para consumirse en los primeros 2-5 años. Guardar un vino sin potencial de guarda lo deteriora.",
+      "correccion_educada": "Eso es un mito muy extendido. Solo los vinos con mucha estructura (taninos, acidez, azúcar) mejoran con los años. La mayoría de vinos pierde fruta y frescura si los guardas demasiado."
+    },
+    {
+      "id": "M005",
+      "mito": "El Malbec es una uva originaria de Argentina",
+      "palabras_clave": ["malbec es argentino", "malbec origen argentina", "uva argentina malbec"],
+      "realidad": "El Malbec es originario del suroeste de Francia, concretamente de la región de Cahors, donde se conoce como Côt o Auxerrois. Llegó a Argentina a mediados del siglo XIX. Argentina lo convirtió en su varietal estrella, pero el origen es francés.",
+      "correccion_educada": "Dato curioso: el Malbec nació en Francia (Cahors), aunque Argentina lo convirtió en su uva icónica. En Cahors todavía se producen Malbec de carácter muy diferente al argentino."
+    },
+    {
+      "id": "M006",
+      "mito": "El rosado es vino tinto rebajado con blanco",
+      "palabras_clave": ["rosado mezcla tinto blanco", "rosado es mezcla", "rosado adulterado"],
+      "realidad": "El rosado auténtico se elabora principalmente por maceración de uvas tintas durante pocas horas (la piel da el color). En la UE está prohibido mezclar tinto y blanco para hacer rosado de mesa, salvo en Champagne rosé (donde sí se permite). El Provence rosé es un ejemplo de elaboración rigurosa.",
+      "correccion_educada": "No, el rosado de calidad se elabora dejando las pieles de uva tinta en contacto con el mosto pocas horas. En la Unión Europea está prohibido mezclar tinto y blanco para hacer rosado, salvo en Champagne."
+    },
+    {
+      "id": "M007",
+      "mito": "El champagne y los espumosos solo son para celebraciones",
+      "palabras_clave": ["champagne solo celebraciones", "cava solo fiestas", "espumoso solo cumpleaños"],
+      "realidad": "Los espumosos son vinos versátiles para cualquier ocasión y excelentes compañeros de mesa. La acidez y las burbujas los convierten en ideales para maridajes con mariscos, sushi, frituras, aperitivos e incluso carnes blancas.",
+      "correccion_educada": "¡Al contrario! El champagne y los espumosos son de los vinos más versátiles para la mesa. Su acidez y burbujas combinan muy bien con mariscos, sushi, frituras y aperitivos."
+    },
+    {
+      "id": "M008",
+      "mito": "Los sulfitos del vino causan el dolor de cabeza",
+      "palabras_clave": ["sulfitos dolor cabeza", "sulfitos resaca", "sulfitos alergia", "vino sin sulfitos cabeza"],
+      "realidad": "Los sulfitos se añaden como conservante y los vinos contienen niveles muy bajos (mucho menos que una lata de zumo de fruta o frutos secos). La evidencia científica no apoya que los sulfitos causen cefaleas en personas sin alergia diagnosticada. Las causas más probables del malestar son el alcohol, las histaminas, los taninos o el consumo excesivo.",
+      "correccion_educada": "Los sulfitos son un conservante que llevan los vinos en cantidades pequeñas, mucho menos que otros alimentos. La ciencia no apoya que sean la causa del dolor de cabeza; es más probable que sean las histaminas, los taninos o simplemente el alcohol."
+    },
+    {
+      "id": "M009",
+      "mito": "El vino tinto debe servirse a temperatura ambiente",
+      "palabras_clave": ["tinto temperatura ambiente", "tinto sin enfriar", "tinto a temperatura"],
+      "realidad": "La 'temperatura ambiente' que se cita históricamente era la de castillos y bodegas medievales (~16-18°C), no la de una habitación moderna (~22-24°C). Los tintos ligeros (Pinot Noir, Beaujolais) se sirven mejor entre 12-14°C; tintos con cuerpo (Cabernet, Rioja Reserva) entre 16-18°C. Demasiada temperatura potencia el alcohol y aplana la fruta.",
+      "correccion_educada": "La 'temperatura ambiente' original era la de una bodega medieval, unos 16-18°C, no la de un piso en verano. Un tinto ligeramente fresco (16-18°C) siempre es mejor que uno demasiado caliente, que sabe a alcohol."
+    },
+    {
+      "id": "M010",
+      "mito": "Cuanto más poso tiene el vino, más calidad tiene",
+      "palabras_clave": ["poso es calidad", "poso vino bueno", "sedimento calidad"],
+      "realidad": "El poso (sedimento) en vinos tintos viejos son precipitados de taninos y antocianinas, completamente normales y no perjudiciales. Sin embargo, su presencia no indica mayor calidad, sino simplemente un vino de cierta edad o con poco filtrado. Un vino joven sin poso puede ser de excelente calidad.",
+      "correccion_educada": "El poso es completamente normal en vinos de cierta edad y no daña; son taninos precipitados. Pero no indica mayor calidad, solo que el vino tiene tiempo o está poco filtrado."
+    },
+    {
+      "id": "M011",
+      "mito": "El Prosecco es el champagne italiano",
+      "palabras_clave": ["prosecco champagne italiano", "prosecco igual champagne", "prosecco es champagne"],
+      "realidad": "El Prosecco se elabora con el método Charmat (segunda fermentación en depósito grande), mientras que el Champagne usa el método tradicional (segunda fermentación en botella). Son métodos, uvas y perfiles sensoriales distintos. El Prosecco es más afrutado y fresco; el Champagne más complejo y con más autólisis.",
+      "correccion_educada": "No exactamente: el Prosecco fermenta en grandes depósitos (método Charmat) mientras el Champagne lo hace en botella (método tradicional). Por eso son tan distintos en aromas y textura."
+    },
+    {
+      "id": "M012",
+      "mito": "Los corchos de mayor calidad hacen mejores vinos",
+      "palabras_clave": ["corcho calidad", "corcho largo mejor", "tapa rosca mal vino"],
+      "realidad": "El corcho de calidad reduce el riesgo de TCA (el famoso 'olor a corcho'), pero no mejora el vino en sí. Las tapas de rosca (screw cap) son igualmente válidas, especialmente para vinos que se consumen jóvenes. Muchos productores de Nueva Zelanda, Australia y Alemania las usan con excelentes resultados.",
+      "correccion_educada": "El tipo de cierre no determina la calidad del vino. Las tapas de rosca son excelentes para vinos jóvenes y eliminan el riesgo de 'corcho'. Lo importante es la elaboración y el viñedo."
+    },
+    {
+      "id": "M013",
+      "mito": "Hay que dejar respirar todos los vinos",
+      "palabras_clave": ["todos los vinos respirar", "abrir el vino antes", "siempre decantar", "dejar airear vino"],
+      "realidad": "Airear y decantar beneficia principalmente a vinos tintos jóvenes con taninos muy marcados y a vinos viejos con sedimentos. Los vinos blancos, rosados, espumosos y la mayoría de tintos jóvenes no mejoran (y algunos incluso pueden perder aromas) con demasiada aireación.",
+      "correccion_educada": "Solo algunos vinos se benefician de airear: los tintos jóvenes y tánnicos o los viejos con sedimento. Los blancos, rosados y espumosos es mejor servirlos directamente."
+    },
+    {
+      "id": "M014",
+      "mito": "El vino blanco no puede envejecer",
+      "palabras_clave": ["blanco no envejece", "blanco no guarda", "solo tintos envejecen"],
+      "realidad": "Muchos blancos tienen un excelente potencial de guarda: el Riesling alemán puede mejorar 20-30 años, el Chardonnay de Borgoña (Meursault, Montrachet) envejece magníficamente, el Chenin Blanc del Loira puede guardar décadas. La acidez y la estructura son la clave del envejecimiento, no el color.",
+      "correccion_educada": "¡Totalmente falso! Algunos de los mejores vinos para envejecer son blancos: Riesling Auslese, Chardonnay de Borgoña o Chenin Blanc del Loira pueden mejorar durante décadas."
+    },
+    {
+      "id": "M015",
+      "mito": "El Rioja solo produce tintos",
+      "palabras_clave": ["rioja solo tinto", "rioja es tinto", "rioja no blanco"],
+      "realidad": "La DOCa Rioja produce vinos tintos, blancos y rosados. Los blancos de Rioja (Viura, Malvasía, Garnacha Blanca) tienen una larga tradición y en los últimos años han vivido una gran renovación, con productores como López de Heredia (Viña Gravonia) o Marqués de Murrieta (Capellanía) produciendo blancos de gran calidad y potencial de guarda.",
+      "correccion_educada": "La DOCa Rioja también produce blancos y rosados de calidad. Los blancos de Rioja viven una renovación muy interesante, especialmente los criados en barrica."
+    },
+    {
+      "id": "M016",
+      "mito": "El vino orgánico no lleva sulfitos",
+      "palabras_clave": ["orgánico sin sulfitos", "ecológico sin sulfitos", "bio sin conservantes"],
+      "realidad": "Los vinos orgánicos pueden llevar sulfitos, aunque en menor cantidad que los convencionales. La normativa europea permite hasta 100 mg/L de SO₂ en vinos tintos orgánicos (vs 150 mg/L convencional). El vino 'sin sulfitos añadidos' es diferente al orgánico y tiene otros retos de conservación.",
+      "correccion_educada": "Los vinos orgánicos pueden contener sulfitos; simplemente usan menos. 'Orgánico' se refiere al cultivo de la uva, no a la ausencia de sulfitos en la bodega."
+    },
+    {
+      "id": "M017",
+      "mito": "La temperatura de servicio del vino blanco es cuanto más fría mejor",
+      "palabras_clave": ["blanco muy frío", "blanco cuanto más frío mejor", "enfriar mucho blanco"],
+      "realidad": "Servir un blanco demasiado frío (menos de 6-8°C) anula sus aromas y matices. Los blancos ligeros y espumosos van bien a 6-10°C, pero los blancos con cuerpo y crianza (Chardonnay, Rioja blanco) se sirven mejor a 10-13°C para que expresen su complejidad.",
+      "correccion_educada": "Un blanco demasiado frío pierde sus aromas y se vuelve plano. Los blancos con cuerpo se sirven entre 10-13°C; solo los muy ligeros y los espumosos van a 6-8°C."
+    },
+    {
+      "id": "M018",
+      "mito": "El Vega Sicilia es el mejor vino del mundo",
+      "palabras_clave": ["vega sicilia mejor vino", "vega sicilia numero uno", "vega sicilia el mejor"],
+      "realidad": "Vega Sicilia Único es uno de los grandes vinos españoles y mundiales, pero 'el mejor vino del mundo' no existe de forma objetiva. La calidad depende del año, el catador, el contexto y el gusto personal. Hay vinos de Borgoña, Burdeos, Toscana y otras regiones que compiten en la cima mundial.",
+      "correccion_educada": "Vega Sicilia es uno de los grandes vinos del mundo, sin duda. Pero 'el mejor' no existe objetivamente: depende del catador, la añada y el momento. Hay joyas en muchas regiones."
+    },
+    {
+      "id": "M019",
+      "mito": "Abrir el vino el día antes lo mejora",
+      "palabras_clave": ["abrir día antes", "vino de un día para otro", "abrir con antelación"],
+      "realidad": "Abrir una botella y dejarla 24 horas normalmente oxida el vino, especialmente blancos y tintos delicados. Lo correcto es decantar o airear brevemente (30-60 minutos) los tintos con mucha estructura. Dejarlo abierto toda la noche puede arruinar un buen vino.",
+      "correccion_educada": "Abrir el vino un día antes suele oxidarlo. Lo más recomendable es decantar o airear 30-60 minutos si es un tinto joven y tánnico, pero no más."
+    },
+    {
+      "id": "M020",
+      "mito": "Los vinos con denominación de origen siempre son mejores que los sin DO",
+      "palabras_clave": ["DO garantía calidad", "sin DO peor vino", "denominación origen mejor"],
+      "realidad": "Las DO y DOCa regulan origen geográfico, variedades permitidas y procesos mínimos, pero no garantizan automáticamente calidad superior. Hay vinos Vino de Mesa o IGP sin DO de calidad excepcional (como algunos Vino de la Tierra de Castilla), y vinos con DO de calidad mediocre.",
+      "correccion_educada": "La denominación de origen regula el origen y los procesos, pero no garantiza por sí sola la calidad. Hay vinos sin DO extraordinarios y vinos con DO que decepcionan."
+    },
+    {
+      "id": "M021",
+      "mito": "El Albariño es solo para mariscos",
+      "palabras_clave": ["albariño solo mariscos", "albariño solo marisco", "albariño solo pescado"],
+      "realidad": "El Albariño de las Rías Baixas marida espléndidamente con marisco y pescado por su acidez y mineralidad, pero también funciona con arroces, cocina japonesa, quesos frescos, ensaladas y aves. Es uno de los blancos más versátiles de España.",
+      "correccion_educada": "El Albariño es excelente con marisco, pero también funciona con arroces, cocina asiática, quesos frescos y aves. Es uno de los blancos más versátiles."
+    },
+    {
+      "id": "M022",
+      "mito": "El vino natural es mejor para la salud",
+      "palabras_clave": ["vino natural más sano", "vino natural salud", "natural sin químicos"],
+      "realidad": "El vino 'natural' (mínima intervención, sin sulfitos o con muy pocos) no tiene respaldo científico que lo haga más saludable. Su menor contenido en sulfitos puede ser mejor para personas sensibles, pero el alcohol sigue siendo el factor principal de impacto en la salud. Además, sin sulfitos el riesgo de oxidación y contaminación bacteriana es mayor.",
+      "correccion_educada": "Los vinos naturales tienen su filosofía propia, pero no hay evidencia científica de que sean más saludables. El factor más relevante para la salud es el alcohol, estén o no intervenidos."
+    },
+    {
+      "id": "M023",
+      "mito": "El Jerez (sherry) es un vino dulce para personas mayores",
+      "palabras_clave": ["jerez es dulce", "sherry dulce", "jerez para mayores", "jerez anticuado"],
+      "realidad": "El Jerez incluye estilos desde muy secos (Fino, Manzanilla, Amontillado) hasta dulces (Pedro Ximénez, Cream). Los secos son vinos de alta gastronomía, perfectos con tapas, jamón, queso manchego, mariscos y cocina japonesa. Es uno de los vinos más incomprendidos y elegantes del mundo.",
+      "correccion_educada": "El Jerez seco (Fino, Manzanilla) es uno de los grandes vinos gastronómicos del mundo, perfecto con tapas, jamón y marisco. El dulce es solo uno de sus muchos estilos."
+    },
+    {
+      "id": "M024",
+      "mito": "Las mujeres prefieren vinos dulces y los hombres secos",
+      "palabras_clave": ["mujeres vinos dulces", "hombres vinos secos", "género y vino", "vino de mujer"],
+      "realidad": "Esta es una generalización sin base científica. Las preferencias de vino dependen de la experiencia, la cultura, el contexto y el paladar individual, no del género.",
+      "correccion_educada": "Eso es un estereotipo sin base real. Las preferencias de vino son completamente individuales y dependen del paladar, la experiencia y el contexto, no del género."
+    },
+    {
+      "id": "M025",
+      "mito": "El Pinot Grigio es un vino sin interés",
+      "palabras_clave": ["pinot grigio aburrido", "pinot grigio sin interés", "pinot grigio malo"],
+      "realidad": "El Pinot Grigio industrial del norte de Italia puede ser neutro, pero el Pinot Gris de Alsacia (Francia), los Pinot Grigio de Friuli o del Alto Adigio son vinos complejos, aromáticos y con excelente potencial. El nombre oculta una gran variedad de calidades.",
+      "correccion_educada": "Hay Pinot Grigio industriales neutros, sí. Pero el Pinot Gris de Alsacia o los del Alto Adigio son vinos complejos y aromáticos de gran nivel. El nombre esconde mucha variedad."
+    },
+    {
+      "id": "M026",
+      "mito": "El vino español es siempre de Rioja",
+      "palabras_clave": ["vino español es rioja", "españa solo rioja", "rioja es lo único español"],
+      "realidad": "España es el país con mayor superficie de viñedo del mundo y tiene más de 70 denominaciones de origen. Priorat, Ribera del Duero, Rías Baixas, Jerez, Toro, Bierzo, Cava, Penedès, Jumilla, Rueda y muchas más producen vinos de clase mundial completamente diferentes al Rioja.",
+      "correccion_educada": "España tiene más de 70 denominaciones de origen y es el país con más viñedo del mundo. Priorat, Ribera del Duero, Rías Baixas, Jerez... hay un universo más allá del Rioja."
+    },
+    {
+      "id": "M027",
+      "mito": "El vino se conserva bien en el frigorífico",
+      "palabras_clave": ["guardar vino nevera", "conservar vino frigorífico", "nevera para vino"],
+      "realidad": "El frigorífico es válido a corto plazo (2-3 días con el vino abierto, con tapón), pero para almacenar vinos sin abrir no es ideal: la temperatura es demasiado baja, la vibración del motor lo afecta, los olores del frigorífico pueden penetrar y la humedad suele ser baja. Lo ideal es bodega a 12-16°C, oscuridad y sin vibraciones.",
+      "correccion_educada": "Para conservar vinos abiertos unos días sí es válido con tapón. Pero para almacenar vinos sin abrir, el frigo no es el lugar ideal: la temperatura es baja, vibra y suele estar seco."
+    },
+    {
+      "id": "M028",
+      "mito": "Solo los vinos franceses merecen los grandes puntos de Parker",
+      "palabras_clave": ["parker solo franceses", "parker vinos franceses", "puntuación solo francia"],
+      "realidad": "Robert Parker valoró altamente vinos de muchas regiones: Napa Valley (California), Ribera del Duero, Barossa Valley (Australia), Priorat, Toscana... Sus puntuaciones más altas (99-100) incluyeron vinos de España, Italia, EE.UU. y otras regiones.",
+      "correccion_educada": "Parker valoró vinos de todo el mundo con las máximas puntuaciones: California, Ribera del Duero, Toscana, Australia... No era exclusivo de Francia en absoluto."
+    },
+    {
+      "id": "M029",
+      "mito": "El vino sin alcohol sabe igual que el vino normal",
+      "palabras_clave": ["vino sin alcohol igual", "desalcoholizado igual", "sin alcohol sabe igual"],
+      "realidad": "El alcohol es un vehículo fundamental de los aromas y la textura del vino. Los vinos desalcoholizados han mejorado mucho con técnicas como la evaporación en vacío, pero el perfil sensorial sigue siendo distinto: diferente textura, aromas y final en boca. Son una alternativa válida, pero no idénticos.",
+      "correccion_educada": "Los vinos sin alcohol han mejorado mucho, pero el alcohol transporta aromas y aporta textura, así que el perfil es diferente. Son una buena alternativa, no una réplica exacta."
+    },
+    {
+      "id": "M030",
+      "mito": "El champagne rosé se hace mezclando tinto y blanco",
+      "palabras_clave": ["champagne rosé mezcla", "champagne rosado tinto blanco", "rosé champagne mezcla"],
+      "realidad": "En el Champagne (excepcionalmente en la UE) sí está permitido mezclar vino tinto (Pinot Noir) con el ensamblaje blanco para hacer el Champagne rosé. Es la única región vitivinícola de la UE donde esta práctica está autorizada para espumosos.",
+      "correccion_educada": "En este caso sí: el Champagne rosé es la única excepción en la UE donde está permitido añadir vino tinto al blanco. En el resto de regiones europeas, el rosado se hace por maceración."
+    },
+    {
+      "id": "M031",
+      "mito": "Los vinos naturales no tienen resaca",
+      "palabras_clave": ["natural sin resaca", "vino natural no da resaca", "natural sin malestar"],
+      "realidad": "El alcohol es la principal causa de la resaca, independientemente del método de elaboración. Un vino natural con 14% de alcohol tiene el mismo efecto que un vino convencional con el mismo grado. La resaca puede ser ligeramente diferente por otras moléculas, pero no hay evidencia de que sea significativamente menor.",
+      "correccion_educada": "El alcohol es el responsable principal de la resaca, y los vinos naturales también lo tienen. La diferencia puede ser marginal en otras moléculas, pero no hay evidencia sólida de que den menos resaca."
+    },
+    {
+      "id": "M032",
+      "mito": "El Tempranillo es una uva exclusivamente de La Rioja",
+      "palabras_clave": ["tempranillo solo rioja", "tempranillo es de rioja", "tempranillo rioja exclusivo"],
+      "realidad": "El Tempranillo es la variedad tinta más plantada de España y aparece en múltiples regiones con nombres distintos: Tinto Fino (Ribera del Duero), Tinta de Toro (Toro), Cencibel (La Mancha, Valdepeñas), Ull de Llebre (Cataluña), Aragonez (Portugal). También se cultiva en Portugal, Argentina y Australia.",
+      "correccion_educada": "El Tempranillo es la uva tinta más extendida de España, aunque en cada región tiene nombre propio: Tinto Fino en Ribera, Tinta de Toro en Toro, Cencibel en La Mancha... Es mucho más que Rioja."
+    },
+    {
+      "id": "M033",
+      "mito": "El vino en tetrabrik es siempre de mala calidad",
+      "palabras_clave": ["tetrabrik mal vino", "brick vino malo", "cartón vino pésimo"],
+      "realidad": "El formato no determina la calidad del vino. El tetrabrik es simplemente un envase económico y ligero. Hay cooperativas que producen vinos correctos en este formato para consumo cotidiano. La calidad depende de la uva y la elaboración, no del envase.",
+      "correccion_educada": "El formato es solo el envase. En tetrabrik hay vinos de consumo cotidiano perfectamente correctos. Otra cosa es que los vinos de alta gama no usen este formato por imagen y marketing."
+    },
+    {
+      "id": "M034",
+      "mito": "Los grandes vinos siempre necesitan decantar horas",
+      "palabras_clave": ["decantar horas", "decantación larga", "grandes vinos decantar mucho"],
+      "realidad": "El tiempo de decantación depende del vino. Un tinto muy joven y tánnico puede necesitar 1-2 horas. Un vino muy viejo y frágil puede deteriorarse con demasiada aireación; a veces 20-30 minutos es suficiente o incluso decantar suavemente solo para separar el sedimento.",
+      "correccion_educada": "Depende: los tintos jóvenes y tánnicos se benefician de aireación larga. Los vinos muy viejos son frágiles y se deterioran rápido al airear; a veces solo 20-30 minutos, o solo decantar para el sedimento."
+    },
+    {
+      "id": "M035",
+      "mito": "El Brunello di Montalcino es Sangiovese mezclado con otras uvas",
+      "palabras_clave": ["brunello mezcla", "brunello con otras uvas", "brunello no es puro"],
+      "realidad": "El Brunello di Montalcino es 100% Sangiovese Grosso (localmente llamado Brunello). La normativa DOCG exige que sea monovarietal. Es uno de los vinos italianos más importantes y puros desde el punto de vista varietal.",
+      "correccion_educada": "Al contrario: el Brunello di Montalcino es 100% Sangiovese (Brunello), sin mezcla. La DOCG lo exige expresamente. Es uno de los grandes monovarietales del mundo."
+    },
+    {
+      "id": "M036",
+      "mito": "Los vinos australianos son todos potentes y alcohólicos",
+      "palabras_clave": ["australia vinos fuertes", "australiano alcohólico", "australia solo Shiraz potente"],
+      "realidad": "Australia produce vinos muy diversos. Si bien el Shiraz del Barossa Valley es potente y cálido, hay excelentes vinos frescos y elegantes: Riesling del Clare Valley y Eden Valley, Pinot Noir de Yarra Valley y Tasmania, Chardonnay de Margaret River. El clima varía mucho de una región a otra.",
+      "correccion_educada": "Australia es más diversa de lo que parece: produce Rieslings elegantes en Clare Valley, Pinot Noirs finos en Tasmania y Yarra Valley, y Chardonnays de clase mundial en Margaret River."
+    },
+    {
+      "id": "M037",
+      "mito": "Los vinos con medallas en concursos siempre son los mejores",
+      "palabras_clave": ["medalla garantía calidad", "medalla oro mejor vino", "concurso vino fiable"],
+      "realidad": "Los concursos de vino tienen valor, pero sus condiciones de cata (cata ciega, muchos vinos en poco tiempo, paneles variables) no siempre reflejan la experiencia real de consumo. Los mismos vinos pueden obtener medallas distintas en diferentes concursos. Es una referencia, no una garantía absoluta.",
+      "correccion_educada": "Las medallas son una referencia útil, pero no son infalibles. El mismo vino puede ganar oro en un concurso y nada en otro. Es mejor guiarte también por el productor, la región y tu propio paladar."
+    },
+    {
+      "id": "M038",
+      "mito": "El vino tinto es bueno para el corazón en cualquier cantidad",
+      "palabras_clave": ["tinto bueno corazón", "resveratrol salud", "vino tinto saludable siempre"],
+      "realidad": "Las investigaciones sobre el resveratrol y los polifenoles del vino son prometedoras pero limitadas. Las guías de salud pública actuales indican que cualquier cantidad de alcohol conlleva algún riesgo. La idea de que 'una copa al día es sana' ha sido revisada por la OMS, que en 2023 señaló que no hay nivel seguro de consumo de alcohol.",
+      "correccion_educada": "El tema del vino y la salud es más complejo de lo que se pensaba. La OMS indicó en 2023 que no hay un nivel de consumo de alcohol completamente seguro. El disfrute moderado y consciente es lo sensato."
+    },
+    {
+      "id": "M039",
+      "mito": "El Carmenère chileno siempre fue Carmenère",
+      "palabras_clave": ["carmenere siempre chileno", "carmenere origen chile", "carmenere descubierto chile"],
+      "realidad": "Durante décadas, el Carmenère en Chile fue confundido con Merlot. Fue en 1994 cuando el ampelógrafo francés Jean-Michel Boursiquot identificó que muchas plantaciones chilenas etiquetadas como Merlot eran en realidad Carmenère, una variedad casi extinguida en Francia.",
+      "correccion_educada": "Dato curioso: hasta 1994, el Carmenère chileno se vendía como Merlot. Fue un ampelógrafo francés quien identificó que estas vides eran en realidad Carmenère, la uva perdida de Burdeos."
+    },
+    {
+      "id": "M040",
+      "mito": "El Primitivo y el Zinfandel son uvas distintas",
+      "palabras_clave": ["primitivo distinto zinfandel", "primitivo zinfandel diferente", "primitivo no es zinfandel"],
+      "realidad": "El Primitivo (sur de Italia, Puglia) y el Zinfandel (California) son genéticamente la misma variedad, con origen en Croacia (Tribidrag/Crljenak Kaštelanski). Las diferencias en los vinos se deben al clima, el suelo y la viticultura, no a la uva en sí.",
+      "correccion_educada": "Son la misma uva: el análisis de ADN demostró que Zinfandel, Primitivo y el croata Tribidrag son idénticos genéticamente. Las diferencias en los vinos vienen del terroir y el clima."
+    },
+    {
+      "id": "M041",
+      "mito": "El Champagne más caro (Dom Pérignon, Cristal) es el mejor champagne",
+      "palabras_clave": ["dom perignon mejor", "cristal mejor champagne", "champagne caro mejor"],
+      "realidad": "Dom Pérignon y Cristal son champagnes de gran calidad y reconocimiento, pero muchos catadores y críticos prefieren champagnes de pequeños productores (récoltants-manipulants) como Krug, Egly-Ouriet, Selosse o Henri Giraud, que pueden ser igual de complejos o más únicos, a veces a menor precio.",
+      "correccion_educada": "Dom Pérignon y Cristal son excelentes, pero el mundo del Champagne tiene pequeños productores extraordinarios que muchos catadores prefieren. El precio no siempre define la cima."
+    },
+    {
+      "id": "M042",
+      "mito": "Los tintos de Burdeos envejecen mejor que cualquier otro vino",
+      "palabras_clave": ["burdeos envejece mejor", "burdeos guarda mejor", "burdeos es lo mejor para guardar"],
+      "realidad": "Burdeos tiene una larga tradición de vinos con gran potencial de guarda, pero hay muchos vinos del mundo con longevidad comparable o superior: Barolo (30-50 años), Hermitage (Rhône), Riesling Trockenbeerenauslese alemán, Tokaji Aszú húngaro, Vintage Port. La capacidad de envejecimiento depende de la estructura, no de la región.",
+      "correccion_educada": "Burdeos es famoso por su longevidad, pero un Barolo, un gran Riesling alemán, un Tokaji o un Vintage Port también envejecen décadas. La clave es la estructura del vino, no la región."
+    },
+    {
+      "id": "M043",
+      "mito": "El vino espumoso no marida con comida principal",
+      "palabras_clave": ["espumoso no marida comida", "cava solo aperitivo", "champagne no con comida"],
+      "realidad": "Los espumosos son excelentes para toda la comida. El Champagne Blanc de Blancs (Chardonnay) va bien con pescados y mariscos finos; un Cava puede acompañar toda una comida española; el Crémant o el Cava Reserva van con carnes blancas y arroces.",
+      "correccion_educada": "Los espumosos son de los vinos más versátiles para toda la comida. Un Cava puede acompañar desde las tapas hasta el postre, y un Champagne es perfecto con ostras, pescados y arroces."
+    },
+    {
+      "id": "M044",
+      "mito": "El vino argentino es solo Malbec",
+      "palabras_clave": ["argentina solo malbec", "argentina es malbec", "argentina no tiene otros vinos"],
+      "realidad": "Argentina produce excelentes Torrontés (blanco aromático), Bonarda, Cabernet Franc, Pinot Noir en Patagonia, Cabernet Sauvignon y blends de altura. Salta, Patagonia y Mendoza tienen microclimas muy distintos que dan vinos muy diferentes al Malbec clásico.",
+      "correccion_educada": "Argentina es mucho más que Malbec: el Torrontés blanco es único en el mundo, el Cabernet Franc en Luján de Cuyo es excepcional, y la Patagonia produce Pinot Noirs elegantes."
+    },
+    {
+      "id": "M045",
+      "mito": "Un Gran Reserva siempre es mejor que un Crianza",
+      "palabras_clave": ["gran reserva mejor crianza", "gran reserva siempre superior", "reserva mejor que crianza"],
+      "realidad": "En España, los términos Crianza, Reserva y Gran Reserva indican el tiempo mínimo de crianza, no la calidad intrínseca de la uva o la añada. Un Crianza de una gran bodega en una añada excepcional puede superar a un Gran Reserva de una bodega mediocre en una añada pobre.",
+      "correccion_educada": "Crianza, Reserva y Gran Reserva indican tiempo de crianza mínimo, no calidad. Un Crianza de gran bodega y gran añada puede ser mejor que un Gran Reserva mediocre. El productor y la añada importan tanto como la categoría."
+    },
+    {
+      "id": "M046",
+      "mito": "El vino con más color es siempre más intenso y mejor",
+      "palabras_clave": ["más color mejor vino", "color intenso calidad", "vino oscuro mejor"],
+      "realidad": "El color del vino depende de la variedad, la maceración y la crianza. Un Pinot Noir puede ser de color rubí pálido y ser de altísima calidad; un Garnacha puede tener poca capa y ser muy expresivo. El color no es indicador de calidad.",
+      "correccion_educada": "El color no indica calidad. Un Pinot Noir de Borgoña puede ser rubí pálido y costar cientos de euros. El color depende de la variedad y la elaboración, no de la excelencia."
+    },
+    {
+      "id": "M047",
+      "mito": "El vino de la casa en los restaurantes siempre es malo",
+      "palabras_clave": ["vino casa malo", "vino casa restaurante", "vino de la casa pésimo"],
+      "realidad": "El vino de la casa puede ser perfectamente correcto y a buen precio. Los buenos restaurantes seleccionan vinos de casa que representan bien su cocina. La reputación de ser 'malo' viene de malas experiencias con establecimientos de poco cuidado, no es una norma universal.",
+      "correccion_educada": "Depende del restaurante. Muchos seleccionan su vino de casa con cuidado para que combine con su cocina y sea una buena relación calidad-precio. No es una regla que sea malo."
+    },
+    {
+      "id": "M048",
+      "mito": "Los taninos del vino tinto son siempre astringentes e incómodos",
+      "palabras_clave": ["taninos malos", "taninos incómodos", "taninos son negativos"],
+      "realidad": "Los taninos son polifenoles que dan estructura, potencial de guarda y sensación en boca. En vinos jóvenes pueden ser muy marcados, pero con el tiempo se suavizan y aportan complejidad. Los taninos bien maduros y equilibrados son deseables; la astringencia excesiva suele indicar uvas poco maduras o extracción excesiva.",
+      "correccion_educada": "Los taninos bien maduros son deseables: dan estructura y potencial de guarda. La astringencia incómoda viene de taninos poco maduros o extracción excesiva, no de los taninos en sí."
+    },
+    {
+      "id": "M049",
+      "mito": "El Verdejo es lo mismo que el Sauvignon Blanc",
+      "palabras_clave": ["verdejo sauvignon blanc igual", "verdejo es sauvignon", "verdejo y sauvignon lo mismo"],
+      "realidad": "El Verdejo es una variedad autóctona española de Rueda (Castilla y León), con aromas de hierbas, hinojo, fruta de hueso y mineralidad propia del suelo. El Sauvignon Blanc es francés (Loira, Burdeos) con perfil más cítrico y herbáceo. Son varietales distintos aunque comparten algún rasgo aromático.",
+      "correccion_educada": "Son variedades distintas. El Verdejo es autóctono de Rueda con notas de hinojo y fruta de hueso; el Sauvignon Blanc es francés con más cítrico y hierba. Comparten frescura pero son muy diferentes."
+    },
+    {
+      "id": "M050",
+      "mito": "Si un vino no 'llora' en la copa (lágrimas), es de peor calidad",
+      "palabras_clave": ["lágrimas calidad", "llora copa calidad", "legs copa vino"],
+      "realidad": "Las 'lágrimas' o 'piernas' en la copa son un fenómeno físico (efecto Marangoni) causado por la diferencia de tensión superficial entre el alcohol y el agua. Indican el grado alcohólico y el contenido de azúcar, no la calidad. Un vino de 12% y otro de 15% 'lloran' diferente, pero eso no dice nada de cuál es mejor.",
+      "correccion_educada": "Las lágrimas en la copa son solo física: indican graduación alcohólica y azúcar residual, nada más. Un vino puede ser excelente con pocas lágrimas y mediocre con muchas."
+    }
+  ]
+}

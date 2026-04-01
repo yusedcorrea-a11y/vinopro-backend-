@@ -1,0 +1,15 @@
+{
+  "store_name": "fileSearchStores/vinoproiaknowledge-pkm9r4c7564q",
+  "display_name": "vino-pro-ia-knowledge",
+  "documentos_indexados": [
+    {
+      "archivo": "mitos_vino.json",
+      "estado": "OK"
+    },
+    {
+      "archivo": "conocimiento_vinos.json",
+      "estado": "OK"
+    }
+  ],
+  "indexado_en": "2026-04-01T20:20:29Z"
+}

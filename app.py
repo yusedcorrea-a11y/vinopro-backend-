@@ -217,7 +217,7 @@ VINOS_MUNDIALES = cargar_todos_los_vinos()
 print(f"[INFO] Base de datos lista: {len(VINOS_MUNDIALES)} vinos cargados desde {DATA_FOLDER}")
 
 # Estado para rutas de escaneo, experto en vinos, bodega y analytics
-from routes import escaneo, sumiller, geolocalizacion, bodega, analytics, informes, adaptador, comprar, planes, pagos, ofertas, valoraciones_wishlist, comunidad, call_ws, qr, auth, pairing, vino_semana
+from routes import escaneo, sumiller, geolocalizacion, bodega, analytics, informes, adaptador, comprar, planes, pagos, ofertas, valoraciones_wishlist, comunidad, call_ws, qr, auth, pairing, vino_semana, stats
 from services.busqueda_service import buscar_vinos_avanzado
 from services.enlaces_service import detectar_pais_por_ip
 
@@ -527,6 +527,7 @@ app.include_router(qr.router)
 app.include_router(auth.router)
 app.include_router(pairing.router, prefix="/api")
 app.include_router(vino_semana.router)
+app.include_router(stats.router)
 
 @app.get("/api/status")
 def api_status(request: Request):

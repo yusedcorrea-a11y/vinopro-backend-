@@ -16,6 +16,8 @@ import logging
 import os
 from pathlib import Path
 
+from services.cost_tracker_service import registrar_uso as _track
+
 logger = logging.getLogger(__name__)
 
 # Plan gratuito: gemini-2.0-flash. Al monetizar: gemini-1.5-pro o gemini-2.5-pro
@@ -125,6 +127,13 @@ Reglas: Responde en español, en 2-4 frases. {perfil_instruccion}
             c0 = response.candidates[0]
             if c0.content and c0.content.parts:
                 text = (getattr(c0.content.parts[0], "text", None) or "").strip()
+        usage = getattr(response, "usage_metadata", None)
+        if usage:
+            _track(
+                getattr(usage, "prompt_token_count", 0) or 0,
+                getattr(usage, "candidates_token_count", 0) or 0,
+                "responder_sobre_vino",
+            )
         return text if text else None
     except Exception as e:
         logger.warning("[SumillerGemini] Error en responder_sobre_vino: %s", e)
@@ -195,6 +204,13 @@ def buscar_con_file_search(pregunta: str, perfil: str = "aficionado") -> str | N
             citas_unicas = list(dict.fromkeys(citas))
             texto_cita = ", ".join(citas_unicas)
             text = text + f"\n\n📄 Fuente verificada: {texto_cita}"
+        usage = getattr(response, "usage_metadata", None)
+        if usage:
+            _track(
+                getattr(usage, "prompt_token_count", 0) or 0,
+                getattr(usage, "candidates_token_count", 0) or 0,
+                "buscar_con_file_search",
+            )
         return text
     except Exception as e:
         logger.warning("[SumillerGemini] Error en buscar_con_file_search: %s", e)
@@ -276,6 +292,13 @@ Pregunta o nombre del vino: {texto}"""
         # Evidence Engine — Capa 3: marcar SOLO la respuesta visible, nunca el bloque VINO_JSON
         if respuesta and not respuesta.startswith("[Estimación IA]"):
             respuesta = "[Estimación IA] " + respuesta
+        usage = getattr(response, "usage_metadata", None)
+        if usage:
+            _track(
+                getattr(usage, "prompt_token_count", 0) or 0,
+                getattr(usage, "candidates_token_count", 0) or 0,
+                "buscar_vino_en_nube",
+            )
         return respuesta, vino
     except Exception as e:
         logger.warning("[SumillerGemini] Error en buscar_vino_en_nube: %s", e)
@@ -315,6 +338,13 @@ Reglas: Responde SOLO con la versión mejorada, en español, 2-5 frases. No aña
             c0 = response.candidates[0]
             if c0.content and c0.content.parts:
                 text = (getattr(c0.content.parts[0], "text", None) or "").strip()
+        usage = getattr(response, "usage_metadata", None)
+        if usage:
+            _track(
+                getattr(usage, "prompt_token_count", 0) or 0,
+                getattr(usage, "candidates_token_count", 0) or 0,
+                "reescribir_respuesta",
+            )
         return text if text else None
     except Exception as e:
         logger.warning("[SumillerGemini] Error en reescribir_respuesta: %s", e)

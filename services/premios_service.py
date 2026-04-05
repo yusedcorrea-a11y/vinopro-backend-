@@ -21,14 +21,15 @@ _cache: dict | None = None
 _PALABRAS_RANKING = [
     "mejor vino del mundo", "mejores vinos del mundo", "top vino", "top vinos",
     "vino numero uno", "vino número uno", "vino más premiado", "vino mas premiado",
-    "vino más famoso", "vino mas famoso", "vino más caro", "vino mas caro",
-    "cual es el mejor vino", "cuál es el mejor vino",
-    "que vino es el mejor", "qué vino es el mejor",
-    "ranking vinos", "ranking de vinos", "lista mejores vinos",
-    "vinos premiados", "vinos de culto", "vino de culto",
-    "vino más valorado", "vino mas valorado", "vino top mundial",
-    "wine of the year", "mejor vino internacional", "premios vinos",
-    "vino con más puntos", "vino con mas puntos",
+    "vino más famoso", "vino mas famoso",
+    "cual es el mejor vino del mundo", "cuál es el mejor vino del mundo",
+    "que vino es el mejor del mundo", "qué vino es el mejor del mundo",
+    "ranking vinos del mundo", "ranking de vinos mundiales", "lista mejores vinos del mundo",
+    "vinos premiados internacionalmente", "vinos de culto mundial", "vino de culto mundial",
+    "vino más valorado del mundo", "vino mas valorado del mundo", "vino top mundial",
+    "wine of the year", "mejor vino internacional", "premios internacionales vinos",
+    "vino con más puntos del mundo", "vino con mas puntos del mundo",
+    "top 5 vinos", "top 10 vinos", "top 100 vinos",
 ]
 
 # Mapeo de países comunes a código ISO

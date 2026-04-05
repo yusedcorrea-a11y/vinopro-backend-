@@ -567,12 +567,32 @@ def _preguntar_sumiller_general(
     quizas_quisiste_decir = None
     vino_anadido_a_base = False
 
+    # --- Evidence Engine — Capa 1: Corrección de mitos documentados (SIEMPRE primero) ---
+    mito_detectado = svc_sumiller.verificar_mito(texto_clean)
+    if mito_detectado:
+        respuesta_mito = svc_sumiller.formatear_correccion_mito(mito_detectado)
+        if session_id:
+            nuevo = {"pregunta": texto_clean, "respuesta": respuesta_mito, "vinos_ref": []}
+            contexto = (contexto + [nuevo])[-MAX_CONTEXTO:]
+            historial_store[session_id] = contexto
+        return {
+            "consulta_id": None,
+            "vino_key": None,
+            "pregunta": texto_clean,
+            "respuesta": respuesta_mito,
+            "vino_nombre": None,
+            "imagen_url": None,
+            "mostrar_boton_comprar": False,
+            "perfil": perfil,
+            "evidence_layer": "mito_corregido",
+            "mito_id": mito_detectado.get("id"),
+        }
+
     # --- Evidence Engine — Capa 4: Ranking por Premios Internacionales ---
+    # Solo se activa si NO era un mito. Requiere keywords específicas de ranking mundial.
     if es_pregunta_de_ranking(texto_clean):
         top5 = obtener_top5_mundial()
-        # Intentar obtener país del usuario desde cabecera o IP
         pais_header = getattr(request.state, "pais_usuario", None) or ""
-        # Buscar también si el usuario menciona un país en la pregunta
         codigo_local = codigo_pais_desde_nombre(pais_header) if pais_header else None
         vino_local = obtener_vino_por_pais(codigo_local) if codigo_local else None
         respuesta_premios = formatear_respuesta_premios(top5, vino_local, pais_header or None)
@@ -593,27 +613,6 @@ def _preguntar_sumiller_general(
                 "evidence_layer": "premios_verificados",
                 "mito_id": None,
             }
-
-    # --- Evidence Engine — Capa 1: Corrección de mitos documentados ---
-    mito_detectado = svc_sumiller.verificar_mito(texto_clean)
-    if mito_detectado:
-        respuesta_mito = svc_sumiller.formatear_correccion_mito(mito_detectado)
-        if session_id:
-            nuevo = {"pregunta": texto_clean, "respuesta": respuesta_mito, "vinos_ref": []}
-            contexto = (contexto + [nuevo])[-MAX_CONTEXTO:]
-            historial_store[session_id] = contexto
-        return {
-            "consulta_id": None,
-            "vino_key": None,
-            "pregunta": texto_clean,
-            "respuesta": respuesta_mito,
-            "vino_nombre": None,
-            "imagen_url": None,
-            "mostrar_boton_comprar": False,
-            "perfil": perfil,
-            "evidence_layer": "mito_corregido",
-            "mito_id": mito_detectado.get("id"),
-        }
 
     # Búsqueda previa en BD: si la pregunta menciona un vino (Protos, Viña Pedrosa, etc.), responder con datos de nuestra BD
     coincidencias_bd = buscar_vinos_avanzado(vinos_dict, texto_clean, limite=1)

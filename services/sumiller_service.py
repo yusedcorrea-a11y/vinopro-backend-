@@ -72,7 +72,11 @@ def verificar_mito(pregunta: str) -> dict | None:
     _STOPWORDS = {
         "con", "el", "la", "los", "las", "de", "del", "un", "una", "es", "son",
         "al", "se", "que", "no", "si", "por", "para", "pero", "y", "o", "en",
-        "mas", "más", "siempre", "nunca", "todo", "todos", "solo", "solo",
+        "mas", "más", "siempre", "nunca", "todo", "todos", "solo",
+        # Términos genéricos del dominio del vino: aparecen en casi todas las preguntas
+        # y no aportan señal discriminadora para detectar mitos específicos
+        "vino", "vinos", "mejor", "mejores", "bueno", "buenos", "malo", "malos",
+        "cual", "cuales", "como", "cuando", "donde", "porque", "tiene", "tienen",
     }
     mitos = _cargar_mitos()
     mejor: dict | None = None

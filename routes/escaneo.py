@@ -486,13 +486,51 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                                         "es_pro": _es_pro((x_session_id or "").strip()),
                                         "entidades_extraidas": _obtener_entidades_extraidas(texto_para_early, entidades_override=entidades_imagen),
                                     }
-                # 2) API4AI queda desactivada por defecto para evitar latencia extra sin impacto en la respuesta final.
-                if API4AI_HINTS_ENABLED:
-                    sugerencias_ia = recognize_wine_from_image(contenido_imagen)
-                    if sugerencias_ia and sugerencias_ia[0].get("confidence", 0) >= 0.5:
-                        nombre_ia = (sugerencias_ia[0].get("name") or "").strip()
-                        if nombre_ia:
-                            logger.info("[ESCANEAR] API4AI sugirió %s; solo se usa como pista diagnóstica.", nombre_ia[:50])
+                # 2) API4AI Wine Recognition: usa el nombre identificado en la búsqueda real
+                sugerencias_ia = recognize_wine_from_image(contenido_imagen)
+                if sugerencias_ia and sugerencias_ia[0].get("confidence", 0) >= 0.5:
+                    nombre_ia = (sugerencias_ia[0].get("name") or "").strip()
+                    confianza_ia = float(sugerencias_ia[0].get("confidence") or 0)
+                    if nombre_ia:
+                        logger.info("[ESCANEAR] API4AI identificó '%s' con confianza %.2f", nombre_ia[:50], confianza_ia)
+                        # Buscar directamente en BD con el nombre que dio API4AI
+                        texto_api4ai_norm = normalizar_ocr(nombre_ia)
+                        if len(texto_api4ai_norm) >= 3:
+                            coincidencias_api4ai = buscar_vinos_avanzado(vinos, texto_api4ai_norm, limite=3)
+                            if coincidencias_api4ai and coincidencias_api4ai[0]["score"] >= 4.0:
+                                mejor_api4ai = coincidencias_api4ai[0]
+                                vino_api4ai = mejor_api4ai.get("vino")
+                                if isinstance(vino_api4ai, dict):
+                                    nombre_found = (vino_api4ai.get("nombre") or "").strip()
+                                    bodega_found = (vino_api4ai.get("bodega") or "").strip()
+                                    if _coincidencia_fiable(texto_api4ai_norm, nombre_found, bodega_found):
+                                        logger.info("[ESCANEAR] API4AI encontró en BD: %s", nombre_found[:60])
+                                        consulta_id = str(uuid.uuid4())
+                                        consultas[consulta_id] = {"vino": vino_api4ai, "key": mejor_api4ai["key"]}
+                                        try:
+                                            from services import analytics_service
+                                            analytics_service.registrar_escaneo(True, vino_api4ai.get("nombre"), vino_api4ai.get("pais"))
+                                        except Exception:
+                                            pass
+                                        _push_historial(request, (x_session_id or "").strip(), consulta_id, vino_api4ai.get("nombre"), True)
+                                        return {
+                                            "encontrado_en_bd": True,
+                                            "consulta_id": consulta_id,
+                                            "key": mejor_api4ai["key"],
+                                            "vino_key": mejor_api4ai["key"],
+                                            "mostrar_boton_comprar": True,
+                                            "vino": vino_api4ai,
+                                            "mensaje": "Identificado por reconocimiento visual de etiqueta.",
+                                            "es_pro": _es_pro((x_session_id or "").strip()),
+                                            "entidades_extraidas": _obtener_entidades_extraidas(texto_api4ai_norm, entidades_override=entidades_imagen),
+                                        }
+                        # Si no encontró en BD, añadir el nombre al texto de búsqueda para el resto del pipeline
+                        if confianza_ia >= 0.7:
+                            # Alta confianza: nombre API4AI va primero (más fiable que OCR ruidoso)
+                            texto_busqueda = f"{nombre_ia} {texto_busqueda}".strip()
+                        else:
+                            # Confianza media: añadir como pista adicional al final
+                            texto_busqueda = f"{texto_busqueda} {nombre_ia}".strip()
                 # OCR ya hecho arriba (1b) para priorizar nuestra BD (Viña Pedrosa, etc.)
         except Exception:
             imagen_enviada = True

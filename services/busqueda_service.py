@@ -67,9 +67,13 @@ REGION_PRIORITARIA = [
 
 
 def _detectar_region_prioritaria(texto_norm: str) -> str | None:
-    """Si el texto indica una región prioritaria, devuelve su nombre exacto (como en BD)."""
+    """
+    Si el texto indica una región prioritaria, devuelve su nombre exacto (como en BD).
+    Requiere TODOS los tokens de la región para evitar falsos positivos
+    (p.ej. "ribera" sola no activa el filtro de Ribera del Duero).
+    """
     for claves, region_nombre in REGION_PRIORITARIA:
-        if all(c in texto_norm for c in claves) or (len(claves) >= 1 and claves[0] in texto_norm):
+        if all(c in texto_norm for c in claves):
             return region_nombre
     return None
 
@@ -222,6 +226,55 @@ def buscar_vinos_avanzado(
     else:
         resultados.sort(key=lambda r: r["score"], reverse=True)
     return resultados[:limite]
+
+
+def buscar_por_entidades(
+    vinos_dict: dict,
+    entidades: dict,
+    limite: int = 5,
+    pais_usuario: str | None = None,
+) -> list:
+    """
+    Búsqueda multi-campo por entidades separadas extraídas de la etiqueta.
+    Mucho más precisa que texto plano cuando Gemini Vision identifica:
+      nombre, bodega, denominacion, variedad, anada
+    Fusiona resultados de múltiples búsquedas y suma scores.
+    """
+    if not entidades or not vinos_dict:
+        return []
+
+    fusionados: dict[str, dict] = {}
+
+    def _agregar(resultados: list, factor: float) -> None:
+        for r in resultados:
+            key = r["key"]
+            if key not in fusionados:
+                fusionados[key] = {**r, "score": r["score"] * factor}
+            else:
+                fusionados[key]["score"] += r["score"] * factor
+
+    # 1. Nombre del vino — mayor peso
+    nombre = (entidades.get("nombre") or entidades.get("wine_name") or "").strip()
+    if nombre and len(nombre) >= 3:
+        _agregar(buscar_vinos_avanzado(vinos_dict, nombre, limite=limite * 2, pais_usuario=pais_usuario), 1.5)
+
+    # 2. Bodega — segundo peso
+    bodega = (entidades.get("bodega") or entidades.get("winery") or "").strip()
+    if bodega and len(bodega) >= 3:
+        _agregar(buscar_vinos_avanzado(vinos_dict, bodega, limite=limite * 2, pais_usuario=pais_usuario), 1.2)
+
+    # 3. Denominación de Origen — confirma pero no decide solo
+    do = (entidades.get("denominacion") or entidades.get("do") or entidades.get("appellation") or "").strip()
+    if do and len(do) >= 3:
+        _agregar(buscar_vinos_avanzado(vinos_dict, do, limite=limite * 2, pais_usuario=pais_usuario), 0.6)
+
+    # 4. Variedad principal — refuerzo adicional
+    variedad = (entidades.get("variedad") or entidades.get("grape") or "").strip()
+    if variedad and len(variedad) >= 4:
+        _agregar(buscar_vinos_avanzado(vinos_dict, variedad, limite=limite * 2, pais_usuario=pais_usuario), 0.4)
+
+    todos = sorted(fusionados.values(), key=lambda r: r["score"], reverse=True)
+    return todos[:limite]
 
 
 def buscar_vinos_con_sugerencia(

@@ -58,6 +58,34 @@ CORRECCIONES = [
     ("Gin 9\"", "Protos"),
     ("Est. 1927", "Protos"),
     ("ROBLE", "Roble"),
+    # Denominaciones internacionales comunes
+    ("Appellation Controlee", "Appellation Contrôlée"),
+    ("Appellation Controlee", "AOC"),
+    ("Denominazione di Origine Controllata", "DOC"),
+    ("Denominazione di Origine Controllata e Garantita", "DOCG"),
+    ("Indicazione Geografica Tipica", "IGT"),
+    # Errores comunes en nombres de châteaux franceses
+    ("Chateau ", "Château "),
+    ("CHATEAU ", "Château "),
+    ("chateu ", "Château "),
+    ("Chateaux", "Châteaux"),
+    # Errores en nombres italianos
+    ("Brunello di Montalcmno", "Brunello di Montalcino"),
+    ("Barolo Docg", "Barolo DOCG"),
+    ("Chianti Classlco", "Chianti Classico"),
+    ("Amarone della Valpohcella", "Amarone della Valpolicella"),
+    # Errores en DOC/DO españolas
+    ("Priorato", "Priorat"),
+    ("RIBERADEDUERO", "Ribera del Duero"),
+    ("ribera de duero", "Ribera del Duero"),
+    ("DENOMINACION DE ORIGEN CALIFICADA", "DOCa"),
+    # Errores en marcas conocidas internacionales
+    ("Sassacaia", "Sassicaia"),
+    ("Sassicaía", "Sassicaia"),
+    ("Ornelaia", "Ornellaia"),
+    ("Almavíva", "Almaviva"),
+    ("Penfods", "Penfolds"),
+    ("Petrus", "Pétrus"),
 ]
 
 # Palabras basura conocidas del OCR (se eliminan como token completo)

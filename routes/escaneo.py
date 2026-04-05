@@ -2,6 +2,7 @@
 Endpoints de escaneo de etiquetas y registro de vinos.
 """
 import asyncio
+import difflib
 import json
 import logging
 import os
@@ -48,7 +49,7 @@ def _extraer_ean_de_url_o_texto(texto: str) -> str | None:
 from fastapi import APIRouter, File, Form, Header, HTTPException, Request, UploadFile
 from pydantic import BaseModel, Field
 
-from services.busqueda_service import buscar_vinos_avanzado, buscar_por_codigo_barras_bd
+from services.busqueda_service import buscar_vinos_avanzado, buscar_por_codigo_barras_bd, buscar_por_entidades
 from services.ocr_service import extraer_texto_de_imagen, extraer_datos_etiqueta_doble_capa, TesseractNoDisponibleError
 from services.api_externa_service import buscar_por_texto, buscar_por_codigo_barras, get_informacion_extendida_por_barcode
 from services.ocr_normalizer import limpiar as normalizar_ocr
@@ -135,41 +136,62 @@ def _normalizar_para_coincidencia(t: str) -> str:
     return t.strip()
 
 
-# Marcas clave: si están en texto Y en nombre/bodega del vino, consideramos la coincidencia fiable
-# (evita rechazar "Protos Reserva" cuando el OCR pone "Protos propucto"; o Viña Pedrosa cuando solo lee "Pérez Pascuas")
-_MARCAS_CLAVE_BD = ("protos", "pedrosa")
-# Bodega clave: si el texto contiene esto y el vino tiene esta bodega, es fiable (ej. OCR solo leyó "Pérez Pascuas")
-_BODEGA_CLAVE_PEDROSA = "pérez pascuas"
+# Palabras genéricas que no aportan señal de identidad al comparar OCR con nombre de vino
+_PALABRAS_GENERICAS_VINO = {
+    "vino", "crianza", "reserva", "gran", "tinto", "blanco", "rosado", "espumoso",
+    "seleccion", "especial", "edicion", "limitada", "premium", "classic", "clasico",
+    "aged", "barrel", "oak", "roble", "barrica", "cosecha", "vendimia",
+}
 
 
 def _coincidencia_fiable(texto_busqueda: str, nombre_vino: str, bodega_vino: str | None = None) -> bool:
     """
-    True solo si estamos seguros de que el texto de búsqueda se refiere a ESE vino.
-    Evita devolver "Pingus" cuando el usuario escaneó "Viña Pedrosa" (honestidad máxima).
-    Si la marca (Protos, Pedrosa) está en ambos lados, confiamos aunque el OCR haya puesto "propucto" etc.
-    Si el texto tiene "Pérez Pascuas" y el vino tiene esa bodega (Viña Pedrosa), también es fiable.
+    True si estamos seguros de que el texto de búsqueda se refiere a ESE vino.
+    Estrategia en 4 niveles (del más al menos restrictivo):
+      1. Un token muy distintivo (≥6 letras, no genérico) aparece en ambos lados.
+      2. Contención directa (uno contiene al otro).
+      3. La bodega en el texto confirma la bodega del vino.
+      4. Al menos 2 tokens no genéricos coinciden en nombre+bodega.
     """
     if not nombre_vino or not isinstance(nombre_vino, str):
         return False
     busq = _normalizar_para_coincidencia(texto_busqueda)
     nombre = _normalizar_para_coincidencia(nombre_vino)
     bodega = _normalizar_para_coincidencia(bodega_vino or "") if bodega_vino else ""
-    if not busq and not bodega:
+    if not busq:
         return False
-    # Marca clave en texto y en nombre: Protos/Protos Reserva o Pedrosa/Viña Pedrosa -> fiable
-    for marca in _MARCAS_CLAVE_BD:
-        if marca in busq and marca in nombre:
+
+    # Nivel 1: token muy distintivo (largo y no genérico) en ambos lados
+    tokens_busq = [
+        t for t in busq.split()
+        if len(t) >= 5 and not t.isdigit() and t not in _PALABRAS_GENERICAS_VINO
+    ]
+    tokens_objetivo = set((nombre + " " + bodega).split())
+    for t in tokens_busq:
+        if t in tokens_objetivo:
             return True
-    # Si el OCR solo leyó la bodega: "Pérez Pascuas" en texto y el vino es de esa bodega (Viña Pedrosa, etc.)
-    if _BODEGA_CLAVE_PEDROSA in busq and "pascuas" in bodega:
-        return True
-    # Contención: "Viña Pedrosa" en "Viña Pedrosa Crianza" o al revés
+        # Fuzzy para tokens largos: "sassicaia" vs "sassicaia" (typos leves)
+        for to in tokens_objetivo:
+            if len(to) >= 5 and difflib.SequenceMatcher(None, t, to).ratio() >= 0.88:
+                return True
+
+    # Nivel 2: contención directa (nombre completo dentro del texto o al revés)
     if nombre and (busq in nombre or nombre in busq):
         return True
-    # Al menos 2 tokens significativos del texto de búsqueda deben aparecer en el nombre
-    tokens_busq = [x for x in busq.split() if len(x) > 2]
-    tokens_nom = set(nombre.split())
-    coinciden = sum(1 for t in tokens_busq if t in tokens_nom)
+
+    # Nivel 3: la bodega en el texto confirma el vino (ej. "Pérez Pascuas" → Viña Pedrosa)
+    if bodega:
+        tokens_bodega = [t for t in bodega.split() if len(t) >= 4 and t not in _PALABRAS_GENERICAS_VINO]
+        coinciden_bodega = sum(1 for t in tokens_bodega if t in busq)
+        if coinciden_bodega >= 2 or (len(tokens_bodega) == 1 and tokens_bodega and tokens_bodega[0] in busq):
+            return True
+
+    # Nivel 4: al menos 2 tokens no genéricos (≥3 letras) coinciden en nombre+bodega
+    tokens_busq_general = [
+        t for t in busq.split()
+        if len(t) > 2 and not t.isdigit() and t not in _PALABRAS_GENERICAS_VINO
+    ]
+    coinciden = sum(1 for t in tokens_busq_general if t in tokens_objetivo)
     return coinciden >= 2
 
 
@@ -408,15 +430,12 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
                         "entidades_extraidas": {},
                         "diagnostico_imagen": calidad_imagen,
                     }
-                if calidad_imagen and "borrosa" in (calidad_imagen.get("motivos") or []) and not texto_busqueda and not codigo_barras:
-                    return {
-                        "reconocido": False,
-                        "error_imagen": True,
-                        "es_pro": _es_pro((x_session_id or "").strip()),
-                        "mensaje": mensaje_calidad or "La foto está borrosa. Prueba una captura más nítida.",
-                        "entidades_extraidas": {},
-                        "diagnostico_imagen": calidad_imagen,
-                    }
+                # Imagen borrosa: NO abortamos, dejamos que API4AI + Gemini Vision lo intenten.
+                # Solo guardamos el aviso para añadirlo al mensaje final si tampoco identifican el vino.
+                _imagen_borrosa_sin_texto = (
+                    calidad_imagen and "borrosa" in (calidad_imagen.get("motivos") or [])
+                    and not texto_busqueda and not codigo_barras
+                )
                 # 1) Códigos de barras / QR en la imagen (prioridad: identificación inequívoca)
                 ean_imagen = extraer_primer_ean_de_imagen(contenido_imagen)
                 if ean_imagen:
@@ -566,10 +585,15 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
     if not texto_busqueda:
         if imagen_enviada:
             logger.info("[ESCANEAR] No se extrajo texto de la imagen.")
+            _borrosa = locals().get("_imagen_borrosa_sin_texto", False)
             mensaje_error = (
                 error_vision_imagen
                 if error_vision_imagen
-                else "No pudimos leer la etiqueta. ¿Es una botella de vino? Prueba con otra foto más nítida o escribe el nombre del vino abajo."
+                else (
+                    "La foto está borrosa y no pudimos identificar el vino. Prueba acercándote más a la etiqueta o escribe el nombre del vino abajo."
+                    if _borrosa
+                    else "No pudimos leer la etiqueta. ¿Es una botella de vino? Prueba con otra foto más nítida o escribe el nombre del vino abajo."
+                )
             )
             return {
                 "reconocido": False,
@@ -722,6 +746,22 @@ async def _escanear_etiqueta_impl(request: Request, x_session_id: str | None):
     # Buscar en BD con texto normalizado para mejorar match (Viña Pedrosa, Protos, etc.)
     texto_para_buscar = texto_limpio if texto_limpio else texto_busqueda
     coincidencias = buscar_vinos_avanzado(vinos, texto_para_buscar, limite=5)
+
+    # Mejora: si hay entidades extraídas (nombre, bodega, DO), usar búsqueda multi-campo
+    # que es mucho más precisa que el texto plano cuando Gemini Vision identifica el vino
+    if entidades_imagen and isinstance(entidades_imagen, dict) and any(
+        entidades_imagen.get(k) for k in ("nombre", "bodega", "denominacion", "variedad")
+    ):
+        coincidencias_entidades = buscar_por_entidades(vinos, entidades_imagen, limite=5)
+        if coincidencias_entidades:
+            # Fusionar: el mejor de entidades toma preferencia si su score es competitivo
+            top_entidades = coincidencias_entidades[0]
+            top_texto = coincidencias[0] if coincidencias else None
+            if not top_texto or top_entidades["score"] >= top_texto["score"] * 0.8:
+                logger.info("[ESCANEAR] Búsqueda por entidades separadas activada. Mejor: %s (score=%.2f)",
+                    (top_entidades.get("vino") or {}).get("nombre", "")[:60], top_entidades["score"])
+                coincidencias = coincidencias_entidades
+
     mejor_score = coincidencias[0]["score"] if coincidencias else 0
     mejor_nombre = (coincidencias[0]["vino"].get("nombre") or "") if coincidencias else ""
     logger.info("[ESCANEAR] BD: %d coincidencias, mejor score=%.2f, nombre=%s", len(coincidencias), mejor_score, mejor_nombre[:80] if mejor_nombre else "")

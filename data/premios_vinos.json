@@ -1,0 +1,256 @@
+{
+  "version": "1.0",
+  "actualizado": "2026-04-03",
+  "fuentes": [
+    {"id": "WS",  "nombre": "Wine Spectator Wine of the Year",     "pais_origen": "USA", "tipo": "revista"},
+    {"id": "RP",  "nombre": "Robert Parker / Wine Advocate",       "pais_origen": "USA", "tipo": "critica"},
+    {"id": "DEC", "nombre": "Decanter World Wine Awards",          "pais_origen": "GBR", "tipo": "concurso"},
+    {"id": "JS",  "nombre": "James Suckling",                      "pais_origen": "USA", "tipo": "critica"},
+    {"id": "WE",  "nombre": "Wine Enthusiast Wine of the Year",    "pais_origen": "USA", "tipo": "revista"},
+    {"id": "IWC", "nombre": "International Wine Challenge Trophy", "pais_origen": "GBR", "tipo": "concurso"},
+    {"id": "WA",  "nombre": "Wine Advocate (100 puntos)",          "pais_origen": "USA", "tipo": "critica"},
+    {"id": "GR",  "nombre": "Guia Peñin (España)",                 "pais_origen": "ESP", "tipo": "guia"},
+    {"id": "GB",  "nombre": "Gambero Rosso Tre Bicchieri",         "pais_origen": "ITA", "tipo": "guia"}
+  ],
+  "top_mundial": [
+    {
+      "posicion": 1,
+      "vino": "Penfolds Grange",
+      "bodega": "Penfolds",
+      "tipo": "Tinto (Shiraz)",
+      "pais": "Australia",
+      "codigo_pais": "AUS",
+      "region": "South Australia / Barossa Valley",
+      "premios": [
+        {"fuente": "WS", "premio": "Wine of the Year", "anio": 2008, "puntuacion": "99/100"},
+        {"fuente": "RP", "premio": "100 puntos", "anio": 2010},
+        {"fuente": "JS", "premio": "100 puntos", "anio": 2021}
+      ],
+      "por_que_reconocido": "Considerado el 'vino de culto' australiano por excelencia. Producido desde 1951, es el único vino de Oceanía en el top mundial consistente. Reconocido en más de 15 ediciones del Wine Spectator Top 100."
+    },
+    {
+      "posicion": 2,
+      "vino": "Sassicaia",
+      "bodega": "Tenuta San Guido",
+      "tipo": "Tinto (Cabernet Sauvignon/Franc)",
+      "pais": "Italia",
+      "codigo_pais": "ITA",
+      "region": "Bolgheri, Toscana",
+      "premios": [
+        {"fuente": "WS", "premio": "Wine of the Year", "anio": 1994, "puntuacion": "99/100"},
+        {"fuente": "RP", "premio": "99 puntos", "anio": 2016},
+        {"fuente": "JS", "premio": "100 puntos", "anio": 2016},
+        {"fuente": "GB", "premio": "Tre Bicchieri", "anio": 2023}
+      ],
+      "por_que_reconocido": "El primer vino italiano en ganar el Wine of the Year de Wine Spectator (1994). Pionero de los 'Supertoscanos', tiene su propia DOC (Bolgheri Sassicaia) creada expresamente para él."
+    },
+    {
+      "posicion": 3,
+      "vino": "Vega Sicilia Único",
+      "bodega": "Bodegas Vega Sicilia",
+      "tipo": "Tinto (Tempranillo, Cabernet)",
+      "pais": "España",
+      "codigo_pais": "ESP",
+      "region": "Ribera del Duero, Castilla y León",
+      "premios": [
+        {"fuente": "WS", "premio": "Top 100", "anio": 2022, "puntuacion": "98/100"},
+        {"fuente": "RP", "premio": "98 puntos", "anio": 2019},
+        {"fuente": "DEC", "premio": "Platinum Best in Show", "anio": 2021},
+        {"fuente": "GR", "premio": "99 puntos", "anio": 2022}
+      ],
+      "por_que_reconocido": "Considerado el 'Primer Gran Cru' de España. Producido desde 1864, solo se lanza al mercado cuando la bodega lo considera perfecto, con crianzas que superan los 10 años. Es el vino español con mayor reputación internacional histórica."
+    },
+    {
+      "posicion": 4,
+      "vino": "Château Pétrus",
+      "bodega": "Château Pétrus",
+      "tipo": "Tinto (Merlot)",
+      "pais": "Francia",
+      "codigo_pais": "FRA",
+      "region": "Pomerol, Burdeos",
+      "premios": [
+        {"fuente": "RP", "premio": "100 puntos", "anio": 2000},
+        {"fuente": "RP", "premio": "100 puntos", "anio": 1998},
+        {"fuente": "JS", "premio": "100 puntos", "anio": 2000},
+        {"fuente": "WS", "premio": "Top 100", "anio": 2018, "puntuacion": "98/100"}
+      ],
+      "por_que_reconocido": "El Merlot más famoso y caro del mundo. Producido en apenas 4,5 hectáreas en Pomerol, es icono de Burdeos. Sus añadas del 2000 y 1998 son consideradas perfectas por la mayoría de los críticos mundiales."
+    },
+    {
+      "posicion": 5,
+      "vino": "Screaming Eagle Cabernet Sauvignon",
+      "bodega": "Screaming Eagle",
+      "tipo": "Tinto (Cabernet Sauvignon)",
+      "pais": "Estados Unidos",
+      "codigo_pais": "USA",
+      "region": "Napa Valley, California",
+      "premios": [
+        {"fuente": "WS", "premio": "Wine of the Year", "anio": 2010, "puntuacion": "99/100"},
+        {"fuente": "RP", "premio": "100 puntos", "anio": 1992},
+        {"fuente": "WA", "premio": "100 puntos", "anio": 2007},
+        {"fuente": "JS", "premio": "100 puntos", "anio": 2016}
+      ],
+      "por_que_reconocido": "El 'cult wine' de Napa Valley por excelencia. Solo se producen unas 500 cajas al año, con una lista de espera de décadas. La añada 1992 de Robert Parker con 100 puntos lo catapultó a la fama mundial."
+    },
+    {
+      "posicion": 6,
+      "vino": "Pingus",
+      "bodega": "Dominio de Pingus",
+      "tipo": "Tinto (Tempranillo)",
+      "pais": "España",
+      "codigo_pais": "ESP",
+      "region": "Ribera del Duero, Castilla y León",
+      "premios": [
+        {"fuente": "RP", "premio": "100 puntos", "anio": 2004},
+        {"fuente": "RP", "premio": "100 puntos", "anio": 1996},
+        {"fuente": "JS", "premio": "100 puntos", "anio": 2004},
+        {"fuente": "GR", "premio": "99 puntos", "anio": 2020}
+      ],
+      "por_que_reconocido": "Creado por el danés Peter Sisseck en 1995, Pingus obtuvo 100 puntos de Parker ya en su primera añada (1995). Con solo 300-500 cajas anuales, es el vino español más difícil de conseguir y uno de los más puntuados del mundo."
+    },
+    {
+      "posicion": 7,
+      "vino": "Harlan Estate",
+      "bodega": "Harlan Estate",
+      "tipo": "Tinto (Cabernet Sauvignon blend)",
+      "pais": "Estados Unidos",
+      "codigo_pais": "USA",
+      "region": "Oakville, Napa Valley, California",
+      "premios": [
+        {"fuente": "RP", "premio": "100 puntos", "anio": 2002},
+        {"fuente": "RP", "premio": "100 puntos", "anio": 2001},
+        {"fuente": "WS", "premio": "Top 100", "anio": 2017, "puntuacion": "98/100"},
+        {"fuente": "JS", "premio": "100 puntos", "anio": 2013}
+      ],
+      "por_que_reconocido": "Junto con Screaming Eagle, define el concepto de 'Napa cult wine'. H. William Harlan ha recibido el Decanter Man of the Year. Sus añadas del 2001 y 2002 con 100 puntos de Parker son hitos de la viticultura americana."
+    },
+    {
+      "posicion": 8,
+      "vino": "Zuccardi Valle de Uco Serie A Malbec",
+      "bodega": "Familia Zuccardi",
+      "tipo": "Tinto (Malbec)",
+      "pais": "Argentina",
+      "codigo_pais": "ARG",
+      "region": "Valle de Uco, Mendoza",
+      "premios": [
+        {"fuente": "DEC", "premio": "Best in Show Red", "anio": 2019},
+        {"fuente": "DEC", "premio": "Best in Show Red", "anio": 2022},
+        {"fuente": "WS", "premio": "Top 100", "anio": 2021, "puntuacion": "97/100"},
+        {"fuente": "JS", "premio": "99 puntos", "anio": 2021}
+      ],
+      "por_que_reconocido": "El vino que puso al Malbec argentino en el mapa mundial de los grandes. Zuccardi ganó el Best in Show del Decanter World Wine Awards dos veces (2019 y 2022), siendo el único vino sudamericano en repetir este logro."
+    },
+    {
+      "posicion": 9,
+      "vino": "Barca Velha",
+      "bodega": "Casa Ferreirinha (Sogrape)",
+      "tipo": "Tinto (Touriga Nacional, Tinta Roriz)",
+      "pais": "Portugal",
+      "codigo_pais": "PRT",
+      "region": "Douro Superior",
+      "premios": [
+        {"fuente": "DEC", "premio": "Platinum Best in Show", "anio": 2020},
+        {"fuente": "JS", "premio": "98 puntos", "anio": 2011},
+        {"fuente": "WS", "premio": "Top 100", "anio": 2020, "puntuacion": "97/100"},
+        {"fuente": "IWC", "premio": "Trophy Best Portuguese Red", "anio": 2021}
+      ],
+      "por_que_reconocido": "El icono absoluto del vino portugués, producido desde 1952. Solo se elabora en las añadas excepcionales (menos de 20 veces en su historia). Considerado el 'Vega Sicilia portugués', es el testimonio de la grandeza del Douro."
+    },
+    {
+      "posicion": 10,
+      "vino": "Don Melchor Cabernet Sauvignon",
+      "bodega": "Concha y Toro",
+      "tipo": "Tinto (Cabernet Sauvignon)",
+      "pais": "Chile",
+      "codigo_pais": "CHL",
+      "region": "Puente Alto, Valle del Maipo",
+      "premios": [
+        {"fuente": "WS", "premio": "Wine of the Year", "anio": 2016, "puntuacion": "97/100"},
+        {"fuente": "JS", "premio": "100 puntos", "anio": 2021},
+        {"fuente": "DEC", "premio": "Platinum", "anio": 2022},
+        {"fuente": "WE", "premio": "Wine of the Year", "anio": 2017}
+      ],
+      "por_que_reconocido": "El primer vino latinoamericano en ganar el Wine of the Year de Wine Spectator (2016). Producido desde 1987, Don Melchor ha colocado al Valle del Maipo de Chile en el mapa de los grandes terroirs mundiales."
+    }
+  ],
+  "top_por_pais": {
+    "ESP": {
+      "vino_emblema": "Vega Sicilia Único",
+      "posicion_mundial": 3,
+      "otros_destacados": ["Pingus (Ribera del Duero)", "Alvaro Palacios L'Ermita (Priorat)", "CVNE Imperial Gran Reserva (Rioja)"],
+      "dato_curioso": "España tiene 3 vinos entre el Top 10 mundial: Vega Sicilia Único (#3) y Pingus (#6), más L'Ermita de Álvaro Palacios como el mejor vino del Priorat reconocido por Robert Parker con 100 puntos."
+    },
+    "FRA": {
+      "vino_emblema": "Château Pétrus",
+      "posicion_mundial": 4,
+      "otros_destacados": ["Romanée-Conti (Borgoña)", "Château Margaux (Burdeos)", "Château Mouton Rothschild (Burdeos)"],
+      "dato_curioso": "Francia tiene el vino más caro del mundo: Romanée-Conti, cuya producción de solo 5.000 botellas anuales hace que los precios superen los €10.000 por botella."
+    },
+    "ITA": {
+      "vino_emblema": "Sassicaia",
+      "posicion_mundial": 2,
+      "otros_destacados": ["Barolo Monfortino Giacomo Conterno", "Ornellaia (Bolgheri)", "Brunello di Montalcino Biondi-Santi"],
+      "dato_curioso": "Sassicaia es el único vino en el mundo que tiene su propia denominación de origen (DOC) creada específicamente para un solo productor: Bolgheri Sassicaia DOC."
+    },
+    "AUS": {
+      "vino_emblema": "Penfolds Grange",
+      "posicion_mundial": 1,
+      "otros_destacados": ["Henschke Hill of Grace (Eden Valley)", "Two Hands Ares (Barossa)", "Torbreck The Laird (Barossa)"],
+      "dato_curioso": "Penfolds Grange es el único vino de Oceanía que ha ganado el Wine of the Year de Wine Spectator. Australia tiene el récord de producir vines en condiciones extremas de calor que resultan en concentraciones únicas."
+    },
+    "USA": {
+      "vino_emblema": "Screaming Eagle Cabernet Sauvignon",
+      "posicion_mundial": 5,
+      "otros_destacados": ["Harlan Estate (Napa)", "Opus One (Napa)", "Ridge Monte Bello (Santa Cruz)"],
+      "dato_curioso": "La botella más cara subastada en la historia fue un Screaming Eagle 1992 que se vendió en $500.000. Napa Valley concentra más vinos con 100 puntos de Robert Parker que cualquier otra región fuera de Europa."
+    },
+    "ARG": {
+      "vino_emblema": "Zuccardi Valle de Uco Serie A Malbec",
+      "posicion_mundial": 8,
+      "otros_destacados": ["Achaval Ferrer Finca Mirador (Mendoza)", "Catena Adrianna Vineyard (Mendoza)", "Clos de los Siete (Valle de Uco)"],
+      "dato_curioso": "Argentina es el único país del mundo donde el Malbec alcanza su máxima expresión. Las viñas de alta altitud del Valle de Uco (1.000-1.500 m) producen vinos de una complejidad imposible de replicar en otros terroirs."
+    },
+    "CHL": {
+      "vino_emblema": "Don Melchor Cabernet Sauvignon",
+      "posicion_mundial": 10,
+      "otros_destacados": ["Almaviva (Valle del Maipo)", "Seña (Valle de Aconcagua)", "Lapostolle Clos Apalta (Colchagua)"],
+      "dato_curioso": "Chile fue el primer país latinoamericano en ganar el Wine of the Year de Wine Spectator (Don Melchor 2016). El Valle del Maipo es conocido como el 'Médoc de Sudamérica' por sus suelos y condiciones similares a Burdeos."
+    },
+    "PRT": {
+      "vino_emblema": "Barca Velha",
+      "posicion_mundial": 9,
+      "otros_destacados": ["Quinta do Vale Meão (Douro)", "Prats & Symington Post Scriptum (Douro)", "Quinta do Crasto Vinha Maria Teresa (Douro)"],
+      "dato_curioso": "Barca Velha solo se ha producido en menos de 20 añadas desde 1952, lo que lo convierte en uno de los vinos más raros del mundo. En los años donde la cosecha no alcanza el nivel requerido, simplemente no existe."
+    },
+    "DEU": {
+      "vino_emblema": "Egon Müller Scharzhofberger Riesling TBA",
+      "posicion_mundial": null,
+      "otros_destacados": ["JJ Prüm Wehlener Sonnenuhr Auslese (Mosela)", "Dönnhoff Oberhäuser Brücke Riesling (Nahe)", "Georg Breuer Berg Schlossberg (Rheingau)"],
+      "dato_curioso": "El Riesling Trockenbeerenauslese de Egon Müller es considerado el mayor vino dulce del mundo, con precios superiores a €10.000 por botella. Alemania es la única región donde el Riesling alcanza este nivel de nobleza."
+    },
+    "ZAF": {
+      "vino_emblema": "Kanonkop Paul Sauer",
+      "posicion_mundial": null,
+      "otros_destacados": ["Boekenhoutskloof The Chocolate Block (Franschhoek)", "Meerlust Rubicon (Stellenbosch)", "Eben Sadie Columella (Swartland)"],
+      "dato_curioso": "Sudáfrica tiene la viña más antigua del mundo en producción continua: Groot Constantia, fundada en 1685. Sus vinos de Stellenbosch y Franschhoek cada vez más reconocidos internacionalmente."
+    },
+    "NZL": {
+      "vino_emblema": "Cloudy Bay Sauvignon Blanc",
+      "posicion_mundial": null,
+      "otros_destacados": ["Felton Road Pinot Noir (Central Otago)", "Villa Maria Reserve Chardonnay (Marlborough)", "Rippon Pinot Noir (Central Otago)"],
+      "dato_curioso": "Nueva Zelanda redefinió el Sauvignon Blanc mundial con el estilo fresco y aromático de Marlborough. Cloudy Bay, creado en 1985, es el vino que puso a Nueva Zelanda en el mapa vinícola internacional."
+    },
+    "MEX": {
+      "vino_emblema": "Monte Xanic Gran Ricardo",
+      "posicion_mundial": null,
+      "otros_destacados": ["L.A. Cetto Nebbiolo (Valle de Guadalupe)", "Vinícola Torres Alejandro (Querétaro)", "Roganto Nebbiolo (Valle de Guadalupe)"],
+      "dato_curioso": "México tiene la primera y más antigua bodega del continente americano: Casa Madero, fundada en 1597 en Coahuila. El Valle de Guadalupe en Baja California es el epicentro vinícola mexicano con más de 100 bodegas boutique."
+    },
+    "GBR": {
+      "vino_emblema": "Nyetimber Classic Cuvée",
+      "posicion_mundial": null,
+      "otros_destacados": ["Chapel Down Blanc de Blancs (Kent)", "Camel Valley Cornwall Brut (Cornwall)", "Ridgeview Blanc de Noirs (Sussex)"],
+      "dato_curioso": "Inglaterra es la región vinícola que más crece en el mundo. Los espumosos ingleses del Surrey y Kent han ganado catas a ciegas frente a Champagnes de primera división. El cambio climático está convirtiendo el sur de Inglaterra en un terroir de primer nivel."
+    }
+  }
+}

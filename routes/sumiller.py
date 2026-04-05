@@ -10,6 +10,13 @@ from fastapi import APIRouter, Header, HTTPException, Request, Body
 from services import sumiller_service as svc_sumiller
 from services import translation_service as translation_svc
 from services import freemium_service as freemium_svc
+from services.premios_service import (
+    es_pregunta_de_ranking,
+    obtener_top5_mundial,
+    obtener_vino_por_pais,
+    codigo_pais_desde_nombre,
+    formatear_respuesta_premios,
+)
 from services.imagen_service import get_imagen_vino
 from services.busqueda_service import buscar_vinos_avanzado, buscar_vinos_con_sugerencia
 from services.api_externa_service import buscar_por_texto as off_buscar_por_texto
@@ -559,6 +566,33 @@ def _preguntar_sumiller_general(
     exclude_keys_sesion = list(dict.fromkeys(keys_ya_recomendados))[-25:]
     quizas_quisiste_decir = None
     vino_anadido_a_base = False
+
+    # --- Evidence Engine — Capa 4: Ranking por Premios Internacionales ---
+    if es_pregunta_de_ranking(texto_clean):
+        top5 = obtener_top5_mundial()
+        # Intentar obtener país del usuario desde cabecera o IP
+        pais_header = getattr(request.state, "pais_usuario", None) or ""
+        # Buscar también si el usuario menciona un país en la pregunta
+        codigo_local = codigo_pais_desde_nombre(pais_header) if pais_header else None
+        vino_local = obtener_vino_por_pais(codigo_local) if codigo_local else None
+        respuesta_premios = formatear_respuesta_premios(top5, vino_local, pais_header or None)
+        if respuesta_premios:
+            if session_id:
+                nuevo = {"pregunta": texto_clean, "respuesta": respuesta_premios, "vinos_ref": []}
+                contexto = (contexto + [nuevo])[-MAX_CONTEXTO:]
+                historial_store[session_id] = contexto
+            return {
+                "consulta_id": None,
+                "vino_key": None,
+                "pregunta": texto_clean,
+                "respuesta": respuesta_premios,
+                "vino_nombre": None,
+                "imagen_url": None,
+                "mostrar_boton_comprar": False,
+                "perfil": perfil,
+                "evidence_layer": "premios_verificados",
+                "mito_id": None,
+            }
 
     # --- Evidence Engine — Capa 1: Corrección de mitos documentados ---
     mito_detectado = svc_sumiller.verificar_mito(texto_clean)

@@ -14,9 +14,15 @@ Evidence Engine — Capa 3 con File Search:
 import json
 import logging
 import os
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 from pathlib import Path
 
 from services.cost_tracker_service import registrar_uso as _track
+
+# Timeout máximo para cualquier llamada a Gemini (en segundos).
+# Protege contra el SDK colgándose y evita "Aborted" en el frontend.
+GEMINI_TIMEOUT_S = int(os.environ.get("GEMINI_TIMEOUT_S", "20"))
+_gemini_pool = ThreadPoolExecutor(max_workers=4, thread_name_prefix="gemini")
 
 logger = logging.getLogger(__name__)
 
@@ -224,10 +230,21 @@ def buscar_vino_en_nube(pregunta_o_nombre: str, perfil: str = "aficionado") -> t
       Intenta primero File Search (documentos verificados con citas).
       Si no hay store o falla, usa Gemini libre marcado con [Estimación IA].
     Devuelve (respuesta_texto, vino_dict).
-    - respuesta_texto: respuesta del sumiller en español (2-4 frases).
-    - vino_dict: ficha del vino para guardar en BD local (nombre, bodega, tipo, etc.) o None si Gemini no pudo identificar el vino.
-    Si no hay API key o falla, devuelve (None, None).
+    Incluye timeout de GEMINI_TIMEOUT_S segundos para evitar que el SDK se cuelgue.
     """
+    try:
+        future = _gemini_pool.submit(_buscar_vino_en_nube_impl, pregunta_o_nombre, perfil)
+        return future.result(timeout=GEMINI_TIMEOUT_S)
+    except FuturesTimeoutError:
+        logger.warning("[SumillerGemini] buscar_vino_en_nube timeout (%ds) para: %s", GEMINI_TIMEOUT_S, (pregunta_o_nombre or "")[:60])
+        return None, None
+    except Exception as e:
+        logger.warning("[SumillerGemini] buscar_vino_en_nube error: %s", e)
+        return None, None
+
+
+def _buscar_vino_en_nube_impl(pregunta_o_nombre: str, perfil: str = "aficionado") -> tuple[str | None, dict | None]:
+    """Implementación real de buscar_vino_en_nube (ejecutada con timeout)."""
     client, types = _get_client()
     if not client or not types:
         return None, None

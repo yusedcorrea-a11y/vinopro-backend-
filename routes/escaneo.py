@@ -330,6 +330,7 @@ async def escanear_etiqueta(
 
     Acepta: multipart/form-data (texto, imagen, codigo_barras) o JSON (texto, codigo_barras).
     """
+    ESCANEO_TIMEOUT_S = 60
     try:
         try:
             await asyncio.wait_for(ESCANEO_SEMAPHORE.acquire(), timeout=0.25)
@@ -337,7 +338,19 @@ async def escanear_etiqueta(
             logger.warning("[ESCANEAR] Saturación: sin slot libre de escaneo.")
             return _respuesta_servicio_ocupado(x_session_id)
         try:
-            return await _escanear_etiqueta_impl(request, x_session_id)
+            return await asyncio.wait_for(
+                _escanear_etiqueta_impl(request, x_session_id),
+                timeout=ESCANEO_TIMEOUT_S,
+            )
+        except asyncio.TimeoutError:
+            logger.warning("[ESCANEAR] Timeout global (%ds) en endpoint /escanear", ESCANEO_TIMEOUT_S)
+            return {
+                "reconocido": False,
+                "error_imagen": False,
+                "es_pro": _es_pro((x_session_id or "").strip()),
+                "mensaje": "El análisis tardó demasiado. Intenta con otra foto o escribe el nombre del vino.",
+                "entidades_extraidas": {},
+            }
         finally:
             ESCANEO_SEMAPHORE.release()
     except HTTPException:

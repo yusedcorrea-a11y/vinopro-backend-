@@ -11,8 +11,12 @@ import logging
 import os
 import re
 import time
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeoutError
 
 logger = logging.getLogger(__name__)
+
+GEMINI_VISION_TIMEOUT_S = int(os.environ.get("GEMINI_VISION_TIMEOUT_S", "15"))
+_vision_pool = ThreadPoolExecutor(max_workers=2, thread_name_prefix="vision")
 
 MODELO_GEMINI = os.environ.get("VINO_VISION_MODEL", "gemini-2.0-flash").strip() or "gemini-2.0-flash"
 MAX_IMAGE_SIDE_VISION = 1280
@@ -255,19 +259,23 @@ def analizar_etiqueta_vision(imagen_bytes: bytes, session_key: str | None = None
     _register_session_call(session_key)
     client = genai.Client(api_key=api_key)
 
+    def _call_gemini():
+        return client.models.generate_content(
+            model=MODELO_GEMINI,
+            contents=[
+                types.Part.from_text(text=PROMPT_VISION),
+                types.Part.from_bytes(data=imagen_reducida, mime_type=mime),
+            ],
+            config=types.GenerateContentConfig(max_output_tokens=MAX_OUTPUT_TOKENS_VISION, temperature=0),
+        )
+
     last_exc = None
     for attempt, delay in enumerate((0.0,) + RETRY_DELAYS_SECONDS):
         if delay:
             time.sleep(delay)
         try:
-            response = client.models.generate_content(
-                model=MODELO_GEMINI,
-                contents=[
-                    types.Part.from_text(text=PROMPT_VISION),
-                    types.Part.from_bytes(data=imagen_reducida, mime_type=mime),
-                ],
-                config=types.GenerateContentConfig(max_output_tokens=MAX_OUTPUT_TOKENS_VISION, temperature=0),
-            )
+            future = _vision_pool.submit(_call_gemini)
+            response = future.result(timeout=GEMINI_VISION_TIMEOUT_S)
             texto_resp = _extract_response_text(response)
             if not texto_resp:
                 return None
@@ -285,6 +293,10 @@ def analizar_etiqueta_vision(imagen_bytes: bytes, session_key: str | None = None
             _VISION_CACHE[cache_key] = {"ts": now, "value": result}
             logger.info("[Vision] Gemini extrajo: %s", texto[:80])
             return result
+        except FuturesTimeoutError:
+            logger.warning("[Vision] Timeout (%ds) en intento %d", GEMINI_VISION_TIMEOUT_S, attempt + 1)
+            last_exc = TimeoutError(f"Gemini Vision tardó más de {GEMINI_VISION_TIMEOUT_S}s")
+            break
         except Exception as exc:
             last_exc = exc
             if _should_retry(exc) and attempt < len(RETRY_DELAYS_SECONDS):

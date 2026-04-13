@@ -20,8 +20,26 @@ except ImportError:  # pragma: no cover - entorno sin OpenCV
 
 
 _BRILLO_BAJO = 55.0
-_BLUR_BAJO = 80.0
+# Varianza del Laplaciano: en fotos móviles comprimidas/reducidas suele quedar baja aunque la etiqueta sea legible.
+# Antes 80 era demasiado estricto y disparaba "borrosa" con capturas nítidas a simple vista.
+# Tras normalizar tamaño (ver _gray_normalizado_blur), ~40 separa lo claramente borroso del aceptable.
+_BLUR_BAJO = 40.0
 _HIGHLIGHT_RATIO_ALTO = 0.08
+_MAX_LADO_BLUR = 960
+
+
+def _gray_normalizado_blur(gray):
+    """Reduce a un tamaño comparable entre dispositivos antes de medir nitidez."""
+    h, w = gray.shape[:2]
+    max_dim = max(h, w)
+    if max_dim < 120:
+        return gray
+    if max_dim > _MAX_LADO_BLUR:
+        scale = _MAX_LADO_BLUR / float(max_dim)
+        new_w = max(1, int(w * scale))
+        new_h = max(1, int(h * scale))
+        return cv2.resize(gray, (new_w, new_h), interpolation=cv2.INTER_AREA)
+    return gray
 
 
 def evaluar_calidad_imagen(imagen_bytes: bytes) -> dict:
@@ -51,7 +69,8 @@ def evaluar_calidad_imagen(imagen_bytes: bytes) -> dict:
 
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         brillo_medio = float(gray.mean())
-        blur_score = float(cv2.Laplacian(gray, cv2.CV_64F).var())
+        gray_blur = _gray_normalizado_blur(gray)
+        blur_score = float(cv2.Laplacian(gray_blur, cv2.CV_64F).var())
         highlights_ratio = float((gray >= 245).sum()) / float(gray.size or 1)
 
         motivos = []
@@ -71,7 +90,9 @@ def evaluar_calidad_imagen(imagen_bytes: bytes) -> dict:
         }
         return resultado
     except Exception as exc:  # pragma: no cover - defensivo
-        logger.debug("[IMG_QUALITY] No se pudo evaluar la imagen: %s", exc)
+        logger.warning("[IMG_QUALITY] No se pudo evaluar la imagen: %s", exc)
+        resultado["ok"] = False
+        resultado["motivos"] = ["evaluacion_fallida"]
         return resultado
 
 
